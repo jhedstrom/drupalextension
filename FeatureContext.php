@@ -78,9 +78,9 @@ class FeatureContext extends BehatContext
   }
 
   /**
-  * @When /^I execute that command the anonymous http clone$/
+  * @When /^I execute the anonymous http clone$/
   */
-  public function iExecuteThatCommandTheAnonymousHttpClone() {
+  public function iExecuteTheAnonymousHttpClone() {
     $process = new Process($this->gitCommand);
     $process->setTimeout(3600);
     $process->run();
@@ -90,9 +90,9 @@ class FeatureContext extends BehatContext
   }
 
   /**
-  * @Then /^I should be have a copy of the cloned anonymous repository$/
+  * @Then /^I should have a copy of the cloned anonymous repository$/
   */
-  public function iShouldBeHaveACopyOfTheClonedAnonymousRepository() {
+  public function iShouldHaveACopyOfTheClonedAnonymousRepository() {
     if (!is_dir('doobie')) {
       throw new Exception('The repo could not be found.');
     }
