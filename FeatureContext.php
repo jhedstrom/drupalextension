@@ -35,6 +35,7 @@ class FeatureContext extends BehatContext
     // Allow feature sets to use their own SetFeature.php file
     $this->useContext('git_context', new GitContext($parameters));
     $this->useContext('solr_context', new SolrContext($parameters));
+    $this->useContext('drupalorg_context', new DrupalOrgContext($parameters));
 
   }
 
