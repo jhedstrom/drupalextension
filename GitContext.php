@@ -16,12 +16,13 @@ class GitContext extends BehatContext
   /**
    * Initializes context.
    *
-   * Every scenario gets it's own context object.
+   * Every scenario gets its own context object.
    *
    * @param array $parameters 
    *   Context parameters (set them up through behat.yml).
    */
   public function __construct(array $parameters) {
+    $this->base_url = $parameters['base_url'];
     $driver = new \Behat\Mink\Driver\Selenium2Driver('firefox', array());
     $firefox = new \Behat\Mink\Session($driver);
     $driver = new \Behat\Mink\Driver\GoutteDriver();
@@ -42,7 +43,7 @@ class GitContext extends BehatContext
    */
   public function iAmViewingASandboxRepositoryThatContainsCode() {
     $session = $this->mink->getSession();
-    $session->visit('http://drupal.org/sandbox/eliza411/1545884/');
+    $session->visit($this->base_url .'/sandbox/eliza411/1545884/');
     $element = $session->getPage()
       ->findLink('Version control');
     if (!empty($element)) {

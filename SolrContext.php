@@ -22,6 +22,7 @@ class SolrContext extends BehatContext
    *   Context parameters (set them up through behat.yml).
    */
   public function __construct(array $parameters) {
+    $this->base_url = $parameters['base_url'];
     $driver = new \Behat\Mink\Driver\Selenium2Driver('firefox', array());  
     $firefox = new \Behat\Mink\Session($driver);
     $driver = new \Behat\Mink\Driver\GoutteDriver();
@@ -42,7 +43,7 @@ class SolrContext extends BehatContext
    */
   public function iAmViewingSearchResultsPageForTermViews() {
     $session = $this->mink->getSession();
-    $session->visit('http://drupal.org/search/apachesolr_search/views');
+    $session->visit($this->base_url .'/search/apachesolr_search/views');
     $element = $session->getPage()
       ->findLink('Views');
     if (empty($element)) {
