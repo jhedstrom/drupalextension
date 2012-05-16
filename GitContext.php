@@ -7,6 +7,7 @@ use Behat\Behat\Context\ClosuredContextInterface,
 use Behat\Gherkin\Node\PyStringNode,
     Behat\Gherkin\Node\TableNode;
 use Symfony\Component\Process\Process;
+use Behat\Behat\Context\ContextInterface;
 
 /**
  * Features context.

@@ -95,9 +95,9 @@ class DrupalOrgContext extends BehatContext
    }
 
   /**
-   * @Then /^I should see a link called "([^"]*)"$/
+   * @Then /^I should see the link "([^"]*)"$/
    */
-  public function iShouldSeeALinkCalled($linkname)
+  public function iShouldSeeTheLink($linkname)
   {
   $session = $this->mink->getSession();
   $element = $session->getPage();
