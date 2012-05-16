@@ -106,6 +106,37 @@ class DrupalOrgContext extends BehatContext
       throw new Exception("No link to ". $linkname ."  on ". $session->getCurrentUrl());
     }
   }
+
+  /**
+   * @Then /^I should see the heading "([^"]*)"$/
+   */
+  public function iShouldSeeTheHeading($headingname)
+  {
+  $session = $this->mink->getSession();
+  $element = $session->getPage();
+  foreach (array('h1', 'h2', 'h3', 'h4', 'h5', 'h6') as $heading) {
+    $results = $element->findAll('css', $heading);
+    foreach ($results as $result) {
+      if ($result->getText() == $headingname) {
+        return;
+      }
+    }
+  }
+  throw new Exception("The text ". $headingname ." was not found in any heading ". $session->getCurrentUrl());
+  }
+
+  /**
+   * @Then /^I should see the text "([^"]*)"$/
+   */
+  public function iShouldSeeTheText($text)
+  {
+  $session = $this->mink->getSession();
+  $element = $session->getPage();
+  $result = $element->hasContent($text);
+  if ($result === False) {
+    throw new Exception("The text ". $text ." was not found ". $session->getCurrentUrl());
+    }
+  }
 }
 
 
