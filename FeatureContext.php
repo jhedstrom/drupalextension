@@ -103,6 +103,20 @@ class FeatureContext extends BehatContext
   }
 
   /**
+   * @Then /^I should not see the link "([^"]*)"$/
+   */
+  public function iShouldNotSeeTheLink($linkname)
+  {
+    $session = $this->mink->getSession();
+    $element = $session->getPage();
+    $result = $element->findLink($linkname);
+    if ($result) {
+      throw new Exception("The link ". $linkname ." was present on ". $session->getCurrentUrl() ." and was not supposed to be.");
+    }
+  }
+
+
+  /**
    * @Then /^I should see the heading "([^"]*)"$/
    */
   public function iShouldSeeTheHeading($headingname)
