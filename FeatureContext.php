@@ -43,8 +43,8 @@ class FeatureContext extends BehatContext
   /**
    * Destructor function to close open sessions.
    */
-  public function __destruct() {
-  }
+   public function __destruct() {
+   }
 
   /**
    * @Given /^I am at "([^"]*)"$/
@@ -53,6 +53,7 @@ class FeatureContext extends BehatContext
   {
     $session = $this->mink->getSession();
     $session->visit($this->base_url . $path);
+return;
     $status = $session->getStatusCode();
     if ($status != 200) {
       throw new Exception("Status $status when retriving ". $session->getCurrentUrl());
@@ -78,15 +79,42 @@ class FeatureContext extends BehatContext
    */
   public function iSearchFor($searchterm)
   {
-    $this->searchterm = $searchterm;
     $session = $this->mink->getSession();
     $element = $session->getPage();
-    $element->fillField('edit-text', $this->searchterm);
+    $element->fillField('edit-text', $searchterm);
     $submit = $element->findById('edit-submit');
     if (empty($submit)) {
       throw new Exception('No submit button at '. $session->getCurrentUrl());
     }
     $submit->click();
+  }
+
+  /**
+   * @Given /^I fill in "([^"]*)" for "([^"]*)"$/
+   */
+  public function iFillInFor($formvalue, $fieldname)
+  {
+    $session = $this->mink->getSession();
+    $element = $session->getPage();
+    $result = $element->hasField($fieldname);
+    if ($result === False) {
+      throw new Exception("No field ". $fieldname ." found.");
+    }
+    $element->fillField($fieldname, $formvalue);
+  }
+
+  /**
+   * @When /^I press "([^"]*)"$/
+   */
+  public function iPress($submitbutton)
+  {
+   $session = $this->mink->getSession();
+   $element = $session->getPage();
+   $submit = $element->findButton($submitbutton);
+   if (empty($submit)) {
+     throw new Exception('No submit button at '. $session->getCurrentUrl());
+   }
+   $submit->click();
   }
 
   /**
@@ -260,4 +288,6 @@ class FeatureContext extends BehatContext
       throw new Exception('The search for block was not found.');
     }
   }
+
+
 }
