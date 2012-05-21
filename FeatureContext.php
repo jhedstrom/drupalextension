@@ -8,7 +8,7 @@ use Behat\Gherkin\Node\PyStringNode,
     Behat\Gherkin\Node\TableNode;
 use Symfony\Component\Process\Process;
 
-require 'vendor/.composer/autoload.php';
+require 'vendor/autoload.php';
 
 //
 // Require 3rd-party libraries here:
