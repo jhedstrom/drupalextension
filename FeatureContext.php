@@ -90,9 +90,9 @@ return;
   }
 
   /**
-   * @Given /^I fill in "([^"]*)" for "([^"]*)"$/
+   * @Given /^I enter "([^"]*)" for "([^"]*)"$/
    */
-  public function iFillInFor($formvalue, $fieldname)
+  public function iEnterFor($formvalue, $fieldname)
   {
     $session = $this->mink->getSession();
     $element = $session->getPage();
