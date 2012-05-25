@@ -289,5 +289,65 @@ return;
     }
   }
 
+  // Private function for the whoami step
+   private function whoami()
+   {
+    $session = $this->mink->getSession();
+    $element = $session->getPage();
+    // go to the user page
+    $session->visit($this->base_url . '/user');
+    $page_title = $element->find('css', '#page-title')->getText();
+    if ($page_title) {
+      return $page_title;
+    }
+    return False;
+  }
+
+  /**
+   * @Given /^I am logged in as "([^"]*)" with password "([^"]*)"$/
+   */
+  public function iAmLoggedInAsWithPassword($username, $passwd)
+  {
+    $user = $this->whoami();
+    if(strtolower($user) == strtolower($username)) {
+      // Already logged in.
+      return;
+    }
+
+    $session = $this->mink->getSession();
+    $element = $session->getPage();
+
+    if ($user != 'User account') {
+      // Logout
+      $session->visit($this->base_url . '/user/logout');
+    }
+
+    // go to the user page
+    $session->visit($this->base_url . '/user');
+      // get the page title
+      $page_title = $element->findByID('page-title')->getText();
+      if ($page_title == 'User account') {
+          // If I see this, I'm not logged in at all so log in
+          $element->fillField('Username', $username);
+          $element->fillField('Password', $passwd);
+          $submit = $element->findButton('Log in');
+          if (empty($submit)) {
+            throw new Exception('No submit button at '. $session->getCurrentUrl());
+          }
+          // log in
+          $submit->click();
+          $user = $this->whoami();
+          if(strtolower($user) == strtolower($username)) {
+            // Successfully logged in.
+            return;
+          }
+      } else {
+        throw new Exception("Failed to reach the login page.");
+      }
+
+      throw new Exception('Not logged in.');
+  }
+
+
 
 }
