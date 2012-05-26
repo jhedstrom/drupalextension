@@ -47,9 +47,9 @@ class FeatureContext extends BehatContext
    }
 
   /**
-   * @Given /^I am at "([^"]*)"$/
+   * @Given /^(that I|I) am at "([^"]*)"$/
    */
-  public function iAmAt($path)
+  public function iAmAt($syn, $path)
   {
     $session = $this->mink->getSession();
     $session->visit($this->base_url . $path);
@@ -90,9 +90,9 @@ return;
   }
 
   /**
-   * @Given /^I enter "([^"]*)" for "([^"]*)"$/
+   * @Given /^for "([^"]*)" I enter "([^"]*)"$/
    */
-  public function iEnterFor($formvalue, $fieldname)
+  public function forIenter($formvalue, $fieldname)
   {
     $session = $this->mink->getSession();
     $element = $session->getPage();
@@ -176,40 +176,37 @@ return;
   }
 
   /**
-   * @Given /^I am viewing a sandbox repository that contains code$/
+   * @Given /^I see the text "([^"]*)"$/
    */
-  public function iAmViewingASandboxRepositoryThatContainsCode() {
-    $session = $this->mink->getSession();
-    $session->visit($this->base_url .'/sandbox/eliza411/1545884/');
-    $element = $session->getPage()
-      ->findLink('Version control');
-    if (!empty($element)) {
-      $element->click();
-    }
-    else {
-      throw new Exception('The version control tab was not found.');
+  public function iSeeTheText($text)
+  {
+  $session = $this->mink->getSession();
+  $element = $session->getPage();
+  $result = $element->hasContent($text);
+  if ($result === False) {
+    throw new Exception("The text ". $text ." was not found ". $session->getCurrentUrl());
     }
   }
 
-  /**
-  * @Given /^I see the Git command to perform an anonymous http clone$/
+ /**
+  * @Given /^I see the command "([^"]*)"$/
   */
-  public function iSeeTheGitCommandToPerformAnAnonymousHttpClone() {
-    $page = $this->mink->getSession()
-      ->getPage();
-    $element = $page->find('css', '#content div.codeblock code');
-    if (!empty($element)) {
-      $this->gitCommand = $element->getText();
-    }
-    else {
-      throw new Exception('Commands could not be found.');
-    }
+  public function iSeeTheCommand($command) {
+  $page = $this->mink->getSession()
+  ->getPage();
+  $element = $page->find('css', '#content div.codeblock code');
+  if (!empty($element)) {
+  $this->gitCommand = $element->getText();
   }
+  else {
+  throw new Exception('Commands could not be found.');
+  }
+ }
 
   /**
-  * @When /^I execute the anonymous http clone$/
+  * @When /^I clone the repo$/
   */
-  public function iExecuteTheAnonymousHttpClone() {
+  public function iCloneTheRepo() {
     $process = new Process($this->gitCommand);
     $process->setTimeout(3600);
     $process->run();
@@ -304,9 +301,9 @@ return;
   }
 
   /**
-   * @Given /^I am logged in as "([^"]*)" with password "([^"]*)"$/
+   * @Given /^I am logged in as "([^"]*)" with the password "([^"]*)"$/
    */
-  public function iAmLoggedInAsWithPassword($username, $passwd)
+  public function iAmLoggedInAsWithThePassword($username, $passwd)
   {
     $user = $this->whoami();
     if(strtolower($user) == strtolower($username)) {
@@ -348,6 +345,30 @@ return;
       throw new Exception('Not logged in.');
   }
 
+  /**
+   * @Given /^for "([^"]*)" I select "([^"]*)"$/
+   */
+  public function forISelect($arg1, $arg2)
+  {
+      throw new PendingException();
+  }
 
+  /**
+   * @Given /^I execute the commands$/
+   */
+  public function iExecuteTheCommands()
+  {
+      throw new PendingException();
+  }
+
+  /**
+   * @Given /^I check "([^"]*)"$/
+   */
+  public function iCheck($arg1)
+  {
+      throw new PendingException();
+  }
 
 }
+
+
