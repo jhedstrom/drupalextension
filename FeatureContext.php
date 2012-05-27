@@ -396,6 +396,31 @@ if ($result->isChecked()) {
   }
   throw new Exception("User had not agreed");
 }
+
+  /**
+   * @When /^I select the radio button "([^"]*)" with id "([^"]*)"$/
+   */
+  public function iSelectTheRadioButtonWithId($label, $id)
+  {
+    $session = $this->mink->getSession();
+    $element = $session->getPage();
+    $radiobutton = $element->findById($id);
+    if (null === $radiobutton) {
+      throw new ElementNotFoundException(
+        $this->getSession(), 'form field', 'id|name|label|value', $field
+      );
+    }
+    $value = $radiobutton->getAttribute('value');
+    $labelonpage = $radiobutton->getParent()->getText();
+    if ($label != $labelonpage) {
+      throw new Exception("Button with $id has label $labelonpage instead of $label.");
+    }
+    $radiobutton->selectOption($value, False);
+  }
+
+
+
+//throw new Exception(print_r($value,1));
 }
 
 
