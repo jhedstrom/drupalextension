@@ -364,11 +364,16 @@ return;
   /**
    * @Given /^I check "([^"]*)"$/
    */
-  public function iCheck($arg1)
+  public function iCheck($box)
   {
-      throw new PendingException();
+  $session = $this->mink->getSession();
+  $element = $session->getPage();
+  $result = $element->findField($box);
+  if ($result->isChecked()) {
+    throw new Exception("User has already agreed");
+    }
+    $result->check();
   }
-
 }
 
 
