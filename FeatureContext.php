@@ -34,24 +34,33 @@ class FeatureContext extends BehatContext {
    *
    * Every scenario gets its own context object.
    *
-   * @param array $parameters 
+   * @param array $parameters.
    *   Context parameters (set them up through behat.yml).
    */
   public function __construct(array $parameters) {
-      $this->base_url = $parameters['base_url'];
-      $this->drushAlias = $parameters['drush_alias'];
-      $driver = new \Behat\Mink\Driver\Selenium2Driver('firefox', array());
-      $firefox = new \Behat\Mink\Session($driver);
-      $driver = new \Behat\Mink\Driver\GoutteDriver();
-      $goutte = new \Behat\Mink\Session($driver);
-      $this->mink = new \Behat\Mink\Mink(array('firefox' => $firefox, 'goutte' => $goutte));
-      $this->mink->setDefaultSessionName($parameters['default_browser']);
+    $this->base_url = $parameters['base_url'];
+    $this->default_browser = $parameters['default_browser'];
+    $this->drushAlias = $parameters['drush_alias'];
   }
 
   /**
-   * Destructor function to close open sessions.
+   * @BeforeScenario
    */
-  public function __destruct() {
+  public function beforeScenario($event) {
+    $driver = new \Behat\Mink\Driver\Selenium2Driver('firefox', array());
+    $firefox = new \Behat\Mink\Session($driver);
+    $driver = new \Behat\Mink\Driver\GoutteDriver();
+    $goutte = new \Behat\Mink\Session($driver);
+    $this->mink = new \Behat\Mink\Mink(array('firefox' => $firefox, 'goutte' => $goutte));
+    $this->mink->setDefaultSessionName($this->default_browser);
+  }
+
+  /**
+   * @AfterScenario
+   */
+  public function afterScenario($event) {
+    $this->mink->stopSessions();
+    unset($this->mink);
   }
 
   /**
