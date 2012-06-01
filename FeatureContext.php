@@ -253,55 +253,6 @@ public function iShouldHaveACopyOfTheClonedAnonymousRepository() {
   }
 }
 
-/**
- * @Given /^I am viewing search results page for term views$/
- */
-public function iAmViewingSearchResultsPageForTermViews() {
-  $session = $this->mink->getSession();
-  $session->visit($this->base_url .'/search/apachesolr_search/views');
-  $element = $session->getPage()
-    ->findLink('Views');
-  if (empty($element)) {
-    throw new Exception('No results for views on the search results page.');
-  }
-}
-
-/**
- * @When /^I look at the sidebar$/
- */
-public function iLookAtTheSidebar() {
-  $page = $this->mink->getSession()
-    ->getPage();
-  $element = $page->find('css', '#column-right');
-  if (empty($element)) {
-    throw new Exception('No right sidebar found on search results page.');
-  }
-}
-
-/**
- * @Then /^I should see a filter by block$/
- */
-public function iShouldSeeAFilterByBlock() {
-  $page = $this->mink->getSession()
-    ->getPage();
-  $element = $page->find('css', '#block-drupalorg_search-meta_type h2');
-  if (empty($element)) {
-    throw new Exception('The filter by block was not found.');
-  }
-}
-
-/**
- * @Given /^a search for block$/
- */
-public function aSearchForBlock() {
-  $page = $this->mink->getSession()
-    ->getPage();
-  $element = $page->find('css', '#block-drupalorg_search-drupalorg_search_alternate h2');
-  if (empty($element)) {
-    throw new Exception('The search for block was not found.');
-  }
-}
-
 // Private function for the whoami step
  private function whoami()
  {
