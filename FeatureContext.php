@@ -22,6 +22,14 @@ require 'vendor/autoload.php';
 */
 class FeatureContext extends BehatContext
 {
+
+  /**
+   * Current authenticated user.
+   *
+   * A value of FALSE denotes an anonymous user.
+   */
+  public $user = FALSE;
+
 /**
  * Initializes context.
  *
@@ -32,6 +40,7 @@ class FeatureContext extends BehatContext
  */
 public function __construct(array $parameters) {
   $this->base_url = $parameters['base_url'];
+  $this->drushAlias = $parameters['drush_alias'];
   $driver = new \Behat\Mink\Driver\Selenium2Driver('firefox', array());
   $firefox = new \Behat\Mink\Session($driver);
   $driver = new \Behat\Mink\Driver\GoutteDriver();
@@ -45,6 +54,88 @@ public function __construct(array $parameters) {
  */
  public function __destruct() {
  }
+
+  /**
+   * Helper function to generate a random string of arbitrary length.
+   *
+   * Copied from drush_generate_password().
+   *
+   * @param $length
+   *   Number of characters the generated string should contain.
+   * @return
+   *   The generated string.
+   */
+  public function randomString($length = 10) {
+    // This variable contains the list of allowable characters for the
+    // password. Note that the number 0 and the letter 'O' have been
+    // removed to avoid confusion between the two. The same is true
+    // of 'I', 1, and 'l'.
+    $allowable_characters = 'abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+
+    // Zero-based count of characters in the allowable list:
+    $len = strlen($allowable_characters) - 1;
+
+    // Declare the password as a blank string.
+    $pass = '';
+
+    // Loop the number of times specified by $length.
+    for ($i = 0; $i < $length; $i++) {
+
+      // Each iteration, pick a random character from the
+      // allowable string and append it to the password:
+      $pass .= $allowable_characters[mt_rand(0, $len)];
+    }
+
+    return $pass;
+  }
+
+  /**
+   * Helper function to login the current user.
+   */
+  public function login() {
+    // Check if logged in.
+    if ($this->loggedIn()) {
+      $this->logout();
+    }
+
+    if (!$this->user) {
+      throw new Exception('Tried to login without a user.');
+    }
+
+    $session = $this->mink->getSession();
+    $session->visit($this->base_url . '/user');
+    $element = $session->getPage();
+    $element->fillField('Username', $this->user->name);
+    $element->fillField('Password', $this->user->pass);
+    $submit = $element->findButton('Log in');
+    if (empty($submit)) {
+      throw new Exception('No submit button at '. $session->getCurrentUrl());
+    }
+
+    // Log in.
+    $submit->click();
+  }
+
+  /**
+   * Helper function to logout.
+   */
+  public function logout() {
+    $session = $this->mink->getSession();
+    $session->visit($this->base_url . '/user/logout');
+  }
+
+  /**
+   * Determine if the a user is already logged in.
+   */
+  public function loggedIn() {
+    $session = $this->mink->getSession();
+    $session->visit($this->base_url);
+
+    // If a logout link is found, we are logged in. While not perfect, this is
+    // how Drupal SimpleTests currently work as well.
+    $element = $session->getPage();
+    return $element->findLink('Log out');
+  }
 
 /**
  * @Given /^(that I|I) am at "([^"]*)"$/
@@ -260,13 +351,46 @@ public function iShouldHaveACopyOfTheClonedAnonymousRepository() {
   $element = $session->getPage();
   // go to the user page
   $session->visit($this->base_url . '/user');
-  $page_title = $element->find('css', '#page-title')->getText();
-  if ($page_title) {
-    return $page_title;
+  if ($find = $element->find('css', '#page-title')) {
+    $page_title = $find->getText();
+    if ($page_title) {
+      return $page_title;
+    }
   }
   return False;
 }
 
+/**
+ * @Given /^I am logged in as a user with the "([^"]*)" role$/
+ */
+ public function iAmLoggedInWithRole($role) {
+   // Create user.
+   $name = $this->randomString(8);
+   $pass = $this->randomString(16);
+
+   // Create a new user.
+   $process = new Process("drush @{$this->drushAlias} user-create --password={$pass} $name");
+   $process->setTimeout(3600);
+   $process->run();
+
+   $this->user = (object) array(
+     'name' => $name,
+     'pass' => $pass,
+   );
+
+   if ($role == 'authenticated user') {
+     // Nothing to do.
+   }
+   else {
+     // Assign the given role.
+     $process = new Process("drush @{$this->drushAlias} \"{$role}\" {$name}");
+     $process->setTimeout(3600);
+     $process->run();
+   }
+
+   // Login.
+   $this->login();
+}
 /**
  * @Given /^I am logged in as "([^"]*)" with the password "([^"]*)"$/
  */
