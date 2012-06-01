@@ -39,6 +39,13 @@ class FeatureContext extends BehatContext {
    */
   public function __construct(array $parameters) {
     $this->base_url = $parameters['base_url'];
+    // TODO: There should be a better way to do this.
+    if (isset($parameters['basic_auth'])) {
+      $this->basic_auth = $parameters['basic_auth'];
+      if ($parameters['default_browser'] == 'firefox') {
+        $this->base_url = str_replace('://', '://' . $parameters['basic_auth']['user'] . ':' . $parameters['basic_auth']['pass'] . '@', $this->base_url);
+      }
+    }
     $this->default_browser = $parameters['default_browser'];
     $this->drushAlias = $parameters['drush_alias'];
   }
@@ -51,6 +58,9 @@ class FeatureContext extends BehatContext {
     $firefox = new \Behat\Mink\Session($driver);
     $driver = new \Behat\Mink\Driver\GoutteDriver();
     $goutte = new \Behat\Mink\Session($driver);
+    if (isset($this->basic_auth)) {
+      $goutte->setBasicAuth($this->basic_auth['user'], $this->basic_auth['pass']);
+    }
     $this->mink = new \Behat\Mink\Mink(array('firefox' => $firefox, 'goutte' => $goutte));
     $this->mink->setDefaultSessionName($this->default_browser);
   }
