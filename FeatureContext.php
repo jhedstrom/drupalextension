@@ -388,6 +388,9 @@ class FeatureContext extends BehatContext {
     $process = new Process("drush @{$this->drushAlias} user-create --password={$pass} $name");
     $process->setTimeout(3600);
     $process->run();
+    if (!$process->isSuccessful()) {
+      throw new RuntimeException($process->getErrorOutput());
+    }
 
     $this->user = (object) array(
       'name' => $name,
