@@ -71,6 +71,16 @@ class FeatureContext extends BehatContext {
   public function afterScenario($event) {
     $this->mink->stopSessions();
     unset($this->mink);
+
+    // Remove a user if one was created.
+    if ($this->user) {
+      $process = new Process("drush @{$this->drushAlias} user-cancel --yes {$this->user->name} --delete-content");
+      $process->setTimeout(3600);
+      $process->run();
+      if (!$process->isSuccessful()) {
+        throw new RuntimeException($process->getErrorOutput());
+      }
+    }
   }
 
   /**
