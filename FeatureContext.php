@@ -39,6 +39,13 @@ class FeatureContext extends BehatContext {
    */
   public function __construct(array $parameters) {
     $this->base_url = $parameters['base_url'];
+    // TODO: There should be a better way to do this.
+    if (isset($parameters['basic_auth'])) {
+      $this->basic_auth = $parameters['basic_auth'];
+      if ($parameters['default_browser'] == 'firefox') {
+        $this->base_url = str_replace('://', '://' . $parameters['basic_auth']['user'] . ':' . $parameters['basic_auth']['pass'] . '@', $this->base_url);
+      }
+    }
     $this->default_browser = $parameters['default_browser'];
     $this->drushAlias = $parameters['drush_alias'];
   }
@@ -51,6 +58,9 @@ class FeatureContext extends BehatContext {
     $firefox = new \Behat\Mink\Session($driver);
     $driver = new \Behat\Mink\Driver\GoutteDriver();
     $goutte = new \Behat\Mink\Session($driver);
+    if (isset($this->basic_auth)) {
+      $goutte->setBasicAuth($this->basic_auth['user'], $this->basic_auth['pass']);
+    }
     $this->mink = new \Behat\Mink\Mink(array('firefox' => $firefox, 'goutte' => $goutte));
     $this->mink->setDefaultSessionName($this->default_browser);
   }
@@ -61,6 +71,16 @@ class FeatureContext extends BehatContext {
   public function afterScenario($event) {
     $this->mink->stopSessions();
     unset($this->mink);
+
+    // Remove a user if one was created.
+    if ($this->user) {
+      $process = new Process("drush @{$this->drushAlias} user-cancel --yes {$this->user->name} --delete-content");
+      $process->setTimeout(3600);
+      $process->run();
+      if (!$process->isSuccessful()) {
+        throw new RuntimeException($process->getErrorOutput());
+      }
+    }
   }
 
   /**
@@ -122,6 +142,10 @@ class FeatureContext extends BehatContext {
 
     // Log in.
     $submit->click();
+
+    if (!$this->loggedIn()) {
+      throw new Exception("Failed to log in as user \"{$this->user->name}\" with role \"{$this->user->role}\".");
+    }
   }
 
   /**
@@ -137,7 +161,7 @@ class FeatureContext extends BehatContext {
    */
   public function loggedIn() {
     $session = $this->mink->getSession();
-    $session->visit($this->base_url);
+    $session->visit($this->base_url . '/');
 
     // If a logout link is found, we are logged in. While not perfect, this is
     // how Drupal SimpleTests currently work as well.
@@ -352,6 +376,11 @@ class FeatureContext extends BehatContext {
    * @Given /^I am logged in as a user with the "([^"]*)" role$/
    */
   public function iAmLoggedInWithRole($role) {
+    // Check if a user with this role is already logged in.
+    if ($this->user && isset($this->user->role) && $this->user->role == $role) {
+      return TRUE;
+    }
+
     // Create user.
     $name = $this->randomString(8);
     $pass = $this->randomString(16);
@@ -360,10 +389,14 @@ class FeatureContext extends BehatContext {
     $process = new Process("drush @{$this->drushAlias} user-create --password={$pass} $name");
     $process->setTimeout(3600);
     $process->run();
+    if (!$process->isSuccessful()) {
+      throw new RuntimeException($process->getErrorOutput());
+    }
 
     $this->user = (object) array(
       'name' => $name,
       'pass' => $pass,
+      'role' => $role,
     );
 
     if ($role == 'authenticated user') {
@@ -371,13 +404,18 @@ class FeatureContext extends BehatContext {
     }
     else {
       // Assign the given role.
-      $process = new Process("drush @{$this->drushAlias} \"{$role}\" {$name}");
+      $process = new Process("drush @{$this->drushAlias} user-add-role \"{$role}\" {$name}");
       $process->setTimeout(3600);
       $process->run();
+      if (!$process->isSuccessful()) {
+        throw new RuntimeException($process->getErrorOutput());
+      }
     }
 
     // Login.
     $this->login();
+
+    return TRUE;
   }
 
   /**
