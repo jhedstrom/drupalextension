@@ -151,7 +151,7 @@ class FeatureContext extends BehatContext {
    */
   public function loggedIn() {
     $session = $this->mink->getSession();
-    $session->visit($this->base_url);
+    $session->visit($this->base_url . '/');
 
     // If a logout link is found, we are logged in. While not perfect, this is
     // how Drupal SimpleTests currently work as well.
