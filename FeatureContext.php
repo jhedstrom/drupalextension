@@ -292,9 +292,9 @@ class FeatureContext extends BehatContext {
   }
 
   /**
-   * @When /^I clone the "([^"]*)" repo$/
+   * @When /^I clone the repo$/
    */
-  public function iCloneTheRepo($repo) {
+  public function iCloneTheRepo() {
     $session = $this->mink->getSession();
     $element = $session->getPage();
     $result =  $element->find('css', '#content div.codeblock code');
@@ -310,9 +310,9 @@ class FeatureContext extends BehatContext {
   }
 
   /**
-   * @Then /^I should have a local copy$/
+   * @Then /^I should have a local copy of "([^"]*)"$/
    */
-  public function iShouldHaveALocalCopy() {
+  public function iShouldHaveALocalCopyOf($repo) {
     if (!is_dir($repo)) {
       throw new Exception('The repo could not be found.');
     }
