@@ -132,6 +132,10 @@ class FeatureContext extends BehatContext {
 
     // Log in.
     $submit->click();
+
+    if (!$this->loggedIn()) {
+      throw new Exception("Failed to log in as user \"{$this->user->name}\" with role \"{$this->user->role}\".");
+    }
   }
 
   /**
@@ -371,6 +375,11 @@ class FeatureContext extends BehatContext {
    * @Given /^I am logged in as a user with the "([^"]*)" role$/
    */
   public function iAmLoggedInWithRole($role) {
+    // Check if a user with this role is already logged in.
+    if ($this->user && isset($this->user->role) && $this->user->role == $role) {
+      return TRUE;
+    }
+
     // Create user.
     $name = $this->randomString(8);
     $pass = $this->randomString(16);
@@ -383,6 +392,7 @@ class FeatureContext extends BehatContext {
     $this->user = (object) array(
       'name' => $name,
       'pass' => $pass,
+      'role' => $role,
     );
 
     if ($role == 'authenticated user') {
@@ -397,6 +407,8 @@ class FeatureContext extends BehatContext {
 
     // Login.
     $this->login();
+
+    return TRUE;
   }
 
   /**
