@@ -246,8 +246,7 @@ class FeatureContext extends BehatContext {
     if (empty($submit)) {
       throw new Exception('No submit button at '. $session->getCurrentUrl());
     }
-    $session->wait(5000);
-    $submit->click();
+      $submit->click();
   }
 
   /**
@@ -476,25 +475,29 @@ class FeatureContext extends BehatContext {
     $session = $this->mink->getSession();
     $element = $session->getPage();
     $result = $element->findField($checkbox);
-    if ($result->isChecked()) {
-      throw new Exception("User has already agreed");
+    $checked_state = $result->isChecked();
+    if ($checked_state === True) {
+      throw new Exception($checkbox .': Already checked');
     }
-    $result->check();
+      $result->check();
   }
 
   /**
    * @Given /^I uncheck "([^"]*)"$/
    */
-  public function iUncheck($box) {
+  public function iUncheck($checkbox) {
     $session = $this->mink->getSession();
     $element = $session->getPage();
-    $result = $element->findField($box);
-    if ($result->isChecked()) {
+    $result = $element->findField($checkbox);
+    $checked_state = $result->isChecked();
+    if ($checked_state === True ) {
+    //throw new Exception (print_r($checked_state,1));
       $result->uncheck();
+    } 
+    else { 
+      throw new Exception('"'. $checkbox .'" was not checked so it could not be unchecked');
     }
-    throw new Exception("User had not agreed");
   }
-
   /**
    * @When /^I select the radio button "([^"]*)" with id "([^"]*)"$/
    */
