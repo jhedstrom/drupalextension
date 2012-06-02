@@ -292,25 +292,16 @@ class FeatureContext extends BehatContext {
   }
 
   /**
-   * @Given /^I see the command "([^"]*)"$/
+   * @When /^I clone the "([^"]*)" repo$/
    */
-  public function iSeeTheCommand($command) {
-    $page = $this->mink->getSession()
-      ->getPage();
-    $element = $page->find('css', '#content div.codeblock code');
-    if (!empty($element)) {
-      $this->gitCommand = $element->getText();
-    }
-    else {
-      throw new Exception('Commands could not be found.');
-    }
-  }
-
-  /**
-   * @When /^I clone the repo$/
-   */
-  public function iCloneTheRepo() {
-    $process = new Process($this->gitCommand);
+  public function iCloneTheRepo($repo) {
+    $session = $this->mink->getSession();
+    $element = $session->getPage();
+    $result =  $element->find('css', '#content div.codeblock code');
+    if (!empty($result)) {
+       $this->repo = $result->getText();
+     }
+    $process = new Process($this->repo);
     $process->setTimeout(3600);
     $process->run();
     if (!$process->isSuccessful()) {
@@ -319,21 +310,21 @@ class FeatureContext extends BehatContext {
   }
 
   /**
-   * @Then /^I should have a copy of the cloned anonymous repository$/
+   * @Then /^I should have a local copy$/
    */
-  public function iShouldHaveACopyOfTheClonedAnonymousRepository() {
-    if (!is_dir('doobie')) {
+  public function iShouldHaveALocalCopy() {
+    if (!is_dir($repo)) {
       throw new Exception('The repo could not be found.');
     }
     $oldDirectory = getcwd();
-    chdir('doobie');
+    chdir($repo);
     $process = new Process('git log');
     $process->run();
     if (!$process->isSuccessful()) {
       throw new RuntimeException('The history for the repository could  not be found.' . $process->getErrorOutput());
     }
     chdir($oldDirectory);
-    $process = new Process('rm -rf doobie');
+    $process = new Process('rm -rf '. $repo);
     $process->run();
     if (!$process->isSuccessful()) {
       throw new Exception('ouch.' . $process->getErrorOutput());
@@ -473,10 +464,8 @@ class FeatureContext extends BehatContext {
     $session = $this->mink->getSession();
     $element = $session->getPage();
     $radiobutton = $element->findById($id);
-    if (null === $radiobutton) {
-      throw new ElementNotFoundException(
-        $this->getSession(), 'form field', 'id|name|label|value', $field
-      );
+    if ($radiobutton === null) {
+      throw new Exception('Neither label nor id was found');
     }
     $value = $radiobutton->getAttribute('value');
     $labelonpage = $radiobutton->getParent()->getText();
