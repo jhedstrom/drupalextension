@@ -403,7 +403,7 @@ class FeatureContext extends BehatContext {
     }
     else {
       // Assign the given role.
-      $process = new Process("drush @{$this->drushAlias} \"{$role}\" {$name}");
+      $process = new Process("drush @{$this->drushAlias} user-add-role \"{$role}\" {$name}");
       $process->setTimeout(3600);
       $process->run();
       if (!$process->isSuccessful()) {
