@@ -54,14 +54,16 @@ class FeatureContext extends BehatContext {
    * @BeforeScenario
    */
   public function beforeScenario($event) {
+    $driver = new \Behat\Mink\Driver\SahiDriver('firefox');
+    $sahi_firefox = new \Behat\Mink\Session($driver);  
     $driver = new \Behat\Mink\Driver\Selenium2Driver('firefox', array());
-    $firefox = new \Behat\Mink\Session($driver);
+    $selenium_firefox = new \Behat\Mink\Session($driver);
     $driver = new \Behat\Mink\Driver\GoutteDriver();
     $goutte = new \Behat\Mink\Session($driver);
     if (isset($this->basic_auth)) {
       $goutte->setBasicAuth($this->basic_auth['user'], $this->basic_auth['pass']);
     }
-    $this->mink = new \Behat\Mink\Mink(array('firefox' => $firefox, 'goutte' => $goutte));
+   $this->mink = new \Behat\Mink\Mink(array('sahi_firefox' => $sahi_firefox,'selenium_firefox' => $selenium_firefox, 'goutte' => $goutte));
     $this->mink->setDefaultSessionName($this->default_browser);
   }
 
