@@ -317,6 +317,19 @@ class FeatureContext extends BehatContext {
   }
 
   /**
+   * @Then /^I should get a "([^"]*)" HTTP response$/
+   */
+  public function iShouldGetAHttpResponse($status_code) {
+    $session = $this->mink->getSession();
+    $element = $session->getPage();
+    $status = $session->getStatusCode();
+    if ($status != $status_code) {
+      throw new Exception("Found HTTP response $status instead of $status_code");
+    }
+  }
+
+
+  /**
    * @When /^I clone the repo$/
    */
   public function iCloneTheRepo() {
@@ -371,6 +384,16 @@ class FeatureContext extends BehatContext {
       }
     }
     return False;
+  }
+
+  /**
+   * @Given /^I am an anonymous user$/
+   */
+  public function iAmAnAnonymousUser() {
+    // Verify the user is logged out.
+    if ($this->loggedIn()) {
+      $this->logout();
+    }
   }
 
   /**
