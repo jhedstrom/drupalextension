@@ -1,5 +1,7 @@
 <?php
 
+use Behat\Symfony2Extension\Context\KernelAwareInterface;
+use Behat\MinkExtension\Context\MinkContext;
 use Behat\Behat\Context\ClosuredContextInterface,
     Behat\Behat\Context\TranslatedContextInterface,
     Behat\Behat\Context\BehatContext,
@@ -20,7 +22,7 @@ require 'vendor/autoload.php';
 /**
  * Features context.
  */
-class FeatureContext extends BehatContext {
+class FeatureContext extends MinkContext {
 
   /**
    * Current authenticated user.
@@ -239,9 +241,9 @@ class FeatureContext extends BehatContext {
   }
 
   /**
-   * @When /^I press "([^"]*)"$/
+   * @When /^I press the "([^"]*)" button$/
    */
-  public function iPress($submitbutton) {
+  public function iPressTheButton($submitbutton) {
     $session = $this->mink->getSession();
     $element = $session->getPage();
     $submit = $element->findButton($submitbutton);
@@ -494,9 +496,9 @@ class FeatureContext extends BehatContext {
   }
 
   /**
-   * @Given /^I check "([^"]*)"$/
+   * @Given /^I check the box "([^"]*)"$/
    */
-  public function iCheck($checkbox) {
+  public function iCheckTheBox($checkbox) {
     $session = $this->mink->getSession();
     $element = $session->getPage();
     $result = $element->findField($checkbox);
@@ -508,9 +510,9 @@ class FeatureContext extends BehatContext {
   }
 
   /**
-   * @Given /^I uncheck "([^"]*)"$/
+   * @Given /^I uncheck the box "([^"]*)"$/
    */
-  public function iUncheck($checkbox) {
+  public function iUncheckTheBox($checkbox) {
     $session = $this->mink->getSession();
     $element = $session->getPage();
     $result = $element->findField($checkbox);
