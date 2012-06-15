@@ -57,7 +57,7 @@ class FeatureContext extends MinkContext {
    */
   public function beforeScenario($event) {
     $driver = new \Behat\Mink\Driver\SahiDriver('firefox');
-    $sahi_firefox = new \Behat\Mink\Session($driver);  
+    $sahi_firefox = new \Behat\Mink\Session($driver);
     $driver = new \Behat\Mink\Driver\Selenium2Driver('firefox', array());
     $selenium_firefox = new \Behat\Mink\Session($driver);
     $driver = new \Behat\Mink\Driver\GoutteDriver();
@@ -65,8 +65,8 @@ class FeatureContext extends MinkContext {
     if (isset($this->basic_auth)) {
       $goutte->setBasicAuth($this->basic_auth['user'], $this->basic_auth['pass']);
     }
-   $this->mink = new \Behat\Mink\Mink(array('sahi_firefox' => $sahi_firefox,'selenium_firefox' => $selenium_firefox, 'goutte' => $goutte));
-    $this->mink->setDefaultSessionName($this->default_browser);
+    $this->mink = new \Behat\Mink\Mink(array('sahi_firefox' => $sahi_firefox, 'selenium_firefox' => $selenium_firefox, 'goutte' => $goutte));
+    $this->mink->setDefaultSessionName($thixss->default_browser);
   }
 
   /**
@@ -92,9 +92,10 @@ class FeatureContext extends MinkContext {
    *
    * Copied from drush_generate_password().
    *
-   * @param $length
+   * @param int $length
    *   Number of characters the generated string should contain.
-   * @return
+   *
+   * @return string
    *   The generated string.
    */
   public function randomString($length = 10) {
@@ -141,7 +142,7 @@ class FeatureContext extends MinkContext {
     $element->fillField('Password', $this->user->pass);
     $submit = $element->findButton('Log in');
     if (empty($submit)) {
-      throw new Exception('No submit button at '. $session->getCurrentUrl());
+      throw new Exception('No submit button at ' . $session->getCurrentUrl());
     }
 
     // Log in.
@@ -182,7 +183,7 @@ class FeatureContext extends MinkContext {
     return;
     $status = $session->getStatusCode();
     if ($status != 200) {
-      throw new Exception("Status $status when retriving ". $session->getCurrentUrl());
+      throw new Exception("Status $status when retriving " . $session->getCurrentUrl());
     }
   }
 
@@ -195,7 +196,7 @@ class FeatureContext extends MinkContext {
     return;
     $status = $session->getStatusCode();
     if ($status != 200) {
-      throw new Exception("Status $status when retriving ". $session->getCurrentUrl());
+      throw new Exception("Status $status when retriving " . $session->getCurrentUrl());
     }
   }
 
@@ -208,7 +209,7 @@ class FeatureContext extends MinkContext {
     $element = $session->getPage();
     $result = $element->findLink($linkname);
     if (empty($result)) {
-      throw new Exception("No link to ". $linkname ." on ". $session->getCurrentUrl());
+      throw new Exception("No link to " . $linkname . " on " . $session->getCurrentUrl());
     }
     $result->click();
   }
@@ -222,7 +223,7 @@ class FeatureContext extends MinkContext {
     $element->fillField('edit-text', $searchterm);
     $submit = $element->findById('edit-submit');
     if (empty($submit)) {
-      throw new Exception('No submit button at '. $session->getCurrentUrl());
+      throw new Exception('No submit button at ' . $session->getCurrentUrl());
     }
     $submit->click();
   }
@@ -234,8 +235,8 @@ class FeatureContext extends MinkContext {
     $session = $this->mink->getSession();
     $element = $session->getPage();
     $result = $element->hasField($fieldname);
-    if ($result === False) {
-      throw new Exception("No field ". $fieldname ." found.");
+    if ($result === FALSE) {
+      throw new Exception("No field " . $fieldname . " found.");
     }
     $element->fillField($fieldname, $formvalue);
   }
@@ -248,9 +249,9 @@ class FeatureContext extends MinkContext {
     $element = $session->getPage();
     $submit = $element->findButton($submitbutton);
     if (empty($submit)) {
-      throw new Exception('No submit button at '. $session->getCurrentUrl());
+      throw new Exception('No submit button at ' . $session->getCurrentUrl());
     }
-      $submit->click();
+    $submit->click();
   }
 
   /**
@@ -261,7 +262,7 @@ class FeatureContext extends MinkContext {
     $element = $session->getPage();
     $result = $element->findLink($linkname);
     if (empty($result)) {
-      throw new Exception("No link to ". $linkname ."  on ". $session->getCurrentUrl());
+      throw new Exception("No link to " . $linkname . " on " . $session->getCurrentUrl());
     }
   }
 
@@ -273,7 +274,7 @@ class FeatureContext extends MinkContext {
     $element = $session->getPage();
     $result = $element->findLink($linkname);
     if ($result) {
-      throw new Exception("The link ". $linkname ." was present on ". $session->getCurrentUrl() ." and was not supposed to be.");
+      throw new Exception("The link " . $linkname . " was present on " . $session->getCurrentUrl() . " and was not supposed to be.");
     }
   }
 
@@ -291,7 +292,7 @@ class FeatureContext extends MinkContext {
         }
       }
     }
-    throw new Exception("The text ". $headingname ." was not found in any heading ". $session->getCurrentUrl());
+    throw new Exception("The text " . $headingname . " was not found in any heading " . $session->getCurrentUrl());
   }
 
   /**
@@ -301,8 +302,8 @@ class FeatureContext extends MinkContext {
     $session = $this->mink->getSession();
     $element = $session->getPage();
     $result = $element->hasContent($text);
-    if ($result === False) {
-      throw new Exception("The text ". $text ." was not found ". $session->getCurrentUrl());
+    if ($result === FALSE) {
+      throw new Exception("The text " . $text . " was not found " . $session->getCurrentUrl());
     }
   }
 
@@ -313,8 +314,8 @@ class FeatureContext extends MinkContext {
     $session = $this->mink->getSession();
     $element = $session->getPage();
     $result = $element->hasContent($text);
-    if ($result === True) {
-      throw new Exception("The text ". $text ." was found on ". $session->getCurrentUrl() ." and should not have been");
+    if ($result === TRUE) {
+      throw new Exception("The text " . $text . " was found on " . $session->getCurrentUrl() . " and should not have been");
     }
   }
 
@@ -337,10 +338,10 @@ class FeatureContext extends MinkContext {
   public function iCloneTheRepo() {
     $session = $this->mink->getSession();
     $element = $session->getPage();
-    $result =  $element->find('css', '#content div.codeblock code');
+    $result = $element->find('css', '#content div.codeblock code');
     if (!empty($result)) {
-       $this->repo = $result->getText();
-     }
+      $this->repo = $result->getText();
+    }
     $process = new Process($this->repo);
     $process->setTimeout(3600);
     $process->run();
@@ -356,15 +357,15 @@ class FeatureContext extends MinkContext {
     if (!is_dir($repo)) {
       throw new Exception('The repo could not be found.');
     }
-    $oldDirectory = getcwd();
+    $old_directory = getcwd();
     chdir($repo);
     $process = new Process('git log');
     $process->run();
     if (!$process->isSuccessful()) {
       throw new RuntimeException('The history for the repository could  not be found.' . $process->getErrorOutput());
     }
-    chdir($oldDirectory);
-    $process = new Process('rm -rf '. $repo);
+    chdir($old_directory);
+    $process = new Process('rm -rf ' . $repo);
     $process->run();
     if (!$process->isSuccessful()) {
       throw new Exception('ouch.' . $process->getErrorOutput());
@@ -377,7 +378,7 @@ class FeatureContext extends MinkContext {
   private function whoami() {
     $session = $this->mink->getSession();
     $element = $session->getPage();
-    // go to the user page
+    // Go to the user page.
     $session->visit($this->base_url . '/user');
     if ($find = $element->find('css', '#page-title')) {
       $page_title = $find->getText();
@@ -385,7 +386,7 @@ class FeatureContext extends MinkContext {
         return $page_title;
       }
     }
-    return False;
+    return FALSE;
   }
 
   /**
@@ -449,7 +450,7 @@ class FeatureContext extends MinkContext {
    */
   public function iAmLoggedInAsWithThePassword($username, $passwd) {
     $user = $this->whoami();
-    if(strtolower($user) == strtolower($username)) {
+    if (strtolower($user) == strtolower($username)) {
       // Already logged in.
       return;
     }
@@ -458,30 +459,31 @@ class FeatureContext extends MinkContext {
     $element = $session->getPage();
 
     if ($user != 'User account') {
-      // Logout
+      // Logout.
       $session->visit($this->base_url . '/user/logout');
     }
 
-    // go to the user page
+    // Go to the user page.
     $session->visit($this->base_url . '/user');
-    // get the page title
+    // Get the page title.
     $page_title = $element->findByID('page-title')->getText();
     if ($page_title == 'User account') {
-      // If I see this, I'm not logged in at all so log in
+      // If I see this, I'm not logged in at all so log in.
       $element->fillField('Username', $username);
       $element->fillField('Password', $passwd);
       $submit = $element->findButton('Log in');
       if (empty($submit)) {
-        throw new Exception('No submit button at '. $session->getCurrentUrl());
+        throw new Exception('No submit button at ' . $session->getCurrentUrl());
       }
-      // log in
+      // Log in.
       $submit->click();
       $user = $this->whoami();
-      if(strtolower($user) == strtolower($username)) {
+      if (strtolower($user) == strtolower($username)) {
         // Successfully logged in.
         return;
       }
-    } else {
+    }
+    else {
       throw new Exception("Failed to reach the login page.");
     }
 
@@ -503,10 +505,10 @@ class FeatureContext extends MinkContext {
     $element = $session->getPage();
     $result = $element->findField($checkbox);
     $checked_state = $result->isChecked();
-    if ($checked_state === True) {
-      throw new Exception($checkbox .': Already checked');
+    if ($checked_state === TRUE) {
+      throw new Exception($checkbox . ': Already checked');
     }
-      $result->check();
+    $result->check();
   }
 
   /**
@@ -517,14 +519,14 @@ class FeatureContext extends MinkContext {
     $element = $session->getPage();
     $result = $element->findField($checkbox);
     $checked_state = $result->isChecked();
-    if ($checked_state === True ) {
-    //throw new Exception (print_r($checked_state,1));
+    if ($checked_state === TRUE) {
       $result->uncheck();
-    } 
-    else { 
-      throw new Exception('"'. $checkbox .'" was not checked so it could not be unchecked');
+    }
+    else {
+      throw new Exception('"' . $checkbox . '" was not checked so it could not be unchecked');
     }
   }
+
   /**
    * @When /^I select the radio button "([^"]*)" with id "([^"]*)"$/
    */
@@ -532,7 +534,7 @@ class FeatureContext extends MinkContext {
     $session = $this->mink->getSession();
     $element = $session->getPage();
     $radiobutton = $element->findById($id);
-    if ($radiobutton === null) {
+    if ($radiobutton === NULL) {
       throw new Exception('Neither label nor id was found');
     }
     $value = $radiobutton->getAttribute('value');
@@ -540,6 +542,6 @@ class FeatureContext extends MinkContext {
     if ($label != $labelonpage) {
       throw new Exception("Button with $id has label $labelonpage instead of $label.");
     }
-    $radiobutton->selectOption($value, False);
+    $radiobutton->selectOption($value, FALSE);
   }
 }
