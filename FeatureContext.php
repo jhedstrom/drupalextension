@@ -12,13 +12,6 @@ use Symfony\Component\Process\Process;
 
 require 'vendor/autoload.php';
 
-//
-// Require 3rd-party libraries here:
-//
-//   require_once 'PHPUnit/Autoload.php';
-//   require_once 'PHPUnit/Framework/Assert/Functions.php';
-//
-
 /**
  * Features context.
  */
