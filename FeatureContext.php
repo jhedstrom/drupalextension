@@ -66,7 +66,7 @@ class FeatureContext extends MinkContext {
       $goutte->setBasicAuth($this->basic_auth['user'], $this->basic_auth['pass']);
     }
     $this->mink = new \Behat\Mink\Mink(array('sahi_firefox' => $sahi_firefox, 'selenium_firefox' => $selenium_firefox, 'goutte' => $goutte));
-    $this->mink->setDefaultSessionName($thixss->default_browser);
+    $this->mink->setDefaultSessionName($this->default_browser);
   }
 
   /**
