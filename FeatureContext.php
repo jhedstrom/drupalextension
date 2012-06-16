@@ -70,14 +70,14 @@ class FeatureContext extends MinkContext {
     unset($this->mink);
 
     // Remove a user if one was created.
-    if ($this->user) {
+/*    if ($this->user) {
       $process = new Process("drush @{$this->drushAlias} user-cancel --yes {$this->user->name} --delete-content");
       $process->setTimeout(3600);
       $process->run();
       if (!$process->isSuccessful()) {
         throw new RuntimeException($process->getErrorOutput());
       }
-    }
+    } */
   }
 
   /**
@@ -223,6 +223,7 @@ class FeatureContext extends MinkContext {
 
   /**
    * @Given /^for "([^"]*)" I enter "([^"]*)"$/
+   * @Given /^I enter "([^"]*)" for "([^"]*)"$/
    */
   public function forIenter($fieldname, $formvalue) {
     $session = $this->mink->getSession();
@@ -401,12 +402,12 @@ class FeatureContext extends MinkContext {
       return TRUE;
     }
 
-    // Create user.
+    // Create user (and project)
     $name = $this->randomString(8);
     $pass = $this->randomString(16);
 
     // Create a new user.
-    $process = new Process("drush @{$this->drushAlias} user-create --password={$pass} $name");
+    $process = new Process("drush @{$this->drushAlias} user-create --password={$pass} --mail=$name@example.com $name");
     $process->setTimeout(3600);
     $process->run();
     if (!$process->isSuccessful()) {
@@ -437,6 +438,36 @@ class FeatureContext extends MinkContext {
 
     return TRUE;
   }
+
+  /**
+   * @When /^I create a project$/
+   */
+  public function iCreateAProject() {
+    $this->project = $this->user->name;
+    $session = $this->mink->getSession();
+    $element = $session->getPage();
+    $result = $element->hasField('Project title');
+    if ($result === False) {
+      throw new Exception("No Project title field was found.");
+    }
+    $element->fillField('Project title', $this->project);
+  }
+
+
+  /**
+   * @Then /^I should see the project$/
+   */
+  public function iShouldSeeTheProject() {
+  $session = $this->mink->getSession();
+  $element = $session->getPage();
+  $result = $element->hasContent($this->project);
+    if ($result === False) {
+      throw new Exception("The text ". $this->project ." was not found ". $session->getCurrentUrl());
+    }
+  
+}
+
+
 
   /**
    * @Given /^I am logged in as "([^"]*)" with the password "([^"]*)"$/
@@ -521,9 +552,9 @@ class FeatureContext extends MinkContext {
   }
 
   /**
-   * @When /^I select the radio button "([^"]*)" with id "([^"]*)"$/
+   * @When /^I select the radio button "([^"]*)" with the id "([^"]*)"$/
    */
-  public function iSelectTheRadioButtonWithId($label, $id) {
+  public function iSelectTheRadioButtonWithTheId($label, $id) {
     $session = $this->mink->getSession();
     $element = $session->getPage();
     $radiobutton = $element->findById($id);
