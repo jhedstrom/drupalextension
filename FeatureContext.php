@@ -173,6 +173,7 @@ class FeatureContext extends MinkContext {
   public function iAmAt($syn, $path) {
     $session = $this->mink->getSession();
     $session->visit($this->base_url . $path);
+    $this->mypath = $path;
     return;
     $status = $session->getStatusCode();
     if ($status != 200) {
@@ -325,13 +326,14 @@ class FeatureContext extends MinkContext {
     }
   }
 
-
   /**
    * @When /^I clone the repo$/
    */
   public function iCloneTheRepo() {
     $session = $this->mink->getSession();
-    $element = $session->getPage();
+    //mypath stores the last path visited in another iAmAt  step.
+    $element = $session->getPage($this->mypath);
+    
     $result = $element->find('css', '#content div.codeblock code');
     if (!empty($result)) {
       $this->repo = $result->getText();
