@@ -25,6 +25,11 @@ class FeatureContext extends MinkContext {
   public $user = FALSE;
 
   /**
+   * Keep track of all users that are created so they can easily be removed.
+   */
+  private $users = array();
+
+  /**
    * Initializes context.
    *
    * Every scenario gets its own context object.
@@ -69,13 +74,15 @@ class FeatureContext extends MinkContext {
     $this->mink->stopSessions();
     unset($this->mink);
 
-    // Remove a user if one was created.
-    if ($this->user) {
-      $process = new Process("drush @{$this->drushAlias} user-cancel --yes {$this->user->name} --delete-content");
-      $process->setTimeout(3600);
-      $process->run();
-      if (!$process->isSuccessful()) {
-        throw new RuntimeException($process->getErrorOutput());
+    // Remove any users that were created.
+    if (!empty($this->users)) {
+      foreach ($this->users as $user) {
+        $process = new Process("drush @{$this->drushAlias} user-cancel --yes {$user->name} --delete-content");
+        $process->setTimeout(3600);
+        $process->run();
+        if (!$process->isSuccessful()) {
+          throw new RuntimeException($process->getErrorOutput());
+        }
       }
     }
   }
@@ -413,7 +420,7 @@ class FeatureContext extends MinkContext {
       throw new RuntimeException($process->getErrorOutput());
     }
 
-    $this->user = (object) array(
+    $this->users[] = $this->user = (object) array(
       'name' => $name,
       'pass' => $pass,
       'role' => $role,
