@@ -10,6 +10,10 @@ use Behat\Gherkin\Node\PyStringNode,
     Behat\Gherkin\Node\TableNode;
 use Symfony\Component\Process\Process;
 
+use Behat\Behat\Context\Step\Given;
+use Behat\Behat\Context\Step\When;
+use Behat\Behat\Context\Step\Then;
+
 require 'vendor/autoload.php';
 
 /**
@@ -178,27 +182,16 @@ class FeatureContext extends MinkContext {
    * @Given /^(that I|I) am at "([^"]*)"$/
    */
   public function iAmAt($syn, $path) {
-    $session = $this->mink->getSession();
-    $session->visit($this->base_url . $path);
-    $this->mypath = $path;
-    return;
-    $status = $session->getStatusCode();
-    if ($status != 200) {
-      throw new Exception("Status $status when retriving " . $session->getCurrentUrl());
-    }
+    // Use the mink extension.
+    return new Given("I am on \"$path\"");
   }
 
   /**
    * @When /^I visit "([^"]*)"$/
    */
   public function iVisit($path) {
-    $session = $this->mink->getSession();
-    $session->visit($this->base_url . $path);
-    return;
-    $status = $session->getStatusCode();
-    if ($status != 200) {
-      throw new Exception("Status $status when retriving " . $session->getCurrentUrl());
-    }
+    // Use the mink extension.
+    return new Given("I am on \"$path\"");
   }
 
 
@@ -206,13 +199,8 @@ class FeatureContext extends MinkContext {
    * @When /^I click "([^"]*)"$/
    */
   public function iClick($linkname) {
-    $session = $this->mink->getSession();
-    $element = $session->getPage();
-    $result = $element->findLink($linkname);
-    if (empty($result)) {
-      throw new Exception("No link to " . $linkname . " on " . $session->getCurrentUrl());
-    }
-    $result->click();
+    // Use the mink extension.
+    return new Given("I follow \"$linkname\"");
   }
 
   /**
@@ -234,26 +222,16 @@ class FeatureContext extends MinkContext {
    * @Given /^I enter "([^"]*)" for "([^"]*)"$/
    */
   public function forIenter($fieldname, $formvalue) {
-    $session = $this->mink->getSession();
-    $element = $session->getPage();
-    $result = $element->hasField($fieldname);
-    if ($result === FALSE) {
-      throw new Exception("No field " . $fieldname . " found.");
-    }
-    $element->fillField($fieldname, $formvalue);
+    // Use the mink extension.
+    return new Given("I fill in \"$fieldname\" with \"$formvalue\"");
   }
 
   /**
    * @When /^I press the "([^"]*)" button$/
    */
-  public function iPressTheButton($submitbutton) {
-    $session = $this->mink->getSession();
-    $element = $session->getPage();
-    $submit = $element->findButton($submitbutton);
-    if (empty($submit)) {
-      throw new Exception('No submit button at ' . $session->getCurrentUrl());
-    }
-    $submit->click();
+  public function iPressTheButton($button) {
+    // Use the mink extension.
+    return new Given("I press \"$button\"");
   }
 
   /**
