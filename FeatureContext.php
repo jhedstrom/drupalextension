@@ -179,9 +179,9 @@ class FeatureContext extends MinkContext {
   }
 
   /**
-   * @Given /^(that I|I) am at "([^"]*)"$/
+   * @Given /^(?:that I|I) am at "([^"]*)"$/
    */
-  public function iAmAt($syn, $path) {
+  public function iAmAt($path) {
     // Use the mink extension.
     return new Given("I am on \"$path\"");
   }
