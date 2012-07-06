@@ -280,10 +280,16 @@ class FeatureContext extends MinkContext {
    * @Then /^I should get a "([^"]*)" HTTP response$/
    */
   public function iShouldGetAHttpResponse($status_code) {
-    $status = $this->getSession()->getPage()->getStatusCode();
-    if ($status != $status_code) {
-      throw new Exception("Found HTTP response $status instead of $status_code");
-    }
+    // Use the mink extensions.
+    return new Given("the response status code should be $status_code");
+  }
+
+  /**
+   * @Then /^I should not get a "([^"]*)" HTTP response$/
+   */
+  public function iShouldNotGetAHttpResponse($status_code) {
+    // Use the mink extensions.
+    return new Given("the response status code should not be $status_code");
   }
 
   /**
