@@ -201,7 +201,7 @@ class FeatureContext extends MinkContext {
    * @Given /^(?:that I|I) am at "([^"]*)"$/
    */
   public function iAmAt($path) {
-    // Use the mink extension.
+    // Use the Mink Extenstion step definition.
     return new Given("I am on \"$path\"");
   }
 
@@ -209,7 +209,7 @@ class FeatureContext extends MinkContext {
    * @When /^I visit "([^"]*)"$/
    */
   public function iVisit($path) {
-    // Use the mink extension.
+    // Use the Mink Extenstion step definition.
     return new Given("I am on \"$path\"");
   }
 
@@ -218,7 +218,7 @@ class FeatureContext extends MinkContext {
    * @When /^I click "([^"]*)"$/
    */
   public function iClick($linkname) {
-    // Use the mink extension.
+    // Use the Mink Extenstion step definition.
     return new Given("I follow \"$linkname\"");
   }
 
@@ -227,7 +227,7 @@ class FeatureContext extends MinkContext {
    * @Given /^I enter "([^"]*)" for "([^"]*)"$/
    */
   public function forIenter($fieldname, $formvalue) {
-    // Use the mink extension.
+    // Use the Mink Extenstion step definition.
     return new Given("I fill in \"$fieldname\" with \"$formvalue\"");
   }
 
@@ -235,7 +235,7 @@ class FeatureContext extends MinkContext {
    * @When /^I press the "([^"]*)" button$/
    */
   public function iPressTheButton($button) {
-    // Use the mink extension.
+    // Use the Mink Extenstion step definition.
     return new Given("I press \"$button\"");
   }
 
