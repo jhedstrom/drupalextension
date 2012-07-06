@@ -329,6 +329,54 @@ class FeatureContext extends MinkContext {
   }
 
   /**
+   * @Given /^I check the box "([^"]*)"$/
+   * @TODO convert to mink extension.
+   */
+  public function iCheckTheBox($checkbox) {
+    $element = $this->getSession()->getPage();
+    $result = $element->findField($checkbox);
+    $checked_state = $result->isChecked();
+    if ($checked_state === TRUE) {
+      throw new Exception($checkbox . ': Already checked');
+    }
+    $result->check();
+  }
+
+  /**
+   * @Given /^I uncheck the box "([^"]*)"$/
+   * @TODO convert to mink extension.
+   */
+  public function iUncheckTheBox($checkbox) {
+    $element = $this->getSession()->getPage();
+    $result = $element->findField($checkbox);
+    $checked_state = $result->isChecked();
+    if ($checked_state === TRUE) {
+      $result->uncheck();
+    }
+    else {
+      throw new Exception('"' . $checkbox . '" was not checked so it could not be unchecked');
+    }
+  }
+
+  /**
+   * @When /^I select the radio button "([^"]*)" with the id "([^"]*)"$/
+   * @TODO convert to mink extension.
+   */
+  public function iSelectTheRadioButtonWithTheId($label, $id) {
+    $element = $this->getSession()->getPage();
+    $radiobutton = $element->findById($id);
+    if ($radiobutton === NULL) {
+      throw new Exception('Neither label nor id was found');
+    }
+    $value = $radiobutton->getAttribute('value');
+    $labelonpage = $radiobutton->getParent()->getText();
+    if ($label != $labelonpage) {
+      throw new Exception("Button with $id has label $labelonpage instead of $label.");
+    }
+    $radiobutton->selectOption($value, FALSE);
+  }
+
+  /**
    * @} End of defgroup "mink extensions"
    */
 
@@ -336,20 +384,6 @@ class FeatureContext extends MinkContext {
    * @defgroup drupal.org
    * @{
    * Drupal.org-specific step definitions.
-   */
-
-  /**
-   * @} End of defgroup "drupal.org"
-   */
-
-  /**
-   * @defgroup drupal extensions
-   * @{
-   * Drupal-specific step definitions.
-   */
-
-  /**
-   * @} End of defgroup "drupal extensions"
    */
 
   /**
@@ -391,6 +425,41 @@ class FeatureContext extends MinkContext {
       throw new Exception('ouch.' . $process->getErrorOutput());
     }
   }
+
+  /**
+   * @When /^I create a project$/
+   */
+  public function iCreateAProject() {
+    $this->project = $this->user->name;
+    $element = $this->getSession()->getPage();
+    $result = $element->hasField('Project title');
+    if ($result === False) {
+      throw new Exception("No Project title field was found.");
+    }
+    $element->fillField('Project title', $this->project);
+  }
+
+
+  /**
+   * @Then /^I should see the project$/
+   */
+  public function iShouldSeeTheProject() {
+    $element = $this->getSession()->getPage();
+    $result = $element->hasContent($this->project);
+    if ($result === FALSE) {
+      throw new Exception("The text " . $this->project . " was not found " . $session->getCurrentUrl());
+    }
+  }
+
+  /**
+   * @} End of defgroup "drupal.org"
+   */
+
+  /**
+   * @defgroup drupal extensions
+   * @{
+   * Drupal-specific step definitions.
+   */
 
   /**
    * @Given /^I am an anonymous user$/
@@ -449,33 +518,6 @@ class FeatureContext extends MinkContext {
   }
 
   /**
-   * @When /^I create a project$/
-   */
-  public function iCreateAProject() {
-    $this->project = $this->user->name;
-    $element = $this->getSession()->getPage();
-    $result = $element->hasField('Project title');
-    if ($result === False) {
-      throw new Exception("No Project title field was found.");
-    }
-    $element->fillField('Project title', $this->project);
-  }
-
-
-  /**
-   * @Then /^I should see the project$/
-   */
-  public function iShouldSeeTheProject() {
-  $element = $this->getSession()->getPage();
-  $result = $element->hasContent($this->project);
-  if ($result === FALSE) {
-    throw new Exception("The text " . $this->project . " was not found " . $session->getCurrentUrl());
-  }
-}
-
-
-
-  /**
    * @Given /^I am logged in as "([^"]*)" with the password "([^"]*)"$/
    */
   public function iAmLoggedInAsWithThePassword($username, $passwd) {
@@ -520,54 +562,13 @@ class FeatureContext extends MinkContext {
   }
 
   /**
+   * @} End of defgroup "drupal extensions"
+   */
+
+  /**
    * @Given /^I execute the commands$/
    */
   public function iExecuteTheCommands() {
     throw new PendingException();
-  }
-
-  /**
-   * @Given /^I check the box "([^"]*)"$/
-   */
-  public function iCheckTheBox($checkbox) {
-    $element = $this->getSession()->getPage();
-    $result = $element->findField($checkbox);
-    $checked_state = $result->isChecked();
-    if ($checked_state === TRUE) {
-      throw new Exception($checkbox . ': Already checked');
-    }
-    $result->check();
-  }
-
-  /**
-   * @Given /^I uncheck the box "([^"]*)"$/
-   */
-  public function iUncheckTheBox($checkbox) {
-    $element = $this->getSession()->getPage();
-    $result = $element->findField($checkbox);
-    $checked_state = $result->isChecked();
-    if ($checked_state === TRUE) {
-      $result->uncheck();
-    }
-    else {
-      throw new Exception('"' . $checkbox . '" was not checked so it could not be unchecked');
-    }
-  }
-
-  /**
-   * @When /^I select the radio button "([^"]*)" with the id "([^"]*)"$/
-   */
-  public function iSelectTheRadioButtonWithTheId($label, $id) {
-    $element = $this->getSession()->getPage();
-    $radiobutton = $element->findById($id);
-    if ($radiobutton === NULL) {
-      throw new Exception('Neither label nor id was found');
-    }
-    $value = $radiobutton->getAttribute('value');
-    $labelonpage = $radiobutton->getParent()->getText();
-    if ($label != $labelonpage) {
-      throw new Exception("Button with $id has label $labelonpage instead of $label.");
-    }
-    $radiobutton->selectOption($value, FALSE);
   }
 }
