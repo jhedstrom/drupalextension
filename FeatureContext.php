@@ -297,7 +297,7 @@ class FeatureContext extends MinkContext {
    * @Then /^I should get a "([^"]*)" HTTP response$/
    */
   public function iShouldGetAHttpResponse($status_code) {
-    // Use the mink extensions.
+    // Use the Mink Extension step definition.
     return new Given("the response status code should be $status_code");
   }
 
@@ -305,38 +305,24 @@ class FeatureContext extends MinkContext {
    * @Then /^I should not get a "([^"]*)" HTTP response$/
    */
   public function iShouldNotGetAHttpResponse($status_code) {
-    // Use the mink extensions.
+    // Use the Mink Extension step definition.
     return new Given("the response status code should not be $status_code");
   }
 
   /**
    * @Given /^I check the box "([^"]*)"$/
-   * @TODO convert to mink extension.
    */
   public function iCheckTheBox($checkbox) {
-    $element = $this->getSession()->getPage();
-    $result = $element->findField($checkbox);
-    $checked_state = $result->isChecked();
-    if ($checked_state === TRUE) {
-      throw new Exception($checkbox . ': Already checked');
-    }
-    $result->check();
+    // Use the Mink Extension step definition.
+    return new Given("I check \"$checkbox\"");
   }
 
   /**
    * @Given /^I uncheck the box "([^"]*)"$/
-   * @TODO convert to mink extension.
    */
   public function iUncheckTheBox($checkbox) {
-    $element = $this->getSession()->getPage();
-    $result = $element->findField($checkbox);
-    $checked_state = $result->isChecked();
-    if ($checked_state === TRUE) {
-      $result->uncheck();
-    }
-    else {
-      throw new Exception('"' . $checkbox . '" was not checked so it could not be unchecked');
-    }
+    // Use the Mink Extension step definition.
+    return new Given("I uncheck \"$checkbox\"");
   }
 
   /**
