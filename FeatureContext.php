@@ -246,7 +246,7 @@ class FeatureContext extends MinkContext {
     $element = $this->getSession()->getPage();
     $result = $element->findLink($linkname);
     if (empty($result)) {
-      throw new Exception("No link to " . $linkname . " on " . $session->getCurrentUrl());
+      throw new Exception("No link to " . $linkname . " on " . $this->getSession()->getCurrentUrl());
     }
   }
 
@@ -278,25 +278,19 @@ class FeatureContext extends MinkContext {
   }
 
   /**
-   * @Then /^(I|I should) see the text "([^"]*)"$/
+   * @Then /^(?:I|I should) see the text "([^"]*)"$/
    */
-  public function iShouldSeeTheText($syn, $text) {
-    $element = $this->getSession()->getPage();
-    $result = $element->hasContent($text);
-    if ($result === FALSE) {
-      throw new Exception("The text " . $text . " was not found " . $session->getCurrentUrl());
-    }
+  public function iShouldSeeTheText($text) {
+    // Use the Mink Extension step definition.
+    return new Given("I should see text matching \"$text\"");
   }
 
   /**
    * @Then /^I should not see the text "([^"]*)"$/
    */
   public function iShouldNotSeeTheText($text) {
-    $element = $this->getSession()->getPage();
-    $result = $element->hasContent($text);
-    if ($result === TRUE) {
-      throw new Exception("The text " . $text . " was found on " . $session->getCurrentUrl() . " and should not have been");
-    }
+    // Use the Mink Extension step definition.
+    return new Given("I should not see text matching \"$text\"");
   }
 
   /**
