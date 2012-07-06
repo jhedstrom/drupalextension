@@ -451,6 +451,8 @@ class FeatureContext extends MinkContext {
   }
 
   /**
+   * Creates and authenticates a user with the given role via Drush.
+   *
    * @Given /^I am logged in as a user with the "([^"]*)" role$/
    */
   public function iAmLoggedInWithRole($role) {
@@ -497,6 +499,8 @@ class FeatureContext extends MinkContext {
   }
 
   /**
+   * Authenticates a user.
+   *
    * @Given /^I am logged in as "([^"]*)" with the password "([^"]*)"$/
    */
   public function iAmLoggedInAsWithThePassword($username, $passwd) {
