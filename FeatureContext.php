@@ -42,13 +42,8 @@ class FeatureContext extends MinkContext {
    *   Context parameters (set them up through behat.yml).
    */
   public function __construct(array $parameters) {
-    $this->base_url = $parameters['base_url'];
-    // TODO: There should be a better way to do this.
     if (isset($parameters['basic_auth'])) {
       $this->basic_auth = $parameters['basic_auth'];
-      if ($parameters['default_browser'] == 'firefox') {
-        $this->base_url = str_replace('://', '://' . $parameters['basic_auth']['user'] . ':' . $parameters['basic_auth']['pass'] . '@', $this->base_url);
-      }
     }
     $this->default_browser = $parameters['default_browser'];
     $this->drushAlias = $parameters['drush_alias'];
@@ -58,26 +53,16 @@ class FeatureContext extends MinkContext {
    * @BeforeScenario
    */
   public function beforeScenario($event) {
-    $driver = new \Behat\Mink\Driver\SahiDriver('firefox');
-    $sahi_firefox = new \Behat\Mink\Session($driver);
-    $driver = new \Behat\Mink\Driver\Selenium2Driver('firefox', array());
-    $selenium_firefox = new \Behat\Mink\Session($driver);
-    $driver = new \Behat\Mink\Driver\GoutteDriver();
-    $goutte = new \Behat\Mink\Session($driver);
     if (isset($this->basic_auth)) {
-      $goutte->setBasicAuth($this->basic_auth['user'], $this->basic_auth['pass']);
+      // Setup basic auth.
+      $this->getSession()->setBasicAuth($this->basic_auth['username'], $this->basic_auth['password']);
     }
-    $this->mink = new \Behat\Mink\Mink(array('sahi_firefox' => $sahi_firefox, 'selenium_firefox' => $selenium_firefox, 'goutte' => $goutte));
-    $this->mink->setDefaultSessionName($this->default_browser);
   }
 
   /**
    * @AfterScenario
    */
   public function afterScenario($event) {
-    $this->mink->stopSessions();
-    unset($this->mink);
-
     // Remove any users that were created.
     if (!empty($this->users)) {
       foreach ($this->users as $user) {
@@ -139,14 +124,13 @@ class FeatureContext extends MinkContext {
       throw new Exception('Tried to login without a user.');
     }
 
-    $session = $this->mink->getSession();
-    $session->visit($this->base_url . '/user');
-    $element = $session->getPage();
+    $this->getSession()->visit($this->locatePath('/user'));
+    $element = $this->getSession()->getPage();
     $element->fillField('Username', $this->user->name);
     $element->fillField('Password', $this->user->pass);
     $submit = $element->findButton('Log in');
     if (empty($submit)) {
-      throw new Exception('No submit button at ' . $session->getCurrentUrl());
+      throw new Exception('No submit button at ' . $this->getSession()->getCurrentUrl());
     }
 
     // Log in.
@@ -161,16 +145,15 @@ class FeatureContext extends MinkContext {
    * Helper function to logout.
    */
   public function logout() {
-    $session = $this->mink->getSession();
-    $session->visit($this->base_url . '/user/logout');
+    $this->getSession()->visit($this->locatePath('/user/logout'));
   }
 
   /**
    * Determine if the a user is already logged in.
    */
   public function loggedIn() {
-    $session = $this->mink->getSession();
-    $session->visit($this->base_url . '/');
+    $session = $this->getSession();
+    $session->visit($this->locatePath('/'));
 
     // If a logout link is found, we are logged in. While not perfect, this is
     // how Drupal SimpleTests currently work as well.
@@ -207,8 +190,7 @@ class FeatureContext extends MinkContext {
    * @When /^I search for "([^"]*)"$/
    */
   public function iSearchFor($searchterm) {
-    $session = $this->mink->getSession();
-    $element = $session->getPage();
+    $element = $this->getSession()->getPage();
     $element->fillField('edit-text', $searchterm);
     $submit = $element->findById('edit-submit');
     if (empty($submit)) {
@@ -238,8 +220,7 @@ class FeatureContext extends MinkContext {
    * @Then /^I should see the link "([^"]*)"$/
    */
   public function iShouldSeeTheLink($linkname) {
-    $session = $this->mink->getSession();
-    $element = $session->getPage();
+    $element = $this->getSession()->getPage();
     $result = $element->findLink($linkname);
     if (empty($result)) {
       throw new Exception("No link to " . $linkname . " on " . $session->getCurrentUrl());
@@ -250,8 +231,7 @@ class FeatureContext extends MinkContext {
    * @Then /^I should not see the link "([^"]*)"$/
    */
   public function iShouldNotSeeTheLink($linkname) {
-    $session = $this->mink->getSession();
-    $element = $session->getPage();
+    $element = $this->getSession()->getPage();
     $result = $element->findLink($linkname);
     if ($result) {
       throw new Exception("The link " . $linkname . " was present on " . $session->getCurrentUrl() . " and was not supposed to be.");
@@ -262,8 +242,7 @@ class FeatureContext extends MinkContext {
    * @Then /^I should see the heading "([^"]*)"$/
    */
   public function iShouldSeeTheHeading($headingname) {
-    $session = $this->mink->getSession();
-    $element = $session->getPage();
+    $element = $this->getSession()->getPage();
     foreach (array('h1', 'h2', 'h3', 'h4', 'h5', 'h6') as $heading) {
       $results = $element->findAll('css', $heading);
       foreach ($results as $result) {
@@ -279,8 +258,7 @@ class FeatureContext extends MinkContext {
    * @Then /^(I|I should) see the text "([^"]*)"$/
    */
   public function iShouldSeeTheText($syn, $text) {
-    $session = $this->mink->getSession();
-    $element = $session->getPage();
+    $element = $this->getSession()->getPage();
     $result = $element->hasContent($text);
     if ($result === FALSE) {
       throw new Exception("The text " . $text . " was not found " . $session->getCurrentUrl());
@@ -291,8 +269,7 @@ class FeatureContext extends MinkContext {
    * @Then /^I should not see the text "([^"]*)"$/
    */
   public function iShouldNotSeeTheText($text) {
-    $session = $this->mink->getSession();
-    $element = $session->getPage();
+    $element = $this->getSession()->getPage();
     $result = $element->hasContent($text);
     if ($result === TRUE) {
       throw new Exception("The text " . $text . " was found on " . $session->getCurrentUrl() . " and should not have been");
@@ -303,9 +280,7 @@ class FeatureContext extends MinkContext {
    * @Then /^I should get a "([^"]*)" HTTP response$/
    */
   public function iShouldGetAHttpResponse($status_code) {
-    $session = $this->mink->getSession();
-    $element = $session->getPage();
-    $status = $session->getStatusCode();
+    $status = $this->getSession()->getPage()->getStatusCode();
     if ($status != $status_code) {
       throw new Exception("Found HTTP response $status instead of $status_code");
     }
@@ -315,10 +290,8 @@ class FeatureContext extends MinkContext {
    * @When /^I clone the repo$/
    */
   public function iCloneTheRepo() {
-    $session = $this->mink->getSession();
     //mypath stores the last path visited in another iAmAt  step.
-    $element = $session->getPage($this->mypath);
-    
+    $element = $this->getSession()->getPage($this->mypath);
     $result = $element->find('css', '#content div.codeblock code');
     if (!empty($result)) {
       $this->repo = $result->getText();
@@ -357,10 +330,9 @@ class FeatureContext extends MinkContext {
    * Private function for the whoami step.
    */
   private function whoami() {
-    $session = $this->mink->getSession();
-    $element = $session->getPage();
+    $element = $this->getSession()->getPage();
     // Go to the user page.
-    $session->visit($this->base_url . '/user');
+    $session->visit($this->locatePath('/user'));
     if ($find = $element->find('css', '#page-title')) {
       $page_title = $find->getText();
       if ($page_title) {
@@ -431,8 +403,7 @@ class FeatureContext extends MinkContext {
    */
   public function iCreateAProject() {
     $this->project = $this->user->name;
-    $session = $this->mink->getSession();
-    $element = $session->getPage();
+    $element = $this->getSession()->getPage();
     $result = $element->hasField('Project title');
     if ($result === False) {
       throw new Exception("No Project title field was found.");
@@ -445,8 +416,7 @@ class FeatureContext extends MinkContext {
    * @Then /^I should see the project$/
    */
   public function iShouldSeeTheProject() {
-  $session = $this->mink->getSession();
-  $element = $session->getPage();
+  $element = $this->getSession()->getPage();
   $result = $element->hasContent($this->project);
     if ($result === False) {
       throw new Exception("The text ". $this->project ." was not found ". $session->getCurrentUrl());
@@ -466,16 +436,15 @@ class FeatureContext extends MinkContext {
       return;
     }
 
-    $session = $this->mink->getSession();
-    $element = $session->getPage();
+    $element = $this->getSession()->getPage();
 
     if ($user != 'User account') {
       // Logout.
-      $session->visit($this->base_url . '/user/logout');
+      $this->getSession()->visit($this->locatePath('/user/logout'));
     }
 
     // Go to the user page.
-    $session->visit($this->base_url . '/user');
+    $this->getSession()->visit($this->locatePath('/user'));
     // Get the page title.
     $page_title = $element->findByID('page-title')->getText();
     if ($page_title == 'User account') {
@@ -512,8 +481,7 @@ class FeatureContext extends MinkContext {
    * @Given /^I check the box "([^"]*)"$/
    */
   public function iCheckTheBox($checkbox) {
-    $session = $this->mink->getSession();
-    $element = $session->getPage();
+    $element = $this->getSession()->getPage();
     $result = $element->findField($checkbox);
     $checked_state = $result->isChecked();
     if ($checked_state === TRUE) {
@@ -526,8 +494,7 @@ class FeatureContext extends MinkContext {
    * @Given /^I uncheck the box "([^"]*)"$/
    */
   public function iUncheckTheBox($checkbox) {
-    $session = $this->mink->getSession();
-    $element = $session->getPage();
+    $element = $this->getSession()->getPage();
     $result = $element->findField($checkbox);
     $checked_state = $result->isChecked();
     if ($checked_state === TRUE) {
@@ -542,8 +509,7 @@ class FeatureContext extends MinkContext {
    * @When /^I select the radio button "([^"]*)" with the id "([^"]*)"$/
    */
   public function iSelectTheRadioButtonWithTheId($label, $id) {
-    $session = $this->mink->getSession();
-    $element = $session->getPage();
+    $element = $this->getSession()->getPage();
     $radiobutton = $element->findById($id);
     if ($radiobutton === NULL) {
       throw new Exception('Neither label nor id was found');
