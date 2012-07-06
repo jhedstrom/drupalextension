@@ -50,6 +50,8 @@ class FeatureContext extends MinkContext {
   }
 
   /**
+   * Run before every scenario.
+   *
    * @BeforeScenario
    */
   public function beforeScenario($event) {
@@ -60,6 +62,8 @@ class FeatureContext extends MinkContext {
   }
 
   /**
+   * Run after every scenario.
+   *
    * @AfterScenario
    */
   public function afterScenario($event) {
@@ -75,6 +79,11 @@ class FeatureContext extends MinkContext {
       }
     }
   }
+
+  /**
+   * @defgroup helper functions
+   * @{
+   */
 
   /**
    * Helper function to generate a random string of arbitrary length.
@@ -160,6 +169,33 @@ class FeatureContext extends MinkContext {
     $element = $session->getPage();
     return $element->findLink('Log out');
   }
+
+  /**
+   * Private function for the whoami step.
+   */
+  private function whoami() {
+    $element = $this->getSession()->getPage();
+    // Go to the user page.
+    $session->visit($this->locatePath('/user'));
+    if ($find = $element->find('css', '#page-title')) {
+      $page_title = $find->getText();
+      if ($page_title) {
+        return $page_title;
+      }
+    }
+    return FALSE;
+  }
+
+  /**
+   * @} End of defgroup "helper functions".
+   */
+
+  /**
+   * @defgroup mink extensions
+   * @{
+   * Wrapper step definitions to the Mink extensions in order to implement
+   * alternate wording for tests.
+   */
 
   /**
    * @Given /^(?:that I|I) am at "([^"]*)"$/
@@ -293,6 +329,30 @@ class FeatureContext extends MinkContext {
   }
 
   /**
+   * @} End of defgroup "mink extensions"
+   */
+
+  /**
+   * @defgroup drupal.org
+   * @{
+   * Drupal.org-specific step definitions.
+   */
+
+  /**
+   * @} End of defgroup "drupal.org"
+   */
+
+  /**
+   * @defgroup drupal extensions
+   * @{
+   * Drupal-specific step definitions.
+   */
+
+  /**
+   * @} End of defgroup "drupal extensions"
+   */
+
+  /**
    * @When /^I clone the repo$/
    */
   public function iCloneTheRepo() {
@@ -330,22 +390,6 @@ class FeatureContext extends MinkContext {
     if (!$process->isSuccessful()) {
       throw new Exception('ouch.' . $process->getErrorOutput());
     }
-  }
-
-  /**
-   * Private function for the whoami step.
-   */
-  private function whoami() {
-    $element = $this->getSession()->getPage();
-    // Go to the user page.
-    $session->visit($this->locatePath('/user'));
-    if ($find = $element->find('css', '#page-title')) {
-      $page_title = $find->getText();
-      if ($page_title) {
-        return $page_title;
-      }
-    }
-    return FALSE;
   }
 
   /**
