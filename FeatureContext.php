@@ -223,19 +223,6 @@ class FeatureContext extends MinkContext {
   }
 
   /**
-   * @When /^I search for "([^"]*)"$/
-   */
-  public function iSearchFor($searchterm) {
-    $element = $this->getSession()->getPage();
-    $element->fillField('edit-text', $searchterm);
-    $submit = $element->findById('edit-submit');
-    if (empty($submit)) {
-      throw new Exception('No submit button at ' . $session->getCurrentUrl());
-    }
-    $submit->click();
-  }
-
-  /**
    * @Given /^for "([^"]*)" I enter "([^"]*)"$/
    * @Given /^I enter "([^"]*)" for "([^"]*)"$/
    */
@@ -439,7 +426,6 @@ class FeatureContext extends MinkContext {
     $element->fillField('Project title', $this->project);
   }
 
-
   /**
    * @Then /^I should see the project$/
    */
@@ -449,6 +435,19 @@ class FeatureContext extends MinkContext {
     if ($result === FALSE) {
       throw new Exception("The text " . $this->project . " was not found " . $session->getCurrentUrl());
     }
+  }
+
+  /**
+   * @When /^I search for "([^"]*)"$/
+   */
+  public function iSearchFor($searchterm) {
+    $element = $this->getSession()->getPage();
+    $element->fillField('edit-text', $searchterm);
+    $submit = $element->findById('edit-submit');
+    if (empty($submit)) {
+      throw new Exception('No submit button at ' . $session->getCurrentUrl());
+    }
+    $submit->click();
   }
 
   /**
