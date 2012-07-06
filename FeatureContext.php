@@ -418,10 +418,9 @@ class FeatureContext extends MinkContext {
   public function iShouldSeeTheProject() {
   $element = $this->getSession()->getPage();
   $result = $element->hasContent($this->project);
-    if ($result === False) {
-      throw new Exception("The text ". $this->project ." was not found ". $session->getCurrentUrl());
-    }
-  
+  if ($result === FALSE) {
+    throw new Exception("The text " . $this->project . " was not found " . $session->getCurrentUrl());
+  }
 }
 
 
