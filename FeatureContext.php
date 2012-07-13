@@ -56,8 +56,15 @@ class FeatureContext extends MinkContext {
    */
   public function beforeScenario($event) {
     if (isset($this->basic_auth)) {
-      // Setup basic auth.
-      $this->getSession()->setBasicAuth($this->basic_auth['username'], $this->basic_auth['password']);
+      $driver = $this->getSession()->getDriver();
+      if ($driver instanceof Behat\Mink\Driver\Selenium2Driver) {
+        // Continue if this is a Selenium driver, since this is handled in
+        // locatePath().
+      }
+      else {
+        // Setup basic auth.
+        $this->getSession()->setBasicAuth($this->basic_auth['username'], $this->basic_auth['password']);
+      }
     }
   }
 
