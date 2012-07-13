@@ -194,7 +194,7 @@ class FeatureContext extends MinkContext {
   private function whoami() {
     $element = $this->getSession()->getPage();
     // Go to the user page.
-    $session->visit($this->locatePath('/user'));
+    $this->getSession()->visit($this->locatePath('/user'));
     if ($find = $element->find('css', '#page-title')) {
       $page_title = $find->getText();
       if ($page_title) {
