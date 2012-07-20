@@ -34,19 +34,26 @@ class FeatureContext extends MinkContext {
   private $users = array();
 
   /**
+   * Store a drush alias for tests requiring shell access.
+   */
+  private $drushAlias = FALSE;
+
+  /**
    * Initializes context.
    *
    * Every scenario gets its own context object.
    *
    * @param array $parameters.
-   *   Context parameters (set them up through behat.yml).
+   *   Context parameters (set them up through behat.yml or behat.local.yml).
    */
   public function __construct(array $parameters) {
     if (isset($parameters['basic_auth'])) {
       $this->basic_auth = $parameters['basic_auth'];
     }
     $this->default_browser = $parameters['default_browser'];
-    $this->drushAlias = $parameters['drush_alias'];
+    if (isset($parameters['drush_alias'])) {
+      $this->drushAlias = $parameters['drush_alias'];
+    }
   }
 
   /**
@@ -65,6 +72,19 @@ class FeatureContext extends MinkContext {
         // Setup basic auth.
         $this->getSession()->setBasicAuth($this->basic_auth['username'], $this->basic_auth['password']);
       }
+    }
+  }
+
+  /**
+   * Check for shell access (via drush).
+   *
+   * @BeforeScenario @shellAccess
+   */
+  public function checkShellAccess() {
+    // @todo check that this is a functioning alias.
+    // See http://drupal.org/node/1615450
+    if (!$this->drushAlias) {
+      throw new pendingException('This scenario requires shell access.');
     }
   }
 
