@@ -1,5 +1,7 @@
 <?php
 
+namespace Behat\DrupalExtension\Context
+
 use Behat\Symfony2Extension\Context\KernelAwareInterface;
 use Behat\MinkExtension\Context\MinkContext;
 use Behat\Behat\Context\ClosuredContextInterface,
@@ -14,12 +16,10 @@ use Behat\Behat\Context\Step\Given;
 use Behat\Behat\Context\Step\When;
 use Behat\Behat\Context\Step\Then;
 
-require 'vendor/autoload.php';
-
 /**
  * Features context.
  */
-class FeatureContext extends MinkContext {
+class DrupalContext extends MinkContext {
 
   /**
    * Current authenticated user.
