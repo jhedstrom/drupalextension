@@ -1,0 +1,19 @@
+{
+  "name": "behat/drupal-extension",
+  "type": "behat-extension",
+  "description": "Drupal extension for Behat",
+  "keywords": ["drupal", "web", "test"],
+  "homepage": "http://drupal.org/project/drupalextension",
+  "license": "GPL-2.0+",
+  "require": {
+    "behat/mink": "1.4@stable",
+    "behat/mink-goutte-driver": "*",
+    "behat/mink-selenium2-driver": "*",
+    "behat/behat": "2.4@stable",
+    "behat/mink-extension": "*"
+  },
+  "minimum-stability": "dev",
+  "config": {
+    "bin-dir": "bin/"
+  }
+}
