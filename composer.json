@@ -1,5 +1,5 @@
 {
-  "name": "behat/drupal-extension",
+  "name": "drupal/drupal-extension",
   "type": "behat-extension",
   "description": "Drupal extension for Behat",
   "keywords": ["drupal", "web", "test"],
