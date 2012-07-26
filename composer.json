@@ -17,6 +17,6 @@
     "bin-dir": "bin/"
   },
   "autoload": {
-    "psr-0": { "Behat\\DrupalExtension": "src/" }
+    "psr-0": { "Drupal\\DrupalExtension": "src/" }
   }
 }
