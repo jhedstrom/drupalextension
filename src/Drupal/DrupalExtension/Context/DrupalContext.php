@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\DrupalExtension\Context
+namespace Drupal\DrupalExtension\Context;
 
 use Behat\Symfony2Extension\Context\KernelAwareInterface;
 use Behat\MinkExtension\Context\MinkContext;
