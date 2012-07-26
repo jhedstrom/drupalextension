@@ -6,7 +6,7 @@
   "homepage": "http://drupal.org/project/drupalextension",
   "license": "GPL-2.0+",
   "require": {
-    "behat/mink": ">=2.4.0, <1.5.0",
+    "behat/mink": ">=1.4.0, <1.5.0",
     "behat/mink-goutte-driver": "*",
     "behat/mink-selenium2-driver": "*",
     "behat/behat": ">=2.4.0, <2.5.0",
