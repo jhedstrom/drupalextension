@@ -458,52 +458,6 @@ class DrupalContext extends MinkContext {
   }
 
   /**
-   * Authenticates a user.
-   *
-   * @Given /^I am logged in as "([^"]*)" with the password "([^"]*)"$/
-   */
-  public function iAmLoggedInAsWithThePassword($username, $passwd) {
-    $user = $this->whoami();
-    if (strtolower($user) == strtolower($username)) {
-      // Already logged in.
-      return;
-    }
-
-    $element = $this->getSession()->getPage();
-
-    if ($user != 'User account') {
-      // Logout.
-      $this->getSession()->visit($this->locatePath('/user/logout'));
-    }
-
-    // Go to the user page.
-    $this->getSession()->visit($this->locatePath('/user'));
-    // Get the page title.
-    $page_title = $element->findByID('page-title')->getText();
-    if ($page_title == 'User account') {
-      // If I see this, I'm not logged in at all so log in.
-      $element->fillField('Username', $username);
-      $element->fillField('Password', $passwd);
-      $submit = $element->findButton('Log in');
-      if (empty($submit)) {
-        throw new Exception('No submit button at ' . $session->getCurrentUrl());
-      }
-      // Log in.
-      $submit->click();
-      $user = $this->whoami();
-      if (strtolower($user) == strtolower($username)) {
-        // Successfully logged in.
-        return;
-      }
-    }
-    else {
-      throw new Exception("Failed to reach the login page.");
-    }
-
-    throw new Exception('Not logged in.');
-  }
-
-  /**
    * @} End of defgroup "drupal extensions"
    */
 }
