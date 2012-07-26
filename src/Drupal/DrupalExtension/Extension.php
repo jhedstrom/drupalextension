@@ -36,6 +36,18 @@ class Extension implements ExtensionInterface {
    *   ArrayNodeDefinition instance.
    */
   public function getConfig(ArrayNodeDefinition $builder) {
+    $builder->
+      children()->
+        arrayNode('basic_auth')->
+          useAttributeAsKey('key')->
+          prototype('variable')->end()->
+        end()->
+        scalarNode('drush_alias')->
+          defaultNull()->
+        end()->
+      end()->
+    end();
+
     // @todo
     return;
     // defining what type of configuration can be passed into this extension
