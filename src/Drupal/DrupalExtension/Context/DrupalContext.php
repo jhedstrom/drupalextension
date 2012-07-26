@@ -506,11 +506,4 @@ class DrupalContext extends MinkContext {
   /**
    * @} End of defgroup "drupal extensions"
    */
-
-  /**
-   * @Given /^I execute the commands$/
-   */
-  public function iExecuteTheCommands() {
-    throw new PendingException();
-  }
 }
