@@ -46,7 +46,8 @@ class DrupalContext extends MinkContext {
    * @param array $parameters.
    *   Context parameters (set them up through behat.yml or behat.local.yml).
    */
-  public function __construct(array $parameters) {
+  public function __construct() {
+      return;
     if (isset($parameters['basic_auth'])) {
       $this->basic_auth = $parameters['basic_auth'];
     }
