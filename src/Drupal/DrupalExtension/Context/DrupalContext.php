@@ -217,22 +217,6 @@ class DrupalContext extends MinkContext {
   }
 
   /**
-   * Private function for the whoami step.
-   */
-  private function whoami() {
-    $element = $this->getSession()->getPage();
-    // Go to the user page.
-    $this->getSession()->visit($this->locatePath('/user'));
-    if ($find = $element->find('css', '#page-title')) {
-      $page_title = $find->getText();
-      if ($page_title) {
-        return $page_title;
-      }
-    }
-    return FALSE;
-  }
-
-  /**
    * @} End of defgroup "helper functions".
    */
 
