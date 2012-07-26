@@ -42,11 +42,13 @@ class DrupalContext extends MinkContext {
    * Initializes context.
    *
    * Every scenario gets its own context object.
-   *
-   * @param array $parameters.
-   *   Context parameters (set them up through behat.yml or behat.local.yml).
    */
   public function __construct() {
+    // @todo
+    // Determine how to get back parameters that are set by
+    // \Drupal\DrupalExtension\Extension::load(). Based on the Mink Extension,
+    // once we figure that out, we can probably eliminate this method all-together and
+    // simply directly grab the parameters where they are needed.
       return;
     if (isset($parameters['basic_auth'])) {
       $this->basic_auth = $parameters['basic_auth'];
