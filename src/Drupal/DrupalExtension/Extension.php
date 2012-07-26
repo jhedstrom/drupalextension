@@ -21,7 +21,11 @@ class Extension implements ExtensionInterface {
    */
   public function load(array $config, ContainerBuilder $container) {
     // @todo
-    xdebug_break();
+    $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/config'));
+    $loader->load('services.yml');
+    $container->setParameter('drupal.basic_auth', $config['basic_auth']);
+    $container->setParameter('drupal.drush_alias', $config['drush_alias']);
+
     return;
     $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/config'));
     $loader->load('services.yml');

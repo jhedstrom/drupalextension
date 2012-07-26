@@ -1,0 +1,11 @@
+parameters:
+  # this overrides the class for the core version of this class
+  # TODO
+  # behat.definition.proposal.annotated.class: Drupal\Extension\Definition\Proposal\AnnotatedDefinitionProposal
+
+  behat.drupal.basic_auth:
+    username: ~
+    password: ~
+  behat.drupal.drush_alias: ~
+
+services:
