@@ -1,4 +1,8 @@
 <?php
+/**
+ * @file
+ * Override the output of proposed methods to match Drupal coding standards.
+ */
 
 namespace Drupal\DrupalExtension\Definition\Proposal;
 
