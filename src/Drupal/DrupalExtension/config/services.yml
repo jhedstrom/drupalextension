@@ -3,7 +3,7 @@ parameters:
   behat.definition.proposal.annotated.class: Drupal\DrupalExtension\Definition\Proposal\AnnotatedDefinitionProposal
 
   # Context initializer.
-  drupal.drupal_extension.context.initializer.class: Drupal\DrupalExtenstion\Context\Initializer\DrupalAwareInitializer
+  drupal.drupal_extension.context.initializer.class: Drupal\DrupalExtension\Context\Initializer\DrupalAwareInitializer
 
   drupal.drupal_extension.basic_auth:
     username: ~
@@ -11,9 +11,7 @@ parameters:
   drupal.drupal_extension.drush_alias: ~
 
 services:
-  drupal.drupal_extension.context:
-    class: Drupal\DrupalExtension\Context\DrupalContext
-    initializer:
-      class: %drupal.drupal_extension.context.initializer.class%
-      tags:
-        - { name: behat.context.initializer }
+  drupal.drupal_extension.context.initializer:
+    class: %drupal.drupal_extension.context.initializer.class%
+    tags:
+      - { name: behat.context.initializer }
