@@ -11,7 +11,7 @@ class AnnotatedDefinitionProposal extends BaseAnnotatedDefinitionProposal {
    * @%s /^%s$/
    */
   public function %s(%s) {
-      throw new PendingException();
+    throw new PendingException();
   }
 PHP
       , '%s', $regex, $methodName, implode(', ', $args)
