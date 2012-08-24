@@ -3,10 +3,10 @@ parameters:
   behat.definition.proposal.annotated.class: Drupal\DrupalExtension\Definition\Proposal\AnnotatedDefinitionProposal
 
   # Context initializer.
-  drupal.drupal_extension.context.initializer.class: Drupal\DrupalExtension\Context\Initializer\DrupalAwareInitializer
+  drupal.context.initializer.class: Drupal\DrupalExtension\Context\Initializer\DrupalAwareInitializer
 
   # Context class guesser.
-  drupal.drupal_extension.context.class_guesser.class: Drupal\DrupalExtension\Context\ClassGuesser\DrupalContextClassGuesser
+  drupal.context.class_guesser.class: Drupal\DrupalExtension\Context\ClassGuesser\DrupalContextClassGuesser
 
   drupal.basic_auth:
     username: ~
@@ -15,13 +15,13 @@ parameters:
   drupal.parameters: ~
 
 services:
-  drupal.drupal_extension.context.initializer:
-    class: %drupal.drupal_extension.context.initializer.class%
+  drupal.context.initializer:
+    class: %drupal.context.initializer.class%
     arguments:
       - %drupal.parameters%
     tags:
       - { name: behat.context.initializer }
-  drupal.drupal_extension.context.class_guesser:
-    class: %drupal.drupal_extension.context.class_guesser.class%
+  drupal.context.class_guesser:
+    class: %drupal.context.class_guesser.class%
     tags:
       - { name: behat.context.class_guesser }
