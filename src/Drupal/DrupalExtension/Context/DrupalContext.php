@@ -93,7 +93,7 @@ class DrupalContext extends MinkContext {
         $process->setTimeout(3600);
         $process->run();
         if (!$process->isSuccessful()) {
-          throw new RuntimeException($process->getErrorOutput());
+          throw new \RuntimeException($process->getErrorOutput());
         }
       }
     }
@@ -167,7 +167,7 @@ class DrupalContext extends MinkContext {
     }
 
     if (!$this->user) {
-      throw new Exception('Tried to login without a user.');
+      throw new \Exception('Tried to login without a user.');
     }
 
     $this->getSession()->visit($this->locatePath('/user'));
@@ -176,14 +176,14 @@ class DrupalContext extends MinkContext {
     $element->fillField('Password', $this->user->pass);
     $submit = $element->findButton('Log in');
     if (empty($submit)) {
-      throw new Exception('No submit button at ' . $this->getSession()->getCurrentUrl());
+      throw new \Exception('No submit button at ' . $this->getSession()->getCurrentUrl());
     }
 
     // Log in.
     $submit->click();
 
     if (!$this->loggedIn()) {
-      throw new Exception("Failed to log in as user \"{$this->user->name}\" with role \"{$this->user->role}\".");
+      throw new \Exception("Failed to log in as user \"{$this->user->name}\" with role \"{$this->user->role}\".");
     }
   }
 
@@ -267,7 +267,7 @@ class DrupalContext extends MinkContext {
     $element = $this->getSession()->getPage();
     $result = $element->findLink($linkname);
     if (empty($result)) {
-      throw new Exception("No link to " . $linkname . " on " . $this->getSession()->getCurrentUrl());
+      throw new \Exception("No link to " . $linkname . " on " . $this->getSession()->getCurrentUrl());
     }
   }
 
@@ -278,7 +278,7 @@ class DrupalContext extends MinkContext {
     $element = $this->getSession()->getPage();
     $result = $element->findLink($linkname);
     if ($result) {
-      throw new Exception("The link " . $linkname . " was present on " . $session->getCurrentUrl() . " and was not supposed to be.");
+      throw new \Exception("The link " . $linkname . " was present on " . $session->getCurrentUrl() . " and was not supposed to be.");
     }
   }
 
@@ -295,7 +295,7 @@ class DrupalContext extends MinkContext {
         }
       }
     }
-    throw new Exception("The text " . $headingname . " was not found in any heading " . $session->getCurrentUrl());
+    throw new \Exception("The text " . $headingname . " was not found in any heading " . $session->getCurrentUrl());
   }
 
   /**
@@ -354,12 +354,12 @@ class DrupalContext extends MinkContext {
     $element = $this->getSession()->getPage();
     $radiobutton = $element->findById($id);
     if ($radiobutton === NULL) {
-      throw new Exception('Neither label nor id was found');
+      throw new \Exception('Neither label nor id was found');
     }
     $value = $radiobutton->getAttribute('value');
     $labelonpage = $radiobutton->getParent()->getText();
     if ($label != $labelonpage) {
-      throw new Exception("Button with $id has label $labelonpage instead of $label.");
+      throw new \Exception("Button with $id has label $labelonpage instead of $label.");
     }
     $radiobutton->selectOption($value, FALSE);
   }
@@ -404,7 +404,7 @@ class DrupalContext extends MinkContext {
     $process->setTimeout(3600);
     $process->run();
     if (!$process->isSuccessful()) {
-      throw new RuntimeException($process->getErrorOutput());
+      throw new \RuntimeException($process->getErrorOutput());
     }
 
     $this->users[] = $this->user = (object) array(
@@ -422,7 +422,7 @@ class DrupalContext extends MinkContext {
       $process->setTimeout(3600);
       $process->run();
       if (!$process->isSuccessful()) {
-        throw new RuntimeException($process->getErrorOutput());
+        throw new \RuntimeException($process->getErrorOutput());
       }
     }
 
