@@ -8,7 +8,7 @@ provides step definitions for common testing scenarios specific to
 Drupal sites.
 
 ### Getting started
-1. Get composer
+1. Get [composer](http://getcomposer.org)
 
   ```
   curl -s https://getcomposer.org/installer | php
