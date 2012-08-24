@@ -12,11 +12,9 @@ parameters:
   drupal.context.region_selector.class: Drupal\DrupalExtension\Selector\RegionSelector
 
   # Parameters.
-  drupal.basic_auth:
-    username: ~
-    password: ~
+  drupal.basic_auth: { username: ~, password: ~}
   drupal.drush_alias: ~
-  drupal.parameters: ~
+  drupal.parameters: {}
   drupal.region_map: {}
 
 services:
