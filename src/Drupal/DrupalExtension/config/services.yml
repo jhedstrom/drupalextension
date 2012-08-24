@@ -8,11 +8,16 @@ parameters:
   # Context class guesser.
   drupal.context.class_guesser.class: Drupal\DrupalExtension\Context\ClassGuesser\DrupalContextClassGuesser
 
+  # Region selector class.
+  drupal.context.region_selector.class: Drupal\DrupalExtension\Selector\RegionSelector
+
+  # Parameters.
   drupal.basic_auth:
     username: ~
     password: ~
   drupal.drush_alias: ~
   drupal.parameters: ~
+  drupal.region_map: {}
 
 services:
   drupal.context.initializer:
@@ -25,3 +30,11 @@ services:
     class: %drupal.context.class_guesser.class%
     tags:
       - { name: behat.context.class_guesser }
+  drupal.region_selector:
+    class: %drupal.context.region_selector.class%
+    arguments:
+      # inject the CSSSelector
+      - "@behat.mink.selector.css"
+      - %drupal.region_map%
+    tags:
+      - { name: behat.mink.selector, alias: region }
