@@ -22,6 +22,16 @@ use Behat\Behat\Context\Step\Then;
 class DrupalContext extends MinkContext {
 
   /**
+   * Array of parameters for the Drupal context.
+   */
+  public $parameters = array();
+
+  /**
+   * Basic auth user and password.
+   */
+  public $basic_auth = array();
+
+  /**
    * Current authenticated user.
    *
    * A value of FALSE denotes an anonymous user.
@@ -36,7 +46,7 @@ class DrupalContext extends MinkContext {
   /**
    * Store a drush alias for tests requiring shell access.
    */
-  private $drushAlias = FALSE;
+  public $drushAlias = FALSE;
 
   /**
    * Run before every scenario.

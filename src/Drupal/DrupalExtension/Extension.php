@@ -26,6 +26,13 @@ class Extension implements ExtensionInterface {
     $container->setParameter('drupal.basic_auth', $config['basic_auth']);
     $container->setParameter('drupal.drush_alias', $config['drush_alias']);
 
+    // Store config in parameters array to be passed into the DrupalContext.
+    $drupal_parameters = array();
+    foreach ($config as $key => $value) {
+      $drupal_parameters[$key] = $value;
+    }
+    $container->setParameter('drupal.parameters', $drupal_parameters);
+
     return;
     $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/config'));
     $loader->load('services.yml');

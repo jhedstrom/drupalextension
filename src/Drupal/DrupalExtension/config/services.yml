@@ -8,14 +8,17 @@ parameters:
   # Context class guesser.
   drupal.drupal_extension.context.class_guesser.class: Drupal\DrupalExtension\Context\ClassGuesser\DrupalContextClassGuesser
 
-  drupal.drupal_extension.basic_auth:
+  drupal.basic_auth:
     username: ~
     password: ~
-  drupal.drupal_extension.drush_alias: ~
+  drupal.drush_alias: ~
+  drupal.parameters: ~
 
 services:
   drupal.drupal_extension.context.initializer:
     class: %drupal.drupal_extension.context.initializer.class%
+    arguments:
+      - %drupal.parameters%
     tags:
       - { name: behat.context.initializer }
   drupal.drupal_extension.context.class_guesser:
