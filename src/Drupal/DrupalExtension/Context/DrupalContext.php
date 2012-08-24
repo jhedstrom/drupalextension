@@ -2,7 +2,6 @@
 
 namespace Drupal\DrupalExtension\Context;
 
-use Behat\Symfony2Extension\Context\KernelAwareInterface;
 use Behat\MinkExtension\Context\MinkContext;
 use Behat\Behat\Context\ClosuredContextInterface,
     Behat\Behat\Context\TranslatedContextInterface,
