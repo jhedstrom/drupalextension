@@ -39,27 +39,6 @@ class DrupalContext extends MinkContext {
   private $drushAlias = FALSE;
 
   /**
-   * Initializes context.
-   *
-   * Every scenario gets its own context object.
-   */
-  public function __construct($parameters) {
-    // @todo
-    // Determine how to get back parameters that are set by
-    // \Drupal\DrupalExtension\Extension::load(). Based on the Mink Extension,
-    // once we figure that out, we can probably eliminate this method all-together and
-    // simply directly grab the parameters where they are needed.
-      return;
-    if (isset($parameters['basic_auth'])) {
-      $this->basic_auth = $parameters['basic_auth'];
-    }
-    $this->default_browser = $parameters['default_browser'];
-    if (isset($parameters['drush_alias'])) {
-      $this->drushAlias = $parameters['drush_alias'];
-    }
-  }
-
-  /**
    * Run before every scenario.
    *
    * @BeforeScenario
