@@ -5,6 +5,9 @@ parameters:
   # Context initializer.
   drupal.drupal_extension.context.initializer.class: Drupal\DrupalExtension\Context\Initializer\DrupalAwareInitializer
 
+  # Context class guesser.
+  drupal.drupal_extension.context.class_guesser.class: Drupal\DrupalExtension\Context\ClassGuesser\DrupalContextClassGuesser
+
   drupal.drupal_extension.basic_auth:
     username: ~
     password: ~
@@ -15,3 +18,7 @@ services:
     class: %drupal.drupal_extension.context.initializer.class%
     tags:
       - { name: behat.context.initializer }
+  drupal.drupal_extension.context.class_guesser:
+    class: %drupal.drupal_extension.context.class_guesser.class%
+    tags:
+      - { name: behat.context.class_guesser }

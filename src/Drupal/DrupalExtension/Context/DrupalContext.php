@@ -43,7 +43,7 @@ class DrupalContext extends MinkContext {
    *
    * Every scenario gets its own context object.
    */
-  public function __construct() {
+  public function __construct($parameters) {
     // @todo
     // Determine how to get back parameters that are set by
     // \Drupal\DrupalExtension\Extension::load(). Based on the Mink Extension,
