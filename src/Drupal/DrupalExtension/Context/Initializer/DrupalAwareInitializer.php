@@ -22,6 +22,8 @@ class DrupalAwareInitializer implements InitializerInterface {
   }
 
   public function supports(ContextInterface $context) {
+    // @todo Create a DrupalAwareInterface instead, so developers don't have to
+    // directly extend the DrupalContext class.
     return $context instanceof DrupalContext;
   }
 }
