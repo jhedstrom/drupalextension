@@ -277,7 +277,7 @@ class DrupalContext extends MinkContext {
   }
 
   /**
-   * @Then /^I should see the heading "([^"]*)"$/
+   * @Then /^I (?:|should )see the heading "([^"]*)"$/
    */
   public function iShouldSeeTheHeading($headingname) {
     $element = $this->getSession()->getPage();
