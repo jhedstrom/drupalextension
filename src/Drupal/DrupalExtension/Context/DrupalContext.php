@@ -10,6 +10,8 @@ use Behat\Behat\Context\Step\Given;
 use Behat\Behat\Context\Step\When;
 use Behat\Behat\Context\Step\Then;
 
+use Behat\Mink\Driver\Selenium2Driver as Selenium2Driver;
+
 /**
  * Features context.
  */
@@ -50,7 +52,7 @@ class DrupalContext extends MinkContext {
   public function beforeScenario($event) {
     if (isset($this->basic_auth)) {
       $driver = $this->getSession()->getDriver();
-      if ($driver instanceof Behat\Mink\Driver\Selenium2Driver) {
+      if ($driver instanceof Selenium2Driver) {
         // Continue if this is a Selenium driver, since this is handled in
         // locatePath().
       }
@@ -99,7 +101,7 @@ class DrupalContext extends MinkContext {
    */
   protected function locatePath($path) {
     $driver = $this->getSession()->getDriver();
-    if ($driver instanceof Behat\Mink\Driver\Selenium2Driver && isset($this->basic_auth)) {
+    if ($driver instanceof Selenium2Driver && isset($this->basic_auth)) {
       // Add the basic auth parameters to the base url. This only works for
       // Firefox.
       $startUrl = rtrim($this->getMinkParameter('base_url'), '/') . '/';
