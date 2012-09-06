@@ -31,6 +31,8 @@ class Extension implements ExtensionInterface {
       $drupal_parameters[$key] = $value;
     }
     $container->setParameter('drupal.parameters', $drupal_parameters);
+
+    $container->setParameter('drupal.region_map', $config['region_map']);
   }
 
   /**
@@ -48,6 +50,10 @@ class Extension implements ExtensionInterface {
         end()->
         scalarNode('drush_alias')->
           defaultNull()->
+        end()->
+        arrayNode('region_map')->
+          useAttributeAsKey('key')->
+          prototype('variable')->end()->
         end()->
       end()->
     end();
