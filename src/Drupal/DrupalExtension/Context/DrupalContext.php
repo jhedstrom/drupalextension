@@ -274,7 +274,7 @@ class DrupalContext extends MinkContext {
     $element = $this->getSession()->getPage();
     $result = $element->findLink($linkname);
     if ($result) {
-      throw new \Exception("The link " . $linkname . " was present on " . $session->getCurrentUrl() . " and was not supposed to be.");
+      throw new \Exception("The link " . $linkname . " was present on " . $this->getSession()->getCurrentUrl() . " and was not supposed to be.");
     }
   }
 
@@ -291,7 +291,7 @@ class DrupalContext extends MinkContext {
         }
       }
     }
-    throw new \Exception("The text " . $headingname . " was not found in any heading " . $session->getCurrentUrl());
+    throw new \Exception("The text " . $headingname . " was not found in any heading " . $this->getSession()->getCurrentUrl());
   }
 
   /**
