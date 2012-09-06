@@ -20,7 +20,6 @@ class Extension implements ExtensionInterface {
    *   ContainerBuilder instance.
    */
   public function load(array $config, ContainerBuilder $container) {
-    // @todo
     $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/config'));
     $loader->load('services.yml');
     $container->setParameter('drupal.basic_auth', $config['basic_auth']);
@@ -32,12 +31,6 @@ class Extension implements ExtensionInterface {
       $drupal_parameters[$key] = $value;
     }
     $container->setParameter('drupal.parameters', $drupal_parameters);
-
-    return;
-    $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/config'));
-    $loader->load('services.yml');
-
-    $container->setParameter('drupal.region_map', $config['regions']);
   }
 
   /**
