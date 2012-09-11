@@ -218,16 +218,24 @@ class DrupalContext extends MinkContext {
    * @Given /^(?:that I|I) am at "([^"]*)"$/
    */
   public function iAmAt($path) {
-    // Use the Mink Extenstion step definition.
-    return new Given("I am on \"$path\"");
+    return array(
+      // Use the Mink Extenstion step definition.
+      new Given("I am on \"$path\""),
+      // Extra check to make sure this is a valid page.
+      new Given('I should get a "200" HTTP response'),
+    );
   }
 
   /**
    * @When /^I visit "([^"]*)"$/
    */
   public function iVisit($path) {
-    // Use the Mink Extenstion step definition.
-    return new Given("I am on \"$path\"");
+    return array(
+      // Use the Mink Extenstion step definition.
+      new Given("I am on \"$path\""),
+      // Extra check to make sure this is a valid page.
+      new Given('I should get a "200" HTTP response'),
+    );
   }
 
 
