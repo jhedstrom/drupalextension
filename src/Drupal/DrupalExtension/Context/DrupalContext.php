@@ -215,15 +215,25 @@ class DrupalContext extends MinkContext {
    */
 
   /**
+   * Wrapper step definition to Mink Extension that additionally checks for a
+   * valid HTTP 200 response if available.
+   *
    * @Given /^(?:that I|I) am at "([^"]*)"$/
    */
   public function iAmAt($path) {
-    return array(
-      // Use the Mink Extenstion step definition.
-      new Given("I am on \"$path\""),
-      // Extra check to make sure this is a valid page.
-      new Given('I should get a "200" HTTP response'),
-    );
+    $return = array();
+    // Use the Mink Extenstion step definition.
+    $return[] = new Given("I am on \"$path\"");
+    // @todo ideally this would attempt to call getSession()->getResponseCode()
+    // and then catch the UnsupportedDriverActionException exception thrown, but that
+    // isn't working.
+    $driver = $this->getSession()->getDriver();
+    if (!$driver instanceof Selenium2Driver) {
+      // If available, add extra validation that this is a 200 response.
+      $return[] = new Given('I should get a "200" HTTP response');
+    }
+
+    return $return;
   }
 
   /**
@@ -231,10 +241,8 @@ class DrupalContext extends MinkContext {
    */
   public function iVisit($path) {
     return array(
-      // Use the Mink Extenstion step definition.
-      new Given("I am on \"$path\""),
-      // Extra check to make sure this is a valid page.
-      new Given('I should get a "200" HTTP response'),
+      // Use Drupal Context 'I am at'.
+      new Given("I am at \"$path\""),
     );
   }
 
