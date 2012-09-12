@@ -220,6 +220,8 @@ class DrupalContext extends MinkContext {
    * valid HTTP 200 response if available.
    *
    * @Given /^(?:that I|I) am at "([^"]*)"$/
+   *
+   * @throws UnsupportedDriverActionException
    */
   public function iAmAt($path) {
     $return = array();
