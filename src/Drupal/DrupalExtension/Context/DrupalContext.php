@@ -4,6 +4,7 @@ namespace Drupal\DrupalExtension\Context;
 
 use Behat\MinkExtension\Context\MinkContext;
 use Behat\Behat\Exception\PendingException;
+use Behat\Mink\Exception\UnsupportedDriverActionException;
 use Symfony\Component\Process\Process;
 
 use Behat\Behat\Context\Step\Given;
@@ -224,13 +225,14 @@ class DrupalContext extends MinkContext {
     $return = array();
     // Use the Mink Extenstion step definition.
     $return[] = new Given("I am on \"$path\"");
-    // @todo ideally this would attempt to call getSession()->getResponseCode()
-    // and then catch the UnsupportedDriverActionException exception thrown, but that
-    // isn't working.
-    $driver = $this->getSession()->getDriver();
-    if (!$driver instanceof Selenium2Driver) {
-      // If available, add extra validation that this is a 200 response.
+
+    // If available, add extra validation that this is a 200 response.
+    try {
+      $this->getSession()->getStatusCode();
       $return[] = new Given('I should get a "200" HTTP response');
+    }
+    catch (UnsupportedDriverActionException $e) {
+      // Simply continue on, as this driver doesn't support HTTP response codes.
     }
 
     return $return;
@@ -240,10 +242,8 @@ class DrupalContext extends MinkContext {
    * @When /^I visit "([^"]*)"$/
    */
   public function iVisit($path) {
-    return array(
-      // Use Drupal Context 'I am at'.
-      new Given("I am at \"$path\""),
-    );
+    // Use Drupal Context 'I am at'.
+    return new Given("I am at \"$path\"");
   }
 
 
