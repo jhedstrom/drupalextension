@@ -390,6 +390,7 @@ class DrupalContext extends MinkContext {
 
   /**
    * @Given /^I am an anonymous user$/
+   * @Given /^I am not logged in$/
    */
   public function iAmAnAnonymousUser() {
     // Verify the user is logged out.
