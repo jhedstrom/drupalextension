@@ -219,7 +219,7 @@ class DrupalContext extends MinkContext {
    * Wrapper step definition to Mink Extension that additionally checks for a
    * valid HTTP 200 response if available.
    *
-   * @Given /^(?:that I|I) am at "([^"]*)"$/
+   * @Given /^(?:that I|I) am at "(?P<path>[^"]*)"$/
    *
    * @throws UnsupportedDriverActionException
    */
@@ -241,7 +241,7 @@ class DrupalContext extends MinkContext {
   }
 
   /**
-   * @When /^I visit "([^"]*)"$/
+   * @When /^I visit "(?P<path>[^"]*)"$/
    */
   public function iVisit($path) {
     // Use Drupal Context 'I am at'.
@@ -250,11 +250,11 @@ class DrupalContext extends MinkContext {
 
 
   /**
-   * @When /^I click "([^"]*)"$/
+   * @When /^I click "(?P<link>[^"]*)"$/
    */
-  public function iClick($linkname) {
+  public function iClick($link) {
     // Use the Mink Extenstion step definition.
-    return new Given("I follow \"$linkname\"");
+    return new Given("I follow \"$link\"");
   }
 
   /**
@@ -267,7 +267,7 @@ class DrupalContext extends MinkContext {
   }
 
   /**
-   * @When /^I press the "([^"]*)" button$/
+   * @When /^I press the "(?P<button>[^"]*)" button$/
    */
   public function iPressTheButton($button) {
     // Use the Mink Extenstion step definition.
@@ -275,45 +275,45 @@ class DrupalContext extends MinkContext {
   }
 
   /**
-   * @Then /^I should see the link "([^"]*)"$/
+   * @Then /^I should see the link "(?P<link>[^"]*)"$/
    */
-  public function iShouldSeeTheLink($linkname) {
+  public function iShouldSeeTheLink($link) {
     $element = $this->getSession()->getPage();
-    $result = $element->findLink($linkname);
+    $result = $element->findLink($link);
     if (empty($result)) {
-      throw new \Exception("No link to " . $linkname . " on " . $this->getSession()->getCurrentUrl());
+      throw new \Exception("No link to " . $link . " on " . $this->getSession()->getCurrentUrl());
     }
   }
 
   /**
-   * @Then /^I should not see the link "([^"]*)"$/
+   * @Then /^I should not see the link "(?P<link>[^"]*)"$/
    */
-  public function iShouldNotSeeTheLink($linkname) {
+  public function iShouldNotSeeTheLink($link) {
     $element = $this->getSession()->getPage();
-    $result = $element->findLink($linkname);
+    $result = $element->findLink($link);
     if ($result) {
-      throw new \Exception("The link " . $linkname . " was present on " . $this->getSession()->getCurrentUrl() . " and was not supposed to be.");
+      throw new \Exception("The link " . $link . " was present on " . $this->getSession()->getCurrentUrl() . " and was not supposed to be.");
     }
   }
 
   /**
-   * @Then /^I (?:|should )see the heading "([^"]*)"$/
+   * @Then /^I (?:|should )see the heading "(?P<heading>[^"]*)"$/
    */
-  public function iShouldSeeTheHeading($headingname) {
+  public function iShouldSeeTheHeading($heading) {
     $element = $this->getSession()->getPage();
-    foreach (array('h1', 'h2', 'h3', 'h4', 'h5', 'h6') as $heading) {
-      $results = $element->findAll('css', $heading);
+    foreach (array('h1', 'h2', 'h3', 'h4', 'h5', 'h6') as $tag) {
+      $results = $element->findAll('css', $tag);
       foreach ($results as $result) {
-        if ($result->getText() == $headingname) {
+        if ($result->getText() == $heading) {
           return;
         }
       }
     }
-    throw new \Exception("The text " . $headingname . " was not found in any heading " . $this->getSession()->getCurrentUrl());
+    throw new \Exception("The text " . $heading . " was not found in any heading " . $this->getSession()->getCurrentUrl());
   }
 
   /**
-   * @Then /^(?:I|I should) see the text "([^"]*)"$/
+   * @Then /^(?:I|I should) see the text "(?P<text>[^"]*)"$/
    */
   public function iShouldSeeTheText($text) {
     // Use the Mink Extension step definition.
@@ -321,7 +321,7 @@ class DrupalContext extends MinkContext {
   }
 
   /**
-   * @Then /^I should not see the text "([^"]*)"$/
+   * @Then /^I should not see the text "(?P<text>[^"]*)"$/
    */
   public function iShouldNotSeeTheText($text) {
     // Use the Mink Extension step definition.
@@ -329,23 +329,23 @@ class DrupalContext extends MinkContext {
   }
 
   /**
-   * @Then /^I should get a "([^"]*)" HTTP response$/
+   * @Then /^I should get a "(?P<code>[^"]*)" HTTP response$/
    */
-  public function iShouldGetAHttpResponse($status_code) {
+  public function iShouldGetAHttpResponse($code) {
     // Use the Mink Extension step definition.
-    return new Given("the response status code should be $status_code");
+    return new Given("the response status code should be $code");
   }
 
   /**
-   * @Then /^I should not get a "([^"]*)" HTTP response$/
+   * @Then /^I should not get a "(?P<code>[^"]*)" HTTP response$/
    */
-  public function iShouldNotGetAHttpResponse($status_code) {
+  public function iShouldNotGetAHttpResponse($code) {
     // Use the Mink Extension step definition.
-    return new Given("the response status code should not be $status_code");
+    return new Given("the response status code should not be $code");
   }
 
   /**
-   * @Given /^I check the box "([^"]*)"$/
+   * @Given /^I check the box "(?P<checkbox>[^"]*)"$/
    */
   public function iCheckTheBox($checkbox) {
     // Use the Mink Extension step definition.
@@ -353,7 +353,7 @@ class DrupalContext extends MinkContext {
   }
 
   /**
-   * @Given /^I uncheck the box "([^"]*)"$/
+   * @Given /^I uncheck the box "(?P<checkbox>[^"]*)"$/
    */
   public function iUncheckTheBox($checkbox) {
     // Use the Mink Extension step definition.
@@ -361,7 +361,7 @@ class DrupalContext extends MinkContext {
   }
 
   /**
-   * @When /^I select the radio button "([^"]*)" with the id "([^"]*)"$/
+   * @When /^I select the radio button "(?P<label>[^"]*)" with the id "(?P<id>[^"]*)"$/
    * @TODO convert to mink extension.
    */
   public function iSelectTheRadioButtonWithTheId($label, $id) {
