@@ -51,7 +51,7 @@ class DrupalContext extends MinkContext {
    * @BeforeScenario
    */
   public function beforeScenario($event) {
-    if (isset($this->basic_auth)) {
+    if (!empty($this->basic_auth)) {
       $driver = $this->getSession()->getDriver();
       if ($driver instanceof Selenium2Driver) {
         // Continue if this is a Selenium driver, since this is handled in
