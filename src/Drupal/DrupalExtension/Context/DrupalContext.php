@@ -258,12 +258,12 @@ class DrupalContext extends MinkContext {
   }
 
   /**
-   * @Given /^for "([^"]*)" I enter "([^"]*)"$/
-   * @Given /^I enter "([^"]*)" for "([^"]*)"$/
+   * @Given /^for "(?P<field>[^"]*)" I enter "(?P<value>[^"]*)"$/
+   * @Given /^I enter "(?P<value>[^"]*)" for "(?P<field>[^"]*)"$/
    */
-  public function forIenter($fieldname, $formvalue) {
+  public function forIenter($field, $value) {
     // Use the Mink Extenstion step definition.
-    return new Given("I fill in \"$fieldname\" with \"$formvalue\"");
+    return new Given("I fill in \"$field\" with \"$value\"");
   }
 
   /**
