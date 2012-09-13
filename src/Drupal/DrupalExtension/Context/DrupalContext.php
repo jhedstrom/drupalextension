@@ -402,7 +402,7 @@ class DrupalContext extends MinkContext {
   /**
    * Creates and authenticates a user with the given role via Drush.
    *
-   * @Given /^I am logged in as a user with the "([^"]*)" role$/
+   * @Given /^I am logged in as a user with the "(?P<role>[^"]*)" role$/
    */
   public function iAmLoggedInWithRole($role) {
     // Check if a user with this role is already logged in.
