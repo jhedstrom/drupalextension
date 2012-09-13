@@ -1,0 +1,8 @@
+parameters:
+  drupal.context.driver.drush.class: Drupal\DrupalExtension\Driver\DrushDriver
+
+services:
+  drupal.context.driver.drush:
+    class: %drupal.context.driver.drush.class%
+    tags:
+      - { name: drupal.context.driver }

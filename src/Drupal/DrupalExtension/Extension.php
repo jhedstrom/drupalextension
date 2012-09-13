@@ -33,6 +33,11 @@ class Extension implements ExtensionInterface {
     $container->setParameter('drupal.parameters', $drupal_parameters);
 
     $container->setParameter('drupal.region_map', $config['region_map']);
+
+    // Setup any drivers if requested.
+    if (isset($config['drush'])) {
+      $loader->load('drivers/drush.yml');
+    }
   }
 
   /**
@@ -54,6 +59,12 @@ class Extension implements ExtensionInterface {
         arrayNode('region_map')->
           useAttributeAsKey('key')->
           prototype('variable')->end()->
+        end()->
+        // Drupal drivers.
+        arrayNode('drush')->
+          children()->
+            scalarNode('alias')->
+          end()->
         end()->
       end()->
     end();
