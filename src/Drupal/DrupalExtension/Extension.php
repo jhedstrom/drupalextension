@@ -57,19 +57,6 @@ class Extension implements ExtensionInterface {
         end()->
       end()->
     end();
-
-    // @todo
-    return;
-    // defining what type of configuration can be passed into this extension
-    $builder->
-      children()->
-        // this says, have a "regions" key, which takes a key-value array
-        arrayNode('regions')->
-          useAttributeAsKey('key')->
-          prototype('variable')->end()->
-        end()->
-      end()
-    ;
   }
 
   /**
