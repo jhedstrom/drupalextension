@@ -2,6 +2,9 @@ parameters:
   # This overrides the class for the core version of this class
   behat.definition.proposal.annotated.class: Drupal\DrupalExtension\Definition\Proposal\AnnotatedDefinitionProposal
 
+  # DrupalContext.
+  drupal.context.class: Drupal\DrupalExtension\Context\DrupalContext
+
   # Context initializer.
   drupal.context.initializer.class: Drupal\DrupalExtension\Context\Initializer\DrupalAwareInitializer
 
@@ -18,6 +21,8 @@ parameters:
   drupal.region_map: {}
 
 services:
+  drupal.context:
+    class: %drupal.context.class%
   drupal.context.initializer:
     class: %drupal.context.initializer.class%
     arguments:
