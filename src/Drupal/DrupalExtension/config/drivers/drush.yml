@@ -5,4 +5,4 @@ services:
   drupal.context.driver.drush:
     class: %drupal.context.driver.drush.class%
     tags:
-      - { name: drupal.context.driver }
+      - { name: drupal.context.driver, alias: drush }

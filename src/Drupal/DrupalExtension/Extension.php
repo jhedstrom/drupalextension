@@ -76,11 +76,8 @@ class Extension implements ExtensionInterface {
    * @return array
    */
   public function getCompilerPasses() {
-    // @todo
-    return array();
     return array(
-      new Compiler\SelectorsPass(),
-      new Compiler\SessionsPass(),
+      new Compiler\DriverPass(),
     );
   }
 }
