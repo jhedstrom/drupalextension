@@ -38,6 +38,11 @@ class Extension implements ExtensionInterface {
       $loader->load('drivers/blackbox.yml');
     }
 
+    if (isset($config['drupal'])) {
+      $loader->load('drivers/drupal.yml');
+      $container->setParameter('drupal.driver.drupal.drupal_root', $config['drupal']['drupal_root']);
+    }
+
     if (isset($config['drush'])) {
       $loader->load('drivers/drush.yml');
       if (!isset($config['drush']['alias'])) {
@@ -72,6 +77,14 @@ class Extension implements ExtensionInterface {
         end()->
         // Drupal drivers.
         arrayNode('blackbox')->
+        end()->
+        arrayNode('drupal')->
+          children()->
+            scalarNode('drupal_root')->end()->
+            scalarNode('uri')->
+              defaultValue('default')->
+            end()->
+          end()->
         end()->
         arrayNode('drush')->
           children()->

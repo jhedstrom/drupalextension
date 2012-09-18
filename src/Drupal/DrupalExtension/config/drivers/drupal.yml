@@ -1,0 +1,14 @@
+parameters:
+  drupal.driver.drupal.class: Drupal\Driver\DrupalDriver
+
+  # Default site to bootstrap.
+  drupal.driver.drupal.uri: "default"
+
+services:
+  drupal.driver.drupal:
+    class: %drupal.driver.drupal.class%
+    arguments:
+      - %drupal.driver.drupal.drupal_root%
+      - %drupal.driver.drupal.uri%
+    tags:
+      - { name: drupal.driver, alias: drupal }
