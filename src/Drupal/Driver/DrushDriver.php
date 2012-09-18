@@ -2,6 +2,7 @@
 
 namespace Drupal\Driver;
 
+use Drupal\Exception\BootstrapException;
 use Symfony\Component\Process\Process;
 
 /**
@@ -14,6 +15,11 @@ class DrushDriver implements DriverInterface {
   public $alias;
 
   /**
+   * Track bootstrapping.
+   */
+  private $bootstrapped = FALSE;
+
+  /**
    * Set drush alias.
    */
   public function __construct($alias) {
@@ -21,6 +27,25 @@ class DrushDriver implements DriverInterface {
     $alias = ltrim($alias, '@');
 
     $this->alias = $alias;
+  }
+
+  /**
+   * Implements DriverInterface::bootstrap().
+   */
+  public function bootstrap() {
+    // Check that the given alias works.
+    // @todo check that this is a functioning alias.
+    // See http://drupal.org/node/1615450
+    if ($this->alias) {
+      throw new BootstrapException('A drush alias is required.');
+    }
+  }
+
+  /**
+   * Implements DriverInterface::isBootstrapped().
+   */
+  public function isBootstrapped() {
+    return $this->bootstrapped;
   }
 
   /**

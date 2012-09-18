@@ -56,7 +56,14 @@ class Drupal {
       throw new \InvalidArgumentException(sprintf('Driver "%s" is not registered', $name));
     }
 
-    return $this->drivers[$name];
+    $driver = $this->drivers[$name];
+
+    // Bootstrap driver if needed.
+    if (!$driver->isBootstrapped()) {
+      $driver->bootstrap();
+    }
+
+    return $driver;
   }
 
   /**
