@@ -39,6 +39,7 @@ class DrushDriver implements DriverInterface {
     if (!$this->alias) {
       throw new BootstrapException('A drush alias is required.');
     }
+    $this->bootstrapped = TRUE;
   }
 
   /**
