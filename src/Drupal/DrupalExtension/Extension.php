@@ -34,6 +34,10 @@ class Extension implements ExtensionInterface {
     $container->setParameter('drupal.region_map', $config['region_map']);
 
     // Setup any drivers if requested.
+    if (isset($config['blackbox'])) {
+      $loader->load('drivers/blackbox.yml');
+    }
+
     if (isset($config['drush'])) {
       $loader->load('drivers/drush.yml');
       if (!isset($config['drush']['alias'])) {
@@ -64,6 +68,8 @@ class Extension implements ExtensionInterface {
           prototype('variable')->end()->
         end()->
         // Drupal drivers.
+        arrayNode('blackbox')->
+        end()->
         arrayNode('drush')->
           children()->
             scalarNode('alias')->

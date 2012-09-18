@@ -2,7 +2,7 @@
 
 namespace Drupal\Exception;
 
-use Drupal\Driver;
+use Drupal\Driver\DriverInterface;
 
 /**
  * Drupal driver manager base exception class.

@@ -1,0 +1,8 @@
+parameters:
+  drupal.driver.blackbox.class: Drupal\Driver\BlackboxDriver
+
+services:
+  drupal.driver.blackbox:
+    class: %drupal.driver.blackbox.class%
+    tags:
+      - { name: drupal.driver, alias: blackbox }
