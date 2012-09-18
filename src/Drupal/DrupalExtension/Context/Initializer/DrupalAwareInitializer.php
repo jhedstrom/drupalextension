@@ -5,14 +5,21 @@ namespace Drupal\DrupalExtension\Context\Initializer;
 use Behat\Behat\Context\Initializer\InitializerInterface;
 use Behat\Behat\Context\ContextInterface;
 
-use Drupal\DrupalExtension\Context\DrupalContext;
+use Drupal\Drupal,
+    Drupal\DrupalExtension\Context\DrupalContext;
 
 class DrupalAwareInitializer implements InitializerInterface {
-  public function __construct(array $parameters) {
+  private $drupal, $parameters;
+
+  public function __construct(Drupal $drupal, array $parameters) {
+    $this->drupal = $drupal;
     $this->parameters = $parameters;
   }
 
   public function initialize(ContextInterface $context) {
+    // Set Drupal driver manager.
+    $context->setDrupal($this->drupal);
+
     // Add all parameters to the context.
     $context->parameters = $this->parameters;
 

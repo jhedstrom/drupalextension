@@ -14,15 +14,15 @@ class DriverPass implements CompilerPassInterface {
    * Register Drupal drivers.
    */
   public function process(ContainerBuilder $container) {
-    if (!$container->hasDefinition('drupal.context')) {
+    if (!$container->hasDefinition('drupal.drupal')) {
       return;
     }
 
-    $drupalContextDefinition = $container->getDefinition('drupal.context');
-    foreach ($container->findTaggedServiceIds('drupal.context.driver') as $id => $attributes) {
+    $drupalDefinition = $container->getDefinition('drupal.drupal');
+    foreach ($container->findTaggedServiceIds('drupal.driver') as $id => $attributes) {
       foreach ($attributes as $attribute) {
         if (isset($attribute['alias']) && $name = $attribute['alias']) {
-          $drupalContextDefinition->addMethodCall(
+          $drupalDefinition->addMethodCall(
             'registerDriver', array($name, new Reference($id))
           );
         }

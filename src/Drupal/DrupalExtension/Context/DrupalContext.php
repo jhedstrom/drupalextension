@@ -5,6 +5,9 @@ namespace Drupal\DrupalExtension\Context;
 use Behat\MinkExtension\Context\MinkContext;
 use Behat\Behat\Exception\PendingException;
 use Behat\Mink\Exception\UnsupportedDriverActionException;
+
+use Drupal\Drupal;
+
 use Symfony\Component\Process\Process;
 
 use Behat\Behat\Context\Step\Given;
@@ -16,7 +19,9 @@ use Behat\Mink\Driver\Selenium2Driver as Selenium2Driver;
 /**
  * Features context.
  */
-class DrupalContext extends MinkContext {
+class DrupalContext extends MinkContext implements DrupalAwareInterface {
+
+  private $drupal;
 
   /**
    * Array of parameters for the Drupal context.
@@ -44,6 +49,20 @@ class DrupalContext extends MinkContext {
    * Store a drush alias for tests requiring shell access.
    */
   public $drushAlias = FALSE;
+
+  /**
+   * Set Drupal instance.
+   */
+  public function setDrupal(Drupal $drupal) {
+    $this->drupal = $drupal;
+  }
+
+  /**
+   * Get Drupal instance.
+   */
+  public function getDrupal() {
+    return $this->drupal;
+  }
 
   /**
    * Run before every scenario.
