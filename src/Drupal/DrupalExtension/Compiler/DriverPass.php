@@ -28,5 +28,9 @@ class DriverPass implements CompilerPassInterface {
         }
       }
     }
+
+    $drupalDefinition->addMethodCall(
+      'setDefaultDriverName', array($container->getParameter('drupal.drupal.default_driver'))
+    );
   }
 }

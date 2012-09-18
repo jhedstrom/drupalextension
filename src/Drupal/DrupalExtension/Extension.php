@@ -63,6 +63,9 @@ class Extension implements ExtensionInterface {
         scalarNode('default_driver')->
           defaultValue('blackbox')->
         end()->
+        scalarNode('api_driver')->
+          defaultValue('drush')->
+        end()->
         arrayNode('region_map')->
           useAttributeAsKey('key')->
           prototype('variable')->end()->
