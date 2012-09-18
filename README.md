@@ -38,6 +38,7 @@ The Drupal Extension is an integration layer between [Behat](http://behat.org), 
         selenium2: ~
         base_url: http://git6site.devdrupal.org/
       Drupal\DrupalExtension\Extension:
+        blackbox: ~
   ```
 
 1. To see a list of available step definitions
@@ -46,3 +47,12 @@ The Drupal Extension is an integration layer between [Behat](http://behat.org), 
   bin/behat -dl
   ```
 1. Start adding your feature files to the `features` directory of your repository.
+
+1. Features that require API access in order to setup the proper testing conditions can be tagged with `@api`. This will bootstrap the driver specified by the `api_driver` parameter (which defaults to the drush driver). When using the drush driver, this must be initialized via the `behat.yml` file.
+
+  ```
+  Drupal\DrupalExtension\Extension:
+    blackbox: ~
+	drush:
+	  alias: myDrushAlias
+  ```
