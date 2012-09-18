@@ -36,7 +36,7 @@ class DrushDriver implements DriverInterface {
     // Check that the given alias works.
     // @todo check that this is a functioning alias.
     // See http://drupal.org/node/1615450
-    if ($this->alias) {
+    if (!$this->alias) {
       throw new BootstrapException('A drush alias is required.');
     }
   }
