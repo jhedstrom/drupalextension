@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\DrupalExtension\Driver;
+namespace Drupal\Driver;
 
 /**
  * Driver interface.
