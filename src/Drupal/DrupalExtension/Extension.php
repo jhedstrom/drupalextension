@@ -22,8 +22,7 @@ class Extension implements ExtensionInterface {
   public function load(array $config, ContainerBuilder $container) {
     $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/config'));
     $loader->load('services.yml');
-    $container->setParameter('drupal.basic_auth', $config['basic_auth']);
-    $container->setParameter('drupal.drush_alias', $config['drush_alias']);
+    $container->setParameter('drupal.drupal.default_driver', $config['default_driver']);
 
     // Store config in parameters array to be passed into the DrupalContext.
     $drupal_parameters = array();
@@ -37,6 +36,10 @@ class Extension implements ExtensionInterface {
     // Setup any drivers if requested.
     if (isset($config['drush'])) {
       $loader->load('drivers/drush.yml');
+      if (!isset($config['drush']['alias'])) {
+        throw new \RuntimeException('Drush alias is required for the Drush driver.');
+      }
+      $container->setParameter('drupal.driver.drush.alias', $config['drush']['alias']);
     }
   }
 
@@ -53,8 +56,8 @@ class Extension implements ExtensionInterface {
           useAttributeAsKey('key')->
           prototype('variable')->end()->
         end()->
-        scalarNode('drush_alias')->
-          defaultNull()->
+        scalarNode('default_driver')->
+          defaultValue('blackbox')->
         end()->
         arrayNode('region_map')->
           useAttributeAsKey('key')->

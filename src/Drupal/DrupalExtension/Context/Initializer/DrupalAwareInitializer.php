@@ -14,9 +14,13 @@ class DrupalAwareInitializer implements InitializerInterface {
   public function __construct(Drupal $drupal, array $parameters) {
     $this->drupal = $drupal;
     $this->parameters = $parameters;
+    xdebug_break();
   }
 
   public function initialize(ContextInterface $context) {
+    // Set the default driver.
+    $this->drupal->setDefaultDriverName($this->parameters['default_driver']);
+
     // Set Drupal driver manager.
     $context->setDrupal($this->drupal);
 
@@ -24,7 +28,6 @@ class DrupalAwareInitializer implements InitializerInterface {
     $context->parameters = $this->parameters;
 
     // Add commonly used parameters as proper class variables.
-    $context->drushAlias = $this->parameters['drush_alias'];
     $context->basic_auth = $this->parameters['basic_auth'];
   }
 

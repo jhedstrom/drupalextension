@@ -46,11 +46,6 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
   private $users = array();
 
   /**
-   * Store a drush alias for tests requiring shell access.
-   */
-  public $drushAlias = FALSE;
-
-  /**
    * Set Drupal instance.
    */
   public function setDrupal(Drupal $drupal) {
@@ -62,6 +57,13 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
    */
   public function getDrupal() {
     return $this->drupal;
+  }
+
+  /**
+   * Get active Drupal Driver.
+   */
+  public function getDriver($name = NULL) {
+    return $this->getDrupal()->getDriver($name);
   }
 
   /**
@@ -89,6 +91,8 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
    * @BeforeScenario @shellAccess
    */
   public function checkShellAccess() {
+    // @todo fix/move
+    return;
     // @todo check that this is a functioning alias.
     // See http://drupal.org/node/1615450
     if (!$this->drushAlias) {
@@ -105,12 +109,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
     // Remove any users that were created.
     if (!empty($this->users)) {
       foreach ($this->users as $user) {
-        $process = new Process("drush @{$this->drushAlias} user-cancel --yes {$user->name} --delete-content");
-        $process->setTimeout(3600);
-        $process->run();
-        if (!$process->isSuccessful()) {
-          throw new \RuntimeException($process->getErrorOutput());
-        }
+        $this->getDriver()->userDelete($user);
       }
     }
   }
@@ -430,34 +429,24 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
     }
 
     // Create user (and project)
-    $name = $this->randomString(8);
-    $pass = $this->randomString(16);
-
-    // Create a new user.
-    $process = new Process("drush @{$this->drushAlias} user-create --password={$pass} --mail=$name@example.com $name");
-    $process->setTimeout(3600);
-    $process->run();
-    if (!$process->isSuccessful()) {
-      throw new \RuntimeException($process->getErrorOutput());
-    }
-
-    $this->users[] = $this->user = (object) array(
-      'name' => $name,
-      'pass' => $pass,
+    $user = (object) array(
+      'name' => $this->randomString(8),
+      'pass' => $this->randomString(16),
       'role' => $role,
     );
+    $user->mail = "{$user->name}@example.com";
+
+
+    // Create a new user.
+    $this->getDriver()->userCreate($user);
+
+    $this->users[] = $this->user = $user;
 
     if ($role == 'authenticated user') {
       // Nothing to do.
     }
     else {
-      // Assign the given role.
-      $process = new Process("drush @{$this->drushAlias} user-add-role \"{$role}\" {$name}");
-      $process->setTimeout(3600);
-      $process->run();
-      if (!$process->isSuccessful()) {
-        throw new \RuntimeException($process->getErrorOutput());
-      }
+      $this->getDriver()->userAddRole($user, $role);
     }
 
     // Login.

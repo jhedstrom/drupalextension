@@ -4,5 +4,7 @@ parameters:
 services:
   drupal.driver.drush:
     class: %drupal.driver.drush.class%
+    arguments:
+      - %drupal.driver.drush.alias%
     tags:
       - { name: drupal.driver, alias: drush }
