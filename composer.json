@@ -17,6 +17,11 @@
     "bin-dir": "bin/"
   },
   "autoload": {
-    "psr-0": { "Drupal\\DrupalExtension": "src/" }
+    "psr-0": {
+      "Drupal\\Driver": "src/",
+      "Drupal\\Drupal": "src/",
+      "Drupal\\Exception": "src/",
+      "Drupal\\DrupalExtension": "src/"
+    }
   }
 }
