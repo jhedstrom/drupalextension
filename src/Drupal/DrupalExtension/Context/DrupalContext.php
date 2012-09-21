@@ -234,28 +234,23 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
    */
 
   /**
-   * Wrapper step definition to Mink Extension that additionally checks for a
-   * valid HTTP 200 response if available.
+   * Visit a given path, and additionally check for HTTP response code 200.
    *
    * @Given /^(?:that I|I) am at "(?P<path>[^"]*)"$/
    *
    * @throws UnsupportedDriverActionException
    */
   public function iAmAt($path) {
-    $return = array();
-    // Use the Mink Extenstion step definition.
-    $return[] = new Given("I am on \"$path\"");
+    $this->getSession()->visit($this->locatePath($path));
 
     // If available, add extra validation that this is a 200 response.
     try {
       $this->getSession()->getStatusCode();
-      $return[] = new Given('I should get a "200" HTTP response');
+      return new Given('I should get a "200" HTTP response');
     }
     catch (UnsupportedDriverActionException $e) {
       // Simply continue on, as this driver doesn't support HTTP response codes.
     }
-
-    return $return;
   }
 
   /**
