@@ -36,4 +36,16 @@ interface DriverInterface {
    *   The role name to assign.
    */
   public function userAddRole(\stdClass $user, $role);
+
+  /**
+   * Retrieve watchdog entries.
+   *
+   * @param integer $count
+   *   Number of entries to retrieve.
+   * @param string $type
+   *   Filter by watchdog type.
+   * @param string $severity
+   *   Filter by watchdog severity level.
+   */
+  public function fetchWatchdog($count = 10, $type = NULL, $severity = NULL);
 }

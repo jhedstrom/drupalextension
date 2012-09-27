@@ -82,6 +82,14 @@ class DrupalDriver implements DriverInterface {
   }
 
   /**
+   * Implements DriverInterface::fetchWatchdog().
+   */
+  public function fetchWatchdog($count = 10, $type = NULL, $severity = NULL) {
+    // @todo
+    throw new UnsupportedDriverActionException('No ability to access watchdog entries in %s', $this);
+  }
+
+  /**
    * Validate, and prepare environment for Drupal bootstrap.
    *
    * @throws BootstrapException

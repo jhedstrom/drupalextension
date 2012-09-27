@@ -87,6 +87,18 @@ class DrushDriver implements DriverInterface {
   }
 
   /**
+   * Implements DriverInterface::fetchWatchdog().
+   */
+  public function fetchWatchdog($count = 10, $type = NULL, $severity = NULL) {
+    $options = array(
+      '--count' => $count,
+      '--type' => $type,
+      '--severity' => $severity,
+    );
+    return $this->drush('watchdog-show', array(), $options);
+  }
+
+  /**
    * Execute a drush command.
    */
   public function drush($command, array $arguments = array(), array $options = array()) {
@@ -106,5 +118,6 @@ class DrushDriver implements DriverInterface {
     if (!$process->isSuccessful()) {
       throw new \RuntimeException($process->getErrorOutput());
     }
+    return $process->getOutput();
   }
 }

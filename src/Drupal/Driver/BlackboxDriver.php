@@ -44,4 +44,11 @@ class BlackboxDriver implements DriverInterface {
   public function userAddRole(\stdClass $user, $role) {
     throw new UnsupportedDriverActionException('No ability to add roles for a user in %s', $this);
   }
+
+  /**
+   * Implements DriverInterface::fetchWatchdog().
+   */
+  public function fetchWatchdog($count = 10, $type = NULL, $severity = NULL) {
+    throw new UnsupportedDriverActionException('No ability to access watchdog entries in %s', $this);
+  }
 }
