@@ -76,6 +76,22 @@ class Extension implements ExtensionInterface {
           useAttributeAsKey('key')->
           prototype('variable')->end()->
         end()->
+        arrayNode('text')->
+          children()->
+            scalarNode('log_in')->
+              defaultValue('Log in')->
+            end()->
+            scalarNode('log_out')->
+              defaultValue('Log out')->
+            end()->
+            scalarNode('password_field')->
+              defaultValue('Password')->
+            end()->
+            scalarNode('username_field')->
+              defaultValue('Username')->
+            end()->
+          end()->
+        end()->
         // Drupal drivers.
         arrayNode('blackbox')->
         end()->

@@ -15,4 +15,11 @@ interface DrupalAwareInterface {
    * Gets Drupal instance.
    */
   public function getDrupal();
+
+  /**
+   * Sets parameters provided for Drupal.
+   *
+   * @param array $parameters
+   */
+  public function setDrupalParameters(array $parameters);
 }

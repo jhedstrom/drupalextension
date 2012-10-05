@@ -21,12 +21,7 @@ use Behat\Mink\Driver\Selenium2Driver as Selenium2Driver;
  */
 class DrupalContext extends MinkContext implements DrupalAwareInterface {
 
-  private $drupal;
-
-  /**
-   * Array of parameters for the Drupal context.
-   */
-  public $parameters = array();
+  private $drupal, $drupalParameters;
 
   /**
    * Basic auth user and password.
@@ -57,6 +52,40 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
    */
   public function getDrupal() {
     return $this->drupal;
+  }
+
+  /**
+   * Set parameters provided for Drupal.
+   */
+  public function setDrupalParameters(array $parameters) {
+    $this->drupalParameters = $parameters;
+  }
+
+  /**
+   * Returns a specific Drupal parameter.
+   *
+   * @param string $name
+   *   Parameter name.
+   *
+   * @return mixed
+   */
+  public function getDrupalParameter($name) {
+    return isset($this->drupalParameters[$name]) ? $this->drupalParameters[$name] : NULL;
+  }
+
+  /**
+   * Returns a specific Drupal text value.
+   *
+   * @param string $name
+   *   Text value name, such as 'log_out', which corresponds to the default 'Log
+   *   out' link text.
+   */
+  public function getDrupalText($name) {
+    $text = $this->getDrupalParameter('text');
+    if (!isset($text[$name])) {
+      throw new \Exception(sprintf('No such Drupal string: %s', $name));
+    }
+    return $text[$name];
   }
 
   /**
@@ -187,9 +216,9 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
 
     $this->getSession()->visit($this->locatePath('/user'));
     $element = $this->getSession()->getPage();
-    $element->fillField('Username', $this->user->name);
-    $element->fillField('Password', $this->user->pass);
-    $submit = $element->findButton('Log in');
+    $element->fillField($this->getDrupalText('username_field'), $this->user->name);
+    $element->fillField($this->getDrupalText('password_field'), $this->user->pass);
+    $submit = $element->findButton($this->getDrupalText('log_in'));
     if (empty($submit)) {
       throw new \Exception('No submit button at ' . $this->getSession()->getCurrentUrl());
     }
@@ -219,7 +248,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
     // If a logout link is found, we are logged in. While not perfect, this is
     // how Drupal SimpleTests currently work as well.
     $element = $session->getPage();
-    return $element->findLink('Log out');
+    return $element->findLink($this->getDrupalText('log_out'));
   }
 
   /**

@@ -25,7 +25,7 @@ class DrupalAwareInitializer implements InitializerInterface, EventSubscriberInt
     $context->setDrupal($this->drupal);
 
     // Add all parameters to the context.
-    $context->parameters = $this->parameters;
+    $context->setDrupalParameters($this->parameters);
 
     // Add commonly used parameters as proper class variables.
     $context->basic_auth = $this->parameters['basic_auth'];
