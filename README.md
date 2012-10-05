@@ -56,3 +56,14 @@ The Drupal Extension is an integration layer between [Behat](http://behat.org), 
 	drush:
 	  alias: myDrushAlias
   ```
+
+1. Text strings, such as *Log out* or the *Username* field can be altered via `behat.yml` if they vary from the default values.
+
+   ```
+   Drupal\DrupalExtension\Extension:
+     text:
+	   log_out: "Sign out"
+	   log_in: "Sign in"
+	   password_field: "Enter your password"
+	   username_field: "Nickname"
+   ```
