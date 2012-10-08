@@ -77,6 +77,7 @@ class Extension implements ExtensionInterface {
           prototype('variable')->end()->
         end()->
         arrayNode('text')->
+          addDefaultsIfNotSet()->
           children()->
             scalarNode('log_in')->
               defaultValue('Log in')->
