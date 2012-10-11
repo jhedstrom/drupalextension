@@ -46,6 +46,9 @@ interface DriverInterface {
    *   Filter by watchdog type.
    * @param string $severity
    *   Filter by watchdog severity level.
+   *
+   * @return string
+   *   Watchdog output.
    */
   public function fetchWatchdog($count = 10, $type = NULL, $severity = NULL);
 }
