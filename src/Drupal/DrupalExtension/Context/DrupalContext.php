@@ -26,7 +26,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
   /**
    * Basic auth user and password.
    */
-  public $basic_auth = array();
+  public $basic_auth;
 
   /**
    * Current authenticated user.
@@ -101,7 +101,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
    * @BeforeScenario
    */
   public function beforeScenario($event) {
-    if (!empty($this->basic_auth)) {
+    if (isset($this->basic_auth)) {
       $driver = $this->getSession()->getDriver();
       if ($driver instanceof Selenium2Driver) {
         // Continue if this is a Selenium driver, since this is handled in

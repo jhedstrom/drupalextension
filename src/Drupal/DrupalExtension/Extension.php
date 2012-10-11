@@ -63,8 +63,10 @@ class Extension implements ExtensionInterface {
     $builder->
       children()->
         arrayNode('basic_auth')->
-          useAttributeAsKey('key')->
-          prototype('variable')->end()->
+          children()->
+            scalarNode('username')->end()->
+            scalarNode('password')->end()->
+          end()->
         end()->
         scalarNode('default_driver')->
           defaultValue('blackbox')->
