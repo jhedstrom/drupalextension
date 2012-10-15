@@ -80,8 +80,8 @@ class DrushDriver implements DriverInterface {
    */
   public function userAddRole(\stdClass $user, $role) {
     $arguments = array(
-      $user->name,
-      $role,
+      sprintf('"%s"', $role),
+      $user->name
     );
     $this->drush('user-add-role', $arguments);
   }
