@@ -290,6 +290,14 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
     return new Given("I am at \"$path\"");
   }
 
+  /**
+   * @Given /^(?:that I|I) am (?:on|at) the homepage$/
+   */
+  public function thatIAmOnTheHomepage() {
+    $path = $this->locatePath('/');
+    // Use Drupal Context 'I am at'.
+    return new Given("I am at \"$path\"");
+  }
 
   /**
    * @When /^I click "(?P<link>[^"]*)"$/
