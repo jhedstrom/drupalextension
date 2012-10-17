@@ -488,6 +488,44 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
   }
 
   /**
+   * Attempts to find a link in a table row containing giving text. This is for
+   * administrative pages such as the administer content types screen found at
+   * `admin/structure/types`.
+   *
+   * @Given /^I click "(?P<link>[^"]*)" in the "(?P<row_text>[^"]*)" row$/
+   */
+  public function iClickInTheRow($link, $row_text) {
+    $page = $this->getSession()->getPage();
+    $rows = $page->findAll('css', 'tr');
+    if (!$rows) {
+      throw new \Exception('No rows found on page.');
+    }
+    $row_found = FALSE;
+    foreach ($rows as $row) {
+      if (strpos($row->getText(), $row_text) !== FALSE) {
+        $row_found = TRUE;
+        // Found text in this row, now find link in a cell.
+        $cells = $row->findAll('css', 'td');
+        if (!$cells) {
+          throw new \Exception('No cells found in table row.');
+        }
+        foreach ($cells as $cell) {
+          if ($element = $cell->findLink($link)) {
+            $element->click();
+            return;
+          }
+        }
+      }
+    }
+    if ($row_found) {
+      throw new \Exception(sprintf('Found a row containing "%s", but no "%s" link.', $row_text, $link));
+    }
+    else {
+      throw new \Exception(sprintf('Failed to find a row containing "%s"', $row_text));
+    }
+  }
+
+  /**
    * @} End of defgroup "drupal extensions"
    */
 }
