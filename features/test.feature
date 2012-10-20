@@ -16,3 +16,8 @@ Feature: Test DrupalContext
     And I click "manage fields" in the "Article" row
     Then I should be on "admin/structure/types/manage/article/fields"
     And I should see text matching "Add new field"
+
+ Scenario: Test ability to find heading in a region
+   Given I am not logged in
+   When I am on the homepage
+   Then I should see the heading "User login" in the "left sidebar" region

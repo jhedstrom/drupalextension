@@ -363,6 +363,34 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
   }
 
   /**
+   * Find a heading in a specific region.
+   *
+   * @Then /^I should see the heading "(?P<heading>[^"]*)" in the "(?P<region>[^"]*)"(?:| region)$/
+   */
+  public function iShouldSeeTheHeadingInThe($heading, $region) {
+    $page = $this->getSession()->getPage();
+    $region = $page->find('region', $region);
+    if (!$region) {
+      throw new Exception("$region region was not found");
+    }
+
+    $elements = $region->findAll('css', 'h2');
+    $found = FALSE;
+    if (!empty($elements)) {
+      foreach ($elements as $element) {
+        $text = $element->getText();
+        if ($text === $heading) {
+          $found = TRUE;
+          continue;
+        }
+      }
+    }
+    if (!$found) {
+      throw new Exception("The heading \"$heading\" was not found in the \"$region\" region.");
+    }
+  }
+
+  /**
    * @Then /^(?:I|I should) see the text "(?P<text>[^"]*)"$/
    */
   public function iShouldSeeTheText($text) {
