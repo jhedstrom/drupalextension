@@ -12,6 +12,8 @@ use Drupal\Drupal,
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
+use Symfony\Component\Finder\Finder;
+
 class DrupalAwareInitializer implements InitializerInterface, EventSubscriberInterface {
   private $drupal, $parameters;
 
@@ -30,6 +32,15 @@ class DrupalAwareInitializer implements InitializerInterface, EventSubscriberInt
     // Add commonly used parameters as proper class variables.
     if (isset($this->parameters['basic_auth'])) {
       $context->basic_auth = $this->parameters['basic_auth'];
+    }
+
+    // Initialize any available sub-contexts.
+    if (isset($this->parameters['subcontext_paths'])) {
+      foreach ($this->parameters['subcontext_paths'] as $path) {
+        if ($subcontexts = $this->findAvailableSubContexts($path)) {
+          $context->initializeSubContexts($subcontexts);
+        }
+      }
     }
   }
 
@@ -86,5 +97,22 @@ class DrupalAwareInitializer implements InitializerInterface, EventSubscriberInt
     }
 
     $this->drupal->setDefaultDriverName($driver);
+  }
+
+  /**
+   * Find Sub-contexts matching a given pattern located at the passed path.
+   *
+   * @param string $path
+   *   Absolute path to the directory to search for sub-contexts.
+   * @param string $pattern
+   *   File pattern to match. Defaults to `*.bdd`.
+   */
+  public function findAvailableSubContexts($path, $pattern = '*.bdd') {
+    $finder = new Finder();
+    $iterator = $finder
+      ->files()
+      ->name($pattern)
+      ->in($path);
+    return iterator_to_array($iterator);
   }
 }

@@ -7,6 +7,7 @@ use Behat\Behat\Exception\PendingException;
 use Behat\Mink\Exception\UnsupportedDriverActionException;
 
 use Drupal\Drupal;
+use Drupal\DrupalExtension\Context\DrupalSubContextInterface;
 
 use Symfony\Component\Process\Process;
 
@@ -39,6 +40,30 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
    * Keep track of all users that are created so they can easily be removed.
    */
   private $users = array();
+
+  /**
+   * Initialize subcontexts.
+   *
+   * @param array $subcontexts
+   *   Array of sub-context class names to initiate, keyed by sub-context alias.
+   */
+  public function initializeSubContexts(array $subcontexts) {
+    foreach ($subcontexts as $path => $subcontext) {
+      // Load file.
+      require_once $path;
+    }
+
+    // @todo this seems overkill.
+    $classes = get_declared_classes();
+    $subcontext_classes = array();
+    foreach ($classes as $class) {
+      $reflect = new \ReflectionClass($class);
+      if ($reflect->implementsInterface('Drupal\DrupalExtension\Context\DrupalSubContextInterface')) {
+        $alias = $class::getAlias();
+        $this->useContext($alias, new $class);
+      }
+    }
+  }
 
   /**
    * Set Drupal instance.

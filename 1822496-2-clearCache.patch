@@ -1,0 +1,91 @@
+diff --git a/src/Drupal/Driver/BlackboxDriver.php b/src/Drupal/Driver/BlackboxDriver.php
+index 7be55a9..8a45472 100644
+--- a/src/Drupal/Driver/BlackboxDriver.php
++++ b/src/Drupal/Driver/BlackboxDriver.php
+@@ -51,4 +51,11 @@ class BlackboxDriver implements DriverInterface {
+   public function fetchWatchdog($count = 10, $type = NULL, $severity = NULL) {
+     throw new UnsupportedDriverActionException('No ability to access watchdog entries in %s', $this);
+   }
++
++  /**
++   * Implements DriverInterface::clearCache().
++   */
++  public function clearCache($type = NULL) {
++    throw new UnsupportedDriverActionException('No ability to clear Drupal caches in %s', $this);
++  }
+ }
+diff --git a/src/Drupal/Driver/DriverInterface.php b/src/Drupal/Driver/DriverInterface.php
+index e49c0ec..90f0de7 100644
+--- a/src/Drupal/Driver/DriverInterface.php
++++ b/src/Drupal/Driver/DriverInterface.php
+@@ -51,4 +51,13 @@ interface DriverInterface {
+    *   Watchdog output.
+    */
+   public function fetchWatchdog($count = 10, $type = NULL, $severity = NULL);
++
++  /**
++   * Clear Drupal caches.
++   *
++   * @param string $type
++   *   Type of cache to clear defaults to all.
++   */
++  public function clearCache($type = NULL);
++
+ }
+diff --git a/src/Drupal/Driver/DrupalDriver.php b/src/Drupal/Driver/DrupalDriver.php
+index 1d72bc7..b06d2e3 100644
+--- a/src/Drupal/Driver/DrupalDriver.php
++++ b/src/Drupal/Driver/DrupalDriver.php
+@@ -90,6 +90,14 @@ class DrupalDriver implements DriverInterface {
+   }
+ 
+   /**
++   * Implements DriverInterface::clearCache().
++   *       
++   */
++  public function clearCache($type = NULL) {
++      \drupal_flush_all_caches();
++  }
++
++  /**
+    * Validate, and prepare environment for Drupal bootstrap.
+    *
+    * @throws BootstrapException
+diff --git a/src/Drupal/Driver/DrushDriver.php b/src/Drupal/Driver/DrushDriver.php
+index 2bea64c..a841af6 100644
+--- a/src/Drupal/Driver/DrushDriver.php
++++ b/src/Drupal/Driver/DrushDriver.php
+@@ -99,6 +99,15 @@ class DrushDriver implements DriverInterface {
+   }
+ 
+   /**
++   * Implements DriverInterface::clearCache().
++   */
++  public function clearCache($type = 'all') {
++    $type = array($type);
++    return $this->drush('cache-clear', $type, array());
++  }
++
++
++  /**
+    * Execute a drush command.
+    */
+   public function drush($command, array $arguments = array(), array $options = array()) {
+diff --git a/src/Drupal/DrupalExtension/Context/DrupalContext.php b/src/Drupal/DrupalExtension/Context/DrupalContext.php
+index ede3963..517b488 100644
+--- a/src/Drupal/DrupalExtension/Context/DrupalContext.php
++++ b/src/Drupal/DrupalExtension/Context/DrupalContext.php
+@@ -554,6 +554,13 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
+   }
+ 
+   /**
++    * @Given /^the cache has been cleared$/
++    */
++    public function theCacheHasBeenCleared() {
++      $this->getDriver()->clearCache();
++    }
++
++  /**
+    * @} End of defgroup "drupal extensions"
+    */
+ }

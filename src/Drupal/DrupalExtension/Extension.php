@@ -116,6 +116,11 @@ class Extension implements ExtensionInterface {
             scalarNode('root')->end()->
           end()->
         end()->
+        // Subcontext paths.
+        arrayNode('subcontext_paths')->
+          useAttributeAsKey('key')->
+          prototype('variable')->end()->
+        end()->
       end()->
     end();
   }

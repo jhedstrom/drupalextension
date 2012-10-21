@@ -1,0 +1,69 @@
+diff --git a/features/test.feature b/features/test.feature
+index b4d3e1f..dd37433 100644
+--- a/features/test.feature
++++ b/features/test.feature
+@@ -17,7 +17,16 @@ Feature: Test DrupalContext
+     Then I should be on "admin/structure/types/manage/article/fields"
+     And I should see text matching "Add new field"
+ 
+- Scenario: Test ability to find heading in a region
+-   Given I am not logged in
+-   When I am on the homepage
+-   Then I should see the heading "User login" in the "left sidebar" region
++  Scenario: Test ability to find heading in a region
++    Given I am not logged in
++    When I am on the homepage
++    Then I should see the heading "User login" in the "left sidebar" region
++
++  Scenario: Clicking content in a region
++    Given I am on the homepage
++    And I click "Create new account" in the "first sidebar"
++    Then I should see "A valid e-mail address"
++
++  Scenario: Viewing content in a region
++    Given I am on the homepage
++    Then I should see "User login" in the "first sidebar"
+diff --git a/src/Drupal/DrupalExtension/Context/DrupalContext.php b/src/Drupal/DrupalExtension/Context/DrupalContext.php
+index 80a72a8..1c45dd2 100644
+--- a/src/Drupal/DrupalExtension/Context/DrupalContext.php
++++ b/src/Drupal/DrupalExtension/Context/DrupalContext.php
+@@ -391,6 +391,39 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
+   }
+ 
+   /**
++  * @When /^I (?:follow|click) "(?P<link>[^"]*)" in the "(?P<region>[^"]*)"$/
++  */
++ public function iFollowInThe($link, $region) {
++   // Find the region requested
++   $regionObj = $this->getSession()->getPage()->find('region', $region);
++   if (empty($regionObj)) {
++     throw new \Exception("The region '" . $region . "' is not configured");
++   }
++   // Find the link within the region
++   $linkObj = $regionObj->findLink($link);
++   if (empty($linkObj)) {
++     throw new \Exception("The link '" . $link . "' was not found in the region '" . $region . "'");
++   }
++   $linkObj->click();
++ }
++
++  /**
++   * @Then /^I should see "(?P<text>[^"]*)" in the "(?P<region>[^"]*)"$/
++   */
++  public function iShouldSeeInThe($text, $region) {
++    // Find the region requested
++    $regionObj = $this->getSession()->getPage()->find('region', $region);
++    if (empty($regionObj)) {
++      throw new \Exception("The region '" . $region . "' is not configured");
++    }
++    // Find the text within the region
++    $regionText = $regionObj->getText();
++    if (strpos($regionText, $text) === false) {
++      throw new \Exception("The text '" . $text . "' was not found in the region '" . $region . "'");
++    }
++  }
++
++  /**
+    * @Then /^(?:I|I should) see the text "(?P<text>[^"]*)"$/
+    */
+   public function iShouldSeeTheText($text) {
