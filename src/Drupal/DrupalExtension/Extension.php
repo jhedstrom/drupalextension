@@ -108,8 +108,13 @@ class Extension implements ExtensionInterface {
         end()->
         arrayNode('drush')->
           children()->
-            scalarNode('alias')->
+            scalarNode('alias')->end()->
           end()->
+        end()->
+        // Subcontext paths.
+        arrayNode('subcontext_paths')->
+          useAttributeAsKey('key')->
+          prototype('variable')->end()->
         end()->
       end()->
     end();
