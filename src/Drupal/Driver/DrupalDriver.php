@@ -2,12 +2,13 @@
 
 namespace Drupal\Driver;
 
-use Drupal\Exception\BootstrapException;
+use Drupal\Exception\BootstrapException,
+    Drupal\DrupalExtension\Context\DrupalSubContextFinderInterface;
 
 /**
  * Fully bootstraps Drupal and uses native API calls.
  */
-class DrupalDriver implements DriverInterface {
+class DrupalDriver implements DriverInterface, DrupalSubContextFinderInterface {
   private $drupalRoot;
   private $uri;
   private $bootstrapped = FALSE;
@@ -87,6 +88,33 @@ class DrupalDriver implements DriverInterface {
   public function fetchWatchdog($count = 10, $type = NULL, $severity = NULL) {
     // @todo
     throw new UnsupportedDriverActionException('No ability to access watchdog entries in %s', $this);
+  }
+
+  /**
+   * Implements DrupalSubContextFinderInterface::getPaths().
+   */
+  public function getSubContextPaths() {
+    // Insure system is bootstrapped.
+    if (!$this->isBootstrapped()) {
+      $this->bootstrap();
+    }
+
+    $paths = array();
+
+    // Get enabled modules.
+    $modules = \module_list();
+    $paths = array();
+    foreach ($modules as $module) {
+      $paths[] = $this->drupalRoot . DIRECTORY_SEPARATOR . \drupal_get_path('module', $module);
+    }
+
+    // Themes.
+    // @todo
+
+    // Active profile
+    // @todo
+
+    return $paths;
   }
 
   /**
