@@ -3,12 +3,13 @@
 namespace Drupal\Driver;
 
 use Drupal\Exception\BootstrapException,
-    Drupal\Exception\UnsupportedDriverActionException;
+    Drupal\Exception\UnsupportedDriverActionException,
+    Drupal\DrupalExtension\Context\DrupalSubContextFinderInterface;
 
 /**
  * Fully bootstraps Drupal and uses native API calls.
  */
-class DrupalDriver implements DriverInterface {
+class DrupalDriver implements DriverInterface, DrupalSubContextFinderInterface {
   private $drupalRoot;
   private $uri;
   private $bootstrapped = FALSE;
@@ -96,6 +97,33 @@ class DrupalDriver implements DriverInterface {
   public function clearCache($type = NULL) {
     // @todo call \drupal_flush_all_caches();
     throw new UnsupportedDriverActionException('No ability to clear the cache in %s', $this);
+  }
+
+  /**
+   * Implements DrupalSubContextFinderInterface::getPaths().
+   */
+  public function getSubContextPaths() {
+    // Insure system is bootstrapped.
+    if (!$this->isBootstrapped()) {
+      $this->bootstrap();
+    }
+
+    $paths = array();
+
+    // Get enabled modules.
+    $modules = \module_list();
+    $paths = array();
+    foreach ($modules as $module) {
+      $paths[] = $this->drupalRoot . DIRECTORY_SEPARATOR . \drupal_get_path('module', $module);
+    }
+
+    // Themes.
+    // @todo
+
+    // Active profile
+    // @todo
+
+    return $paths;
   }
 
   /**
