@@ -67,7 +67,7 @@ class DrupalAwareInitializer implements InitializerInterface, EventSubscriberInt
   /**
    * Configures default Drupal driver to use before each scenario or outline.
    *
-   * `@api1 tagged scenarios will get the `api_driver1 as the default driver.
+   * `@api` tagged scenarios will get the `api_driver` as the default driver.
    *
    * Other scenarios get the `default_driver` as the default driver.
    *
