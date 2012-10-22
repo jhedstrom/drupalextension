@@ -8,7 +8,8 @@ use Behat\Behat\Context\Initializer\InitializerInterface,
     Behat\Behat\Event\OutlineEvent;
 
 use Drupal\Drupal,
-    Drupal\DrupalExtension\Context\DrupalContext;
+    Drupal\DrupalExtension\Context\DrupalContext,
+    Drupal\DrupalExtension\Context\DrupalSubContextFinderInterface;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -35,8 +36,24 @@ class DrupalAwareInitializer implements InitializerInterface, EventSubscriberInt
     }
 
     // Initialize any available sub-contexts.
-    if (isset($this->parameters['subcontext_paths'])) {
-      foreach ($this->parameters['subcontext_paths'] as $path) {
+    if (isset($this->parameters['subcontexts'])) {
+      $paths = array();
+
+      // Drivers may specify paths to subcontexts.
+      if ($this->parameters['subcontexts']['autoload']) {
+        foreach ($this->drupal->getDrivers() as $name => $driver) {
+          if ($driver instanceof DrupalSubContextFinderInterface) {
+            $paths += $driver->getSubContextPaths();
+          }
+        }
+      }
+
+      // Additional subcontext locations may be specified manually in behat.yml.
+      if (isset($this->parameters['subcontexts']['paths'])) {
+        $paths += $this->parameters['subcontexts']['paths'];
+      }
+
+      foreach ($paths as $path) {
         if ($subcontexts = $this->findAvailableSubContexts($path)) {
           $context->initializeSubContexts($subcontexts);
         }

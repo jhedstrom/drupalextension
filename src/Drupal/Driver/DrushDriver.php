@@ -3,13 +3,15 @@
 namespace Drupal\Driver;
 
 use Drupal\Exception\BootstrapException,
-    Drupal\Exception\UnsupportedDriverActionException;
+    Drupal\Exception\UnsupportedDriverActionException,
+    Drupal\DrupalExtension\Context\DrupalSubContextFinderInterface;
+
 use Symfony\Component\Process\Process;
 
 /**
  * Implements DriverInterface.
  */
-class DrushDriver implements DriverInterface {
+class DrushDriver implements DriverInterface, DrupalSubContextFinderInterface {
   /**
    * Store a drush alias for tests requiring shell access.
    */
@@ -126,6 +128,40 @@ class DrushDriver implements DriverInterface {
     return $this->drush('cache-clear', $type, array());
   }
 
+  /**
+   * Implements DrupalSubContextFinderInterface::getPaths().
+   */
+  public function getSubContextPaths() {
+    $paths = array();
+    // @todo should only return paths if they are local to the machine.
+
+    // Get a list of enabled projects.
+    $options = array(
+      'status' => 'enabled',
+      'pipe' => NULL,
+    );
+    if ($projects = $this->drush('pm-list', array(), $options)) {
+      $projects = explode(PHP_EOL, trim($projects, PHP_EOL));
+      // @todo it would be nice if the drush pm-list command had an option to
+      // return this info. In the meantime, brute-force query it.
+      $query = '"' . sprintf("SELECT filename FROM {system} WHERE name in ('%s')", implode("', '", $projects)) . '"';
+      $options = array('db-prefix' => NULL);
+      $result = $this->drush('sql-query', array($query), $options);
+      $result = explode(PHP_EOL, trim($result, PHP_EOL));
+
+      // Remove SQL header.
+      array_shift($result);
+
+      // Strip off module filename and add base path.
+      $base_path = $this->getDrupalRoot();
+
+      foreach ($result as $path) {
+        $paths[] = dirname($base_path . DIRECTORY_SEPARATOR . $path);
+      }
+    }
+
+    return $paths;
+  }
 
   /**
    * Execute a drush command.
@@ -158,5 +194,22 @@ class DrushDriver implements DriverInterface {
    */
   public function createNode(\stdClass $node) {
     throw new UnsupportedDriverActionException('No ability to create nodes in %s', $this);
+  }
+
+  /**
+   * Helper function to derive the Drupal root directory from given alias.
+   */
+  public function getDrupalRoot($alias = NULL) {
+    if (!$alias) {
+      $alias = $this->alias;
+    }
+
+    // Use drush site-alias to find path.
+    $path = $this->drush('site-alias', array('@' . $alias), array('pipe' => NULL));
+
+    // Remove anything past the # that occasionally returns with site-alias.
+    $path = reset(explode('#', $path));
+
+    return $path;
   }
 }
