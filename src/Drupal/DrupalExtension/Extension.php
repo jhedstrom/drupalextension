@@ -112,9 +112,17 @@ class Extension implements ExtensionInterface {
           end()->
         end()->
         // Subcontext paths.
-        arrayNode('subcontext_paths')->
-          useAttributeAsKey('key')->
-          prototype('variable')->end()->
+        arrayNode('subcontexts')->
+          addDefaultsIfNotSet()->
+          children()->
+            arrayNode('paths')->
+              useAttributeAsKey('key')->
+              prototype('variable')->end()->
+            end()->
+            scalarNode('autoload')->
+              defaultValue(TRUE)->
+            end()->
+          end()->
         end()->
       end()->
     end();

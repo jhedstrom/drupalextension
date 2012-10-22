@@ -83,4 +83,11 @@ class Drupal {
 
     $this->defaultDriverName = $name;
   }
+
+  /**
+   * Returns all instantiated drivers.
+   */
+  public function getDrivers() {
+    return $this->drivers;
+  }
 }
