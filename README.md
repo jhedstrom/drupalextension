@@ -7,15 +7,15 @@ The Drupal Extension is an integration layer between [Behat](http://behat.org), 
 1. You'll need something resembling this `composer.json` file
 
   ```
-  {
-    "require": {
-      "drupal/drupal-extension": "*"
-  },
-    "minimum-stability": "dev",
-    "config": {
-      "bin-dir": "bin/"
+    {
+      "require": {
+        "drupal/drupal-extension": "*"
+    },
+      "minimum-stability": "dev",
+      "config": {
+        "bin-dir": "bin/"
+      }
     }
-  }
   ```
 
 1. Then run
@@ -29,16 +29,16 @@ The Drupal Extension is an integration layer between [Behat](http://behat.org), 
 1. At a minimum, your `behat.yml` file will look like this
 
   ```
-  default:
-    paths:
-      features: 'features'
-    extensions:
-      Behat\MinkExtension\Extension:
-        goutte: ~
-        selenium2: ~
-        base_url: http://git6site.devdrupal.org/
-      Drupal\DrupalExtension\Extension:
-        blackbox: ~
+    default:
+      paths:
+        features: 'features'
+      extensions:
+        Behat\MinkExtension\Extension:
+          goutte: ~
+          selenium2: ~
+          base_url: http://git6site.devdrupal.org/
+        Drupal\DrupalExtension\Extension:
+          blackbox: ~
   ```
 
 1. To see a list of available step definitions
