@@ -24,7 +24,11 @@ The Drupal Extension is an integration layer between [Behat](http://behat.org), 
   php composer.phar install
   ```
 
-  To download the required dependencies.
+  To download the required dependencies. If composer isn't installed
+
+  ```
+  curl -s https://getcomposer.org/installer | php
+  ```
 
 1. At a minimum, your `behat.yml` file will look like this
 
