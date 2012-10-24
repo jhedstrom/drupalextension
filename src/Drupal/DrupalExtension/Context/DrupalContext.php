@@ -147,7 +147,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
    * Override MinkContext::locatePath() to work around Selenium not supporting
    * basic auth.
    */
-  protected function locatePath($path) {
+  public function locatePath($path) {
     $driver = $this->getSession()->getDriver();
     if ($driver instanceof Selenium2Driver && isset($this->basic_auth)) {
       // Add the basic auth parameters to the base url. This only works for
