@@ -49,6 +49,10 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
    */
   public function initializeSubContexts(array $subcontexts) {
     foreach ($subcontexts as $path => $subcontext) {
+      if (!file_exists($path)) {
+        throw new \RuntimeException(sprintf('Subcontext path %s path does not exist.', $path));
+      }
+
       // Load file.
       require_once $path;
     }
