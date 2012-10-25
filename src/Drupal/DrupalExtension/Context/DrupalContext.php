@@ -371,7 +371,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
     $page = $this->getSession()->getPage();
     $region = $page->find('region', $region);
     if (!$region) {
-      throw new Exception("$region region was not found");
+      throw new \Exception("$region region was not found");
     }
 
     $elements = $region->findAll('css', 'h2');
