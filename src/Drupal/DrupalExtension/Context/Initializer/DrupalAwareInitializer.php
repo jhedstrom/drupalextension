@@ -123,13 +123,23 @@ class DrupalAwareInitializer implements InitializerInterface, EventSubscriberInt
    *   Absolute path to the directory to search for sub-contexts.
    * @param string $pattern
    *   File pattern to match. Defaults to `*.behat.inc`.
+   *
+   * @return array
+   *   An array of paths.
    */
   public function findAvailableSubContexts($path, $pattern = '*.behat.inc') {
+    $paths = array();
+
     $finder = new Finder();
     $iterator = $finder
       ->files()
       ->name($pattern)
       ->in($path);
-    return iterator_to_array($iterator);
+
+    foreach ($iterator as $found) {
+      $paths[$found->getRealPath()] = $found->getFileName();
+    }
+
+    return $paths;
   }
 }
