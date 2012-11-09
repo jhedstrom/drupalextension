@@ -13,9 +13,6 @@
     "behat/mink-extension": "*"
   },
   "minimum-stability": "dev",
-  "config": {
-    "bin-dir": "bin/"
-  },
   "autoload": {
     "psr-0": {
       "Drupal\\Driver": "src/",
