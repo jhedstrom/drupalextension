@@ -369,12 +369,12 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
    */
   public function iShouldSeeTheHeadingInThe($heading, $region) {
     $page = $this->getSession()->getPage();
-    $region = $page->find('region', $region);
-    if (!$region) {
+    $regionObj = $page->find('region', $region);
+    if (!$regionObj) {
       throw new \Exception("$region region was not found");
     }
 
-    $elements = $region->findAll('css', 'h2');
+    $elements = $regionObj->findAll('css', 'h2');
     $found = FALSE;
     if (!empty($elements)) {
       foreach ($elements as $element) {
@@ -386,7 +386,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
       }
     }
     if (!$found) {
-      throw new Exception("The heading \"$heading\" was not found in the \"$region\" region.");
+      throw new \Exception("The heading \"$heading\" was not found in the \"$region\" region.");
     }
   }
 
