@@ -367,7 +367,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
    *
    * @Then /^I should see the heading "(?P<heading>[^"]*)" in the "(?P<region>[^"]*)"(?:| region)$/
    */
-  public function iShouldSeeTheHeadingInThe($heading, $region) {
+  public function iShouldSeeTheHeadingInTheRegion($heading, $region) {
     $page = $this->getSession()->getPage();
     $regionObj = $page->find('region', $region);
     if (!$regionObj) {
@@ -386,7 +386,51 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
       }
     }
     if (!$found) {
-      throw new \Exception("The heading \"$heading\" was not found in the \"$region\" region.");
+      throw new \Exception(sprintf('The heading "%s" was not found in the "%s" region.', $heading, $region));
+    }
+  }
+
+  /**
+   * @When /^I (?:follow|click) "(?P<link>[^"]*)" in the "(?P<region>[^"]*)"(?:| region)$/
+   */
+  public function iFollowLinkInTheRegion($link, $region) {
+    // Find the region requested
+    $regionObj = $this->getSession()->getPage()->find('region', $region);
+    if (empty($regionObj)) {
+      throw new \Exception("The region '" . $region . "' is not configured");
+    }
+    // Find the link within the region
+    $linkObj = $regionObj->findLink($link);
+    if (empty($linkObj)) {
+      throw new \Exception(sprintf('The link "%s" was not found in the region "%s"', $link, $region));
+    }
+    $linkObj->click();
+  }
+
+  /**
+   * @Then /^I should see the link "(?P<link>[^"]*)" in the "(?P<region>[^"]*)"(?:| region)$/
+   */
+  public function assertLinkRegion($link, $region) {
+    $element = $this->getSession()->getPage()->find('region', $region);
+    $result = $element->findLink($link);
+    if (empty($result)) {
+      throw new \Exception(sprintf('No link to "%s" in the "%s" region on "%s"', $link, $region, $this->getSession()->getCurrentUrl()));
+    }
+  }
+
+  /**
+   * @Then /^I should see "(?P<text>[^"]*)" in the "(?P<region>[^"]*)"(?:| region)$/
+   */
+  public function iShouldTextSeeInTheRegion($text, $region) {
+    // Find the region requested
+    $regionObj = $this->getSession()->getPage()->find('region', $region);
+    if (empty($regionObj)) {
+      throw new \Exception("The region '" . $region . "' is not configured");
+    }
+    // Find the text within the region
+    $regionText = $regionObj->getText();
+    if (strpos($regionText, $text) === false) {
+      throw new \Exception("The text '" . $text . "' was not found in the region '" . $region . "'");
     }
   }
 
