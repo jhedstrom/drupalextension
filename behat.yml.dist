@@ -1,0 +1,12 @@
+default:
+  extensions:
+    Behat\MinkExtension\Extension:
+      goutte: ~
+      selenium2: ~
+      base_url: http://drupal.org
+    Drupal\DrupalExtension\Extension:
+      blackbox: ~
+      region_map:
+        content: "#content"
+        left header: "#header-left"
+        right sidebar: "#sidebar-first"
