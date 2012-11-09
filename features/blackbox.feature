@@ -3,7 +3,6 @@ Feature: Test DrupalContext
   As a developer
   I need to use the step definitions of this context
 
-  @api
   Scenario: Test the ability to find a heading in a region
     Given I am on the homepage
     When I click "Download & Extend"
