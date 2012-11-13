@@ -51,4 +51,13 @@ interface DriverInterface {
    *   Watchdog output.
    */
   public function fetchWatchdog($count = 10, $type = NULL, $severity = NULL);
+
+  /**
+   * Clear Drupal caches.
+   *
+   * @param string $type
+   *   Type of cache to clear defaults to all.
+   */
+  public function clearCache($type = NULL);
+
 }

@@ -99,6 +99,15 @@ class DrushDriver implements DriverInterface {
   }
 
   /**
+   * Implements DriverInterface::clearCache().
+   */
+  public function clearCache($type = 'all') {
+    $type = array($type);
+    return $this->drush('cache-clear', $type, array());
+  }
+
+
+  /**
    * Execute a drush command.
    */
   public function drush($command, array $arguments = array(), array $options = array()) {

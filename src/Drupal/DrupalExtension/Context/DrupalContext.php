@@ -598,6 +598,13 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
   }
 
   /**
+    * @Given /^the cache has been cleared$/
+    */
+    public function theCacheHasBeenCleared() {
+      $this->getDriver()->clearCache();
+    }
+
+  /**
    * @} End of defgroup "drupal extensions"
    */
 }

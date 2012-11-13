@@ -2,7 +2,8 @@
 
 namespace Drupal\Driver;
 
-use Drupal\Exception\BootstrapException;
+use Drupal\Exception\BootstrapException,
+    Drupal\Exception\UnsupportedDriverActionException;
 
 /**
  * Fully bootstraps Drupal and uses native API calls.
@@ -87,6 +88,14 @@ class DrupalDriver implements DriverInterface {
   public function fetchWatchdog($count = 10, $type = NULL, $severity = NULL) {
     // @todo
     throw new UnsupportedDriverActionException('No ability to access watchdog entries in %s', $this);
+  }
+
+  /**
+   * Implements DriverInterface::clearCache().
+   */
+  public function clearCache($type = NULL) {
+    // @todo call \drupal_flush_all_caches();
+    throw new UnsupportedDriverActionException('No ability to clear the cache in %s', $this);
   }
 
   /**

@@ -51,4 +51,11 @@ class BlackboxDriver implements DriverInterface {
   public function fetchWatchdog($count = 10, $type = NULL, $severity = NULL) {
     throw new UnsupportedDriverActionException('No ability to access watchdog entries in %s', $this);
   }
+
+  /**
+   * Implements DriverInterface::clearCache().
+   */
+  public function clearCache($type = NULL) {
+    throw new UnsupportedDriverActionException('No ability to clear Drupal caches in %s', $this);
+  }
 }
