@@ -72,6 +72,16 @@ The Drupal Extension is an integration layer between [Behat](http://behat.org), 
 	  root: /my/path/to/drupal
   ```
 
+1. Targeting content in specific regions can be accomplished once those regions have been defined.
+
+  ```
+  Drupal\DrupalExtension\Extension:
+    region_map:
+	  My region: "#css-selector"
+	  Content: "#main .region-content"
+	  Right sidebar: "#sidebar-second"
+  ```
+
 1. Text strings, such as *Log out* or the *Username* field can be altered via `behat.yml` if they vary from the default values.
 
    ```
