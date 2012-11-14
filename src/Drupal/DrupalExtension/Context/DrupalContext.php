@@ -420,7 +420,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
   }
 
   /**
-   * @Then /^I should see "(?P<text>[^"]*)" in the "(?P<region>[^"]*)"(?:| region)$/
+   * @Then /^I should see (?:the text |)"(?P<text>[^"]*)" in the "(?P<region>[^"]*)"(?:| region)$/
    */
   public function iShouldTextSeeInTheRegion($text, $region) {
     // Find the region requested
