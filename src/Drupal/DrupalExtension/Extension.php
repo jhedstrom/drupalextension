@@ -46,10 +46,14 @@ class Extension implements ExtensionInterface {
 
     if (isset($config['drush'])) {
       $loader->load('drivers/drush.yml');
-      if (!isset($config['drush']['alias'])) {
-        throw new \RuntimeException('Drush alias is required for the Drush driver.');
+      if (!isset($config['drush']['alias']) && !isset($config['drush']['root'])) {
+        throw new \RuntimeException('Drush `alias` or `root` path is required for the Drush driver.');
       }
+      $config['drush']['alias'] = isset($config['drush']['alias']) ? $config['drush']['alias'] : FALSE;
       $container->setParameter('drupal.driver.drush.alias', $config['drush']['alias']);
+
+      $config['drush']['root'] = isset($config['drush']['root']) ? $config['drush']['root'] : FALSE;
+      $container->setParameter('drupal.driver.drush.root', $config['drush']['root']);
     }
   }
 
@@ -108,7 +112,8 @@ class Extension implements ExtensionInterface {
         end()->
         arrayNode('drush')->
           children()->
-            scalarNode('alias')->
+            scalarNode('alias')->end()->
+            scalarNode('root')->end()->
           end()->
         end()->
       end()->

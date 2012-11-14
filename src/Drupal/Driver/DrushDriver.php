@@ -13,7 +13,13 @@ class DrushDriver implements DriverInterface {
   /**
    * Store a drush alias for tests requiring shell access.
    */
-  public $alias;
+  public $alias = FALSE;
+
+  /**
+   * Store the root path to a Drupal installation. This is an alternative to
+   * using drush aliases.
+   */
+  public $root = FALSE;
 
   /**
    * Track bootstrapping.
@@ -21,13 +27,26 @@ class DrushDriver implements DriverInterface {
   private $bootstrapped = FALSE;
 
   /**
-   * Set drush alias.
+   * Set drush alias or root path.
+   *
+   * @param string $alias
+   *   A drush alias
+   * @param string $root_path
+   *   The root path of the Drupal install. This is an alternative to using aliases.
    */
-  public function __construct($alias) {
+  public function __construct($alias = NULL, $root_path = NULL) {
+    if ($alias) {
     // Trim off the '@' symbol if it has been added.
     $alias = ltrim($alias, '@');
 
     $this->alias = $alias;
+    }
+    elseif ($root_path) {
+      $this->root = $root_path;
+    }
+    else {
+      throw new \BootstrapException('A drush alias or root path is required.');
+    }
   }
 
   /**
@@ -37,8 +56,8 @@ class DrushDriver implements DriverInterface {
     // Check that the given alias works.
     // @todo check that this is a functioning alias.
     // See http://drupal.org/node/1615450
-    if (!$this->alias) {
-      throw new BootstrapException('A drush alias is required.');
+    if (!$this->alias && !$this->root) {
+      throw new BootstrapException('A drush alias or root path is required.');
     }
     $this->bootstrapped = TRUE;
   }
@@ -122,7 +141,10 @@ class DrushDriver implements DriverInterface {
         $string_options .= ' --' . $name . '=' . $value;
       }
     }
-    $process = new Process("drush @{$this->alias} {$command} {$string_options} {$arguments}");
+
+    $alias = $this->alias ? "@{$this->alias}" : '--root=' . $this->root;
+
+    $process = new Process("drush {$alias} {$command} {$string_options} {$arguments}");
     $process->setTimeout(3600);
     $process->run();
     if (!$process->isSuccessful()) {

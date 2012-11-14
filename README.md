@@ -63,6 +63,15 @@ The Drupal Extension is an integration layer between [Behat](http://behat.org), 
 	  alias: myDrushAlias
   ```
 
+  Alternatively, the root path to the Drupal installation may be specified.
+
+  ```
+  Drupal\DrupalExtension\Extension:
+    blackbox: ~
+	drush:
+	  root: /my/path/to/drupal
+  ```
+
 1. Text strings, such as *Log out* or the *Username* field can be altered via `behat.yml` if they vary from the default values.
 
    ```
