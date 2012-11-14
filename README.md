@@ -12,7 +12,7 @@ The Drupal Extension is an integration layer between [Behat](http://behat.org), 
     {
       "require": {
         "drupal/drupal-extension": "*"
-    },
+      },
       "minimum-stability": "dev",
       "config": {
         "bin-dir": "bin/"
@@ -57,29 +57,29 @@ The Drupal Extension is an integration layer between [Behat](http://behat.org), 
 1. Features that require API access in order to setup the proper testing conditions can be tagged with `@api`. This will bootstrap the driver specified by the `api_driver` parameter (which defaults to the drush driver). When using the drush driver, this must be initialized via the `behat.yml` file.
 
   ```
-  Drupal\DrupalExtension\Extension:
-    blackbox: ~
-	drush:
-	  alias: myDrushAlias
+    Drupal\DrupalExtension\Extension:
+      blackbox: ~
+	  drush:
+	    alias: myDrushAlias
   ```
 
   Alternatively, the root path to the Drupal installation may be specified.
 
   ```
-  Drupal\DrupalExtension\Extension:
-    blackbox: ~
-	drush:
-	  root: /my/path/to/drupal
+    Drupal\DrupalExtension\Extension:
+      blackbox: ~
+	  drush:
+	    root: /my/path/to/drupal
   ```
 
 1. Targeting content in specific regions can be accomplished once those regions have been defined.
 
   ```
-  Drupal\DrupalExtension\Extension:
-    region_map:
-	  My region: "#css-selector"
-	  Content: "#main .region-content"
-	  Right sidebar: "#sidebar-second"
+    Drupal\DrupalExtension\Extension:
+      region_map:
+	    My region: "#css-selector"
+	    Content: "#main .region-content"
+	    Right sidebar: "#sidebar-second"
   ```
 
 1. Text strings, such as *Log out* or the *Username* field can be altered via `behat.yml` if they vary from the default values.
