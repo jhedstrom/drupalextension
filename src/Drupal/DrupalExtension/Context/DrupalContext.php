@@ -606,6 +606,23 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
   }
 
   /**
+   * @Given /^I am viewing (?:a|an) "(?P<type>[^"]*)" node with the title "(?P<title>[^"]*)"$/
+   * @Given /^(?:a|an) "(?P<type>[^"]*)" node with the title "(?P<title>[^"]*)"$/
+   */
+  public function createNode($type, $title) {
+    // @todo make this easily extensible.
+    $node = (object) array(
+      'title' => $title,
+      'type' => $type,
+      'body' => $this->randomString(255),
+    );
+    $saved = $this->getDriver()->createNode($node);
+
+    // Set internal page on the new node.
+    $this->getSession()->visit($this->locatePath('/node/' . $saved->nid));
+  }
+
+  /**
    * @} End of defgroup "drupal extensions"
    */
 }

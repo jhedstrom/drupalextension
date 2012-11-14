@@ -60,4 +60,13 @@ interface DriverInterface {
    */
   public function clearCache($type = NULL);
 
+  /**
+   * Create a node.
+   *
+   * @param object $node
+   *   Fully loaded node object.
+   * @return object
+   *   The node object including the node ID in the case of new nodes.
+   */
+  public function createNode(\stdClass $node);
 }

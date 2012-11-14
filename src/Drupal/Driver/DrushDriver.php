@@ -2,7 +2,8 @@
 
 namespace Drupal\Driver;
 
-use Drupal\Exception\BootstrapException;
+use Drupal\Exception\BootstrapException,
+    Drupal\Exception\UnsupportedDriverActionException;
 use Symfony\Component\Process\Process;
 
 /**
@@ -128,5 +129,12 @@ class DrushDriver implements DriverInterface {
       throw new \RuntimeException($process->getErrorOutput());
     }
     return $process->getOutput();
+  }
+
+  /**
+   * Implements DriverInterface::createNode().
+   */
+  public function createNode(\stdClass $node) {
+    throw new UnsupportedDriverActionException('No ability to create nodes in %s', $this);
   }
 }

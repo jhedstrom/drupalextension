@@ -58,4 +58,11 @@ class BlackboxDriver implements DriverInterface {
   public function clearCache($type = NULL) {
     throw new UnsupportedDriverActionException('No ability to clear Drupal caches in %s', $this);
   }
+
+  /**
+   * Implements DriverInterface::createNode().
+   */
+  public function createNode(\stdClass $node) {
+    throw new UnsupportedDriverActionException('No ability to create nodes in %s', $this);
+  }
 }

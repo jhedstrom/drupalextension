@@ -21,7 +21,12 @@ Feature: Test DrupalContext
     When I am on the homepage
     Then I should see the heading "User login" in the "left sidebar" region
 
-  Scenario: Test ability to clear cache.
+  Scenario: Test ability to clear cache
     Given the cache has been cleared
     When I am on the homepage
     Then I should get a "200" HTTP response
+
+  Scenario: Test ability to create nodes
+    Given I am logged in as a user with the "administrator" role
+    When I am viewing an "article" node with the title "My article"
+    Then I should see the heading "My article"
