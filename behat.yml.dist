@@ -1,4 +1,6 @@
 default:
+  paths:
+    bootstrap: vendor/behat/behat/features/bootstrap
   extensions:
     Behat\MinkExtension\Extension:
       goutte: ~

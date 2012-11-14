@@ -4,7 +4,7 @@ Feature: Ability to find Drupal sub-contexts
   I need to be able to define step-definitions within corresponding Drupal modules or projects
 
   Background:
-    Given a file named "/tmp/foo.bdd" with:
+    Given a file named "foo.behat.inc" with:
       """
       <?php
 
@@ -18,8 +18,8 @@ Feature: Ability to find Drupal sub-contexts
         }
 
         /**
-        * @Then /^I should be logged out$/
-        */
+         * @Then /^I should be logged out$/
+         */
         public function iShouldBeLoggedOut() {
           throw new PendingException();
         }
@@ -27,7 +27,7 @@ Feature: Ability to find Drupal sub-contexts
       """
 
   Scenario: Step-definitions in sub-contexts are available
-    Given a file "behat.yml" with:
+    Given a file named "behat.yml" with:
       """
       default:
         paths:
@@ -39,4 +39,10 @@ Feature: Ability to find Drupal sub-contexts
             base_url: http://drupal.org
           Drupal\DrupalExtension\Extension:
             blackbox: ~
-            subcontext_paths: { foo: '/tmp/foo' }
+            subcontext_paths: { foo: './' }
+      """
+   When I run "behat --no-ansi -dl"
+   Then the output should contain:
+      """
+      Then /^I should be logged out$/
+      """
