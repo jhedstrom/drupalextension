@@ -366,6 +366,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
    * Find a heading in a specific region.
    *
    * @Then /^I should see the heading "(?P<heading>[^"]*)" in the "(?P<region>[^"]*)"(?:| region)$/
+   * @Then /^I should see the "(?P<heading>[^"]*)" heading in the "(?P<region>[^"]*)"(?:| region)$/
    */
   public function iShouldSeeTheHeadingInTheRegion($heading, $region) {
     $page = $this->getSession()->getPage();
