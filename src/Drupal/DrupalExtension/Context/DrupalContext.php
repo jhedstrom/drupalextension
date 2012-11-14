@@ -436,6 +436,22 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
   }
 
   /**
+   * @Then /^I should not see (?:the text |)"(?P<text>[^"]*)" in the "(?P<region>[^"]*)"(?:| region)$/
+   */
+  public function assertTextNotRegion($text, $region) {
+    // Find the region requested
+    $regionObj = $this->getSession()->getPage()->find('region', $region);
+    if (empty($regionObj)) {
+      throw new \Exception("The region '" . $region . "' is not configured");
+    }
+    // Find the text within the region
+    $regionText = $regionObj->getText();
+    if (strpos($regionText, $text) !== FALSE) {
+      throw new \Exception(sprintf('The text "%s" was found in the region "%s"', $text, $region));
+    }
+  }
+
+  /**
    * @Then /^(?:I|I should) see the text "(?P<text>[^"]*)"$/
    */
   public function iShouldSeeTheText($text) {

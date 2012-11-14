@@ -17,3 +17,7 @@ Feature: Test DrupalContext
   Scenario: Viewing content in a region
     Given I am on the homepage
     Then I should see "Come for the software, stay for the community" in the "left header"
+
+  Scenario: Test ability to find text that should not appear in a region
+    Given I am on the homepage
+    Then I should not see the text "Proprietary software is cutting edge" in the "left header"
