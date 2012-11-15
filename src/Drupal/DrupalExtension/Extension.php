@@ -99,6 +99,13 @@ class Extension implements ExtensionInterface {
             end()->
           end()->
         end()->
+        arrayNode('selectors')->
+          children()->
+            scalarNode('message_selector')->end()->
+            scalarNode('error_message_selector')->end()->
+            scalarNode('success_message_selector')->end()->
+          end()->
+        end()->
         // Drupal drivers.
         arrayNode('blackbox')->
         end()->

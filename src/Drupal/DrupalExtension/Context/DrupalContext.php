@@ -14,6 +14,9 @@ use Behat\Behat\Context\Step\Given;
 use Behat\Behat\Context\Step\When;
 use Behat\Behat\Context\Step\Then;
 
+use Behat\Gherkin\Node\PyStringNode;
+use Behat\Gherkin\Node\TableNode;
+
 use Behat\Mink\Driver\Selenium2Driver as Selenium2Driver;
 
 /**
@@ -638,6 +641,198 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
     $this->getSession()->visit($this->locatePath('/node/' . $saved->nid));
   }
 
+  /**
+   * Checks if the current page contains the given error message
+   *
+   * @param $message
+   *   string The text to be checked
+   *
+   * @Then /^I should see the error message(?:| containing) "([^"]*)"$/
+   */
+  public function iShouldSeeTheErrorMessage($message) {
+    $errorSelector = $this->getDrupalSelector('error_message_selector');
+    $errorSelectorObj = $this->getSession()->getPage()->find("css", $errorSelector);
+    if(empty($errorSelectorObj)) {
+      throw new \Exception(sprintf("The page '%s' does not contain any error messages", $this->getSession()->getCurrentUrl()));
+    }
+    if (strpos(trim($errorSelectorObj->getText()), $message) === FALSE) {
+      throw new \Exception(sprintf("The page '%s' does not contain the error message '%s'", $this->getSession()->getCurrentUrl(), $message));
+    }
+  }
+
+  /**
+   * Checks if the current page contains the given set of error messages
+   *
+   * @param $messages
+   *   array An array of texts to be checked
+   *
+   * @Then /^I should see the following <error messages>$/
+   */
+  public function iShouldSeeTheFollowingErrorMessages(TableNode $messages) {
+    $steps = array();
+    foreach ($messages->getHash() as $key => $value) {
+      $message = trim($value['error messages']);
+      $steps[] = new Then("I should see the error message \"$message\"");
+    }
+    return $steps;
+  }
+
+  /**
+   * Checks if the current page does not contain the given error message
+   *
+   * @param $message
+   *   string The text to be checked
+   *
+   * @Given /^I should not see the error message(?:| containing) "([^"]*)"$/
+   */
+  public function iShouldNotSeeTheErrorMessage($message) {
+    $errorSelector = $this->getDrupalSelector('error_message_selector');
+    $errorSelectorObj = $this->getSession()->getPage()->find("css", $errorSelector);
+    if(!empty($errorSelectorObj)) {
+      if (strpos(trim($errorSelectorObj->getText()), $message) !== FALSE) {
+        throw new \Exception(sprintf("The page '%s' contains the error message '%s'", $this->getSession()->getCurrentUrl(), $message));
+      }
+    }
+  }
+
+  /**
+   * Checks if the current page does not contain the given set error messages
+   *
+   * @param $messages
+   *   array An array of texts to be checked
+   *
+   * @Then /^I should not see the following <error messages>$/
+   */
+  public function iShouldNotSeeTheFollowingErrorMessages(TableNode $messages) {
+    $steps = array();
+    foreach ($messages->getHash() as $key => $value) {
+      $message = trim($value['error messages']);
+      $steps[] = new Then("I should not see the error message \"$message\"");
+    }
+    return $steps;
+  }
+
+  /**
+   * Checks if the current page contains the given success message
+   *
+   * @param $message
+   *   string The text to be checked
+   *
+   * @Then /^I should see the success message(?:| containing) "([^"]*)"$/
+   */
+  public function iShouldSeeTheSuccessMessage($message) {
+    $successSelector = $this->getDrupalSelector('success_message_selector');
+    $successSelectorObj = $this->getSession()->getPage()->find("css", $successSelector);
+    if(empty($successSelectorObj)) {
+      throw new \Exception(sprintf("The page '%s' does not contain any success messages", $this->getSession()->getCurrentUrl()));
+    }
+    if (strpos(trim($successSelectorObj->getText()), $message) === FALSE) {
+      throw new \Exception(sprintf("The page '%s' does not contain the success message '%s'", $this->getSession()->getCurrentUrl(), $message));
+    }
+  }
+
+  /**
+   * Checks if the current page contains the given set of success messages
+   *
+   * @param $message
+   *   array An array of texts to be checked
+   *
+   * @Then /^I should see the following <success messages>$/
+   */
+  public function iShouldSeeTheFollowingSuccessMessages(TableNode $messages) {
+    $steps = array();
+    foreach ($messages->getHash() as $key => $value) {
+      $message = trim($value['success messages']);
+      $steps[] = new Then("I should see the success message \"$message\"");
+    }
+    return $steps;
+  }
+
+  /**
+   * Checks if the current page does not contain the given set of success message
+   *
+   * @param $message
+   *   string The text to be checked
+   *
+   * @Given /^I should not see the success message(?:| containing) "([^"]*)"$/
+   */
+  public function iShouldNotSeeTheSuccessMessage($message) {
+    $successSelector = $this->getDrupalSelector('success_message_selector');
+    $successSelectorObj = $this->getSession()->getPage()->find("css", $successSelector);
+    if(!empty($successSelectorObj)) {
+      if (strpos(trim($successSelectorObj->getText()), $message) !== FALSE) {
+        throw new \Exception(sprintf("The page '%s' contains the success message '%s'", $this->getSession()->getCurrentUrl(), $message));
+      }
+    }
+  }
+
+  /**
+   * Checks if the current page does not contain the given set of success messages
+   *
+   * @param $message
+   *   array An array of texts to be checked
+   *
+   * @Then /^I should not see the following <success messages>$/
+   */
+  public function iShouldNotSeeTheFollowingSuccessMessages(TableNode $messages) {
+    $steps = array();
+    foreach ($messages->getHash() as $key => $value) {
+      $message = trim($value['success messages']);
+      $steps[] = new Then("I should not see the success message \"$message\"");
+    }
+    return $steps;
+  }
+
+  /**
+   * Checks if the current page contain the given message
+   *
+   * @param $message
+   *   string The message to be checked
+   *
+   * @Then /^I should see the message(?:| containing) "([^"]*)"$/
+   */
+  public function iShouldSeeTheMessage($message) {
+    $msgSelector = $this->getDrupalSelector('message_selector');
+    $msgSelectorObj = $this->getSession()->getPage()->find("css", $msgSelector);
+    if(empty($msgSelectorObj)) {
+      throw new \Exception(sprintf("The page '%s' does not contain any messages", $this->getSession()->getCurrentUrl()));
+    }
+    if (strpos(trim($msgSelectorObj->getText()), $message) === FALSE) {
+      throw new \Exception(sprintf("The page '%s' does not contain the message '%s'", $this->getSession()->getCurrentUrl(), $message));
+    }
+  }
+
+  /**
+   * Checks if the current page does not contain the given message
+   *
+   * @param $message
+   *   string The message to be checked
+   *
+   * @Then /^I should not see the message(?:| containing) "([^"]*)"$/
+   */
+  public function iShouldNotSeeTheMessage($message) {
+    $msgSelector = $this->getDrupalSelector('message_selector');
+    $msgSelectorObj = $this->getSession()->getPage()->find("css", $msgSelector);
+    if(!empty($msgSelectorObj)) {
+      if (strpos(trim($msgSelectorObj->getText()), $message) !== FALSE) {
+        throw new \Exception(sprintf("The page '%s' contains the message '%s'", $this->getSession()->getCurrentUrl(), $message));
+      }
+    }
+  }
+
+  /**
+   * Returns a specific css selector.
+   *
+   * @param $name
+   *   string CSS selector name
+   */
+  public function getDrupalSelector($name) {
+    $text = $this->getDrupalParameter('selectors');
+    if (!isset($text[$name])) {
+      throw new \Exception(sprintf('No such selector configured: %s', $name));
+    }
+    return $text[$name];
+  }
   /**
    * @} End of defgroup "drupal extensions"
    */

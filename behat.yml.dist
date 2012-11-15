@@ -11,3 +11,7 @@ default:
         footer: "#footer"
         left header: "#header-left"
         right sidebar: "#column-right"
+      selectors:
+        message_selector: '.messages'
+        error_message_selector: '.messages.messages-error'
+        success_message_selector: '.messages.messages-status'
