@@ -39,7 +39,8 @@ Feature: Ability to find Drupal sub-contexts
             base_url: http://drupal.org
           Drupal\DrupalExtension\Extension:
             blackbox: ~
-            subcontext_paths: { foo: './' }
+            subcontexts:
+              paths: { foo: './' }
       """
    When I run "behat --no-ansi -dl"
    Then the output should contain:
