@@ -455,6 +455,25 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
   }
 
   /**
+   * Checks, if a button with id|name|title|alt|value exists or not and pressess the same
+   *
+   * @param $button
+   *   string The id|name|title|alt|value of the button to be pressed
+   * @param $region
+   *   string The region in which the button should be pressed
+   *
+   * @Given /^I press "(?P<button>[^"]*)" in the "(?P<region>[^"]*)"(?:| region)$/
+   */
+  public function assertPressButtonRegion($button, $region) {
+    $regionObj = $this->getSession()->getPage()->find('region', $region);
+    $buttonObj = $regionObj->findButton($button);
+    if (empty($buttonObj)) {
+      throw new \Exception(sprintf("The button '%s' was not found in the region '%s'", $button, $region));
+    }
+    $regionObj->pressButton($button);
+  }
+
+  /**
    * @Then /^(?:I|I should) see the text "(?P<text>[^"]*)"$/
    */
   public function iShouldSeeTheText($text) {
@@ -833,6 +852,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
     }
     return $text[$name];
   }
+
   /**
    * @} End of defgroup "drupal extensions"
    */

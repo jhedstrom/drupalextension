@@ -10,6 +10,7 @@ default:
         content: "#content"
         footer: "#footer"
         left header: "#header-left"
+        right header: "#header-right"
         right sidebar: "#column-right"
       selectors:
         message_selector: '.messages'

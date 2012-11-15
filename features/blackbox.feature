@@ -22,6 +22,11 @@ Feature: Test DrupalContext
     Given I am on the homepage
     Then I should not see the text "Proprietary software is cutting edge" in the "left header"
 
+  Scenario: Press a button in a region
+    Given I am on the homepage
+    When I press "Search" in the "right header" region
+    Then I should see the text "Filter by content type" in the "content" region
+
   Scenario: Error messages
    Given I am on "/user"
    When I press "Log in"
