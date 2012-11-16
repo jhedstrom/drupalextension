@@ -12,4 +12,4 @@ before_script:
   - curl http://getcomposer.org/installer | php
   - php composer.phar install --dev
 
-script: vendor/bin/behat -fprogress features/blackbox.feature
+script: vendor/bin/behat -fprogress --tags=~api
