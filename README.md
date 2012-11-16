@@ -92,3 +92,23 @@ The Drupal Extension is an integration layer between [Behat](http://behat.org), 
 	   password_field: "Enter your password"
 	   username_field: "Nickname"
    ```
+
+1. The Drupal Extension is capable of discovering additional step-definitions provided by subcontexts. Module authors can provide these in files following the naming convention of `foo.behat.inc`. Once that module is enabled, the Drupal Extension will load these.
+
+  Additional subcontexts can be loaded by either placing them in the bootstrap directory (typically `features/bootstrap`) or by adding them to `behat.yml`.
+
+  ```
+  Drupal\DrupalExtension\Extension:
+    subcontexts:
+	  paths:
+	    - "/path/to/additional/subcontexts"
+		- "/another/path"
+  ```
+
+  To disable automatic loading of subcontexts:
+
+  ```
+  Drupal\DrupalExtension\Extension:
+    subcontexts:
+	  autoload: 0
+  ```
