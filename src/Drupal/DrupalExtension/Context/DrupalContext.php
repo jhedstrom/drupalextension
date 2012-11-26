@@ -252,14 +252,14 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
     $element->fillField($this->getDrupalText('password_field'), $this->user->pass);
     $submit = $element->findButton($this->getDrupalText('log_in'));
     if (empty($submit)) {
-      throw new \Exception('No submit button at ' . $this->getSession()->getCurrentUrl());
+      throw new \Exception(sprintf("No submit button at %s", $this->getSession()->getCurrentUrl()));
     }
 
     // Log in.
     $submit->click();
 
     if (!$this->loggedIn()) {
-      throw new \Exception("Failed to log in as user \"{$this->user->name}\" with role \"{$this->user->role}\".");
+      throw new \Exception(sprintf("Failed to log in as user '%s' with role '%s'", $this->user->name, $this->user->role));
     }
   }
 
@@ -363,7 +363,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
     $element = $this->getSession()->getPage();
     $result = $element->findLink($link);
     if (empty($result)) {
-      throw new \Exception("No link to " . $link . " on " . $this->getSession()->getCurrentUrl());
+      throw new \Exception(sprintf("No link to '%s' on the page %s", $link, $this->getSession()->getCurrentUrl()));
     }
   }
 
@@ -374,7 +374,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
     $element = $this->getSession()->getPage();
     $result = $element->findLink($link);
     if ($result) {
-      throw new \Exception("The link " . $link . " was present on " . $this->getSession()->getCurrentUrl() . " and was not supposed to be.");
+      throw new \Exception(sprintf("The link '%s' was present on the page %s and was not supposed to be", $link, $this->getSession()->getCurrentUrl()));
     }
   }
 
@@ -391,7 +391,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
         }
       }
     }
-    throw new \Exception("The text " . $heading . " was not found in any heading " . $this->getSession()->getCurrentUrl());
+    throw new \Exception(sprintf("The text '%s' was not found in any heading on the page %s", $heading, $this->getSession()->getCurrentUrl()));
   }
 
   /**
@@ -404,23 +404,22 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
     $page = $this->getSession()->getPage();
     $regionObj = $page->find('region', $region);
     if (!$regionObj) {
-      throw new \Exception("$region region was not found");
+      throw new \Exception(sprintf("The region '%s' is not configured", $region));
     }
 
-    $elements = $regionObj->findAll('css', 'h2');
-    $found = FALSE;
-    if (!empty($elements)) {
-      foreach ($elements as $element) {
-        $text = $element->getText();
-        if ($text === $heading) {
-          $found = TRUE;
-          continue;
+
+    foreach (array('h1', 'h2', 'h3', 'h4', 'h5', 'h6') as $tag) {
+      $elements = $regionObj->findAll('css', $tag);
+      if (!empty($elements)) {
+        foreach ($elements as $element) {
+          if (trim($element->getText()) === $heading) {
+            return;
+          }
         }
       }
     }
-    if (!$found) {
-      throw new \Exception(sprintf('The heading "%s" was not found in the "%s" region.', $heading, $region));
-    }
+
+    throw new \Exception(sprintf('The heading "%s" was not found in the "%s" region on the page %s', $heading, $region, $this->getSession()->getCurrentUrl()));
   }
 
   /**
@@ -430,12 +429,12 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
     // Find the region requested
     $regionObj = $this->getSession()->getPage()->find('region', $region);
     if (empty($regionObj)) {
-      throw new \Exception("The region '" . $region . "' is not configured");
+      throw new \Exception(sprintf("The region '%s' is not configured", $region));
     }
     // Find the link within the region
     $linkObj = $regionObj->findLink($link);
     if (empty($linkObj)) {
-      throw new \Exception(sprintf('The link "%s" was not found in the region "%s"', $link, $region));
+      throw new \Exception(sprintf('The link "%s" was not found in the region "%s" on the page %s', $link, $region, $this->getSession()->getCurrentUrl()));
     }
     $linkObj->click();
   }
@@ -447,7 +446,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
     $element = $this->getSession()->getPage()->find('region', $region);
     $result = $element->findLink($link);
     if (empty($result)) {
-      throw new \Exception(sprintf('No link to "%s" in the "%s" region on "%s"', $link, $region, $this->getSession()->getCurrentUrl()));
+      throw new \Exception(sprintf('No link to "%s" in the "%s" region on the page %s', $link, $region, $this->getSession()->getCurrentUrl()));
     }
   }
 
@@ -458,12 +457,12 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
     // Find the region requested
     $regionObj = $this->getSession()->getPage()->find('region', $region);
     if (empty($regionObj)) {
-      throw new \Exception("The region '" . $region . "' is not configured");
+      throw new \Exception(sprintf("The region '%s' is not configured", $region));
     }
     // Find the text within the region
     $regionText = $regionObj->getText();
     if (strpos($regionText, $text) === false) {
-      throw new \Exception("The text '" . $text . "' was not found in the region '" . $region . "'");
+      throw new \Exception(sprintf("The text '%s' was not found in the region '%s' on the page %s", $text, $region, $this->getSession()->getCurrentUrl()));
     }
   }
 
@@ -474,12 +473,12 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
     // Find the region requested
     $regionObj = $this->getSession()->getPage()->find('region', $region);
     if (empty($regionObj)) {
-      throw new \Exception("The region '" . $region . "' is not configured");
+      throw new \Exception(sprintf("The region '%s' is not configured", $region));
     }
     // Find the text within the region
     $regionText = $regionObj->getText();
     if (strpos($regionText, $text) !== FALSE) {
-      throw new \Exception(sprintf('The text "%s" was found in the region "%s"', $text, $region));
+      throw new \Exception(sprintf('The text "%s" was found in the region "%s" on the page %s', $text, $region, $this->getSession()->getCurrentUrl()));
     }
   }
 
@@ -497,7 +496,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
     $regionObj = $this->getSession()->getPage()->find('region', $region);
     $buttonObj = $regionObj->findButton($button);
     if (empty($buttonObj)) {
-      throw new \Exception(sprintf("The button '%s' was not found in the region '%s'", $button, $region));
+      throw new \Exception(sprintf("The button '%s' was not found in the region '%s' on the page %s", $button, $region, $this->getSession()->getCurrentUrl()));
     }
     $regionObj->pressButton($button);
   }
@@ -558,12 +557,12 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
     $element = $this->getSession()->getPage();
     $radiobutton = $element->findById($id);
     if ($radiobutton === NULL) {
-      throw new \Exception('Neither label nor id was found');
+      throw new \Exception(sprintf('The radio button with id "%s" was not found on the page %s', $id, $this->getSession()->getCurrentUrl()));
     }
     $value = $radiobutton->getAttribute('value');
     $labelonpage = $radiobutton->getParent()->getText();
     if ($label != $labelonpage) {
-      throw new \Exception("Button with $id has label $labelonpage instead of $label.");
+      throw new \Exception(sprintf("Button with id '%s' has label '%s' instead of '%s' on the page %s", $id, $labelonpage, $label, $this->getSession()->getCurrentUrl()));
     }
     $radiobutton->selectOption($value, FALSE);
   }
@@ -638,7 +637,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
     $page = $this->getSession()->getPage();
     $rows = $page->findAll('css', 'tr');
     if (!$rows) {
-      throw new \Exception('No rows found on page.');
+      throw new \Exception(sprintf('No rows found on the page %s', $this->getSession()->getCurrentUrl()));
     }
     $row_found = FALSE;
     foreach ($rows as $row) {
@@ -647,7 +646,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
         // Found text in this row, now find link in a cell.
         $cells = $row->findAll('css', 'td');
         if (!$cells) {
-          throw new \Exception('No cells found in table row.');
+          throw new \Exception(sprintf('No cells found in table row on the page %s', $this->getSession()->getCurrentUrl()));
         }
         foreach ($cells as $cell) {
           if ($element = $cell->findLink($link)) {
@@ -658,10 +657,10 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
       }
     }
     if ($row_found) {
-      throw new \Exception(sprintf('Found a row containing "%s", but no "%s" link.', $row_text, $link));
+      throw new \Exception(sprintf('Found a row containing "%s", but no "%s" link on the page %s', $row_text, $link, $this->getSession()->getCurrentUrl()));
     }
     else {
-      throw new \Exception(sprintf('Failed to find a row containing "%s"', $row_text));
+      throw new \Exception(sprintf('Failed to find a row containing "%s" on the page %s', $row_text, $this->getSession()->getCurrentUrl()));
     }
   }
 
