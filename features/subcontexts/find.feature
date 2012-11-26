@@ -18,9 +18,9 @@ Feature: Ability to find Drupal sub-contexts
         }
 
         /**
-         * @Then /^I should be logged out$/
+         * @Then /^I should have a subcontext definition$/
          */
-        public function iShouldBeLoggedOut() {
+        public function assertSubContextDefinition() {
           throw new PendingException();
         }
       }
@@ -45,5 +45,5 @@ Feature: Ability to find Drupal sub-contexts
    When I run "behat --no-ansi -dl"
    Then the output should contain:
       """
-      Then /^I should be logged out$/
+      Then /^I should have a subcontext definition$/
       """
