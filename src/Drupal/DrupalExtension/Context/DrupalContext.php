@@ -378,20 +378,19 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
       throw new \Exception(sprintf("The region '%s' is not configured", $region));
     }
 
-    $elements = $regionObj->findAll('css', 'h2');
-    $found = FALSE;
-    if (!empty($elements)) {
-      foreach ($elements as $element) {
-        $text = $element->getText();
-        if ($text === $heading) {
-          $found = TRUE;
-          continue;
+
+    foreach (array('h1', 'h2', 'h3', 'h4', 'h5', 'h6') as $tag) {
+      $elements = $regionObj->findAll('css', $tag);
+      if (!empty($elements)) {
+        foreach ($elements as $element) {
+          if (trim($element->getText()) === $heading) {
+            return;
+          }
         }
       }
     }
-    if (!$found) {
-      throw new \Exception(sprintf('The heading "%s" was not found in the "%s" region on the page %s', $heading, $region, $this->getSession()->getCurrentUrl()));
-    }
+
+    throw new \Exception(sprintf('The heading "%s" was not found in the "%s" region on the page %s', $heading, $region, $this->getSession()->getCurrentUrl()));
   }
 
   /**
