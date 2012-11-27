@@ -1,3 +1,4 @@
+# These tests are written to run against a default Drupal 7 standard install site.
 @api
 Feature: Test DrupalContext
   In order to prove the Drupal context is working properly
@@ -6,8 +7,8 @@ Feature: Test DrupalContext
 
   Scenario: Test the functionality of drush aliases
     Given I am logged in as a user with the "authenticated user" role
-    When I click "Log out"
-    Then I should be logged out
+    When I click "My account"
+    Then I should see the heading "History"
 
   Scenario: Test the ability to target links within table rows
     Given I am logged in as a user with the "administrator" role
