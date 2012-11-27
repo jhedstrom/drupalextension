@@ -20,7 +20,7 @@ install:
 
 before_script:
   # Setup a stock Drupal 7 install to test api abilities.
-  - drush --quiet --yes --root=$PWD/drupal site-install --db-url=sqlite://db.sqlite
+  - drush --debug --yes --root=$PWD/drupal site-install --db-url=sqlite://db.sqlite
   - drush --quiet --yes --root=$PWD/drupal runserver :8888 > /dev/null 2>&1 &
   - sleep 4s
   # Replace DRUPALROOT in our behat file with the current path.
