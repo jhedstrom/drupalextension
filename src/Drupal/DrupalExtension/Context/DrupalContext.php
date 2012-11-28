@@ -404,7 +404,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
     $page = $this->getSession()->getPage();
     $regionObj = $page->find('region', $region);
     if (!$regionObj) {
-      throw new \Exception(sprintf("The region '%s' is not configured", $region));
+      throw new \Exception(sprintf('No region "%s" found on the page %s.', $region, $this->getSession()->getCurrentUrl()));
     }
 
 
@@ -429,7 +429,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
     // Find the region requested
     $regionObj = $this->getSession()->getPage()->find('region', $region);
     if (empty($regionObj)) {
-      throw new \Exception(sprintf("The region '%s' is not configured", $region));
+      throw new \Exception(sprintf('No region "%s" found on the page %s.', $region, $this->getSession()->getCurrentUrl()));
     }
     // Find the link within the region
     $linkObj = $regionObj->findLink($link);
@@ -444,6 +444,9 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
    */
   public function assertLinkRegion($link, $region) {
     $element = $this->getSession()->getPage()->find('region', $region);
+    if (!$element) {
+      throw new \Exception(sprintf('No region "%s" found on the page %s.', $region, $this->getSession()->getCurrentUrl()));
+    }
     $result = $element->findLink($link);
     if (empty($result)) {
       throw new \Exception(sprintf('No link to "%s" in the "%s" region on the page %s', $link, $region, $this->getSession()->getCurrentUrl()));
@@ -457,7 +460,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
     // Find the region requested
     $regionObj = $this->getSession()->getPage()->find('region', $region);
     if (empty($regionObj)) {
-      throw new \Exception(sprintf("The region '%s' is not configured", $region));
+      throw new \Exception(sprintf('No region "%s" found on the page %s.', $region, $this->getSession()->getCurrentUrl()));
     }
     // Find the text within the region
     $regionText = $regionObj->getText();
@@ -473,7 +476,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
     // Find the region requested
     $regionObj = $this->getSession()->getPage()->find('region', $region);
     if (empty($regionObj)) {
-      throw new \Exception(sprintf("The region '%s' is not configured", $region));
+      throw new \Exception(sprintf('No region "%s" found on the page %s.', $region, $this->getSession()->getCurrentUrl()));
     }
     // Find the text within the region
     $regionText = $regionObj->getText();

@@ -16,3 +16,18 @@ default:
         message_selector: '.messages'
         error_message_selector: '.messages.messages-error'
         success_message_selector: '.messages.messages-status'
+
+# Separate profile for testing using the api driver. This assumes a
+# stock Drupal 7 install.
+api:
+  extensions:
+    Behat\MinkExtension\Extension:
+      base_url: http://localhost:8888
+    Drupal\DrupalExtension\Extension:
+      api_driver: "drupal"
+      drupal:
+        # Change this to the absolute path to Drupal install.
+        drupal_root: "|DRUPALROOT|"
+      region_map:
+        left sidebar: "#sidebar-first"
+        content: "#content"
