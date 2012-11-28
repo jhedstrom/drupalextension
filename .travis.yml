@@ -35,4 +35,6 @@ before_script:
 
 script:
   - vendor/bin/behat -fprogress --tags=~api
-  - vendor/bin/behat -fprogress --profile=api --tags="@api&&~@drush"
+# @todo these are failing until
+# https://github.com/fabpot/Goutte/pull/86 is committed to Goutte.
+#  - vendor/bin/behat -fprogress --profile=api --tags="@api&&~@drush"
