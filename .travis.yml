@@ -15,7 +15,7 @@ mysql:
 
 install:
   - curl http://getcomposer.org/installer | php
-  - php composer.phar install --dev
+  - php composer.phar install
   - "mysql -e 'create database drupal;'"
   - sudo apt-get update > /dev/null
   - sudo apt-get --quiet=2 install php5-cgi php5-curl php5-gd php5-mysql > /dev/null
