@@ -27,6 +27,7 @@ before_script:
   - export DRUPALROOT="$PWD/drupal"
   - sed -i 's#|DRUPALROOT|#'"$DRUPALROOT"'#g' behat.yml.dist
   - cat behat.yml.dist
+  - cat drupal/sites/default/settings.php
 
 script:
   - vendor/bin/behat -fprogress --tags=~api
