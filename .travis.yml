@@ -18,7 +18,7 @@ install:
   - php composer.phar install --dev
   - "mysql -e 'create database drupal;'"
   - sudo apt-get update > /dev/null
-  - sudo apt-get --quiet=2 install php5-cgi php5-curl php5-gd > /dev/null
+  - sudo apt-get --quiet=2 install php5-cgi php5-curl php5-gd php5-mysql > /dev/null
   - pear channel-discover pear.drush.org
   - pear install drush/drush
   - phpenv rehash
