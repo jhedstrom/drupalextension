@@ -30,4 +30,4 @@ api:
         drupal_root: "|DRUPALROOT|"
       region_map:
         left sidebar: "#sidebar-first"
-        content: "content"
+        content: "#content"
