@@ -26,8 +26,8 @@ install:
 
 before_script:
   # Setup a stock Drupal 7 install to test api abilities.
-  - drush --debug --yes --root=$PWD/drupal site-install --db-url=mysql://root:@127.0.0.1/drupal
-  - drush --quiet --yes --root=$PWD/drupal runserver :8888 > /dev/null 2>&1 &
+  - drush --quiet --yes --root=$PWD/drupal site-install --db-url=mysql://root:@127.0.0.1/drupal
+  - drush --debug --yes --root=$PWD/drupal runserver :8888 &
   - sleep 4s
   # Replace DRUPALROOT in our behat file with the current path.
   - export DRUPALROOT="$PWD/drupal"
