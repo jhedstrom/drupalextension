@@ -5,12 +5,19 @@
   "keywords": ["drupal", "web", "test"],
   "homepage": "http://drupal.org/project/drupalextension",
   "license": "GPL-2.0+",
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/christianchristensen/Goutte"
+    }
+  ],
   "require": {
     "behat/mink": ">=1.4.0, <1.5.0",
     "behat/mink-goutte-driver": "*",
     "behat/mink-selenium2-driver": "*",
     "behat/behat": ">=2.4.3, <2.5.0",
-    "behat/mink-extension": "*"
+    "behat/mink-extension": "*",
+    "fabpot/goutte": "dev-master#fa7284b"
   },
   "minimum-stability": "dev",
   "autoload": {
