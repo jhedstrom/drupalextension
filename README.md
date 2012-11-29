@@ -98,17 +98,17 @@ The Drupal Extension is an integration layer between [Behat](http://behat.org), 
   Additional subcontexts can be loaded by either placing them in the bootstrap directory (typically `features/bootstrap`) or by adding them to `behat.yml`.
 
   ```
-  Drupal\DrupalExtension\Extension:
-    subcontexts:
-	  paths:
-	    - "/path/to/additional/subcontexts"
-		- "/another/path"
+    Drupal\DrupalExtension\Extension:
+      subcontexts:
+	    paths:
+	      - "/path/to/additional/subcontexts"
+		  - "/another/path"
   ```
 
   To disable automatic loading of subcontexts:
 
   ```
-  Drupal\DrupalExtension\Extension:
-    subcontexts:
-	  autoload: 0
+    Drupal\DrupalExtension\Extension:
+      subcontexts:
+	    autoload: 0
   ```
