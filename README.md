@@ -71,6 +71,14 @@ The Drupal Extension is an integration layer between [Behat](http://behat.org), 
 	  drush:
 	    root: /my/path/to/drupal
   ```
+  If you want to use native API calls instead of drush API you should configure your behat.yml as follows:
+
+  ```
+  Drupal\DrupalExtension\Extension:
+    api_driver: "drupal"
+    drupal:
+      drupal_root: "/absolute/path/to/drupal"
+  ```
 
 1. Targeting content in specific regions can be accomplished once those regions have been defined.
 
