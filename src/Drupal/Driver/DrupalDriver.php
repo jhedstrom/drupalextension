@@ -20,6 +20,7 @@ class DrupalDriver implements DriverInterface, DrupalSubContextFinderInterface {
   public function __construct($drupalRoot, $uri) {
     $this->drupalRoot = realpath($drupalRoot);
     $this->uri = $uri;
+    $this->getDrupalVersion();
   }
 
   /**
@@ -128,6 +129,39 @@ class DrupalDriver implements DriverInterface, DrupalSubContextFinderInterface {
     // @todo
 
     return $paths;
+  }
+
+  /**
+   * Determine Drupal version.
+   *
+   * @throws BootstrapException
+   *
+   * @see drush_drupal_version()
+   */
+  function getDrupalVersion() {
+    if (!isset($this->drupalVersion)) {
+      // Support 6, 7 and 8.
+      $version_constant_paths = array(
+        // Drupal 6.
+        '/modules/system/system.module',
+        // Drupal 7.
+        '/includes/bootstrap.inc',
+        // Drupal 8.
+        '/core/includes/bootstrap',
+      );
+      foreach ($version_constant_paths as $path) {
+        if (file_exists($this->drupalRoot . $path)) {
+          require_once $this->drupalRoot . $path;
+        }
+      }
+      if (defined('VERSION')) {
+        $this->drupalVersion = VERSION;
+      }
+      else {
+        throw new BootstrapException('Unable to determine Drupal core version. Supported versions are 6, 7, and 8.');
+      }
+    }
+    return $this->drupalVersion;
   }
 
   /**
