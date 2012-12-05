@@ -35,4 +35,4 @@ before_script:
 
 script:
   - vendor/bin/behat -fprogress --tags=~api
-  - vendor/bin/behat -fprogress --profile=api --tags="@api&&~@drush"
+  - vendor/bin/behat -fprogress --profile=api --tags="@api"

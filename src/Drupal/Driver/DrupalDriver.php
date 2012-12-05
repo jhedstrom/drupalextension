@@ -32,6 +32,7 @@ class DrupalDriver implements DriverInterface, DrupalSubContextFinderInterface {
     $this->validateDrupalSite();
 
     // Bootstrap Drupal.
+    chdir(DRUPAL_ROOT);
     drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
     $this->bootstrapped = TRUE;
   }
@@ -95,8 +96,11 @@ class DrupalDriver implements DriverInterface, DrupalSubContextFinderInterface {
    * Implements DriverInterface::clearCache().
    */
   public function clearCache($type = NULL) {
-    // @todo call \drupal_flush_all_caches();
-    throw new UnsupportedDriverActionException('No ability to clear the cache in %s', $this);
+    // Need to change into the Drupal root directory or the registry explodes.
+    $current_path = getcwd();
+    chdir(DRUPAL_ROOT);
+    \drupal_flush_all_caches();
+    chdir($current_path);
   }
 
   /**

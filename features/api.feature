@@ -22,7 +22,6 @@ Feature: Test DrupalContext
     When I am on the homepage
     Then I should see the heading "User login" in the "left sidebar" region
 
-  @drush
   Scenario: Test ability to clear cache
     Given the cache has been cleared
     When I am on the homepage
