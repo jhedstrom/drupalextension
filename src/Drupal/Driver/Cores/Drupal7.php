@@ -6,11 +6,15 @@ namespace Drupal\Driver\Cores;
  * Drupal 7 core.
  */
 class Drupal7 implements CoreInterface {
+  private $drupalRoot;
+  private $uri;
+
   /**
    * Set drupalRoot.
    */
-  public function __construct($drupalRoot) {
+  public function __construct($drupalRoot, $uri = 'default') {
     $this->drupalRoot = $drupalRoot;
+    $this->uri = $uri;
   }
 
   /**

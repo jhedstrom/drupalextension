@@ -13,8 +13,6 @@ use Drupal\Driver\Cores\CoreInterface,
  * Fully bootstraps Drupal and uses native API calls.
  */
 class DrupalDriver implements DriverInterface, DrupalSubContextFinderInterface {
-  private $drupalRoot;
-  private $uri;
   private $bootstrapped = FALSE;
   public  $core;
 

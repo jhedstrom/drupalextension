@@ -10,8 +10,11 @@ interface CoreInterface {
    * Instantiate the core interface.
    *
    * @param string $drupalRoot
+   *
+   * @param string $uri
+   *   URI that is accessing Drupal. Defaults to 'default'.
    */
-  public function __construct($drupalRoot);
+  public function __construct($drupalRoot, $uri = 'default');
 
   /**
    * Bootstrap Drupal.
