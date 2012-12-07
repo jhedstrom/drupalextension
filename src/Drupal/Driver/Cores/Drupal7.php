@@ -22,9 +22,11 @@ class Drupal7 implements CoreInterface {
    */
   public function bootstrap() {
     // Validate, and prepare environment for Drupal bootstrap.
-    define('DRUPAL_ROOT', $this->drupalRoot);
-    require_once DRUPAL_ROOT . '/includes/bootstrap.inc';
-    $this->validateDrupalSite();
+    if (!defined('DRUPAL_ROOT')) {
+      define('DRUPAL_ROOT', $this->drupalRoot);
+      require_once DRUPAL_ROOT . '/includes/bootstrap.inc';
+      $this->validateDrupalSite();
+    }
 
     // Bootstrap Drupal.
     chdir(DRUPAL_ROOT);
