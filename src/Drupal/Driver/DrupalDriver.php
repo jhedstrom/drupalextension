@@ -6,6 +6,9 @@ use Drupal\Exception\BootstrapException,
     Drupal\Exception\UnsupportedDriverActionException,
     Drupal\DrupalExtension\Context\DrupalSubContextFinderInterface;
 
+use Drupal\Driver\Cores\CoreInterface,
+    Drupal\Driver\Cores\Drupal7 as Drupal7;
+
 /**
  * Fully bootstraps Drupal and uses native API calls.
  */
@@ -13,6 +16,7 @@ class DrupalDriver implements DriverInterface, DrupalSubContextFinderInterface {
   private $drupalRoot;
   private $uri;
   private $bootstrapped = FALSE;
+  public  $core;
 
   /**
    * Set Drupal root and URI.
@@ -20,22 +24,18 @@ class DrupalDriver implements DriverInterface, DrupalSubContextFinderInterface {
   public function __construct($drupalRoot, $uri) {
     $this->drupalRoot = realpath($drupalRoot);
     $this->uri = $uri;
-    $this->getDrupalVersion();
+    $version = $this->getDrupalVersion();
+    // @todo figure out why entire namespace is required here.
+    $class = '\Drupal\Driver\Cores\Drupal' . $version;
+    $core = new $class($this->drupalRoot);
+    $this->setCore($core);
   }
 
   /**
    * Implements DriverInterface::bootstrap().
    */
   public function bootstrap() {
-    // Validate, and prepare environment for Drupal bootstrap.
-    define('DRUPAL_ROOT', $this->drupalRoot);
-    require_once DRUPAL_ROOT . '/includes/bootstrap.inc';
-    $this->validateDrupalSite();
-
-    // Bootstrap Drupal.
-    chdir(DRUPAL_ROOT);
-    drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
-    $this->bootstrapped = TRUE;
+    $this->getCore()->bootstrap();
   }
 
   /**
@@ -132,7 +132,7 @@ class DrupalDriver implements DriverInterface, DrupalSubContextFinderInterface {
   }
 
   /**
-   * Determine Drupal version.
+   * Determine major Drupal version.
    *
    * @throws BootstrapException
    *
@@ -155,69 +155,39 @@ class DrupalDriver implements DriverInterface, DrupalSubContextFinderInterface {
         }
       }
       if (defined('VERSION')) {
-        $this->drupalVersion = VERSION;
+        $version = VERSION;
       }
       else {
         throw new BootstrapException('Unable to determine Drupal core version. Supported versions are 6, 7, and 8.');
+      }
+
+      // Extract the major version from VERSION.
+      $version_parts = explode('.', $version);
+      if (is_numeric($version_parts[0])) {
+        $this->drupalVersion = (integer) $version_parts[0];
+      }
+      else {
+        throw new BootstrapException(sprintf('Unable to extract major Drupal core version from version string %s.', $version));
       }
     }
     return $this->drupalVersion;
   }
 
   /**
-   * Validate, and prepare environment for Drupal bootstrap.
+   * Instantiate and set Drupal core class.
    *
-   * @throws BootstrapException
-   *
-   * @see _drush_bootstrap_drupal_site_validate()
+   * @param $version
+   *   Drupal major version.
    */
-  private function validateDrupalSite() {
-    if ('default' !== $this->uri) {
-      // Fake the necessary HTTP headers that Drupal needs:
-      $drupal_base_url = parse_url($this->uri);
-      // If there's no url scheme set, add http:// and re-parse the url
-      // so the host and path values are set accurately.
-      if (!array_key_exists('scheme', $drupal_base_url)) {
-        $drush_uri = 'http://' . $this->uri;
-        $drupal_base_url = parse_url($this->uri);
-      }
-      // Fill in defaults.
-      $drupal_base_url += array(
-        'path' => NULL,
-        'host' => NULL,
-        'port' => NULL,
-      );
-      $_SERVER['HTTP_HOST'] = $drupal_base_url['host'];
+  public function setCore(CoreInterface $core) {
+    $this->core = $core;
+  }
 
-      if ($drupal_base_url['port']) {
-        $_SERVER['HTTP_HOST'] .= ':' . $drupal_base_url['port'];
-      }
-      $_SERVER['SERVER_PORT'] = $drupal_base_url['port'];
-
-      if (array_key_exists('path', $drupal_base_url)) {
-        $_SERVER['PHP_SELF'] = $drupal_base_url['path'] . '/index.php';
-      }
-      else {
-        $_SERVER['PHP_SELF'] = '/index.php';
-      }
-    }
-    else {
-      $_SERVER['HTTP_HOST'] = 'default';
-      $_SERVER['PHP_SELF'] = '/index.php';
-    }
-
-    $_SERVER['REQUEST_URI'] = $_SERVER['SCRIPT_NAME'] = $_SERVER['PHP_SELF'];
-    $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
-    $_SERVER['REQUEST_METHOD']  = NULL;
-
-    $_SERVER['SERVER_SOFTWARE'] = NULL;
-    $_SERVER['HTTP_USER_AGENT'] = NULL;
-
-    $conf_path = conf_path(TRUE, TRUE);
-    $conf_file = $this->drupalRoot . "/$conf_path/settings.php";
-    if (!file_exists($conf_file)) {
-      throw new BootstrapException(sprintf('Could not find a Drupal settings.php file at "%s"', $conf_file));
-    }
+  /**
+   * Return current core.
+   */
+  public function getCore() {
+    return $this->core;
   }
 
   /**
