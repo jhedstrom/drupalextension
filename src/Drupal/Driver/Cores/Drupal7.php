@@ -35,6 +35,17 @@ class Drupal7 implements CoreInterface {
   }
 
   /**
+   * Implements CoreInterface::clearCache().
+   */
+  public function clearCache() {
+    // Need to change into the Drupal root directory or the registry explodes.
+    $current_path = getcwd();
+    chdir(DRUPAL_ROOT);
+    \drupal_flush_all_caches();
+    chdir($current_path);
+  }
+
+  /**
    * Impelements CoreInterface::validateDrupalSite().
    */
   public function validateDrupalSite() {

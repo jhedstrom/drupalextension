@@ -22,6 +22,11 @@ interface CoreInterface {
   public function bootstrap();
 
   /**
+   * Clear caches.
+   */
+  public function clearCache();
+
+  /**
    * Validate, and prepare environment for Drupal bootstrap.
    *
    * @throws BootstrapException
