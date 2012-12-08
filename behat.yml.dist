@@ -1,4 +1,6 @@
 default:
+  filters:
+    tags: "~@api"
   extensions:
     Behat\MinkExtension\Extension:
       goutte: ~
@@ -20,6 +22,8 @@ default:
 # Separate profile for testing using the api driver. This assumes a
 # stock Drupal 7 install.
 api:
+  filters:
+    tags: "@api"
   extensions:
     Behat\MinkExtension\Extension:
       base_url: http://localhost:8888

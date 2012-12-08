@@ -29,5 +29,5 @@ before_script:
   - sed -i 's#|DRUPALROOT|#'"$DRUPALROOT"'#g' behat.yml.dist
 
 script:
-  - vendor/bin/behat -fprogress --tags=~api
-  - vendor/bin/behat -fprogress --profile=api --tags="@api"
+  - vendor/bin/behat -fprogress
+  - vendor/bin/behat -fprogress --profile=api
