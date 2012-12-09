@@ -107,7 +107,7 @@ class DrupalDriver implements DriverInterface, DrupalSubContextFinderInterface {
    * Implements DrupalSubContextFinderInterface::getPaths().
    */
   public function getSubContextPaths() {
-    // Insure system is bootstrapped.
+    // Ensure system is bootstrapped.
     if (!$this->isBootstrapped()) {
       $this->bootstrap();
     }
