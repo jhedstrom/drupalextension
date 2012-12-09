@@ -1,122 +1,105 @@
-Drupal Extension
-====================
+DrupalExtension
+===============
 
-The Drupal Extension is an integration layer between [Behat](http://behat.org), [Mink Extension](http://extensions.behat.org/mink/), and Drupal. It provides step definitions for common testing scenarios specific to Drupal sites.
+ A Behat extension providing step definitions for Drupal and related projects.
 
-[![Build Status](https://travis-ci.org/jhedstrom/drupalextension.png)](https://travis-ci.org/jhedstrom/drupalextension)
+ [![Build Status](https://travis-ci.org/jhedstrom/drupalextension.png)](https://travis-ci.org/jhedstrom/drupalextension)
 
-### Using the Drupal Extension for testing your own projects.
-1. You'll need something resembling this `composer.json` file
 
-  ```
-    {
-      "require": {
-        "drupal/drupal-extension": "*"
-      },
-      "minimum-stability": "dev",
-      "config": {
-        "bin-dir": "bin/"
-      }
-    }
-  ```
+Installation
+------------
 
-1. Then run
+  Get [Composer](http://getcomposer.org/download/) and start a new project.
+   
+    ./composer.phar init
 
-  ```
-  php composer.phar install
-  ```
+  When asked for minimum stability, specify `dev`, when asked for dependencies,
+  specify `drupal/drupal-extension`.
 
-  To download the required dependencies. If composer isn't installed
 
-  ```
-  curl -s https://getcomposer.org/installer | php
-  ```
+Usage
+-----
 
-1. At a minimum, your `behat.yml` file will look like this
+  Copy behat.yml.dist into your project and modify for your needs.
 
-  ```
-    default:
-      paths:
-        features: 'features'
-      extensions:
-        Behat\MinkExtension\Extension:
-          goutte: ~
-          selenium2: ~
-          base_url: http://git6site.devdrupal.org/
-        Drupal\DrupalExtension\Extension:
-          blackbox: ~
-  ```
+  Begin writing [Behat features](http://docs.behat.org/).
 
-1. To see a list of available step definitions
 
-  ```
-  bin/behat -dl
-  ```
-1. Start adding your feature files to the `features` directory of your repository.
+API Usage
+---------
 
-1. Features that require API access in order to setup the proper testing conditions can be tagged with `@api`. This will bootstrap the driver specified by the `api_driver` parameter (which defaults to the drush driver). When using the drush driver, this must be initialized via the `behat.yml` file.
+  Some step definitions will require direct API access in order to manipulate
+  Drupal; the `@api` tag will bootstrap the driver specified by the
+  `api_driver` parameter in `behat.yml` (or Drush by default).
 
-  ```
+  The Drush driver requires a working site alias or a local drupal path to be
+  specified in your Behat configuration (`behat.yml`):
+
     Drupal\DrupalExtension\Extension:
       blackbox: ~
-	  drush:
-	    alias: myDrushAlias
-  ```
+      drush:
+        alias: myDrushAlias
 
-  Alternatively, the root path to the Drupal installation may be specified.
+  or
 
-  ```
     Drupal\DrupalExtension\Extension:
       blackbox: ~
-	  drush:
-	    root: /my/path/to/drupal
-  ```
-  If you want to use native API calls instead of drush API you should configure your behat.yml as follows:
+      drush:
+        root: /my/path/to/drupal
 
-  ```
-  Drupal\DrupalExtension\Extension:
-    api_driver: "drupal"
-    drupal:
-      drupal_root: "/absolute/path/to/drupal"
-  ```
+  Alternatively, if Drupal is in the local filesystem, you can use the `drupal`
+  driver, which calls Drupal APIs directly, but requires you specify the path
+  to Drupal:
 
-1. Targeting content in specific regions can be accomplished once those regions have been defined.
+    Drupal\DrupalExtension\Extension:
+      api_driver: "drupal"
+      drupal:
+        drupal_root: "path/to/drupal"
 
-  ```
+
+Configuration
+-------------
+
+  Some steps take advantage of nice names for Drupal page regions. These can
+  be specified in a `region_map`:
+
     Drupal\DrupalExtension\Extension:
       region_map:
-	    My region: "#css-selector"
-	    Content: "#main .region-content"
-	    Right sidebar: "#sidebar-second"
-  ```
+        My region: "#css-selector"
+        Content: "#main .region-content"
+        Right sidebar: "#sidebar-second"
 
-1. Text strings, such as *Log out* or the *Username* field can be altered via `behat.yml` if they vary from the default values.
 
-   ```
-   Drupal\DrupalExtension\Extension:
-     text:
-	   log_out: "Sign out"
-	   log_in: "Sign in"
-	   password_field: "Enter your password"
-	   username_field: "Nickname"
-   ```
+  If your site has changed the text of certain core UI strings, such as "Log
+  out" or "Username" you inform DrupalExtension so related steps will continue
+  to work:
 
-1. The Drupal Extension is capable of discovering additional step-definitions provided by subcontexts. Module authors can provide these in files following the naming convention of `foo.behat.inc`. Once that module is enabled, the Drupal Extension will load these.
+    Drupal\DrupalExtension\Extension:
+      text:
+        log_out: "Sign out"
+        log_in: "Sign in"
+        password_field: "Enter your password"
+        username_field: "Nickname"
 
-  Additional subcontexts can be loaded by either placing them in the bootstrap directory (typically `features/bootstrap`) or by adding them to `behat.yml`.
 
-  ```
+Step Autodiscovery
+------------------
+
+  Drupal module authors may provide additional step definitions using a
+  subcontext inside a `<module>.behat.inc` within their project; these will
+  automatically discovered and added, making those steps available for use.
+
+  You may disable this behavior in `behat.yml`:
+
     Drupal\DrupalExtension\Extension:
       subcontexts:
-	    paths:
-	      - "/path/to/additional/subcontexts"
-		  - "/another/path"
-  ```
+        autoload: 0
+  
+  Further subcontexts can be loaded by either placing them in the bootstrap
+  directory (typically `features/bootstrap`) or by adding them to behat.yml:
 
-  To disable automatic loading of subcontexts:
-
-  ```
     Drupal\DrupalExtension\Extension:
       subcontexts:
-	    autoload: 0
-  ```
+        paths:
+          - "/path/to/additional/subcontexts"
+          - "/another/path"
