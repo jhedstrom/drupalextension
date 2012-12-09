@@ -4,35 +4,27 @@ php:
   - 5.3
   - 5.4
 
-branches:
-  only:
-    - master
-
 mysql:
   database: drupal
   username: root
   encoding: utf8
 
 install:
-  - curl http://getcomposer.org/installer | php
-  - php composer.phar install
+  - composer install
   - "mysql -e 'create database drupal;'"
   - sudo apt-get update > /dev/null
   - sudo apt-get --quiet=2 install php5-cgi php5-curl php5-gd php5-mysql > /dev/null
   - pear channel-discover pear.drush.org
   - pear install drush/drush
   - phpenv rehash
-  - drush --quiet dl drupal --drupal-project-rename
 
 before_script:
   # Setup a stock Drupal 7 install to test api abilities.
+  - drush --quiet dl drupal --drupal-project-rename
   - drush --quiet --yes --root=$PWD/drupal site-install --db-url=mysql://root:@127.0.0.1/drupal
   - drush --quiet --yes --root=$PWD/drupal runserver :8888 > /dev/null 2>&1 &
   - sleep 4s
-  # Replace DRUPALROOT in our behat file with the current path.
-  - export DRUPALROOT="$PWD/drupal"
-  - sed -i 's#|DRUPALROOT|#'"$DRUPALROOT"'#g' behat.yml.dist
 
 script:
-  - vendor/bin/behat -fprogress --tags=~api
-  - vendor/bin/behat -fprogress --profile=api --tags="@api"
+  - vendor/bin/behat -fprogress
+  - vendor/bin/behat -fprogress --profile=api

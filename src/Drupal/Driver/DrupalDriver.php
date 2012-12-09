@@ -18,7 +18,7 @@ class DrupalDriver implements DriverInterface, DrupalSubContextFinderInterface {
    * Set Drupal root and URI.
    */
   public function __construct($drupalRoot, $uri) {
-    $this->drupalRoot = $drupalRoot;
+    $this->drupalRoot = realpath($drupalRoot);
     $this->uri = $uri;
   }
 
@@ -107,7 +107,7 @@ class DrupalDriver implements DriverInterface, DrupalSubContextFinderInterface {
    * Implements DrupalSubContextFinderInterface::getPaths().
    */
   public function getSubContextPaths() {
-    // Insure system is bootstrapped.
+    // Ensure system is bootstrapped.
     if (!$this->isBootstrapped()) {
       $this->bootstrap();
     }
