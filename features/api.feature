@@ -59,3 +59,13 @@ Feature: DrupalContext
     Given I am logged in as a user with the "administrator" role
     When I am viewing a "tags" term with the name "My tag"
     Then I should see the heading "My tag"
+
+  Scenario: Create many terms
+    Given "tags" terms:
+    | name    |
+    | Tag one |
+    | Tag two |
+    And I am logged in as a user with the "administrator" role
+    When I go to "admin/structure/taxonomy/tags"
+    Then I should see "Tag one"
+    And I should see "Tag two"

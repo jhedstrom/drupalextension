@@ -719,6 +719,17 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
   }
 
   /**
+   * @Given /^"(?P<vocabulary>[^"]*)" terms:$/
+   */
+  public function createTerms($vocabulary, TableNode $termsTable) {
+    foreach ($termsTable->getHash() as $termsHash) {
+      $term = (object) $termsHash;
+      $term->vocabulary_machine_name = $vocabulary;
+      $this->getDriver()->createTerm($term);
+    }
+  }
+
+  /**
    * Checks if the current page contains the given error message
    *
    * @param $message
