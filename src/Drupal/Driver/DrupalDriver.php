@@ -18,7 +18,7 @@ class DrupalDriver implements DriverInterface, DrupalSubContextFinderInterface {
    * Set Drupal root and URI.
    */
   public function __construct($drupalRoot, $uri) {
-    $this->drupalRoot = $drupalRoot;
+    $this->drupalRoot = realpath($drupalRoot);
     $this->uri = $uri;
   }
 

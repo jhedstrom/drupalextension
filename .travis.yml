@@ -24,9 +24,6 @@ before_script:
   - drush --quiet --yes --root=$PWD/drupal site-install --db-url=mysql://root:@127.0.0.1/drupal
   - drush --quiet --yes --root=$PWD/drupal runserver :8888 > /dev/null 2>&1 &
   - sleep 4s
-  # Replace DRUPALROOT in our behat file with the current path.
-  - export DRUPALROOT="$PWD/drupal"
-  - sed -i 's#|DRUPALROOT|#'"$DRUPALROOT"'#g' behat.yml.dist
 
 script:
   - vendor/bin/behat -fprogress

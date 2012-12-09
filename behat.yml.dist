@@ -31,7 +31,7 @@ api:
       api_driver: "drupal"
       drupal:
         # Change this to the absolute path to Drupal install.
-        drupal_root: "|DRUPALROOT|"
+        drupal_root: "drupal"
       region_map:
         left sidebar: "#sidebar-first"
         content: "#content"
