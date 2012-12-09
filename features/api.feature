@@ -38,3 +38,8 @@ Feature: DrupalContext
     When I run cron
     And am on "admin/reports/dblog"
     Then I should see the link "Cron run completed"
+
+  Scenario: Create a term
+    Given I am logged in as a user with the "administrator" role
+    When I am viewing a "tags" term with the name "My tag"
+    Then I should see the heading "My tag"

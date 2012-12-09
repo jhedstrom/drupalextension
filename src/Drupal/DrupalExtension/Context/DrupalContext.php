@@ -691,6 +691,23 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
   }
 
   /**
+   * @Given /^I am viewing (?:a|an) "(?P<vocabulary>[^"]*)" term with the name "(?P<name>[^"]*)"$/
+   * @Given /^(?:a|an) "(?P<vocabulary>[^"]*)" term with the name "(?P<name>[^"]*)"$/
+   */
+  public function createTerm($vocabulary, $name) {
+    // @todo make this easily extensible.
+    $term = (object) array(
+      'name' => $name,
+      'vocabulary_machine_name' => $vocabulary,
+      'description' => $this->randomString(255),
+    );
+    $saved = $this->getDriver()->createTerm($term);
+
+    // Set internal page on the new node.
+    $this->getSession()->visit($this->locatePath('/taxonomy/term/' . $saved->tid));
+  }
+
+  /**
    * Checks if the current page contains the given error message
    *
    * @param $message
