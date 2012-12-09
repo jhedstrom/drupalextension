@@ -691,6 +691,17 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
   }
 
   /**
+   * @Given /^"(?P<type>[^"]*)" nodes:$/
+   */
+  public function createNodes($type, TableNode $nodesTable) {
+    foreach ($nodesTable->getHash() as $nodeHash) {
+      $node = (object) $nodeHash;
+      $node->type = $type;
+      $this->getDriver()->createNode($node);
+    }
+  }
+
+  /**
    * @Given /^I am viewing (?:a|an) "(?P<vocabulary>[^"]*)" term with the name "(?P<name>[^"]*)"$/
    * @Given /^(?:a|an) "(?P<vocabulary>[^"]*)" term with the name "(?P<name>[^"]*)"$/
    */

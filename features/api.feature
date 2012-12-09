@@ -39,6 +39,22 @@ Feature: DrupalContext
     And am on "admin/reports/dblog"
     Then I should see the link "Cron run completed"
 
+  Scenario: Create many nodes
+    Given "page" nodes:
+    | title    |
+    | Page one |
+    | Page two |
+    And "article" nodes:
+    | title          |
+    | First article  |
+    | Second article |
+    And I am logged in as a user with the "administrator" role
+    When I go to "admin/content"
+    Then I should see "Page one"
+    And I should see "Page two"
+    And I should see "First article"
+    And I should see "Second article"
+
   Scenario: Create a term
     Given I am logged in as a user with the "administrator" role
     When I am viewing a "tags" term with the name "My tag"
