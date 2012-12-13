@@ -40,7 +40,7 @@ class Drupal7 implements CoreInterface {
     // Need to change into the Drupal root directory or the registry explodes.
     $current_path = getcwd();
     chdir(DRUPAL_ROOT);
-    \drupal_flush_all_caches();
+    drupal_flush_all_caches();
     chdir($current_path);
   }
 
@@ -52,7 +52,7 @@ class Drupal7 implements CoreInterface {
     if (!isset($node->status)) {
       $node->status = 1;
     }
-    \node_save($node);
+    node_save($node);
     return $node;
   }
 
@@ -69,7 +69,7 @@ class Drupal7 implements CoreInterface {
     // hashed password.
     $account = clone $user;
 
-    \user_save($account, (array) $user);
+    user_save($account, (array) $user);
 
     // Store UID.
     $user->uid = $account->uid;
@@ -79,20 +79,20 @@ class Drupal7 implements CoreInterface {
    * Implements CoreInterface::userDelete().
    */
   public function userDelete(\stdClass $user) {
-    \user_cancel(array(), $user->uid, 'user_cancel_delete');
+    user_cancel(array(), $user->uid, 'user_cancel_delete');
   }
 
   /**
    * Implements CoreInterface::userAddRole().
    */
   public function userAddRole(\stdClass $user, $role_name) {
-    $role = \user_role_load_by_name($role_name);
+    $role = user_role_load_by_name($role_name);
 
     if (!$role) {
       throw new \RuntimeException(sprintf('No role "%s" exists.', $role_name));
     }
 
-    \user_multiple_role_edit(array($user->uid), 'add_role', $role->rid);
+    user_multiple_role_edit(array($user->uid), 'add_role', $role->rid);
   }
 
   /**
