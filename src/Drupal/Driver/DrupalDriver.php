@@ -34,6 +34,7 @@ class DrupalDriver implements DriverInterface, DrupalSubContextFinderInterface {
    */
   public function bootstrap() {
     $this->getCore()->bootstrap();
+    $this->bootstrapped = TRUE;
   }
 
   /**

@@ -31,7 +31,6 @@ class Drupal7 implements CoreInterface {
     // Bootstrap Drupal.
     chdir(DRUPAL_ROOT);
     drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
-    $this->bootstrapped = TRUE;
   }
 
   /**
