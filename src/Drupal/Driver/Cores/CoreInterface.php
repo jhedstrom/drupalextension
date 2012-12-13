@@ -27,6 +27,21 @@ interface CoreInterface {
   public function clearCache();
 
   /**
+   * Create a user.
+   */
+  public function userCreate(\stdClass $user);
+
+  /**
+   * Delete a user.
+   */
+  public function userDelete(\stdClass $user);
+
+  /**
+   * Add a role to a user.
+   */
+  public function userAddRole(\stdClass $user, $role_name);
+
+  /**
    * Validate, and prepare environment for Drupal bootstrap.
    *
    * @throws BootstrapException

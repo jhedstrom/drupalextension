@@ -45,6 +45,45 @@ class Drupal7 implements CoreInterface {
   }
 
   /**
+   * Implements CoreInterface::userCreate().
+   */
+  public function userCreate(\stdClass $user) {
+    // Default status to TRUE if not explicitly creating a blocked user.
+    if (!isset($user->status)) {
+      $user->status = 1;
+    }
+
+    // Clone user object, otherwise user_save() changes the password to the
+    // hashed password.
+    $account = clone $user;
+
+    \user_save($account, (array) $user);
+
+    // Store UID.
+    $user->uid = $account->uid;
+  }
+
+  /**
+   * Implements CoreInterface::userDelete().
+   */
+  public function userDelete(\stdClass $user) {
+    \user_cancel(array(), $user->uid, 'user_cancel_delete');
+  }
+
+  /**
+   * Implements CoreInterface::userAddRole().
+   */
+  public function userAddRole(\stdClass $user, $role_name) {
+    $role = \user_role_load_by_name($role_name);
+
+    if (!$role) {
+      throw new \RuntimeException(sprintf('No role "%s" exists.', $role_name));
+    }
+
+    \user_multiple_role_edit(array($user->uid), 'add_role', $role->rid);
+  }
+
+  /**
    * Impelements CoreInterface::validateDrupalSite().
    */
   public function validateDrupalSite() {
