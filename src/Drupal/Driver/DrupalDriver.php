@@ -171,11 +171,6 @@ class DrupalDriver implements DriverInterface, DrupalSubContextFinderInterface {
    * Implements DriverInterface::createNode().
    */
   public function createNode(\stdClass $node) {
-    // Default status to 1 if not set.
-    if (!isset($node->status)) {
-      $node->status = 1;
-    }
-    \node_save($node);
-    return $node;
+    return $this->getCore()->nodeCreate($node);
   }
 }

@@ -27,6 +27,11 @@ interface CoreInterface {
   public function clearCache();
 
   /**
+   * Create a node.
+   */
+  public function nodeCreate(\stdClass $node);
+
+  /**
    * Create a user.
    */
   public function userCreate(\stdClass $user);

@@ -45,6 +45,18 @@ class Drupal7 implements CoreInterface {
   }
 
   /**
+   * Implements CoreInterface::nodeCreate().
+   */
+  public function nodeCreate(\stdClass $node) {
+    // Default status to 1 if not set.
+    if (!isset($node->status)) {
+      $node->status = 1;
+    }
+    \node_save($node);
+    return $node;
+  }
+
+  /**
    * Implements CoreInterface::userCreate().
    */
   public function userCreate(\stdClass $user) {
