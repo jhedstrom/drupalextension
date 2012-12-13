@@ -20,11 +20,11 @@ install:
 
 before_script:
   # Setup a stock Drupal 7 install to test api abilities.
-  - drush --quiet dl drupal --drupal-project-rename
-  - drush --quiet --yes --root=$PWD/drupal site-install --db-url=mysql://root:@127.0.0.1/drupal
-  - drush --quiet --yes --root=$PWD/drupal runserver :8888 > /dev/null 2>&1 &
+  - drush --quiet dl drupal-7 --drupal-project-rename=drupal7
+  - drush --quiet --yes --root=$PWD/drupal7 site-install --db-url=mysql://root:@127.0.0.1/drupal
+  - drush --quiet --yes --root=$PWD/drupal7 runserver :8888 > /dev/null 2>&1 &
   - sleep 4s
 
 script:
   - vendor/bin/behat -fprogress
-  - vendor/bin/behat -fprogress --profile=api
+  - vendor/bin/behat -fprogress --profile=drupal7

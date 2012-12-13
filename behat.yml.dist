@@ -21,7 +21,7 @@ default:
 
 # Separate profile for testing using the api driver. This assumes a
 # stock Drupal 7 install.
-api:
+drupal7:
   filters:
     tags: "@api"
   extensions:
@@ -31,7 +31,7 @@ api:
       api_driver: "drupal"
       drupal:
         # Change this to the absolute path to Drupal install.
-        drupal_root: "drupal"
+        drupal_root: "drupal7"
       region_map:
         left sidebar: "#sidebar-first"
         content: "#content"
