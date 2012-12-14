@@ -13,7 +13,7 @@ class Drupal8 implements CoreInterface {
    * Set drupalRoot.
    */
   public function __construct($drupalRoot, $uri = 'default') {
-    $this->drupalRoot = $drupalRoot;
+    $this->drupalRoot = realpath($drupalRoot);
     $this->uri = $uri;
   }
 
