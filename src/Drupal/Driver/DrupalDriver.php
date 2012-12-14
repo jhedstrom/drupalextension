@@ -15,6 +15,7 @@ use Drupal\Driver\Cores\CoreInterface,
 class DrupalDriver implements DriverInterface, DrupalSubContextFinderInterface {
   private $bootstrapped = FALSE;
   public  $core;
+  public  $version;
 
   /**
    * Set Drupal root and URI.
@@ -22,11 +23,7 @@ class DrupalDriver implements DriverInterface, DrupalSubContextFinderInterface {
   public function __construct($drupalRoot, $uri) {
     $this->drupalRoot = realpath($drupalRoot);
     $this->uri = $uri;
-    $version = $this->getDrupalVersion();
-    // @todo figure out why entire namespace is required here.
-    $class = '\Drupal\Driver\Cores\Drupal' . $version;
-    $core = new $class($this->drupalRoot);
-    $this->setCore($core);
+    $this->version = $this->getDrupalVersion();
   }
 
   /**
@@ -153,11 +150,14 @@ class DrupalDriver implements DriverInterface, DrupalSubContextFinderInterface {
   /**
    * Instantiate and set Drupal core class.
    *
-   * @param $version
-   *   Drupal major version.
+   * @param array $availableCores
+   *   A major-version-keyed array of available core controllers.
    */
-  public function setCore(CoreInterface $core) {
-    $this->core = $core;
+  public function setCore($availableCores) {
+    if (!isset($availableCores[$this->version])) {
+      throw new BootstrapException(sprintf('There is no available Drupal core controller for Drupal version %s.', $this->version));
+    }
+    $this->core = $availableCores[$this->version];
   }
 
   /**

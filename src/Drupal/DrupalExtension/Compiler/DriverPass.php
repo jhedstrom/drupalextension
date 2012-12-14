@@ -27,6 +27,23 @@ class DriverPass implements CompilerPassInterface {
           );
         }
       }
+
+      // If this is Drupal Driver, then a core controller needs to be
+      // instantiated as well.
+      if ('drupal.driver.drupal' === $id) {
+        $drupalDriverDefinition = $container->getDefinition($id);
+        $availableCores = array();
+        foreach ($container->findTaggedServiceIds('drupal.core') as $coreId => $coreAttributes) {
+          foreach ($coreAttributes as $attribute) {
+            if (isset($attribute['alias']) && $name = $attribute['alias']) {
+              $availableCores[$name] = $container->getDefinition($coreId);
+            }
+          }
+        }
+        $drupalDriverDefinition->addMethodCall(
+          'setCore', array($availableCores)
+        );
+      }
     }
 
     $drupalDefinition->addMethodCall(
