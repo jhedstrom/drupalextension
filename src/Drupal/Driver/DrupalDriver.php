@@ -3,8 +3,9 @@
 namespace Drupal\Driver;
 
 use Drupal\Exception\BootstrapException,
-    Drupal\Exception\UnsupportedDriverActionException,
     Drupal\DrupalExtension\Context\DrupalSubContextFinderInterface;
+
+use Behat\Behat\Exception\PendingException;
 
 /**
  * Fully bootstraps Drupal and uses native API calls.
@@ -64,8 +65,7 @@ class DrupalDriver implements DriverInterface, DrupalSubContextFinderInterface {
    * Implements DriverInterface::fetchWatchdog().
    */
   public function fetchWatchdog($count = 10, $type = NULL, $severity = NULL) {
-    // @todo
-    throw new UnsupportedDriverActionException('No ability to access watchdog entries in %s', $this);
+    throw new PendingException(sprintf('Currently no ability to access watchdog entries in %s', $this));
   }
 
   /**
