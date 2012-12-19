@@ -118,7 +118,7 @@ class DrupalDriver implements DriverInterface, DrupalSubContextFinderInterface {
         // Drupal 7.
         '/includes/bootstrap.inc',
         // Drupal 8.
-        '/core/includes/bootstrap',
+        '/core/includes/bootstrap.inc',
       );
       foreach ($version_constant_paths as $path) {
         if (file_exists($this->drupalRoot . $path)) {

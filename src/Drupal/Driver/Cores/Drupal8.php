@@ -24,7 +24,7 @@ class Drupal8 implements CoreInterface {
     // Validate, and prepare environment for Drupal bootstrap.
     if (!defined('DRUPAL_ROOT')) {
       define('DRUPAL_ROOT', $this->drupalRoot);
-      require_once DRUPAL_ROOT . '/includes/bootstrap.inc';
+      require_once DRUPAL_ROOT . '/core/includes/bootstrap.inc';
       $this->validateDrupalSite();
     }
 
@@ -52,7 +52,9 @@ class Drupal8 implements CoreInterface {
     if (!isset($node->status)) {
       $node->status = 1;
     }
-    node_save($node);
+    $node = entity_create('node', array($node));
+    $node->save();
+
     return $node;
   }
 
@@ -74,9 +76,8 @@ class Drupal8 implements CoreInterface {
 
     // Clone user object, otherwise user_save() changes the password to the
     // hashed password.
-    $account = clone $user;
-
-    user_save($account, (array) $user);
+    $account = entity_create('user', (array) $user);
+    $account->save();
 
     // Store UID.
     $user->uid = $account->uid;
@@ -93,7 +94,7 @@ class Drupal8 implements CoreInterface {
    * Implements CoreInterface::userAddRole().
    */
   public function userAddRole(\stdClass $user, $role_name) {
-    $role = user_role_load_by_name($role_name);
+    $role = user_role_load($role_name);
 
     if (!$role) {
       throw new \RuntimeException(sprintf('No role "%s" exists.', $role_name));
