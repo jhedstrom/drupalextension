@@ -6,9 +6,6 @@ use Drupal\Exception\BootstrapException,
     Drupal\Exception\UnsupportedDriverActionException,
     Drupal\DrupalExtension\Context\DrupalSubContextFinderInterface;
 
-use Drupal\Driver\Cores\CoreInterface,
-    Drupal\Driver\Cores\Drupal7 as Drupal7;
-
 /**
  * Fully bootstraps Drupal and uses native API calls.
  */
