@@ -173,4 +173,13 @@ class DrupalDriver implements DriverInterface, DrupalSubContextFinderInterface {
   public function createNode(\stdClass $node) {
     return $this->getCore()->nodeCreate($node);
   }
+
+  /**
+   * Implements DriverInterface::runCron().
+   */
+  public function runCron() {
+    if (!$this->getCore()->runCron()) {
+      throw new \Exception('Failed to run cron.');
+    }
+  }
 }

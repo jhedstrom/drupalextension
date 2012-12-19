@@ -65,4 +65,11 @@ class BlackboxDriver implements DriverInterface {
   public function createNode(\stdClass $node) {
     throw new UnsupportedDriverActionException('No ability to create nodes in %s', $this);
   }
+
+  /**
+   * Implements DriverInterface::runCron().
+   */
+  public function runCron() {
+    throw new UnsupportedDriverActionException('No ability to run cron in %s', $this);
+  }
 }

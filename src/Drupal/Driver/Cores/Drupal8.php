@@ -57,6 +57,13 @@ class Drupal8 implements CoreInterface {
   }
 
   /**
+   * Implements CoreInterface::runCron().
+   */
+  public function runCron() {
+    return drupal_cron_run();
+  }
+
+  /**
    * Implements CoreInterface::userCreate().
    */
   public function userCreate(\stdClass $user) {

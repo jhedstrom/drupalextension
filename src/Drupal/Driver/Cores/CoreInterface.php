@@ -27,6 +27,14 @@ interface CoreInterface {
   public function clearCache();
 
   /**
+   * Run cron.
+   *
+   * @return boolean
+   *   True if cron runs, otherwise false.
+   */
+  public function runCron();
+
+  /**
    * Create a node.
    */
   public function nodeCreate(\stdClass $node);

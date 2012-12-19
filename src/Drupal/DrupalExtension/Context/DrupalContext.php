@@ -666,6 +666,13 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
   }
 
   /**
+   * @Given /^I run cron$/
+   */
+  public function iRunCron() {
+    $this->getDriver()->runCron();
+  }
+
+  /**
    * @Given /^I am viewing (?:a|an) "(?P<type>[^"]*)" node with the title "(?P<title>[^"]*)"$/
    * @Given /^(?:a|an) "(?P<type>[^"]*)" node with the title "(?P<title>[^"]*)"$/
    */

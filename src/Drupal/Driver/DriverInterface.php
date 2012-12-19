@@ -69,4 +69,9 @@ interface DriverInterface {
    *   The node object including the node ID in the case of new nodes.
    */
   public function createNode(\stdClass $node);
+
+  /**
+   * Run cron.
+   */
+  public function runCron();
 }

@@ -162,6 +162,13 @@ class DrushDriver implements DriverInterface {
   }
 
   /**
+   * Implements DriverInterface::runCron().
+   */
+  public function runCron() {
+    $this->drush('cron');
+  }
+
+  /**
    * Helper function to derive the Drupal root directory from given alias.
    */
   public function getDrupalRoot($alias = NULL) {
