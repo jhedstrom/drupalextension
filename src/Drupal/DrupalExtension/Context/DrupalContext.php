@@ -545,13 +545,14 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
 
   /**
    * @When /^I select the radio button "(?P<label>[^"]*)" with the id "(?P<id>[^"]*)"$/
+   * @When /^I select the radio button "(?P<label>[^"]*)"$/
    * @TODO convert to mink extension.
    */
-  public function iSelectTheRadioButtonWithTheId($label, $id) {
+  public function iSelectTheRadioButtonWithTheId($label, $id = FALSE) {
     $element = $this->getSession()->getPage();
-    $radiobutton = $element->findById($id);
+    $radiobutton = $id ? $element->findById($id) : $element->find('named', array('radio', $this->getSession()->getSelectorsHandler()->xpathLiteral($label)));
     if ($radiobutton === NULL) {
-      throw new \Exception(sprintf('The radio button with id "%s" was not found on the page %s', $id, $this->getSession()->getCurrentUrl()));
+      throw new \Exception(sprintf('The radio button with %s "%s" was not found on the page %s', $id ? $id : $label, $this->getSession()->getCurrentUrl()));
     }
     $value = $radiobutton->getAttribute('value');
     $labelonpage = $radiobutton->getParent()->getText();
