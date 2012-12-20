@@ -52,6 +52,11 @@ class Drupal7 implements CoreInterface {
     if (!isset($node->status)) {
       $node->status = 1;
     }
+
+    // Set original if not set.
+    if (!isset($node->original)) {
+      $node->original = clone $node;
+    }
     node_save($node);
     return $node;
   }
