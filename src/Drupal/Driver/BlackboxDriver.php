@@ -72,4 +72,12 @@ class BlackboxDriver implements DriverInterface {
   public function runCron() {
     throw new UnsupportedDriverActionException('No ability to run cron in %s', $this);
   }
+
+  /**
+   * Implements DriverInterface::createTerm().
+   */
+  public function createTerm(\stdClass $term) {
+    throw new UnsupportedDriverActionException('No ability to create terms in %s', $this);
+  }
 }
+

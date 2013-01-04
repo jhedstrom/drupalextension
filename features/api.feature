@@ -38,3 +38,34 @@ Feature: DrupalContext
     When I run cron
     And am on "admin/reports/dblog"
     Then I should see the link "Cron run completed"
+
+  Scenario: Create many nodes
+    Given "page" nodes:
+    | title    |
+    | Page one |
+    | Page two |
+    And "article" nodes:
+    | title          |
+    | First article  |
+    | Second article |
+    And I am logged in as a user with the "administrator" role
+    When I go to "admin/content"
+    Then I should see "Page one"
+    And I should see "Page two"
+    And I should see "First article"
+    And I should see "Second article"
+
+  Scenario: Create a term
+    Given I am logged in as a user with the "administrator" role
+    When I am viewing a "tags" term with the name "My tag"
+    Then I should see the heading "My tag"
+
+  Scenario: Create many terms
+    Given "tags" terms:
+    | name    |
+    | Tag one |
+    | Tag two |
+    And I am logged in as a user with the "administrator" role
+    When I go to "admin/structure/taxonomy/tags"
+    Then I should see "Tag one"
+    And I should see "Tag two"

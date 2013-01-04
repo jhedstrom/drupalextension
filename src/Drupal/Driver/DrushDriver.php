@@ -197,4 +197,11 @@ class DrushDriver implements DriverInterface {
 
     return $path;
   }
+
+  /**
+   * Implements DriverInterface::createTerm().
+   */
+  public function createTerm(\stdClass $term) {
+    throw new UnsupportedDriverActionException('No ability to create terms in %s', $this);
+  }
 }
