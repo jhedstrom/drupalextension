@@ -179,4 +179,21 @@ class DrupalDriver implements DriverInterface, DrupalSubContextFinderInterface {
       throw new \Exception('Failed to run cron.');
     }
   }
+
+  /**
+   * Implements DriverInterface::createTerm().
+   */
+  public function createTerm(\stdClass $term) {
+    if (!isset($term->vid)) {
+      // Try to load vocabulary by machine name.
+      $vocabularies = \taxonomy_vocabulary_load_multiple(FALSE, array('machine_name' => $term->vocabulary_machine_name));
+      if (!empty($vocabularies)) {
+        $vids = array_keys($vocabularies);
+        $term->vid = reset($vids);
+      }
+    }
+
+    \taxonomy_term_save($term);
+    return $term;
+  }
 }
