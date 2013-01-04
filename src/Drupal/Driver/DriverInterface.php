@@ -74,4 +74,14 @@ interface DriverInterface {
    * Run cron.
    */
   public function runCron();
+
+  /**
+   * Create a taxonomy term.
+   *
+   * @param object $term
+   *   Term object.
+   * @return object
+   *   The term object including the term ID in the case of new terms.
+   */
+  public function createTerm(\stdClass $term);
 }
