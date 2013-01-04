@@ -590,7 +590,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
    */
   public function iAmLoggedInWithRole($role) {
     // Check if a user with this role is already logged in.
-    if ($this->user && isset($this->user->role) && $this->user->role == $role) {
+    if ($this->loggedIn() && $this->user && isset($this->user->role) && $this->user->role == $role) {
       return TRUE;
     }
 
