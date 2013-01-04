@@ -59,8 +59,9 @@ The Drupal Extension is an integration layer between [Behat](http://behat.org), 
   ```
     Drupal\DrupalExtension\Extension:
       blackbox: ~
-	  drush:
-	    alias: myDrushAlias
+      # Set the drush alias to "@self" by default, when executing tests from within the drupal installation.
+      drush:
+        alias: self
   ```
 
   Alternatively, the root path to the Drupal installation may be specified.
