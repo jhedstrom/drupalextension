@@ -5,9 +5,6 @@ use Drupal\DrupalExtension\Context\DrupalContext,
 use Behat\Gherkin\Node\PyStringNode,
     Behat\Gherkin\Node\TableNode;
 
-require_once 'PHPUnit/Autoload.php';
-require_once 'PHPUnit/Framework/Assert/Functions.php';
-
 require 'vendor/autoload.php';
 
 /**
