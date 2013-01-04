@@ -73,9 +73,6 @@ class DrushDriver implements DriverInterface {
 
   /**
    * Implements DriverInterface::userCreate().
-   *
-   * @return
-   *   ID of the created user.
    */
   public function userCreate(\stdClass $user) {
     $arguments = array(
@@ -85,16 +82,7 @@ class DrushDriver implements DriverInterface {
       'password' => $user->pass,
       'mail' => $user->mail,
     );
-
-    $result = $this->drush('user-create', $arguments, $options);
-    // Find the row containing "user ID : xxx".
-    preg_match('/User ID\s+:\s+\d+/', $result, $matches);
-    if (empty($matches)) {
-      return NULL;
-    }
-    // Extract the ID from the row.
-    list(, $uid) = explode(':', $matches[0]);
-    return (int)$uid;
+    $this->drush('user-create', $arguments, $options);
   }
 
   /**

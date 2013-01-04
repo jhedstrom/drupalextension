@@ -604,7 +604,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
 
 
     // Create a new user.
-    $user->uid = $this->getDriver()->userCreate($user);
+    $this->getDriver()->userCreate($user);
 
     $this->users[] = $this->user = $user;
 
