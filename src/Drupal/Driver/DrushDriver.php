@@ -134,7 +134,7 @@ class DrushDriver implements DriverInterface {
   public function drush($command, array $arguments = array(), array $options = array()) {
     $arguments = implode(' ', $arguments);
     $string_options = '';
-    $options['nocolor'] => '';
+    $options['nocolor'] = '';
     foreach ($options as $name => $value) {
       if (is_null($value)) {
         $string_options .= ' --' . $name;
