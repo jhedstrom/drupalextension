@@ -691,6 +691,25 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
   }
 
   /**
+   * @Given /^I am viewing my "(?P<type>[^"]*)" node with the title "(?P<title>[^"]*)"$/
+   */
+  public function createMyNode($type, $title) {
+    if (!$this->user->uid) {
+      throw new \Exception(sprintf('There is no current logged in user to create a node for.'));
+    }
+    $node = (object) array(
+      'title' => $title,
+      'type' => $type,
+      'body' => $this->randomString(255),
+      'uid' => $this->user->uid,
+    );
+    $saved = $this->getDriver()->createNode($node);
+
+    // Set internal page on the new node.
+    $this->getSession()->visit($this->locatePath('/node/' . $saved->nid));
+  }
+
+  /**
    * @Given /^"(?P<type>[^"]*)" nodes:$/
    */
   public function createNodes($type, TableNode $nodesTable) {
