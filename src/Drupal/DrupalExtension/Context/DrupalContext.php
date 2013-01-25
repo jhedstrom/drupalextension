@@ -18,6 +18,7 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 use Behat\Behat\Context\Step\Given;
 use Behat\Behat\Context\Step\When;
 use Behat\Behat\Context\Step\Then;
+use Behat\Behat\Context\TranslatedContextInterface;
 
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
@@ -27,7 +28,7 @@ use Behat\Mink\Driver\Selenium2Driver as Selenium2Driver;
 /**
  * Features context.
  */
-class DrupalContext extends MinkContext implements DrupalAwareInterface {
+class DrupalContext extends MinkContext implements DrupalAwareInterface, TranslatedContextInterface {
 
   private $drupal, $drupalParameters;
 
@@ -108,6 +109,15 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
         $this->useContext($alias, new $class);
       }
     }
+  }
+
+  /**
+   * Returns list of definition translation resources paths.
+   *
+   * @return array
+   */
+  public function getTranslationResources() {
+    return glob(__DIR__ . '/../../../../i18n/*.xliff');
   }
 
   /**

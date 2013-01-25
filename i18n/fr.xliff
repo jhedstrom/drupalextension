@@ -1,0 +1,191 @@
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="en" datatype="plaintext" original="global" target-language="fr">
+    <header />
+    <body>
+      <trans-unit id="i-am-at-page">
+	<source><![CDATA[/^(?:that I|I) am at "(?P[^"]*)"$/]]></source>
+	<target><![CDATA[/^(?:that I|I) am at "(?P[^"]*)"$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-visit-page">
+	<source><![CDATA[/^I visit "(?P[^"]*)"$/]]></source>
+	<target><![CDATA[/^I visit "(?P[^"]*)"$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-click-link">
+	<source><![CDATA[/^I click "(?P<link>[^"]*)"$/]]></source>
+	<target><![CDATA[/^I click "(?P<link>[^"]*)"$/]]></target>
+	</trans-unit>
+	<trans-unit id="for-fields-i-enter-value">
+	<source><![CDATA[/^for "(?P<field>[^"]*)" I enter "(?P<value>[^"]*)"$/]]></source>
+	<target><![CDATA[/^for "(?P<field>[^"]*)" I enter "(?P<value>[^"]*)"$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-enter-value-for-fields">
+	<source><![CDATA[/^I enter "(?P<value>[^"]*)" for "(?P<field>[^"]*)"$/]]></source>
+	<target><![CDATA[/^I enter "(?P<value>[^"]*)" for "(?P<field>[^"]*)"$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-press-the-button-button">
+	<source><![CDATA[/^I press the "(?P<button>[^"]*)" button$/]]></source>
+	<target><![CDATA[/^I press the "(?P<button>[^"]*)" button$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-should-see-the-link-link">
+	<source><![CDATA[/^I should see the link "(?P<link>[^"]*)"$/]]></source>
+	<target><![CDATA[/^I should see the link "(?P<link>[^"]*)"$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-should-not-see-the-link-link">
+	<source><![CDATA[/^I should not see the link "(?P<link>[^"]*)"$/]]></source>
+	<target><![CDATA[/^I should not see the link "(?P<link>[^"]*)"$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-should-see-the-heading-heading">
+	<source><![CDATA[/^I (?:|should )see the heading "(?P<heading>[^"]*)"$/]]></source>
+	<target><![CDATA[/^I (?:|should )see the heading "(?P<heading>[^"]*)"$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-should-see-the-heading-heading-in-the-region">
+	<source><![CDATA[/^I should see the heading "(?P<heading>[^"]*)" in the "(?P<region>[^"]*)"(?:| region)$/]]></source>
+	<target><![CDATA[/^I should see the heading "(?P<heading>[^"]*)" in the "(?P<region>[^"]*)"(?:| region)$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-should-see-the-heading-in-the-region">
+	<source><![CDATA[/^I should see the "(?P<heading>[^"]*)" heading in the "(?P<region>[^"]*)"(?:| region)$/]]></source>
+	<target><![CDATA[/^I should see the "(?P<heading>[^"]*)" heading in the "(?P<region>[^"]*)"(?:| region)$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-follow-link-in-the-region-region">
+	<source><![CDATA[/^I (?:follow|click) "(?P<link>[^"]*)" in the "(?P<region>[^"]*)"(?:| region)$/]]></source>
+	<target><![CDATA[/^I (?:follow|click) "(?P<link>[^"]*)" in the "(?P<region>[^"]*)"(?:| region)$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-should-see-the-link-in-the-region">
+	<source><![CDATA[/^I should see the link "(?P<link>[^"]*)" in the "(?P<region>[^"]*)"(?:| region)$/]]></source>
+	<target><![CDATA[/^I should see the link "(?P<link>[^"]*)" in the "(?P<region>[^"]*)"(?:| region)$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-should-see-the-text-in-the-region">
+	<source><![CDATA[/^I should see (?:the text |)"(?P<text>[^"]*)" in the "(?P<region>[^"]*)"(?:| region)$/]]></source>
+	<target><![CDATA[/^I should see (?:the text |)"(?P<text>[^"]*)" in the "(?P<region>[^"]*)"(?:| region)$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-should-not-see-the-text-in-the-region">
+	<source><![CDATA[/^I should not see (?:the text |)"(?P<text>[^"]*)" in the "(?P<region>[^"]*)"(?:| region)$/]]></source>
+	<target><![CDATA[/^I should not see (?:the text |)"(?P<text>[^"]*)" in the "(?P<region>[^"]*)"(?:| region)$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-press-button-in-the-region">
+	<source><![CDATA[/^I press "(?P<button>[^"]*)" in the "(?P<region>[^"]*)"(?:| region)$/]]></source>
+	<target><![CDATA[/^I press "(?P<button>[^"]*)" in the "(?P<region>[^"]*)"(?:| region)$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-should-see-the-text">
+	<source><![CDATA[/^(?:I|I should) see the text "(?P<text>[^"]*)"$/]]></source>
+	<target><![CDATA[/^(?:I|I should) see the text "(?P<text>[^"]*)"$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-should-not-see-the-text">
+	<source><![CDATA[/^I should not see the text "(?P<text>[^"]*)"$/]]></source>
+	<target><![CDATA[/^I should not see the text "(?P<text>[^"]*)"$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-should-get-a-code-http-response">
+	<source><![CDATA[/^I should get a "(?P<code>[^"]*)" HTTP response$/]]></source>
+	<target><![CDATA[/^I should get a "(?P<code>[^"]*)" HTTP response$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-should-not-get-a-code-http-response">
+	<source><![CDATA[/^I should not get a "(?P<code>[^"]*)" HTTP response$/]]></source>
+	<target><![CDATA[/^I should not get a "(?P<code>[^"]*)" HTTP response$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-check-the-box">
+	<source><![CDATA[/^I check the box "(?P<checkbox>[^"]*)"$/]]></source>
+	<target><![CDATA[/^I check the box "(?P<checkbox>[^"]*)"$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-uncheck-the-box">
+	<source><![CDATA[/^I uncheck the box "(?P<checkbox>[^"]*)"$/]]></source>
+	<target><![CDATA[/^I uncheck the box "(?P<checkbox>[^"]*)"$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-select-the-radio-button-with-the-id">
+	<source><![CDATA[/^I select the radio button "(?P<label>[^"]*)" with the id "(?P<id>[^"]*)"$/]]></source>
+	<target><![CDATA[/^I select the radio button "(?P<label>[^"]*)" with the id "(?P<id>[^"]*)"$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-select-the-radio-button">
+	<source><![CDATA[/^I select the radio button "(?P<label>[^"]*)"$/]]></source>
+	<target><![CDATA[/^I select the radio button "(?P<label>[^"]*)"$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-am-an-anonymous-user">
+	<source><![CDATA[/^I am an anonymous user$/]]></source>
+	<target><![CDATA[/^I am an anonymous user$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-am-not-logged-in">
+	<source><![CDATA[/^I am not logged in$/]]></source>
+	<target><![CDATA[/^I am not logged in$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-am-logged-in-as-a-user-with-the-role">
+	<source><![CDATA[/^I am logged in as a user with the "(?P<role>[^"]*)" role$/]]></source>
+	<target><![CDATA[/^I am logged in as a user with the "(?P<role>[^"]*)" role$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-click-link-in-the-row">
+	<source><![CDATA[/^I click "(?P<link>[^"]*)" in the "(?P<row_text>[^"]*)" row$/]]></source>
+	<target><![CDATA[/^I click "(?P<link>[^"]*)" in the "(?P<row_text>[^"]*)" row$/]]></target>
+      </trans-unit>
+      <trans-unit id="the-cache-has-been-cleared">
+	<source><![CDATA[/^the cache has been cleared$/]]></source>
+	<target><![CDATA[/^the cache has been cleared$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-run-cron">
+	<source><![CDATA[/^I run cron$/]]></source>
+	<target><![CDATA[/^I run cron$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-am-viewing-a-type-node-with-the-title">
+	<source><![CDATA[/^I am viewing (?:a|an) "(?P<type>[^"]*)" node with the title "(?P<title>[^"]*)"$/]]></source>
+	<target><![CDATA[/^I am viewing (?:a|an) "(?P<type>[^"]*)" node with the title "(?P<title>[^"]*)"$/]]></target>
+      </trans-unit>
+      <trans-unit id="a-type-node-with-the-title">
+	<source><![CDATA[/^(?:a|an) "(?P<type>[^"]*)" node with the title "(?P<title>[^"]*)"$/]]></source>
+	<target><![CDATA[/^(?:a|an) "(?P<type>[^"]*)" node with the title "(?P<title>[^"]*)"$/]]></target>
+      </trans-unit>
+      <trans-unit id="type-nodes">
+	<source><![CDATA[/^"(?P<type>[^"]*)" nodes:$/]]></source>
+	<target><![CDATA[/^"(?P<type>[^"]*)" nodes:$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-am-viewing-a-vocabulary-term-with-the-name">
+	<source><![CDATA[/^I am viewing (?:a|an) "(?P<vocabulary>[^"]*)" term with the name "(?P<name>[^"]*)"$/]]></source>
+	<target><![CDATA[/^I am viewing (?:a|an) "(?P<vocabulary>[^"]*)" term with the name "(?P<name>[^"]*)"$/]]></target>
+      </trans-unit>
+      <trans-unit id="a-vocabulary-term-with-the-name">
+	<source><![CDATA[/^(?:a|an) "(?P<vocabulary>[^"]*)" term with the name "(?P<name>[^"]*)"$/]]></source>
+	<target><![CDATA[/^(?:a|an) "(?P<vocabulary>[^"]*)" term with the name "(?P<name>[^"]*)"$/]]></target>
+      </trans-unit>
+      <trans-unit id="vocabulary-terms">
+	<source><![CDATA[/^"(?P<vocabulary>[^"]*)" terms:$/]]></source>
+	<target><![CDATA[/^"(?P<vocabulary>[^"]*)" terms:$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-should-see-the-error-message">
+	<source><![CDATA[/^I should see the error message(?:| containing) "([^"]*)"$/]]></source>
+	<target><![CDATA[/^I should see the error message(?:| containing) "([^"]*)"$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-should-see-the-following-error-messages">
+	<source><![CDATA[/^I should see the following <error messages>$/]]></source>
+	<target><![CDATA[/^I should see the following <error messages>$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-should-not-see-the-error-message">
+	<source><![CDATA[/^I should not see the error message(?:| containing) "([^"]*)"$/]]></source>
+	<target><![CDATA[/^I should not see the error message(?:| containing) "([^"]*)"$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-should-not-see-the-following-error">
+	<source><![CDATA[/^I should not see the following <error messages>$/]]></source>
+	<target><![CDATA[/^I should not see the following <error messages>$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-should-see-the-success-message">
+	<source><![CDATA[/^I should see the success message(?:| containing) "([^"]*)"$/]]></source>
+	<target><![CDATA[/^I should see the success message(?:| containing) "([^"]*)"$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-should-see-the-following-success">
+	<source><![CDATA[/^I should see the following <success messages>$/]]></source>
+	<target><![CDATA[/^I should see the following <success messages>$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-should-not-see-the-success-message">
+	<source><![CDATA[/^I should not see the success message(?:| containing) "([^"]*)"$/]]></source>
+	<target><![CDATA[/^I should not see the success message(?:| containing) "([^"]*)"$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-should-not-see-the-following-success-messages">
+	<source><![CDATA[/^I should not see the following <success messages>$/]]></source>
+	<target><![CDATA[/^I should not see the following <success messages>$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-should-see-the-message">
+	<source><![CDATA[/^I should see the message(?:| containing) "([^"]*)"$/]]></source>
+	<target><![CDATA[/^I should see the message(?:| containing) "([^"]*)"$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-should-not-see-the-message">
+	<source><![CDATA[/^I should not see the message(?:| containing) "([^"]*)"$/]]></source>
+	<target><![CDATA[/^I should not see the message(?:| containing) "([^"]*)"$/]]></target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
