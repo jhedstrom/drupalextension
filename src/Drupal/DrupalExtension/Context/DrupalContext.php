@@ -552,7 +552,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
     $element = $this->getSession()->getPage();
     $radiobutton = $id ? $element->findById($id) : $element->find('named', array('radio', $this->getSession()->getSelectorsHandler()->xpathLiteral($label)));
     if ($radiobutton === NULL) {
-      throw new \Exception(sprintf('The radio button with %s "%s" was not found on the page %s', $id ? $id : $label, $this->getSession()->getCurrentUrl()));
+      throw new \Exception(sprintf('The radio button with "%s" was not found on the page %s', $id ? $id : $label, $this->getSession()->getCurrentUrl()));
     }
     $value = $radiobutton->getAttribute('value');
     $labelonpage = $radiobutton->getParent()->getText();
