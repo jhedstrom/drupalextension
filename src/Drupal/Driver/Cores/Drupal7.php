@@ -57,6 +57,10 @@ class Drupal7 implements CoreInterface {
     if (!isset($node->original)) {
       $node->original = clone $node;
     }
+
+    // Attempt to decipher any fields that may be specified.
+    $node = $this->expandEntityFields($node);
+
     node_save($node);
     return $node;
   }
@@ -157,5 +161,44 @@ class Drupal7 implements CoreInterface {
     if (!file_exists($conf_file)) {
       throw new BootstrapException(sprintf('Could not find a Drupal settings.php file at "%s"', $conf_file));
     }
+  }
+
+  /**
+   * Given a node object, expand fields to match the format expected by node_save().
+   *
+   * @param stdClass $entity
+   *   Entity object.
+   * @param string $entityType
+   *   Entity type, defaults to node.
+   * @param string $bundle
+   *   Entity bundle.
+   */
+  function expandEntityFields(\stdClass $entity, $entityType = 'node', $bundle = '') {
+    if ($entityType === 'node' && !$bundle) {
+      $bundle = $entity->type;
+    }
+
+    $new_entity = clone $entity;
+    foreach ($entity as $param => $value) {
+      if ($info = field_info_field($param)) {
+        foreach ($info['bundles'] as $type => $bundles) {
+          if ($type == $entityType) {
+            foreach ($bundles as $target_bundle) {
+              if ($bundle === $target_bundle) {
+                unset($new_entity->{$param});
+
+                // Use the first defined column. @todo probably breaks things.
+                $column_names = array_keys($info['columns']);
+                $column = array_shift($column_names);
+                var_dump($column);
+                $new_entity->{$param}[LANGUAGE_NONE][0][$column] = $value;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    return $new_entity;
   }
 }

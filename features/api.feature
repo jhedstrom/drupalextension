@@ -55,6 +55,14 @@ Feature: DrupalContext
     And I should see "First article"
     And I should see "Second article"
 
+  Scenario: Create nodes with fields
+    Given "article" nodes:
+    | title                     | promote | body             |
+    | First article with fields |       1 | PLACEHOLDER BODY |
+    When I am on the homepage
+    And follow "First article with fields"
+    Then I should see the text "PLACEHOLDER BODY"
+
   Scenario: Create a term
     Given I am logged in as a user with the "administrator" role
     When I am viewing a "tags" term with the name "My tag"
