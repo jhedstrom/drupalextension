@@ -391,7 +391,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
    * @Then /^I should see the heading "(?P<heading>[^"]*)" in the "(?P<region>[^"]*)"(?:| region)$/
    * @Then /^I should see the "(?P<heading>[^"]*)" heading in the "(?P<region>[^"]*)"(?:| region)$/
    */
-  public function iShouldSeeTheHeadingInTheRegion($heading, $region) {
+  public function assertRegionHeading($heading, $region) {
     $page = $this->getSession()->getPage();
     $regionObj = $page->find('region', $region);
     if (!$regionObj) {
@@ -416,7 +416,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
   /**
    * @When /^I (?:follow|click) "(?P<link>[^"]*)" in the "(?P<region>[^"]*)"(?:| region)$/
    */
-  public function iFollowLinkInTheRegion($link, $region) {
+  public function assertRegionLinkFollow($link, $region) {
     // Find the region requested
     $regionObj = $this->getSession()->getPage()->find('region', $region);
     if (empty($regionObj)) {
@@ -447,7 +447,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
   /**
    * @Then /^I should see (?:the text |)"(?P<text>[^"]*)" in the "(?P<region>[^"]*)"(?:| region)$/
    */
-  public function iShouldTextSeeInTheRegion($text, $region) {
+  public function assertRegionText($text, $region) {
     // Find the region requested
     $regionObj = $this->getSession()->getPage()->find('region', $region);
     if (empty($regionObj)) {
@@ -463,7 +463,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
   /**
    * @Then /^I should not see (?:the text |)"(?P<text>[^"]*)" in the "(?P<region>[^"]*)"(?:| region)$/
    */
-  public function assertTextNotRegion($text, $region) {
+  public function assertNotRegionText($text, $region) {
     // Find the region requested
     $regionObj = $this->getSession()->getPage()->find('region', $region);
     if (empty($regionObj)) {
@@ -486,7 +486,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
    *
    * @Given /^I press "(?P<button>[^"]*)" in the "(?P<region>[^"]*)"(?:| region)$/
    */
-  public function assertPressButtonRegion($button, $region) {
+  public function assertRegionPressButton($button, $region) {
     $regionObj = $this->getSession()->getPage()->find('region', $region);
     $buttonObj = $regionObj->findButton($button);
     if (empty($buttonObj)) {
