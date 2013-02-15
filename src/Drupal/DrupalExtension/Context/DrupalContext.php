@@ -496,6 +496,19 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
   }
 
   /**
+   * Fills in a form field with id|name|title|alt|value in the specified region.
+   *
+   * @Given /^(?:|I )fill in "(?P<value>(?:[^"]|\\")*)" for "(?P<field>(?:[^"]|\\")*)" in the "(?P<region>[^"]*)"(?:| region)$/
+   * @Given /^(?:|I )fill in "(?P<field>(?:[^"]|\\")*)" with "(?P<value>(?:[^"]|\\")*)" in the "(?P<region>[^"]*)"(?:| region)$/
+   */
+  public function regionFillField($field, $value, $region) {
+    $field = $this->fixStepArgument($field);
+    $value = $this->fixStepArgument($value);
+    $regionObj = $this->getSession()->getPage()->find('region', $region);
+    $regionObj->fillField($field, $value);
+  }
+
+  /**
    * @Then /^(?:I|I should) see the text "(?P<text>[^"]*)"$/
    */
   public function iShouldSeeTheText($text) {
