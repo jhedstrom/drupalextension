@@ -190,7 +190,6 @@ class Drupal7 implements CoreInterface {
                 // Use the first defined column. @todo probably breaks things.
                 $column_names = array_keys($info['columns']);
                 $column = array_shift($column_names);
-                var_dump($column);
                 $new_entity->{$param}[LANGUAGE_NONE][0][$column] = $value;
               }
             }
