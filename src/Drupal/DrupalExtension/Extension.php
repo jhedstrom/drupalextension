@@ -41,7 +41,6 @@ class Extension implements ExtensionInterface {
     if (isset($config['drupal'])) {
       $loader->load('drivers/drupal.yml');
       $container->setParameter('drupal.driver.drupal.drupal_root', $config['drupal']['drupal_root']);
-      $container->setParameter('drupal.driver.drupal.uri', $config['drupal']['uri']);
     }
 
     if (isset($config['drush'])) {
@@ -112,9 +111,6 @@ class Extension implements ExtensionInterface {
         arrayNode('drupal')->
           children()->
             scalarNode('drupal_root')->end()->
-            scalarNode('uri')->
-              defaultValue('default')->
-            end()->
           end()->
         end()->
         arrayNode('drush')->
