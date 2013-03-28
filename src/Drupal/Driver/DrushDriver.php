@@ -113,9 +113,9 @@ class DrushDriver implements DriverInterface {
    */
   public function fetchWatchdog($count = 10, $type = NULL, $severity = NULL) {
     $options = array(
-      '--count' => $count,
-      '--type' => $type,
-      '--severity' => $severity,
+      'count' => $count,
+      'type' => $type,
+      'severity' => $severity,
     );
     return $this->drush('watchdog-show', array(), $options);
   }
