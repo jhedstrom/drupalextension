@@ -163,6 +163,13 @@ class DrushDriver implements DriverInterface {
   }
 
   /**
+   * Implements DriverInterface::processBatch().
+   */
+  public function processBatch() {
+    // Do nothing. Drush should internally handle any needs for processing batch ops.
+  }
+
+  /**
    * Implements DriverInterface::runCron().
    */
   public function runCron() {

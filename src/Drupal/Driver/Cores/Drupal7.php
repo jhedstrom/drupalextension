@@ -98,6 +98,12 @@ class Drupal7 implements CoreInterface {
     user_cancel(array(), $user->uid, 'user_cancel_delete');
   }
 
+  public function processBatch() {
+    $batch =& batch_get();
+    $batch['progressive'] = FALSE;
+     batch_process();
+  }
+
   /**
    * Implements CoreInterface::userAddRole().
    */

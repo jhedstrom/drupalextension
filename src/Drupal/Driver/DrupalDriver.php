@@ -54,6 +54,9 @@ class DrupalDriver implements DriverInterface, DrupalSubContextFinderInterface {
     $this->getCore()->userDelete($user);
   }
 
+  public function processBatch() {
+    $this->getCore()->processBatch();
+  }
   /**
    * Implements DriverInterface::userAddRole().
    */

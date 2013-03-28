@@ -172,6 +172,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
       foreach ($this->users as $user) {
         $this->getDriver()->userDelete($user);
       }
+      $this->getDriver()->processBatch();
     }
   }
 

@@ -38,6 +38,9 @@ class BlackboxDriver implements DriverInterface {
     throw new UnsupportedDriverActionException('No ability to delete users in %s', $this);
   }
 
+  public function processBatch() {
+    throw new UnsupportedDriverActionException('No ability to process batch actions in %s', $this);
+  }
   /**
    * Implements DriverInterface::userAddRole().
    */

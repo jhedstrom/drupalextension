@@ -27,6 +27,8 @@ interface DriverInterface {
    */
   public function userDelete(\stdClass $user);
 
+  public function processBatch();
+
   /**
    * Add a role for a user.
    *
