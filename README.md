@@ -52,6 +52,13 @@ The Drupal Extension is an integration layer between [Behat](http://behat.org), 
   ```
   bin/behat -dl
   ```
+
+If the step definitions aren't listed, try running this command:
+
+  ```
+  bin/behat --init
+  ```
+
 1. Start adding your feature files to the `features` directory of your repository.
 
 1. Features that require API access in order to setup the proper testing conditions can be tagged with `@api`. This will bootstrap the driver specified by the `api_driver` parameter (which defaults to the drush driver). When using the drush driver, this must be initialized via the `behat.yml` file.
@@ -120,4 +127,16 @@ The Drupal Extension is an integration layer between [Behat](http://behat.org), 
     Drupal\DrupalExtension\Extension:
       subcontexts:
 	    autoload: 0
+  ```
+
+1. If you will be using a `features/bootstrap/FeatureContext.php` file, make sure you make the following change:
+
+  ```
+  class FeatureContext extends BehatContext
+  ```
+
+  should become
+
+  ```
+  class FeatureContext extends Drupal\DrupalExtension\Context\DrupalContext
   ```
