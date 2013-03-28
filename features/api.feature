@@ -63,6 +63,14 @@ Feature: DrupalContext
     And follow "First article with fields"
     Then I should see the text "PLACEHOLDER BODY"
 
+  Scenario: Create users
+    Given users:
+    | name     | mail            | status |
+    | Joe User | joe@example.com | 1      |
+    And I am logged in as a user with the "administrator" role
+    When I visit "admin/people"
+    Then I should see the link "Joe User"
+
   Scenario: Create a term
     Given I am logged in as a user with the "administrator" role
     When I am viewing a "tags" term with the name "My tag"

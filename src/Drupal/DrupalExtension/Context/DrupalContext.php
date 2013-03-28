@@ -751,6 +751,17 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
   }
 
   /**
+   * @Given /^users:$/
+   */
+  public function createUsers(TableNode $usersTable) {
+    foreach ($usersTable->getHash() as $userHash) {
+      $user = (object) $userHash;
+      $this->getDriver()->userCreate($user);
+      $this->users[] = $user;
+    }
+  }
+
+  /**
    * @Given /^"(?P<vocabulary>[^"]*)" terms:$/
    */
   public function createTerms($vocabulary, TableNode $termsTable) {
