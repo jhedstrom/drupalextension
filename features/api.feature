@@ -85,3 +85,15 @@ Feature: DrupalContext
     When I go to "admin/structure/taxonomy/tags"
     Then I should see "Tag one"
     And I should see "Tag two"
+
+  Scenario: Create nodes with specific authorship
+    Given users:
+    | name     | mail            | status |
+    | Joe User | joe@example.com | 1      |
+    And "article" nodes:
+    | title          | author   | body             | promote |
+    | Article by Joe | Joe User | PLACEHOLDER BODY | 1       |
+    When I am logged in as a user with the "administrator" role
+    And I am on the homepage
+    And I follow "Article by Joe"
+    Then I should see the link "Joe User"

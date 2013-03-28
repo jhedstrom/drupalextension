@@ -58,6 +58,11 @@ class Drupal7 implements CoreInterface {
       $node->original = clone $node;
     }
 
+    // Assign authorship if none exists and `author` is passed.
+    if (!isset($node->uid) && !empty($node->author) && ($user = user_load_by_name($node->author))) {
+      $node->uid = $user->uid;
+    }
+
     // Attempt to decipher any fields that may be specified.
     $node = $this->expandEntityFields($node);
 
