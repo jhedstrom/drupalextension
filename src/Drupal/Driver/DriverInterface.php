@@ -73,6 +73,14 @@ interface DriverInterface {
   public function createNode(\stdClass $node);
 
   /**
+   * Delete a node.
+   *
+   * @param object $node
+   *   Fully loaded node object.
+   */
+  public function nodeDelete(\stdClass $node);
+
+  /**
    * Run cron.
    */
   public function runCron();

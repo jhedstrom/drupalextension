@@ -59,6 +59,13 @@ class Drupal6 implements CoreInterface {
   }
 
   /**
+   * Implements CoreInterface::nodeDelete().
+   */
+  public function nodeDelete(\stdClass $node) {
+    node_delete($node->nid);
+  }
+
+  /**
    * Implements CoreInterface::runCron().
    */
   public function runCron() {

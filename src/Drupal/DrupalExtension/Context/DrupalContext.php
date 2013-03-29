@@ -33,6 +33,11 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
   public $basic_auth;
 
   /**
+   * Keep track of nodes so they can be cleaned up.
+   */
+  public $nodes = array();
+
+  /**
    * Current authenticated user.
    *
    * A value of FALSE denotes an anonymous user.
@@ -167,6 +172,13 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
    * @AfterScenario
    */
   public function afterScenario($event) {
+    // Remove any nodes that were created.
+    if (!empty($this->nodes)) {
+      foreach ($this->nodes as $node) {
+        $this->getDriver()->nodeDelete($node);
+      }
+    }
+
     // Remove any users that were created.
     if (!empty($this->users)) {
       foreach ($this->users as $user) {
@@ -699,6 +711,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
       'body' => $this->randomString(255),
     );
     $saved = $this->getDriver()->createNode($node);
+    $this->nodes[] = $saved;
 
     // Set internal page on the new node.
     $this->getSession()->visit($this->locatePath('/node/' . $saved->nid));
@@ -718,6 +731,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
       'uid' => $this->user->uid,
     );
     $saved = $this->getDriver()->createNode($node);
+    $this->nodes[] = $saved;
 
     // Set internal page on the new node.
     $this->getSession()->visit($this->locatePath('/node/' . $saved->nid));
@@ -730,7 +744,8 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
     foreach ($nodesTable->getHash() as $nodeHash) {
       $node = (object) $nodeHash;
       $node->type = $type;
-      $this->getDriver()->createNode($node);
+      $saved = $this->getDriver()->createNode($node);
+      $this->nodes[] = $saved;
     }
   }
 

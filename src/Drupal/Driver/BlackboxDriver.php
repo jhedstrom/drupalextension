@@ -70,6 +70,13 @@ class BlackboxDriver implements DriverInterface {
   }
 
   /**
+   * Implements DriverInterface::nodeDelete().
+   */
+  public function nodeDelete(\stdClass $node) {
+    throw new UnsupportedDriverActionException('No ability to delete nodes in %s', $this);
+  }
+
+  /**
    * Implements DriverInterface::runCron().
    */
   public function runCron() {

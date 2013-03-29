@@ -175,6 +175,13 @@ class DrupalDriver implements DriverInterface, DrupalSubContextFinderInterface {
   }
 
   /**
+   * Implements CoreInterface::nodeDelete().
+   */
+  public function nodeDelete(\stdClass $node) {
+    return $this->getCore()->nodeDelete($node);
+  }
+
+  /**
    * Implements DriverInterface::runCron().
    */
   public function runCron() {

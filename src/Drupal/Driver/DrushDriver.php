@@ -163,6 +163,13 @@ class DrushDriver implements DriverInterface {
   }
 
   /**
+   * Implements DriverInterface::nodeDelete().
+   */
+  public function nodeDelete(\stdClass $node) {
+    throw new UnsupportedDriverActionException('No ability to delete nodes in %s', $this);
+  }
+
+  /**
    * Implements DriverInterface::processBatch().
    */
   public function processBatch() {

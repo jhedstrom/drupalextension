@@ -40,6 +40,11 @@ interface CoreInterface {
   public function nodeCreate(\stdClass $node);
 
   /**
+   * Delete a node.
+   */
+  public function nodeDelete(\stdClass $node);
+
+  /**
    * Create a user.
    */
   public function userCreate(\stdClass $user);
