@@ -29,8 +29,10 @@ class Drupal8 implements CoreInterface {
     }
 
     // Bootstrap Drupal.
+    $current_path = getcwd();
     chdir(DRUPAL_ROOT);
     drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
+    chdir($current_path);
   }
 
   /**
