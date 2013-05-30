@@ -210,6 +210,19 @@ class Drupal7 implements CoreInterface {
                 // Use the first defined column. @todo probably breaks things.
                 $column_names = array_keys($info['columns']);
                 $column = array_shift($column_names);
+
+                // Special handling for date fields (start/end).
+                // @todo generalize this
+                if ('date' === $info['module']) {
+                  // Dates passed in separated by a comma are start/end dates.
+                  $dates = explode(',', $value);
+                  $value = trim($dates[0]);
+                  if (!empty($dates[1])) {
+                    $column2 = array_shift($column_names);
+                    $new_entity->{$param}[LANGUAGE_NONE][0][$column2] = trim($dates[1]);
+                  }
+                }
+
                 $new_entity->{$param}[LANGUAGE_NONE][0][$column] = $value;
               }
             }
