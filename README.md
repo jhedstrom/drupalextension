@@ -140,3 +140,12 @@ If the step definitions aren't listed, try running this command:
   ```
   class FeatureContext extends Drupal\DrupalExtension\Context\DrupalContext
   ```
+
+### Additional resources
+
+ * [Behat documentation](http://docs.behat.org)
+ * [Mink documentation](http://mink.behat.org)
+
+#### Examples and code snippets
+
+ * [Complex node creation, with field collections and entity references](https://gist.github.com/jhedstrom/5708233)
