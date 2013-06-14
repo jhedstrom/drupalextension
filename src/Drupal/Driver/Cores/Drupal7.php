@@ -221,6 +221,7 @@ class Drupal7 implements CoreInterface {
                     $column2 = array_shift($column_names);
                     $new_entity->{$param}[LANGUAGE_NONE][0][$column2] = trim($dates[1]);
                   }
+                  $new_entity->{$param}[LANGUAGE_NONE][0][$column] = $value;
                 }
                 // Special handling for term references.
                 elseif ('taxonomy' === $info['module']) {
