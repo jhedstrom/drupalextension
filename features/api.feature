@@ -97,3 +97,19 @@ Feature: DrupalContext
     And I am on the homepage
     And I follow "Article by Joe"
     Then I should see the link "Joe User"
+
+  Scenario: Create an article with multiple term references
+    Given "tags" terms:
+    | name      |
+    | Tag one   |
+    | Tag two   |
+    | Tag three |
+    | Tag four  |
+    And "article" nodes:
+    | title          | body             | promote | field_tags                            |
+    | Article by Joe | PLACEHOLDER BODY | 1       | Tag one, Tag two, Tag three, Tag four |
+    When I am logged in as a user with the "administrator" role
+    And I am on the homepage
+    And I follow "Article by Joe"
+    Then I should see the link "Tag one"
+    And I should see the link "Tag two"

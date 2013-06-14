@@ -222,8 +222,19 @@ class Drupal7 implements CoreInterface {
                     $new_entity->{$param}[LANGUAGE_NONE][0][$column2] = trim($dates[1]);
                   }
                 }
-
-                $new_entity->{$param}[LANGUAGE_NONE][0][$column] = $value;
+                // Special handling for term references.
+                elseif ('taxonomy' === $info['module']) {
+                  $terms = explode(',', $value);
+                  $i = 0;
+                  foreach ($terms as $term) {
+                    $term = taxonomy_get_term_by_name($term);
+                    $new_entity->{$param}[LANGUAGE_NONE][$i][$column] = array_shift($term)->tid;
+                    $i++;
+                  }
+                }
+                else {
+                  $new_entity->{$param}[LANGUAGE_NONE][0][$column] = $value;
+                }
               }
             }
           }
