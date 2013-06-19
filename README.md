@@ -129,16 +129,14 @@ If the step definitions aren't listed, try running this command:
 	    autoload: 0
   ```
 
-1. If you will be using a `features/bootstrap/FeatureContext.php` file, make sure you make the following change:
+1. The file: `features/bootstrap/FeatureContext.php` is for testing the Drupal Extension itself, and should not be used as a starting point for a feature context. A feature context that extends the Drupal Extension would look like this:
 
   ```
-  class FeatureContext extends BehatContext
-  ```
-
-  should become
-
-  ```
-  class FeatureContext extends Drupal\DrupalExtension\Context\DrupalContext
+  use Drupal\DrupalExtension\Context\DrupalContext;
+  
+  class FeatureContext extends DrupalContext {
+    ...
+  }
   ```
 
 ### Additional resources
