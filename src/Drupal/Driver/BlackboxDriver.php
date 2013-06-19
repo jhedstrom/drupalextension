@@ -98,6 +98,20 @@ class BlackboxDriver implements DriverInterface {
   }
 
   /**
+   * Implements DriverInterface::roleCreate().
+   */
+  public function roleCreate(array $permissions) {
+    throw new UnsupportedDriverActionException($this->errorString('create roles'), $this);
+  }
+
+  /**
+   * Implements DriverInterface::roleDelete().
+   */
+  public function roleDelete($rid) {
+    throw new UnsupportedDriverActionException($this->errorString('delete roles'), $this);
+  }
+
+  /**
    * Error printing exception
    *
    * @param string $error

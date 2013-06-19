@@ -93,6 +93,93 @@ class Drupal8 implements CoreInterface {
   }
 
   /**
+   * Implements CoreInterface::roleCreate().
+   */
+  public function roleCreate(array $permissions) {
+    // Generate a random, lowercase machine name.
+    $rid = strtolower($this->randomName(8));
+
+    // Generate a random label.
+    // In the role UI role names are trimmed and random string can start or
+    // end with a space.
+    $name = trim($this->randomString(8));
+
+    // Check the all the permissions strings are valid.
+    if (!$this->checkPermissions($permissions)) {
+      throw new \RuntimeException('All permissions are not valid.');
+    }
+
+    // Create new role.
+    $role = entity_create('user_role', array(
+      'id' => $rid,
+      'label' => $name,
+    ));
+    $result = $role->save();
+
+    if ($result === SAVED_NEW) {
+      // Grant the specified permissions to the role, if any.
+      if (!empty($permissions)) {
+        user_role_grant_permissions($role->id(), $permissions);
+
+        $assigned_permissions = db_query('SELECT permission FROM {role_permission} WHERE rid = :rid', array(':rid' => $role->id()))->fetchCol();
+        $missing_permissions = array_diff($permissions, $assigned_permissions);
+        if ($missing_permissions) {
+          return FALSE;
+        }
+      }
+      return $role->id();
+    }
+    else {
+      return FALSE;
+    }
+  }
+
+  /**
+   * Implements CoreInterface::roleDelete().
+   */
+  public function roleDelete($rid) {
+    $role = user_role_load($rid);
+
+    if (!$role) {
+      throw new \RuntimeException(sprintf('No role "%s" exists.', $rid));
+    }
+
+    $role->delete();
+  }
+
+  public function processBatch() {
+    $this->validateDrupalSite();
+    $batch =& batch_get();
+    $batch['progressive'] = FALSE;
+    batch_process();
+  }
+
+  /**
+   * Check to make sure that the array of permissions are valid.
+   *
+   * @param array $permissions
+   *   Permissions to check.
+   * @param bool $reset
+   *   Reset cached available permissions.
+   * @return bool TRUE or FALSE depending on whether the permissions are valid.
+   */
+  protected function checkPermissions(array $permissions, $reset = FALSE) {
+    $available = &drupal_static(__FUNCTION__);
+
+    if (!isset($available) || $reset) {
+      $available = array_keys(module_invoke_all('permission'));
+    }
+
+    $valid = TRUE;
+    foreach ($permissions as $permission) {
+      if (!in_array($permission, $available)) {
+        $valid = FALSE;
+      }
+    }
+    return $valid;
+  }
+
+  /**
    * Implements CoreInterface::userDelete().
    */
   public function userDelete(\stdClass $user) {
@@ -183,4 +270,58 @@ class Drupal8 implements CoreInterface {
       'No ability to delete terms in %s', $this
     );
   }
+
+  // TODO: Move / remove the below.
+
+  /**
+   * Generates a random string of ASCII characters of codes 32 to 126.
+   *
+   * The generated string includes alpha-numeric characters and common
+   * miscellaneous characters. Use this method when testing general input
+   * where the content is not restricted.
+   *
+   * Do not use this method when special characters are not possible (e.g., in
+   * machine or file names that have already been validated); instead, use
+   * Drupal\simpletest\TestBase::randomName().
+   *
+   * @param int $length
+   *   Length of random string to generate.
+   *
+   * @return string Randomly generated string.@see Drupal\simpletest\TestBase::randomName()
+   */
+  public static function randomString($length = 8) {
+    $str = '';
+    for ($i = 0; $i < $length; $i++) {
+      $str .= chr(mt_rand(32, 126));
+    }
+    return $str;
+  }
+
+  /**
+   * Generates a random string containing letters and numbers.
+   *
+   * The string will always start with a letter. The letters may be upper or
+   * lower case. This method is better for restricted inputs that do not
+   * accept certain characters. For example, when testing input fields that
+   * require machine readable values (i.e. without spaces and non-standard
+   * characters) this method is best.
+   *
+   * Do not use this method when testing unvalidated user input. Instead, use
+   * Drupal\simpletest\TestBase::randomString().
+   *
+   * @param int $length
+   *   Length of random string to generate.
+   *
+   * @return string Randomly generated string.@see Drupal\simpletest\TestBase::randomString()
+   */
+  public static function randomName($length = 8) {
+    $values = array_merge(range(65, 90), range(97, 122), range(48, 57));
+    $max = count($values) - 1;
+    $str = chr(mt_rand(97, 122));
+    for ($i = 1; $i < $length; $i++) {
+      $str .= chr($values[mt_rand(0, $max)]);
+    }
+    return $str;
+  }
+
 }

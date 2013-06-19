@@ -135,6 +135,70 @@ class Drupal7 implements CoreInterface {
   }
 
   /**
+   * Check to make sure that the array of permissions are valid.
+   *
+   * @param array $permissions
+   *   Permissions to check.
+   * @param bool $reset
+   *   Reset cached available permissions.
+   * @return bool TRUE or FALSE depending on whether the permissions are valid.
+   */
+  protected function checkPermissions(array $permissions, $reset = FALSE) {
+    $available = &drupal_static(__FUNCTION__);
+
+    if (!isset($available) || $reset) {
+      $available = array_keys(module_invoke_all('permission'));
+    }
+
+    $valid = TRUE;
+    foreach ($permissions as $permission) {
+      if (!in_array($permission, $available)) {
+        $valid = FALSE;
+      }
+    }
+    return $valid;
+  }
+
+  /**
+   * Implements CoreInterface::roleCreate().
+   */
+  public function roleCreate(array $permissions) {
+
+    // TODO: Generate role name randomly.
+
+    // Create new role.
+    $role = new stdClass();
+    $role->name = $name;
+    user_role_save($role);
+    user_role_grant_permissions($role->rid, $permissions);
+
+    if ($role && !empty($role->rid)) {
+      $count = db_query('SELECT COUNT(*) FROM {role_permission} WHERE rid = :rid', array(':rid' => $role->rid))->fetchField();
+      if ($count == count($permissions)) {
+        return $role->rid;
+      }
+      else {
+        return FALSE;
+      }
+
+    }
+    else {
+      return FALSE;
+    }
+  }
+
+  /**
+   * Implements CoreInterface::roleDelete().
+   */
+  public function roleDelete($rid) {
+    db_query('DELETE FROM {role} WHERE rid = %d', $rid);
+
+    if (!db_affected_rows()) {
+      throw new \RuntimeException(sprintf('No role "%s" exists.', $rid));
+    }
+  }
+
+  /**
    * Impelements CoreInterface::validateDrupalSite().
    */
   public function validateDrupalSite() {

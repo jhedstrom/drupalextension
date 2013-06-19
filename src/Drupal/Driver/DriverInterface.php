@@ -104,4 +104,24 @@ interface DriverInterface {
    *    Status constant indicating deletion.
    */
   public function termDelete(\stdClass $term);
+
+  /**
+   * Create a role
+   *
+   * @param array $permissions
+   *   An array of permissions to create the role with.
+   *
+   * @return string
+   *   Role ID of newly created role, or FALSE if role creation failed.
+   */
+  public function roleCreate(array $permissions);
+
+  /**
+   * Delete a role
+   *
+   * @param $rid
+   *   A role name to delete.
+   */
+  public function roleDelete($rid);
+
 }

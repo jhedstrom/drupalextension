@@ -75,6 +75,13 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
   public $terms = array();
 
   /**
+   * Keep track of any roles that are created so they can easily be removed.
+   *
+   * @var array
+   */
+  private $roles = array();
+
+  /**
    * Initialize subcontexts.
    *
    * @param array $subcontexts
@@ -148,6 +155,8 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
    * @param string $name
    *   Text value name, such as 'log_out', which corresponds to the default 'Log
    *   out' link text.
+   * @throws \Exception
+   * @return
    */
   public function getDrupalText($name) {
     $text = $this->getDrupalParameter('text');
@@ -208,6 +217,13 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
     if (!empty($this->terms)) {
       foreach ($this->terms as $term) {
         $this->getDriver()->termDelete($term);
+      }
+    }
+
+    // Remove any roles that were created.
+    if (!empty($this->roles)) {
+      foreach ($this->roles as $rid) {
+        $this->getDriver()->roleDelete($rid);
       }
     }
   }
@@ -486,7 +502,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
     }
     // Find the text within the region
     $regionText = $regionObj->getText();
-    if (strpos($regionText, $text) === false) {
+    if (strpos($regionText, $text) === FALSE) {
       throw new \Exception(sprintf("The text '%s' was not found in the region '%s' on the page %s", $text, $region, $this->getSession()->getCurrentUrl()));
     }
   }
@@ -678,6 +694,36 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
 
     // Login.
     $this->login();
+  }
+
+  /**
+   * @Given /^I am logged in as a user with "([^"]*)" permissions$/
+   */
+  public function iAmLoggedInAsAUserWithPermissions($permissions) {
+    $permissions = explode(',', $permissions);
+
+    $rid = $this->getDriver()->roleCreate($permissions);
+    if (!$rid) {
+      return FALSE;
+    }
+    // Create user.
+    $user = (object) array(
+      'name' => $this->randomString(8),
+      'pass' => $this->randomString(16),
+      'roles' => array($rid),
+    );
+    $user->mail = "{$user->name}@example.com";
+
+    // Create a new user.
+    $this->getDriver()->userCreate($user);
+
+    $this->users[] = $this->user = $user;
+    $this->roles[] = $rid;
+
+    // Login.
+    $this->login();
+
+    return TRUE;
   }
 
   /**
