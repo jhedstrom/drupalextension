@@ -228,8 +228,12 @@ class Drupal7 implements CoreInterface {
                   $terms = explode(',', $value);
                   $i = 0;
                   foreach ($terms as $term) {
-                    $term = taxonomy_get_term_by_name($term);
-                    $new_entity->{$param}[LANGUAGE_NONE][$i][$column] = array_shift($term)->tid;
+                    $tid = taxonomy_get_term_by_name($term);
+                    if (!$tid) {
+                      throw new \Exception(sprintf("No term '%s' exists.", $term));
+                    }
+
+                    $new_entity->{$param}[LANGUAGE_NONE][$i][$column] = array_shift($tid)->tid;
                     $i++;
                   }
                 }
