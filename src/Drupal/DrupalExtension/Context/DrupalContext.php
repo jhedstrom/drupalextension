@@ -1003,6 +1003,28 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
     }
 
   /**
+   * Uses Mink's "print last response" dialog to output current state to command line, then pauses.
+   *
+   * @Given /^I print last response and break$/
+   */
+    public function iPrintLastResponseAndBreak()
+    {
+      $this->printLastResponse();
+      return new Then("I break");
+    }
+
+  /**
+   * Uses Mink's "show last response" to output markup to browser, then pauses.
+   *
+   * @Given /^I show last response and break$/
+   */
+    public function iShowLastResponseAndBreak()
+    {
+      $this->showLastResponse();
+      return new Then("I break");
+    }
+
+  /**
    * @} End of defgroup "debugging steps"
    */
 }
