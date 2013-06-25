@@ -94,4 +94,14 @@ interface DriverInterface {
    *   The term object including the term ID in the case of new terms.
    */
   public function createTerm(\stdClass $term);
+
+  /**
+   * Delete a taxonomy term.
+   *
+   * @param object $term.
+   *    Term object to delete.
+   * @return
+   *    Status constant indicating deletion.
+   */
+  public function termDelete(\stdClass $term);
 }

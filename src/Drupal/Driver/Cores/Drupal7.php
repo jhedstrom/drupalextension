@@ -262,4 +262,42 @@ class Drupal7 implements CoreInterface {
       $entity->created = strtotime($entity->created);
     }
   }
+
+  /*
+   * Implements CoreInterface::termCreate.
+   */
+  public function termCreate(\stdClass $term) {
+    if (!isset($term->vid)) {
+      // Try to load vocabulary by machine name.
+      $vocabularies = \taxonomy_vocabulary_load_multiple(FALSE, array(
+        'machine_name' => $term->vocabulary_machine_name
+      ));
+      if (!empty($vocabularies)) {
+        $vids = array_keys($vocabularies);
+        $term->vid = reset($vids);
+      }
+    }
+
+    \taxonomy_term_save($term);
+
+    // Loading a term by name returns an array of term objects, but there should
+    // only be one matching term in a testing context, so take the first match
+    // by reset()'ing $matches.
+    $matches = \taxonomy_get_term_by_name($term->name);
+    $saved_term = reset($matches);
+
+    return $saved_term;
+  }
+
+  /**
+   * Implements CoreInterface::termDelete.
+   */
+  public function termDelete(\stdClass $term) {
+    $status = 0;
+    if (isset($term->tid)) {
+      $status = \taxonomy_term_delete($term->tid);
+    }
+    // Will be SAVED_DELETED (3) on success.
+    return $status;
+  }
 }

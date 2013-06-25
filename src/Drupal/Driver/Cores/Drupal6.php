@@ -162,4 +162,24 @@ class Drupal6 implements CoreInterface {
       throw new BootstrapException(sprintf('Could not find a Drupal settings.php file at "%s"', $conf_file));
     }
   }
+
+  /**
+   * Implements CoreInterface::termCreate.
+   * @todo implement for drupal6
+   */
+  public function termCreate(\stdClass $term) {
+    throw new UnsupportedDriverActionException(
+      'No ability to create create terms in %s', $this
+    );
+  }
+
+  /**
+   * Implements CoreInterface::termDelete.
+   * @todo implement for drupal6
+   */
+  public function termDelete(\stdClass $term) {
+    throw new UnsupportedDriverActionException(
+      'No ability to delete terms in %s', $this
+    );
+  }
 }

@@ -67,4 +67,14 @@ interface CoreInterface {
    * @see _drush_bootstrap_drupal_site_validate()
    */
   public function validateDrupalSite();
+
+  /**
+   * Create a taxonomy term.
+   */
+  public function termCreate(\stdClass $term);
+
+  /**
+   * Delete a taxonomy term,
+   */
+  public function termDelete(\stdClass $term);
 }

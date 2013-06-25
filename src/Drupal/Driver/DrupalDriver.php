@@ -194,16 +194,13 @@ class DrupalDriver implements DriverInterface, DrupalSubContextFinderInterface {
    * Implements DriverInterface::createTerm().
    */
   public function createTerm(\stdClass $term) {
-    if (!isset($term->vid)) {
-      // Try to load vocabulary by machine name.
-      $vocabularies = \taxonomy_vocabulary_load_multiple(FALSE, array('machine_name' => $term->vocabulary_machine_name));
-      if (!empty($vocabularies)) {
-        $vids = array_keys($vocabularies);
-        $term->vid = reset($vids);
-      }
-    }
+    return $this->getCore()->termCreate($term);
+  }
 
-    \taxonomy_term_save($term);
-    return $term;
+  /**
+   * Implements DriverInterface::termDelete().
+   */
+  public function termDelete(\stdClass $term) {
+    return $this->getCore()->termDelete($term);
   }
 }

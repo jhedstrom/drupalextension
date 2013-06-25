@@ -50,6 +50,11 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
   private $users = array();
 
   /**
+   * Keep track of all terms that are created so they can easily be removed.
+   */
+  public $terms = array();
+
+  /**
    * Initialize subcontexts.
    *
    * @param array $subcontexts
@@ -185,6 +190,13 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
         $this->getDriver()->userDelete($user);
       }
       $this->getDriver()->processBatch();
+    }
+
+    // Remove any terms that were created.
+    if (!empty($this->terms)) {
+      foreach ($this->terms as $term) {
+        $this->getDriver()->termDelete($term);
+      }
     }
   }
 
@@ -761,8 +773,9 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
       'description' => $this->randomString(255),
     );
     $saved = $this->getDriver()->createTerm($term);
+    $this->terms[] = $saved;
 
-    // Set internal page on the new node.
+    // Set internal page on the term.
     $this->getSession()->visit($this->locatePath('/taxonomy/term/' . $saved->tid));
   }
 
@@ -784,7 +797,8 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
     foreach ($termsTable->getHash() as $termsHash) {
       $term = (object) $termsHash;
       $term->vocabulary_machine_name = $vocabulary;
-      $this->getDriver()->createTerm($term);
+      $saved = $this->getDriver()->createTerm($term);
+      $this->terms[] = $saved;
     }
   }
 
