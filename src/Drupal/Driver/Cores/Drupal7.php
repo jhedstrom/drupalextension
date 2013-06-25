@@ -68,6 +68,9 @@ class Drupal7 implements CoreInterface {
     // Attempt to decipher any fields that may be specified.
     $node = $this->expandEntityFields($node);
 
+    // Convert properties to expected structure.
+    $this->expandEntityProperties($node);
+
     node_save($node);
     return $node;
   }
@@ -248,5 +251,15 @@ class Drupal7 implements CoreInterface {
     }
 
     return $new_entity;
+  }
+
+  /**
+   * Given an entity object, expand any property fields to the expected structure.
+   */
+  protected function expandEntityProperties(\stdClass $entity) {
+    // The created field may come in as a readable date, rather than a timestamp.
+    if (isset($entity->created) && !is_numeric($entity->created)) {
+      $entity->created = strtotime($entity->created);
+    }
   }
 }

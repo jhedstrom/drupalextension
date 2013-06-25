@@ -114,3 +114,10 @@ Feature: DrupalContext
     And I should see the link "Tag two"
     And I should see the link "Tag three"
     And I should see the link "Tag four"
+
+  Scenario: Readable created dates
+    Given "article" nodes:
+    | title        | body             | created            | status | promote |
+    | Test article | PLACEHOLDER BODY | 07/27/2014 12:03am |      1 |       1 |
+    When I am on the homepage
+    Then I should see the text "Sun, 07/27/2014 - 00:03"
