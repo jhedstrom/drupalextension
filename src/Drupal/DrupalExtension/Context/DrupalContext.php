@@ -470,6 +470,20 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
   }
 
   /**
+   * @Then /^I should not see the link "(?P<link>[^"]*)" in the "(?P<region>[^"]*)"(?:| region)$/
+   */
+  public function assertNotLinkRegion($link, $region) {
+    $element = $this->getSession()->getPage()->find('region', $region);
+    if (!$element) {
+      throw new \Exception(sprintf('No region "%s" found on the page %s.', $region, $this->getSession()->getCurrentUrl()));
+    }
+    $result = $element->findLink($link);
+    if (!empty($result)) {
+      throw new \Exception(sprintf('Link to "%s" in the "%s" region on the page %s', $link, $region, $this->getSession()->getCurrentUrl()));
+    }
+  }
+
+  /**
    * @Then /^I should see (?:the text |)"(?P<text>[^"]*)" in the "(?P<region>[^"]*)"(?:| region)$/
    */
   public function assertRegionText($text, $region) {
