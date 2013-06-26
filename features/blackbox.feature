@@ -27,6 +27,10 @@ Feature: Test DrupalContext
     When I press "Search" in the "right header" region
     Then I should see the text "Filter by content type" in the "content" region
 
+  Scenario: Check a link should not exist in a region
+    Given I am on the homepage
+    Then I should not see the link "This link should never exist in a default Drupal install" in the "right header"
+
   Scenario: Error messages
    Given I am on "/user"
    When I press "Log in"
