@@ -211,6 +211,6 @@ class DrushDriver implements DriverInterface {
    * Implements DriverInterface::termDelete().
    */
   public function termDelete(\stdClass $term) {
-    throw new UnsupportedDriverActionException('No ability to create terms in %s', $this);
+    throw new UnsupportedDriverActionException('No ability to delete terms in %s', $this);
   }
 }
