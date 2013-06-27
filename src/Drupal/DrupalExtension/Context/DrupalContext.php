@@ -397,7 +397,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
   /**
    * @Then /^I (?:|should )see the heading "(?P<heading>[^"]*)"$/
    */
-  public function iShouldSeeTheHeading($heading) {
+  public function assertHeading($heading) {
     $element = $this->getSession()->getPage();
     foreach (array('h1', 'h2', 'h3', 'h4', 'h5', 'h6') as $tag) {
       $results = $element->findAll('css', $tag);
@@ -408,6 +408,21 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
       }
     }
     throw new \Exception(sprintf("The text '%s' was not found in any heading on the page %s", $heading, $this->getSession()->getCurrentUrl()));
+  }
+
+  /**
+   * @Then /^I (?:|should )not see the heading "(?P<heading>[^"]*)"$/
+   */
+  public function assertNotHeading($heading) {
+    $element = $this->getSession()->getPage();
+    foreach (array('h1', 'h2', 'h3', 'h4', 'h5', 'h6') as $tag) {
+      $results = $element->findAll('css', $tag);
+      foreach ($results as $result) {
+        if ($result->getText() == $heading) {
+          throw new \Exception(sprintf("The text '%s' was found in a heading on the page %s", $heading, $this->getSession()->getCurrentUrl()));
+        }
+      }
+    }
   }
 
   /**
