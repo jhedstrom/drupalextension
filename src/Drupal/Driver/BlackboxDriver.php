@@ -99,14 +99,13 @@ class BlackboxDriver implements DriverInterface {
 
   /**
    * Error printing exception
-   *
    * @param string $error
    *   The term, node, user or permission.
    *
-   * @return String
-   *   A formatted string reminding people to use an api driver.
+   * @return a formatted string reminding people to use an api driver.
    */
   private function errorString($error) {
     return sprintf('No ability to %s in %%s. Put `@api` into your feature and add an api driver (ex: `api_driver: drupal`) in behat.yml.', $error);
+>>>>>>> Created better blackbox messages reminding users to use @api tags and api drivers.
   }
 }
