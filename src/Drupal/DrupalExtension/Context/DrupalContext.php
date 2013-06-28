@@ -1027,4 +1027,47 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
   /**
    * @} End of defgroup "drupal extensions"
    */
+  /**
+   * @defgroup "debugging steps"
+   * @{
+   */
+
+  /**
+   * Pauses the scenario until the user presses a key. Useful when debugging a scenario.
+   *
+   * @Then /^(?:|I )break$/
+   */
+    public function iPutABreakpoint()
+    {
+      fwrite(STDOUT, "\033[s \033[93m[Breakpoint] Press \033[1;93m[RETURN]\033[0;93m to continue...\033[0m");
+      while (fgets(STDIN, 1024) == '') {}
+      fwrite(STDOUT, "\033[u");
+      return;
+    }
+
+  /**
+   * Uses Mink's "print last response" dialog to output current state to command line, then pauses.
+   *
+   * @Given /^I print last response and break$/
+   */
+    public function iPrintLastResponseAndBreak()
+    {
+      $this->printLastResponse();
+      return new Then("I break");
+    }
+
+  /**
+   * Uses Mink's "show last response" to output markup to browser, then pauses.
+   *
+   * @Given /^I show last response and break$/
+   */
+    public function iShowLastResponseAndBreak()
+    {
+      $this->showLastResponse();
+      return new Then("I break");
+    }
+
+  /**
+   * @} End of defgroup "debugging steps"
+   */
 }
