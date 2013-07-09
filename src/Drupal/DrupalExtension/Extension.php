@@ -144,6 +144,7 @@ class Extension implements ExtensionInterface {
   public function getCompilerPasses() {
     return array(
       new Compiler\DriverPass(),
+      new Compiler\EventSubscriberPass(),
     );
   }
 }

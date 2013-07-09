@@ -11,21 +11,26 @@ use Drupal\Drupal,
     Drupal\DrupalExtension\Context\DrupalContext,
     Drupal\DrupalExtension\Context\DrupalSubContextFinderInterface;
 
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 use Symfony\Component\Finder\Finder;
 
 class DrupalAwareInitializer implements InitializerInterface, EventSubscriberInterface {
-  private $drupal, $parameters;
+  private $drupal, $parameters, $dispatcher;
 
-  public function __construct(Drupal $drupal, array $parameters) {
+  public function __construct(Drupal $drupal, array $parameters, EventDispatcher $dispatcher) {
     $this->drupal = $drupal;
     $this->parameters = $parameters;
+    $this->dispatcher = $dispatcher;
   }
 
   public function initialize(ContextInterface $context) {
     // Set Drupal driver manager.
     $context->setDrupal($this->drupal);
+
+    // Set event dispatcher.
+    $context->setDispatcher($this->dispatcher);
 
     // Add all parameters to the context.
     $context->setDrupalParameters($this->parameters);

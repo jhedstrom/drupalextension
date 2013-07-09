@@ -13,6 +13,12 @@ parameters:
   # Context class guesser.
   drupal.context.class_guesser.class: Drupal\DrupalExtension\Context\ClassGuesser\DrupalContextClassGuesser
 
+  # Event dispatcher.
+  drupal.event_dispatcher.class: Symfony\Component\EventDispatcher\EventDispatcher
+
+  # Hook dispatcher.
+  drupal.hook.dispatcher.class: Drupal\DrupalExtension\Hook\Dispatcher
+
   # Region selector class.
   drupal.context.region_selector.class: Drupal\DrupalExtension\Selector\RegionSelector
 
@@ -29,6 +35,7 @@ services:
     arguments:
       - @drupal.drupal
       - %drupal.parameters%
+      - @drupal.event_dispatcher
     tags:
       - { name: behat.context.initializer }
       - { name: behat.event_subscriber, priority: 0 }
@@ -36,6 +43,12 @@ services:
     class: %drupal.context.class_guesser.class%
     tags:
       - { name: behat.context.class_guesser }
+  drupal.event_dispatcher:
+    class: %drupal.event_dispatcher.class%
+  drupal.hook.dispatcher:
+    class: %drupal.hook.dispatcher.class%
+    tags:
+      - { name: drupal.event_subscriber }
   drupal.region_selector:
     class: %drupal.context.region_selector.class%
     arguments:
