@@ -5,6 +5,13 @@
   "keywords": ["drupal", "web", "test"],
   "homepage": "http://drupal.org/project/drupalextension",
   "license": "GPL-2.0+",
+  "authors": [
+     {
+       "name": "Jonathan Hedstrom",
+       "email": "jhedstrom@gmail.com",
+       "homepage": "http://professorbikeybike.com"
+     }
+  ],
   "require": {
     "behat/mink": ">=1.4.0, <1.5.0",
     "behat/mink-goutte-driver": "*",
