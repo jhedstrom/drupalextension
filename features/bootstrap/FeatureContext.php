@@ -30,7 +30,7 @@ class FeatureContext extends DrupalContext {
    *
    * @beforeNodeCreate
    */
-  public static function alterNodeParameters(EntityEvent $event) {
+  public function alterNodeParameters(EntityEvent $event) {
     // @see `features/api.feature`
     // Change 'published on' to the expected 'created'.
     $node = $event->getEntity();
@@ -45,7 +45,7 @@ class FeatureContext extends DrupalContext {
    *
    * @beforeTermCreate
    */
-  public static function alterTermParameters(EntityEvent $event) {
+  public function alterTermParameters(EntityEvent $event) {
     // @see `features/api.feature`
     // Change 'Label' to expected 'name'.
     $term = $event->getEntity();
@@ -60,7 +60,7 @@ class FeatureContext extends DrupalContext {
    *
    * @beforeUserCreate
    */
-  public static function alterUserParameters(EntityEvent $event) {
+  public function alterUserParameters(EntityEvent $event) {
     // @see `features/api.feature`
     // Concatenate 'First name' and 'Last name' to form user name.
     $user = $event->getEntity();

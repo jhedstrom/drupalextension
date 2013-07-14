@@ -20,4 +20,13 @@ abstract class EntityHook extends FilterableHook {
     }
   }
 
+  /**
+   * Runs hook callback.
+   *
+   * @param EventInterface $event
+   */
+  public function run(EventInterface $event) {
+    call_user_func($this->getCallbackForContext($event->getContext()), $event);
+  }
+
 }
