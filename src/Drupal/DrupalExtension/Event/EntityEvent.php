@@ -2,7 +2,8 @@
 
 namespace Drupal\DrupalExtension\Event;
 
-use Behat\Behat\Context\ContextInterface;
+use Behat\Behat\Context\ContextInterface,
+    Behat\Behat\Event\EventInterface;
 
 use Symfony\Component\EventDispatcher\Event;
 

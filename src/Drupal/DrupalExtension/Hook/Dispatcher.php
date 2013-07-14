@@ -2,11 +2,13 @@
 
 namespace Drupal\DrupalExtension\Hook;
 
+use Behat\Behat\Event\EventInterface,
+    Behat\Behat\Hook\HookInterface;
+
 use Symfony\Component\EventDispatcher\EventDispatcher,
     Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-use Drupal\DrupalExtension\Event\EntityEvent,
-    Drupal\DrupalExtension\Event\EventInterface;
+use Drupal\DrupalExtension\Event\EntityEvent;
 
 /**
  * Hook dispatcher.
@@ -57,11 +59,33 @@ class Dispatcher implements EventSubscriberInterface {
   /**
    * Listens to "beforeNodeCreate" event.
    *
-   * @param StepEvent $event
+   * @param EntityEvent $event
    *
    * @uses fireStepHooks()
    */
     public function beforeNodeCreate(EntityEvent $event) {
+      $this->fireHooks(__FUNCTION__, $event);
+    }
+
+  /**
+   * Listens to "beforeTermCreate" event.
+   *
+   * @param EntityEvent $event
+   *
+   * @uses fireStepHooks()
+   */
+    public function beforeTermCreate(EntityEvent $event) {
+      $this->fireHooks(__FUNCTION__, $event);
+    }
+
+  /**
+   * Listens to "beforeUserCreate" event.
+   *
+   * @param EntityEvent $event
+   *
+   * @uses fireStepHooks()
+   */
+    public function beforeUserCreate(EntityEvent $event) {
       $this->fireHooks(__FUNCTION__, $event);
     }
 

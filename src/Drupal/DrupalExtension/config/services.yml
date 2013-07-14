@@ -19,6 +19,9 @@ parameters:
   # Hook dispatcher.
   drupal.hook.dispatcher.class: Drupal\DrupalExtension\Hook\Dispatcher
 
+  # Hook loader.
+  drupal.context.loader.annotated.class: Drupal\DrupalExtension\Context\Loader\Annotated
+
   # Region selector class.
   drupal.context.region_selector.class: Drupal\DrupalExtension\Selector\RegionSelector
 
@@ -49,6 +52,12 @@ services:
     class: %drupal.hook.dispatcher.class%
     tags:
       - { name: drupal.event_subscriber }
+  drupal.context.loader.annotated:
+    class: %drupal.context.loader.annotated.class%
+    arguments:
+      - @drupal.hook.dispatcher
+    tags:
+      - { name: behat.context.loader }
   drupal.region_selector:
     class: %drupal.context.region_selector.class%
     arguments:
