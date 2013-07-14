@@ -136,3 +136,13 @@ Feature: DrupalContext
     And I am logged in as a user with the "administrator" role
     When I visit "admin/people"
     Then I should see the link "Joe User"
+
+  Scenario: Term hooks are functioning
+    Given "tags" terms:
+    | Label     |
+    | Tag one   |
+    | Tag two   |
+    And I am logged in as a user with the "administrator" role
+    When I go to "admin/structure/taxonomy/tags"
+    Then I should see "Tag one"
+    And I should see "Tag two"

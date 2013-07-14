@@ -41,6 +41,21 @@ class FeatureContext extends DrupalContext {
   }
 
   /**
+   * Hook into term creation to test `@beforeTermCreate`
+   *
+   * @beforeTermCreate
+   */
+  public static function alterTermParameters(EntityEvent $event) {
+    // @see `features/api.feature`
+    // Change 'Label' to expected 'name'.
+    $term = $event->getEntity();
+    if (isset($term->{'Label'})) {
+      $term->name = $term->{'Label'};
+      unset($term->{'Label'});
+    }
+  }
+
+  /**
    * Hook into user creation to test `@beforeUserCreate`
    *
    * @beforeUserCreate
