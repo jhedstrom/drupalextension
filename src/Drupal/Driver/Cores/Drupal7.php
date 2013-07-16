@@ -278,6 +278,15 @@ class Drupal7 implements CoreInterface {
       }
     }
 
+    // If `parent` is set, look up a term in this vocab with that name.
+    if (isset($term->parent)) {
+      $parent = \taxonomy_get_term_by_name($term->parent, $term->vocabulary_machine_name);
+      if (!empty($parent)) {
+        $parent = reset($parent);
+        $term->parent = $parent->tid;
+      }
+    }
+
     \taxonomy_term_save($term);
 
     // Loading a term by name returns an array of term objects, but there should
