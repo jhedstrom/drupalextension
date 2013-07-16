@@ -139,6 +139,26 @@ If the step definitions aren't listed, try running this command:
   }
   ```
 
+1. Methods in your `FeatureContext` class can be tagged to fire before certain events:
+
+  ```php
+  use Drupal\DrupalExtension\Event\EntityEvent;
+  
+  ...
+  
+  /**
+   * Call this function before nodes are created.
+   *
+   * @beforeNodeCreate
+   */
+   public function alterNodeObject(EntityEvent $event) {
+     $node = $event->getEntity();
+     // Alter node object as needed.
+   }
+   ```
+
+   Other available tags include `@beforeTermCreate` and `@beforeUserCreate`
+
 ### Additional resources
 
  * [Behat documentation](http://docs.behat.org)

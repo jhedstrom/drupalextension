@@ -7,9 +7,11 @@ use Behat\Behat\Exception\PendingException;
 use Behat\Mink\Exception\UnsupportedDriverActionException;
 
 use Drupal\Drupal;
+use Drupal\DrupalExtension\Event\EntityEvent;
 use Drupal\DrupalExtension\Context\DrupalSubContextInterface;
 
 use Symfony\Component\Process\Process;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 use Behat\Behat\Context\Step\Given;
 use Behat\Behat\Context\Step\When;
@@ -26,6 +28,11 @@ use Behat\Mink\Driver\Selenium2Driver as Selenium2Driver;
 class DrupalContext extends MinkContext implements DrupalAwareInterface {
 
   private $drupal, $drupalParameters;
+
+  /**
+   * Event dispatcher object.
+   */
+  protected $dispatcher;
 
   /**
    * Basic auth user and password.
@@ -94,6 +101,13 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
    */
   public function getDrupal() {
     return $this->drupal;
+  }
+
+  /**
+   * Set event dispatcher.
+   */
+  public function setDispatcher(EventDispatcher $dispatcher) {
+    $this->dispatcher = $dispatcher;
   }
 
   /**
@@ -751,6 +765,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
       'type' => $type,
       'body' => $this->randomString(255),
     );
+    $this->dispatcher->dispatch('beforeNodeCreate', new EntityEvent($this, $node));
     $saved = $this->getDriver()->createNode($node);
     $this->nodes[] = $saved;
 
@@ -771,6 +786,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
       'body' => $this->randomString(255),
       'uid' => $this->user->uid,
     );
+    $this->dispatcher->dispatch('beforeNodeCreate', new EntityEvent($this, $node));
     $saved = $this->getDriver()->createNode($node);
     $this->nodes[] = $saved;
 
@@ -785,6 +801,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
     foreach ($nodesTable->getHash() as $nodeHash) {
       $node = (object) $nodeHash;
       $node->type = $type;
+      $this->dispatcher->dispatch('beforeNodeCreate', new EntityEvent($this, $node));
       $saved = $this->getDriver()->createNode($node);
       $this->nodes[] = $saved;
     }
@@ -801,6 +818,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
       'vocabulary_machine_name' => $vocabulary,
       'description' => $this->randomString(255),
     );
+    $this->dispatcher->dispatch('beforeTermCreate', new EntityEvent($this, $term));
     $saved = $this->getDriver()->createTerm($term);
     $this->terms[] = $saved;
 
@@ -814,6 +832,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
   public function createUsers(TableNode $usersTable) {
     foreach ($usersTable->getHash() as $userHash) {
       $user = (object) $userHash;
+      $this->dispatcher->dispatch('beforeUserCreate', new EntityEvent($this, $user));
       $this->getDriver()->userCreate($user);
       $this->users[] = $user;
     }
@@ -826,6 +845,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
     foreach ($termsTable->getHash() as $termsHash) {
       $term = (object) $termsHash;
       $term->vocabulary_machine_name = $vocabulary;
+      $this->dispatcher->dispatch('beforeTermCreate', new EntityEvent($this, $term));
       $saved = $this->getDriver()->createTerm($term);
       $this->terms[] = $saved;
     }
