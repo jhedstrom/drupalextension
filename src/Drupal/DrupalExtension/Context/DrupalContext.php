@@ -687,7 +687,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
     // Create a new user.
     $this->getDriver()->userCreate($user);
 
-    $this->users[] = $this->user = $user;
+    $this->users[$user->name] = $this->user = $user;
 
     if ($role == 'authenticated user') {
       // Nothing to do.
@@ -700,6 +700,21 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
     $this->login();
 
     return TRUE;
+  }
+
+  /**
+   * @Given /^I am logged in as "(?P<name>[^"]*)"$/
+   */
+  public function assertLoggedInByName($name) {
+    if (!isset($this->users[$name])) {
+      throw new \Exception(sprintf('No user with %s name is registered with the driver.', $name));
+    }
+
+    // Change internal current user.
+    $this->user = $this->users[$name];
+
+    // Login.
+    $this->login();
   }
 
   /**
@@ -832,9 +847,16 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
   public function createUsers(TableNode $usersTable) {
     foreach ($usersTable->getHash() as $userHash) {
       $user = (object) $userHash;
+
+      // Set a password.
+      if (!isset($user->pass)) {
+        $user->pass = $this->randomString();
+      }
+
       $this->dispatcher->dispatch('beforeUserCreate', new EntityEvent($this, $user));
       $this->getDriver()->userCreate($user);
-      $this->users[] = $user;
+
+      $this->users[$user->name] = $user;
     }
   }
 
