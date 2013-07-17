@@ -184,21 +184,6 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
   }
 
   /**
-   * Check for shell access (via drush).
-   *
-   * @BeforeScenario @shellAccess
-   */
-  public function checkShellAccess() {
-    // @todo fix/move
-    return;
-    // @todo check that this is a functioning alias.
-    // See http://drupal.org/node/1615450
-    if (!$this->drushAlias) {
-      throw new pendingException('This scenario requires shell access.');
-    }
-  }
-
-  /**
    * Run after every scenario.
    *
    * @AfterScenario
