@@ -303,7 +303,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
    *
    * @throws UnsupportedDriverActionException
    */
-  public function iAmAt($path) {
+  public function assertAtPath($path) {
     $this->getSession()->visit($this->locatePath($path));
 
     // If available, add extra validation that this is a 200 response.
@@ -319,7 +319,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
   /**
    * @When /^I visit "(?P<path>[^"]*)"$/
    */
-  public function iVisit($path) {
+  public function assertVisit($path) {
     // Use Drupal Context 'I am at'.
     return new Given("I am at \"$path\"");
   }
@@ -327,7 +327,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
   /**
    * @When /^I click "(?P<link>[^"]*)"$/
    */
-  public function iClick($link) {
+  public function assertClick($link) {
     // Use the Mink Extenstion step definition.
     return new Given("I follow \"$link\"");
   }
@@ -336,7 +336,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
    * @Given /^for "(?P<field>[^"]*)" I enter "(?P<value>[^"]*)"$/
    * @Given /^I enter "(?P<value>[^"]*)" for "(?P<field>[^"]*)"$/
    */
-  public function forIenter($field, $value) {
+  public function assertEnterField($field, $value) {
     // Use the Mink Extenstion step definition.
     return new Given("I fill in \"$field\" with \"$value\"");
   }
@@ -344,7 +344,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
   /**
    * @When /^I press the "(?P<button>[^"]*)" button$/
    */
-  public function iPressTheButton($button) {
+  public function assertPressButton($button) {
     // Use the Mink Extenstion step definition.
     return new Given("I press \"$button\"");
   }
@@ -352,7 +352,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
   /**
    * @Then /^I should see the link "(?P<link>[^"]*)"$/
    */
-  public function iShouldSeeTheLink($link) {
+  public function assertLinkVisible($link) {
     $element = $this->getSession()->getPage();
     $result = $element->findLink($link);
     if (empty($result)) {
@@ -363,7 +363,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
   /**
    * @Then /^I should not see the link "(?P<link>[^"]*)"$/
    */
-  public function iShouldNotSeeTheLink($link) {
+  public function assertNotLinkVisible($link) {
     $element = $this->getSession()->getPage();
     $result = $element->findLink($link);
     if ($result) {
@@ -542,7 +542,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
   /**
    * @Then /^(?:I|I should) see the text "(?P<text>[^"]*)"$/
    */
-  public function iShouldSeeTheText($text) {
+  public function assertTextVisible($text) {
     // Use the Mink Extension step definition.
     return new Given("I should see text matching \"$text\"");
   }
@@ -550,7 +550,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
   /**
    * @Then /^I should not see the text "(?P<text>[^"]*)"$/
    */
-  public function iShouldNotSeeTheText($text) {
+  public function assertNotTextVisible($text) {
     // Use the Mink Extension step definition.
     return new Given("I should not see text matching \"$text\"");
   }
@@ -558,7 +558,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
   /**
    * @Then /^I should get a "(?P<code>[^"]*)" HTTP response$/
    */
-  public function iShouldGetAHttpResponse($code) {
+  public function assertHttpResponse($code) {
     // Use the Mink Extension step definition.
     return new Given("the response status code should be $code");
   }
@@ -566,7 +566,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
   /**
    * @Then /^I should not get a "(?P<code>[^"]*)" HTTP response$/
    */
-  public function iShouldNotGetAHttpResponse($code) {
+  public function assertNotHttpResponse($code) {
     // Use the Mink Extension step definition.
     return new Given("the response status code should not be $code");
   }
@@ -574,7 +574,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
   /**
    * @Given /^I check the box "(?P<checkbox>[^"]*)"$/
    */
-  public function iCheckTheBox($checkbox) {
+  public function assertCheckBox($checkbox) {
     // Use the Mink Extension step definition.
     return new Given("I check \"$checkbox\"");
   }
@@ -582,7 +582,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
   /**
    * @Given /^I uncheck the box "(?P<checkbox>[^"]*)"$/
    */
-  public function iUncheckTheBox($checkbox) {
+  public function assertUncheckBox($checkbox) {
     // Use the Mink Extension step definition.
     return new Given("I uncheck \"$checkbox\"");
   }
@@ -592,7 +592,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
    * @When /^I select the radio button "(?P<label>[^"]*)"$/
    * @TODO convert to mink extension.
    */
-  public function iSelectTheRadioButtonWithTheId($label, $id = FALSE) {
+  public function assertSelectRadioById($label, $id = FALSE) {
     $element = $this->getSession()->getPage();
     $radiobutton = $id ? $element->findById($id) : $element->find('named', array('radio', $this->getSession()->getSelectorsHandler()->xpathLiteral($label)));
     if ($radiobutton === NULL) {
@@ -620,7 +620,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
    * @Given /^I am an anonymous user$/
    * @Given /^I am not logged in$/
    */
-  public function iAmAnAnonymousUser() {
+  public function assertAnonymousUser() {
     // Verify the user is logged out.
     if ($this->loggedIn()) {
       $this->logout();
@@ -632,7 +632,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
    *
    * @Given /^I am logged in as a user with the "(?P<role>[^"]*)" role$/
    */
-  public function iAmLoggedInWithRole($role) {
+  public function assertAuthenticatedByRole($role) {
     // Check if a user with this role is already logged in.
     if ($this->loggedIn() && $this->user && isset($this->user->role) && $this->user->role == $role) {
       return TRUE;
@@ -687,7 +687,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
    *
    * @Given /^I click "(?P<link>[^"]*)" in the "(?P<row_text>[^"]*)" row$/
    */
-  public function iClickInTheRow($link, $row_text) {
+  public function assertClickInTableRow($link, $row_text) {
     $page = $this->getSession()->getPage();
     $rows = $page->findAll('css', 'tr');
     if (!$rows) {
@@ -721,14 +721,14 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
   /**
    * @Given /^the cache has been cleared$/
    */
-  public function theCacheHasBeenCleared() {
+  public function assertCacheClear() {
     $this->getDriver()->clearCache();
   }
 
   /**
    * @Given /^I run cron$/
    */
-  public function iRunCron() {
+  public function assertCron() {
     $this->getDriver()->runCron();
   }
 
@@ -844,7 +844,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
    *
    * @Then /^I should see the error message(?:| containing) "([^"]*)"$/
    */
-  public function iShouldSeeTheErrorMessage($message) {
+  public function assertErrorVisible($message) {
     $errorSelector = $this->getDrupalSelector('error_message_selector');
     $errorSelectorObj = $this->getSession()->getPage()->find("css", $errorSelector);
     if(empty($errorSelectorObj)) {
@@ -863,7 +863,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
    *
    * @Then /^I should see the following <error messages>$/
    */
-  public function iShouldSeeTheFollowingErrorMessages(TableNode $messages) {
+  public function assertMultipleErrors(TableNode $messages) {
     $steps = array();
     foreach ($messages->getHash() as $key => $value) {
       $message = trim($value['error messages']);
@@ -880,7 +880,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
    *
    * @Given /^I should not see the error message(?:| containing) "([^"]*)"$/
    */
-  public function iShouldNotSeeTheErrorMessage($message) {
+  public function assertNotErrorVisible($message) {
     $errorSelector = $this->getDrupalSelector('error_message_selector');
     $errorSelectorObj = $this->getSession()->getPage()->find("css", $errorSelector);
     if(!empty($errorSelectorObj)) {
@@ -898,7 +898,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
    *
    * @Then /^I should not see the following <error messages>$/
    */
-  public function iShouldNotSeeTheFollowingErrorMessages(TableNode $messages) {
+  public function assertNotMultipleErrors(TableNode $messages) {
     $steps = array();
     foreach ($messages->getHash() as $key => $value) {
       $message = trim($value['error messages']);
@@ -915,7 +915,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
    *
    * @Then /^I should see the success message(?:| containing) "([^"]*)"$/
    */
-  public function iShouldSeeTheSuccessMessage($message) {
+  public function assertSuccessMessage($message) {
     $successSelector = $this->getDrupalSelector('success_message_selector');
     $successSelectorObj = $this->getSession()->getPage()->find("css", $successSelector);
     if(empty($successSelectorObj)) {
@@ -934,7 +934,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
    *
    * @Then /^I should see the following <success messages>$/
    */
-  public function iShouldSeeTheFollowingSuccessMessages(TableNode $messages) {
+  public function assertMultipleSuccessMessage(TableNode $messages) {
     $steps = array();
     foreach ($messages->getHash() as $key => $value) {
       $message = trim($value['success messages']);
@@ -951,7 +951,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
    *
    * @Given /^I should not see the success message(?:| containing) "([^"]*)"$/
    */
-  public function iShouldNotSeeTheSuccessMessage($message) {
+  public function assertNotSuccessMessage($message) {
     $successSelector = $this->getDrupalSelector('success_message_selector');
     $successSelectorObj = $this->getSession()->getPage()->find("css", $successSelector);
     if(!empty($successSelectorObj)) {
@@ -969,7 +969,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
    *
    * @Then /^I should not see the following <success messages>$/
    */
-  public function iShouldNotSeeTheFollowingSuccessMessages(TableNode $messages) {
+  public function assertNotMultipleSuccessMessage(TableNode $messages) {
     $steps = array();
     foreach ($messages->getHash() as $key => $value) {
       $message = trim($value['success messages']);
@@ -986,7 +986,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
    *
    * @Then /^I should see the message(?:| containing) "([^"]*)"$/
    */
-  public function iShouldSeeTheMessage($message) {
+  public function assertMessage($message) {
     $msgSelector = $this->getDrupalSelector('message_selector');
     $msgSelectorObj = $this->getSession()->getPage()->find("css", $msgSelector);
     if(empty($msgSelectorObj)) {
@@ -1005,7 +1005,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
    *
    * @Then /^I should not see the message(?:| containing) "([^"]*)"$/
    */
-  public function iShouldNotSeeTheMessage($message) {
+  public function assertNotMessage($message) {
     $msgSelector = $this->getDrupalSelector('message_selector');
     $msgSelectorObj = $this->getSession()->getPage()->find("css", $msgSelector);
     if(!empty($msgSelectorObj)) {
