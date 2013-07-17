@@ -7,6 +7,7 @@ use Behat\Behat\Exception\PendingException;
 use Behat\Mink\Exception\UnsupportedDriverActionException;
 
 use Drupal\Drupal;
+use Drupal\Component\Utility\Random;
 use Drupal\DrupalExtension\Event\EntityEvent;
 use Drupal\DrupalExtension\Context\DrupalSubContextInterface;
 
@@ -236,41 +237,6 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
    * @defgroup helper functions
    * @{
    */
-
-  /**
-   * Helper function to generate a random string of arbitrary length.
-   *
-   * Copied from drush_generate_password().
-   *
-   * @param int $length
-   *   Number of characters the generated string should contain.
-   *
-   * @return string
-   *   The generated string.
-   */
-  public function randomString($length = 10) {
-    // This variable contains the list of allowable characters for the
-    // password. Note that the number 0 and the letter 'O' have been
-    // removed to avoid confusion between the two. The same is true
-    // of 'I', 1, and 'l'.
-    $allowable_characters = 'abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-
-    // Zero-based count of characters in the allowable list:
-    $len = strlen($allowable_characters) - 1;
-
-    // Declare the password as a blank string.
-    $pass = '';
-
-    // Loop the number of times specified by $length.
-    for ($i = 0; $i < $length; $i++) {
-
-      // Each iteration, pick a random character from the
-      // allowable string and append it to the password:
-      $pass .= $allowable_characters[mt_rand(0, $len)];
-    }
-
-    return $pass;
-  }
 
   /**
    * Helper function to login the current user.
@@ -677,8 +643,8 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
 
     // Create user (and project)
     $user = (object) array(
-      'name' => $this->randomString(8),
-      'pass' => $this->randomString(16),
+      'name' => Random::string(8),
+      'pass' => Random::string(16),
       'role' => $role,
     );
     $user->mail = "{$user->name}@example.com";
@@ -778,7 +744,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
     $node = (object) array(
       'title' => $title,
       'type' => $type,
-      'body' => $this->randomString(255),
+      'body' => Random::string(255),
     );
     $this->dispatcher->dispatch('beforeNodeCreate', new EntityEvent($this, $node));
     $saved = $this->getDriver()->createNode($node);
@@ -798,7 +764,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
     $node = (object) array(
       'title' => $title,
       'type' => $type,
-      'body' => $this->randomString(255),
+      'body' => Random::string(255),
       'uid' => $this->user->uid,
     );
     $this->dispatcher->dispatch('beforeNodeCreate', new EntityEvent($this, $node));
@@ -831,7 +797,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
     $term = (object) array(
       'name' => $name,
       'vocabulary_machine_name' => $vocabulary,
-      'description' => $this->randomString(255),
+      'description' => Random::string(255),
     );
     $this->dispatcher->dispatch('beforeTermCreate', new EntityEvent($this, $term));
     $saved = $this->getDriver()->createTerm($term);
@@ -850,7 +816,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
 
       // Set a password.
       if (!isset($user->pass)) {
-        $user->pass = $this->randomString();
+        $user->pass = Random::string();
       }
 
       $this->dispatcher->dispatch('beforeUserCreate', new EntityEvent($this, $user));

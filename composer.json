@@ -25,6 +25,7 @@
   "minimum-stability": "dev",
   "autoload": {
     "psr-0": {
+      "Drupal\\Component": "src/",
       "Drupal\\Driver": "src/",
       "Drupal\\Drupal": "src/",
       "Drupal\\Exception": "src/",
