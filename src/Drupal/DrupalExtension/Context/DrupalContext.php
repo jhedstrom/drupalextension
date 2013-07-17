@@ -32,16 +32,22 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
 
   /**
    * Event dispatcher object.
+   *
+   * @var \Symfony\Component\EventDispatcher\EventDispatcher
    */
   protected $dispatcher;
 
   /**
    * Basic auth user and password.
+   *
+   * @var array
    */
   public $basic_auth;
 
   /**
    * Keep track of nodes so they can be cleaned up.
+   *
+   * @var array
    */
   public $nodes = array();
 
@@ -49,16 +55,22 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
    * Current authenticated user.
    *
    * A value of FALSE denotes an anonymous user.
+   *
+   * @var mixed
    */
   public $user = FALSE;
 
   /**
    * Keep track of all users that are created so they can easily be removed.
+   *
+   * @var array
    */
   private $users = array();
 
   /**
    * Keep track of all terms that are created so they can easily be removed.
+   *
+   * @var array
    */
   public $terms = array();
 
