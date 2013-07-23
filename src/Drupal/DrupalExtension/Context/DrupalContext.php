@@ -786,6 +786,25 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
   }
 
   /**
+   * @Given /^I am viewing (?:a|an) "(?P<type>[^"]*)" node:$/
+   */
+  public function assertViewingNode($type, TableNode $fields) {
+    $node = (object) array(
+      'type' => $type,
+    );
+    foreach ($fields->getRowsHash() as $field => $value) {
+      $node->{$field} = $value;
+    }
+
+    $this->dispatcher->dispatch('beforeNodeCreate', new EntityEvent($this, $node));
+    $saved = $this->getDriver()->createNode($node);
+    $this->nodes[] = $saved;
+
+    // Set internal browser on the node.
+    $this->getSession()->visit($this->locatePath('/node/' . $saved->nid));
+  }
+
+  /**
    * @Given /^I am viewing (?:a|an) "(?P<vocabulary>[^"]*)" term with the name "(?P<name>[^"]*)"$/
    * @Given /^(?:a|an) "(?P<vocabulary>[^"]*)" term with the name "(?P<name>[^"]*)"$/
    */

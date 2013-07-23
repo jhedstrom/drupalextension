@@ -63,6 +63,13 @@ Feature: DrupalContext
     And follow "First article with fields"
     Then I should see the text "PLACEHOLDER BODY"
 
+  Scenario: Create and view a node with fields
+    Given I am viewing an "Article" node:
+    | title | My article with fields! |
+    | body  | A placeholder           |
+    Then I should see the heading "My article with fields!"
+    And I should see the text "A placeholder"
+
   Scenario: Create users
     Given users:
     | name     | mail            | status |
