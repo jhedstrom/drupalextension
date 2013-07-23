@@ -65,11 +65,11 @@ class Drupal7 implements CoreInterface {
       $node->uid = $user->uid;
     }
 
-    // Attempt to decipher any fields that may be specified.
-    $node = $this->expandEntityFields($node);
-
     // Convert properties to expected structure.
     $this->expandEntityProperties($node);
+
+    // Attempt to decipher any fields that may be specified.
+    $node = $this->expandEntityFields($node);
 
     node_save($node);
     return $node;
@@ -260,6 +260,15 @@ class Drupal7 implements CoreInterface {
     // The created field may come in as a readable date, rather than a timestamp.
     if (isset($entity->created) && !is_numeric($entity->created)) {
       $entity->created = strtotime($entity->created);
+    }
+
+    // Map human-readable node types to machine node types.
+    $types = \node_type_get_types();
+    foreach ($types as $type) {
+      if ($entity->type == $type->name) {
+        $entity->type = $type->type;
+        continue;
+      }
     }
   }
 
