@@ -1,6 +1,7 @@
 <?php
 
 namespace Drupal\Driver\Cores;
+use Drupal\Component\Utility\Random;
 
 /**
  * Drupal 8 core.
@@ -24,14 +25,20 @@ class Drupal8 implements CoreInterface {
     // Validate, and prepare environment for Drupal bootstrap.
     if (!defined('DRUPAL_ROOT')) {
       define('DRUPAL_ROOT', $this->drupalRoot);
-      require_once DRUPAL_ROOT . '/core/includes/bootstrap.inc';
-      $this->validateDrupalSite();
     }
 
     // Bootstrap Drupal.
     $current_path = getcwd();
     chdir(DRUPAL_ROOT);
+    require_once DRUPAL_ROOT . '/core/includes/bootstrap.inc';
+    $this->validateDrupalSite();
+
     drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
+
+    // Initialise an anonymous session. required for the bootstrap.
+    require_once DRUPAL_ROOT . '/' . settings()->get('session_inc', 'core/includes/session.inc');
+    drupal_session_initialize();
+
     chdir($current_path);
   }
 
@@ -78,6 +85,8 @@ class Drupal8 implements CoreInterface {
    * Implements CoreInterface::userCreate().
    */
   public function userCreate(\stdClass $user) {
+    $this->validateDrupalSite();
+
     // Default status to TRUE if not explicitly creating a blocked user.
     if (!isset($user->status)) {
       $user->status = 1;
@@ -121,11 +130,12 @@ class Drupal8 implements CoreInterface {
       if (!empty($permissions)) {
         user_role_grant_permissions($role->id(), $permissions);
 
-        $assigned_permissions = db_query('SELECT permission FROM {role_permission} WHERE rid = :rid', array(':rid' => $role->id()))->fetchCol();
+        // TODO: Fix this.
+        /*$assigned_permissions = db_query('SELECT permission FROM {role_permission} WHERE rid = :rid', array(':rid' => $role->id()))->fetchCol();
         $missing_permissions = array_diff($permissions, $assigned_permissions);
         if ($missing_permissions) {
           return FALSE;
-        }
+        }*/
       }
       return $role->id();
     }
@@ -209,7 +219,6 @@ class Drupal8 implements CoreInterface {
       // If there's no url scheme set, add http:// and re-parse the url
       // so the host and path values are set accurately.
       if (!array_key_exists('scheme', $drupal_base_url)) {
-        $drush_uri = 'http://' . $this->uri;
         $drupal_base_url = parse_url($this->uri);
       }
       // Fill in defaults.
@@ -274,54 +283,40 @@ class Drupal8 implements CoreInterface {
   // TODO: Move / remove the below.
 
   /**
-   * Generates a random string of ASCII characters of codes 32 to 126.
-   *
-   * The generated string includes alpha-numeric characters and common
-   * miscellaneous characters. Use this method when testing general input
-   * where the content is not restricted.
+   * Generates a unique random string of ASCII characters of codes 32 to 126.
    *
    * Do not use this method when special characters are not possible (e.g., in
    * machine or file names that have already been validated); instead, use
-   * Drupal\simpletest\TestBase::randomName().
+   * \Drupal\simpletest\TestBase::randomName().
    *
    * @param int $length
    *   Length of random string to generate.
    *
-   * @return string Randomly generated string.@see Drupal\simpletest\TestBase::randomName()
+   * @return string
+   *   Randomly generated unique string.
+   *
+   * @see \Drupal\Component\Utility\Random::string()
    */
   public static function randomString($length = 8) {
-    $str = '';
-    for ($i = 0; $i < $length; $i++) {
-      $str .= chr(mt_rand(32, 126));
-    }
-    return $str;
+    return Random::string($length, TRUE);
   }
 
   /**
-   * Generates a random string containing letters and numbers.
-   *
-   * The string will always start with a letter. The letters may be upper or
-   * lower case. This method is better for restricted inputs that do not
-   * accept certain characters. For example, when testing input fields that
-   * require machine readable values (i.e. without spaces and non-standard
-   * characters) this method is best.
+   * Generates a unique random string containing letters and numbers.
    *
    * Do not use this method when testing unvalidated user input. Instead, use
-   * Drupal\simpletest\TestBase::randomString().
+   * \Drupal\simpletest\TestBase::randomString().
    *
    * @param int $length
    *   Length of random string to generate.
    *
-   * @return string Randomly generated string.@see Drupal\simpletest\TestBase::randomString()
+   * @return string
+   *   Randomly generated unique string.
+   *
+   * @see \Drupal\Component\Utility\Random::name()
    */
   public static function randomName($length = 8) {
-    $values = array_merge(range(65, 90), range(97, 122), range(48, 57));
-    $max = count($values) - 1;
-    $str = chr(mt_rand(97, 122));
-    for ($i = 1; $i < $length; $i++) {
-      $str .= chr($values[mt_rand(0, $max)]);
-    }
-    return $str;
+    return Random::name($length, TRUE);
   }
 
 }
