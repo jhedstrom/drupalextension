@@ -640,7 +640,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
 
     // Create user (and project)
     $user = (object) array(
-      'name' => Random::string(8),
+      'name' => Random::name(8),
       'pass' => Random::string(16),
       'role' => $role,
     );
