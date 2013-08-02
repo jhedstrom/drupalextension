@@ -1,6 +1,7 @@
 <?php
 
 namespace Drupal\Driver\Cores;
+
 use Drupal\Component\Utility\Random;
 
 /**
@@ -106,12 +107,10 @@ class Drupal8 implements CoreInterface {
    */
   public function roleCreate(array $permissions) {
     // Generate a random, lowercase machine name.
-    $rid = strtolower($this->randomName(8));
+    $rid = strtolower(Random::name(8, TRUE));
 
     // Generate a random label.
-    // In the role UI role names are trimmed and random string can start or
-    // end with a space.
-    $name = trim($this->randomString(8));
+    $name = trim(Random::name(8, TRUE));
 
     // Check the all the permissions strings are valid.
     if (!$this->checkPermissions($permissions)) {
@@ -278,45 +277,6 @@ class Drupal8 implements CoreInterface {
     throw new UnsupportedDriverActionException(
       'No ability to delete terms in %s', $this
     );
-  }
-
-  // TODO: Move / remove the below.
-
-  /**
-   * Generates a unique random string of ASCII characters of codes 32 to 126.
-   *
-   * Do not use this method when special characters are not possible (e.g., in
-   * machine or file names that have already been validated); instead, use
-   * \Drupal\simpletest\TestBase::randomName().
-   *
-   * @param int $length
-   *   Length of random string to generate.
-   *
-   * @return string
-   *   Randomly generated unique string.
-   *
-   * @see \Drupal\Component\Utility\Random::string()
-   */
-  public static function randomString($length = 8) {
-    return Random::string($length, TRUE);
-  }
-
-  /**
-   * Generates a unique random string containing letters and numbers.
-   *
-   * Do not use this method when testing unvalidated user input. Instead, use
-   * \Drupal\simpletest\TestBase::randomString().
-   *
-   * @param int $length
-   *   Length of random string to generate.
-   *
-   * @return string
-   *   Randomly generated unique string.
-   *
-   * @see \Drupal\Component\Utility\Random::name()
-   */
-  public static function randomName($length = 8) {
-    return Random::name($length, TRUE);
   }
 
 }
