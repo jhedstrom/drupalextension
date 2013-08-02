@@ -2,6 +2,8 @@
 
 namespace Drupal\Driver\Cores;
 
+use Drupal\Component\Utility\Random;
+
 /**
  * Drupal 7 core.
  */
@@ -98,6 +100,16 @@ class Drupal7 implements CoreInterface {
       $user->status = 1;
     }
 
+    // Convert roles to proper structure.
+    if (isset($user->roles)) {
+      foreach ($user->roles as $key => $rid) {
+        $role = user_role_load($rid);
+        unset($user->roles[$key]);
+        $user->roles[$rid] = $role->name;
+
+      }
+    }
+
     // Clone user object, otherwise user_save() changes the password to the
     // hashed password.
     $account = clone $user;
@@ -164,11 +176,22 @@ class Drupal7 implements CoreInterface {
    */
   public function roleCreate(array $permissions) {
 
-    // TODO: Generate role name randomly.
+    // Both machine name and permission title are allowed.
+    $all_permissions = $this->getAllPermissions();
+
+    foreach ($permissions as $key => $name) {
+      if (!isset($all_permissions[$name])) {
+        $search = array_search($name, $all_permissions);
+        if (!$search) {
+          throw new \RuntimeException(sprintf("No permission '%s' exists.", $name));
+        }
+        $permissions[$key] = $search;
+      }
+    }
 
     // Create new role.
-    $role = new stdClass();
-    $role->name = $name;
+    $role = new \stdClass();
+    $role->name = Random::name(8);
     user_role_save($role);
     user_role_grant_permissions($role->rid, $permissions);
 
@@ -191,11 +214,7 @@ class Drupal7 implements CoreInterface {
    * Implements CoreInterface::roleDelete().
    */
   public function roleDelete($rid) {
-    db_query('DELETE FROM {role} WHERE rid = %d', $rid);
-
-    if (!db_affected_rows()) {
-      throw new \RuntimeException(sprintf('No role "%s" exists.', $rid));
-    }
+    user_role_delete((int) $rid);
   }
 
   /**
@@ -382,4 +401,19 @@ class Drupal7 implements CoreInterface {
     // Will be SAVED_DELETED (3) on success.
     return $status;
   }
+
+  /**
+   * Helper function to get all permissions.
+   *
+   * @return array
+   *   Array keyed by permission name, with the human-readable title as the value.
+   */
+  protected function getAllPermissions() {
+    $permissions = array();
+    foreach (module_invoke_all('permission') as $name => $permission) {
+      $permissions[$name] = $permission['title'];
+    }
+    return $permissions;
+  }
+
 }

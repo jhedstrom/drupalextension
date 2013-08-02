@@ -160,3 +160,8 @@ Feature: DrupalContext
     When I go to "admin/structure/taxonomy/tags"
     Then I should see "Tag one"
     And I should see "Tag two"
+
+  Scenario: Log in as a user with specific permissions
+    Given I am logged in as a user with the "Administer content types" permission
+    When I go to "admin/structure/types"
+    Then I should see the link "Add content type"
