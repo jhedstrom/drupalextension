@@ -697,7 +697,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
   }
 
   /**
-   * @Given /^I am logged in as a user with "(?P<permission>[^"]*)" permissions$/
+   * @Given /^I am logged in as a user with the "(?P<permission>[^"]*)" permission(?:|s)$/
    */
   public function assertLoggedInWithPermissions($permissions) {
     $permissions = explode(',', $permissions);
