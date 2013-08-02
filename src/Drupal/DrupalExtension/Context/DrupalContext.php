@@ -708,8 +708,8 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
     }
     // Create user.
     $user = (object) array(
-      'name' => $this->randomString(8),
-      'pass' => $this->randomString(16),
+      'name' => Random::name(8),
+      'pass' => Random::string(16),
       'roles' => array($rid),
     );
     $user->mail = "{$user->name}@example.com";
