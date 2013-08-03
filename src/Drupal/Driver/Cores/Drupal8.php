@@ -100,7 +100,7 @@ class Drupal8 implements CoreInterface {
     $account->save();
 
     // Store UID.
-    $user->uid = $account->uid;
+    $user->uid = $account->id();
   }
 
   /**
