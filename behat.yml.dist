@@ -27,7 +27,7 @@ drupal7:
     tags: "@api"
   extensions:
     Behat\MinkExtension\Extension:
-      base_url: http://localhost:8888
+      base_url: http://localhost:8887
     Drupal\DrupalExtension\Extension:
       api_driver: "drupal"
       drupal:
@@ -49,6 +49,22 @@ drush:
       drush_driver: "drush"
       drush:
         root: "drupal7"
+      region_map:
+        left sidebar: "#sidebar-first"
+        content: "#content"
+
+# Separate profile for testing D8. Assumes a stock Drupal 8 install.
+drupal8:
+  filters:
+    tags: "@d8"
+  extensions:
+    Behat\MinkExtension\Extension:
+      base_url: http://d8.dev
+    Drupal\DrupalExtension\Extension:
+      api_driver: "drupal"
+      drupal:
+        # Change this to the absolute path to Drupal install.
+        drupal_root: "/home/jhedstrom/work/drupal-8"
       region_map:
         left sidebar: "#sidebar-first"
         content: "#content"

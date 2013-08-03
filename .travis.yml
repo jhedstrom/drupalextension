@@ -10,8 +10,10 @@ mysql:
   encoding: utf8
 
 install:
+  - composer self-update
   - composer install
-  - "mysql -e 'create database drupal;'"
+  - "mysql -e 'create database drupal7;'"
+  - "mysql -e 'create database drupal8;'"
   - sudo apt-get update > /dev/null
   - sudo apt-get --quiet=2 install php5-cgi php5-curl php5-gd php5-mysql > /dev/null
   - pear channel-discover pear.drush.org
@@ -21,11 +23,17 @@ install:
 before_script:
   # Setup a stock Drupal 7 install to test api abilities.
   - drush --quiet dl drupal-7 --drupal-project-rename=drupal7
-  - drush --quiet --yes --root=$PWD/drupal7 site-install --db-url=mysql://root:@127.0.0.1/drupal
-  - drush --quiet --yes --root=$PWD/drupal7 runserver :8888 > /dev/null 2>&1 &
+  - drush --quiet --yes --root=$PWD/drupal7 site-install --db-url=mysql://root:@127.0.0.1/drupal7
+  - drush --quiet --yes --root=$PWD/drupal7 runserver :8887 > /dev/null 2>&1 &
+  # Setup a stock Drupal 8 install to test api abilities.
+  - drush --quiet dl drupal-8.0-alpha2 --drupal-project-rename=drupal8
+  - drush --quiet --yes --root=$PWD/drupal8 site-install --db-url=mysql://root:@127.0.0.1/drupal8
+  - drush --quiet --yes --root=$PWD/drupal8 runserver :8888 > /dev/null 2>&1 &
   - sleep 4s
 
 script:
   - vendor/bin/behat -fprogress
   - vendor/bin/behat -fprogress --profile=drupal7
   - vendor/bin/behat -fprogress --profile=drush
+  - vendor/bin/behat -fprogress --profile=drupal8
+
