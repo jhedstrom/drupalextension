@@ -657,7 +657,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
     // Create user (and project)
     $user = (object) array(
       'name' => Random::name(8),
-      'pass' => Random::string(16),
+      'pass' => Random::name(16),
       'role' => $role,
     );
     $user->mail = "{$user->name}@example.com";
@@ -709,7 +709,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
     // Create user.
     $user = (object) array(
       'name' => Random::name(8),
-      'pass' => Random::string(16),
+      'pass' => Random::name(16),
       'roles' => array($rid),
     );
     $user->mail = "{$user->name}@example.com";
@@ -878,7 +878,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
 
       // Set a password.
       if (!isset($user->pass)) {
-        $user->pass = Random::string();
+        $user->pass = Random::name();
       }
 
       $this->dispatcher->dispatch('beforeUserCreate', new EntityEvent($this, $user));
