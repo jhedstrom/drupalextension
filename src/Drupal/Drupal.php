@@ -10,11 +10,15 @@ use Drupal\Driver\DriverInterface;
 class Drupal {
   /**
    * Default driver.
+   *
+   * @var string
    */
   private $defaultDriverName;
 
   /**
    * All initiated drivers.
+   *
+   * @var array
    */
   private $drivers = array();
 
