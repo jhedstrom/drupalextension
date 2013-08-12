@@ -2,6 +2,8 @@
 
 namespace Drupal\Driver\Cores;
 
+use Drupal\Exception\BootstrapException;
+
 /**
  * Drupal 6 core.
  */
