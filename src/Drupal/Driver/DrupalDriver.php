@@ -11,9 +11,27 @@ use Behat\Behat\Exception\PendingException;
  * Fully bootstraps Drupal and uses native API calls.
  */
 class DrupalDriver implements DriverInterface, DrupalSubContextFinderInterface {
+
+  /**
+   * Track whether Drupal has been bootstrapped.
+   *
+   * @var bool
+   */
   private $bootstrapped = FALSE;
-  public  $core;
-  public  $version;
+
+  /**
+   * Drupal core object.
+   *
+   * @var \Drupal\Driver\Cores\CoreInterface
+   */
+  public $core;
+
+  /**
+   * Drupal core version.
+   *
+   * @var numeric
+   */
+  public $version;
 
   /**
    * Set Drupal root and URI.
