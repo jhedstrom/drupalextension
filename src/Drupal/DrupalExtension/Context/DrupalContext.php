@@ -174,6 +174,28 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
   }
 
   /**
+   * Return a region from the current page.
+   *
+   * @throws \Exception
+   *   If region cannot be found.
+   *
+   * @param string $region
+   *   The machine name of the region to return.
+   *
+   * @return \Behat\Mink\Element\NodeElement|NULL
+   */
+  private function getRegion($region) {
+    $session = $this->getSession();
+    $regionObj = $session->getPage()->find('region', $region);
+    if (!$regionObj) {
+      throw new \Exception(sprintf('No region "%s" found on the page %s.', $region, $session->getCurrentUrl()));
+    }
+
+    return $regionObj;
+  }
+
+
+  /**
    * Run before every scenario.
    *
    * @BeforeScenario
@@ -423,14 +445,12 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
    *
    * @Then /^I should see the heading "(?P<heading>[^"]*)" in the "(?P<region>[^"]*)"(?:| region)$/
    * @Then /^I should see the "(?P<heading>[^"]*)" heading in the "(?P<region>[^"]*)"(?:| region)$/
+   *
+   * @throws \Exception
+   *   If region or header within it cannot be found.
    */
   public function assertRegionHeading($heading, $region) {
-    $page = $this->getSession()->getPage();
-    $regionObj = $page->find('region', $region);
-    if (!$regionObj) {
-      throw new \Exception(sprintf('No region "%s" found on the page %s.', $region, $this->getSession()->getCurrentUrl()));
-    }
-
+    $regionObj = $this->getRegion($region);
 
     foreach (array('h1', 'h2', 'h3', 'h4', 'h5', 'h6') as $tag) {
       $elements = $regionObj->findAll('css', $tag);
@@ -448,13 +468,13 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
 
   /**
    * @When /^I (?:follow|click) "(?P<link>[^"]*)" in the "(?P<region>[^"]*)"(?:| region)$/
+   *
+   * @throws \Exception
+   *   If region or link within it cannot be found.
    */
   public function assertRegionLinkFollow($link, $region) {
-    // Find the region requested
-    $regionObj = $this->getSession()->getPage()->find('region', $region);
-    if (empty($regionObj)) {
-      throw new \Exception(sprintf('No region "%s" found on the page %s.', $region, $this->getSession()->getCurrentUrl()));
-    }
+    $regionObj = $this->getRegion($region);
+
     // Find the link within the region
     $linkObj = $regionObj->findLink($link);
     if (empty($linkObj)) {
@@ -465,13 +485,14 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
 
   /**
    * @Then /^I should see the link "(?P<link>[^"]*)" in the "(?P<region>[^"]*)"(?:| region)$/
+   *
+   * @throws \Exception
+   *   If region or link within it cannot be found.
    */
   public function assertLinkRegion($link, $region) {
-    $element = $this->getSession()->getPage()->find('region', $region);
-    if (!$element) {
-      throw new \Exception(sprintf('No region "%s" found on the page %s.', $region, $this->getSession()->getCurrentUrl()));
-    }
-    $result = $element->findLink($link);
+    $regionObj = $this->getRegion($region);
+
+    $result = $regionObj->findLink($link);
     if (empty($result)) {
       throw new \Exception(sprintf('No link to "%s" in the "%s" region on the page %s', $link, $region, $this->getSession()->getCurrentUrl()));
     }
@@ -479,13 +500,14 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
 
   /**
    * @Then /^I should not see the link "(?P<link>[^"]*)" in the "(?P<region>[^"]*)"(?:| region)$/
+   *
+   * @throws \Exception
+   *   If region or link within it cannot be found.
    */
   public function assertNotLinkRegion($link, $region) {
-    $element = $this->getSession()->getPage()->find('region', $region);
-    if (!$element) {
-      throw new \Exception(sprintf('No region "%s" found on the page %s.', $region, $this->getSession()->getCurrentUrl()));
-    }
-    $result = $element->findLink($link);
+    $regionObj = $this->getRegion($region);
+
+    $result = $regionObj->findLink($link);
     if (!empty($result)) {
       throw new \Exception(sprintf('Link to "%s" in the "%s" region on the page %s', $link, $region, $this->getSession()->getCurrentUrl()));
     }
@@ -493,13 +515,13 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
 
   /**
    * @Then /^I should see (?:the text |)"(?P<text>[^"]*)" in the "(?P<region>[^"]*)"(?:| region)$/
-   */
+   *
+   * @throws \Exception
+   *   If region or text within it cannot be found.
+*/
   public function assertRegionText($text, $region) {
-    // Find the region requested
-    $regionObj = $this->getSession()->getPage()->find('region', $region);
-    if (empty($regionObj)) {
-      throw new \Exception(sprintf('No region "%s" found on the page %s.', $region, $this->getSession()->getCurrentUrl()));
-    }
+    $regionObj = $this->getRegion($region);
+
     // Find the text within the region
     $regionText = $regionObj->getText();
     if (strpos($regionText, $text) === FALSE) {
@@ -509,13 +531,13 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
 
   /**
    * @Then /^I should not see (?:the text |)"(?P<text>[^"]*)" in the "(?P<region>[^"]*)"(?:| region)$/
+   *
+   * @throws \Exception
+   *   If region or text within it cannot be found.
    */
   public function assertNotRegionText($text, $region) {
-    // Find the region requested
-    $regionObj = $this->getSession()->getPage()->find('region', $region);
-    if (empty($regionObj)) {
-      throw new \Exception(sprintf('No region "%s" found on the page %s.', $region, $this->getSession()->getCurrentUrl()));
-    }
+    $regionObj = $this->getRegion($region);
+
     // Find the text within the region
     $regionText = $regionObj->getText();
     if (strpos($regionText, $text) !== FALSE) {
@@ -526,15 +548,19 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
   /**
    * Checks, if a button with id|name|title|alt|value exists or not and pressess the same
    *
+   * @Given /^I press "(?P<button>[^"]*)" in the "(?P<region>[^"]*)"(?:| region)$/
+   *
    * @param $button
    *   string The id|name|title|alt|value of the button to be pressed
    * @param $region
    *   string The region in which the button should be pressed
    *
-   * @Given /^I press "(?P<button>[^"]*)" in the "(?P<region>[^"]*)"(?:| region)$/
+   * @throws \Exception
+   *   If region or button within it cannot be found.
    */
   public function assertRegionPressButton($button, $region) {
-    $regionObj = $this->getSession()->getPage()->find('region', $region);
+    $regionObj = $this->getRegion($region);
+
     $buttonObj = $regionObj->findButton($button);
     if (empty($buttonObj)) {
       throw new \Exception(sprintf("The button '%s' was not found in the region '%s' on the page %s", $button, $region, $this->getSession()->getCurrentUrl()));
@@ -547,11 +573,14 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
    *
    * @Given /^(?:|I )fill in "(?P<value>(?:[^"]|\\")*)" for "(?P<field>(?:[^"]|\\")*)" in the "(?P<region>[^"]*)"(?:| region)$/
    * @Given /^(?:|I )fill in "(?P<field>(?:[^"]|\\")*)" with "(?P<value>(?:[^"]|\\")*)" in the "(?P<region>[^"]*)"(?:| region)$/
+   *
+   * @throws \Exception
+   *   If region cannot be found.
    */
   public function regionFillField($field, $value, $region) {
     $field = $this->fixStepArgument($field);
     $value = $this->fixStepArgument($value);
-    $regionObj = $this->getSession()->getPage()->find('region', $region);
+    $regionObj = $this->getRegion($region);
     $regionObj->fillField($field, $value);
   }
 
