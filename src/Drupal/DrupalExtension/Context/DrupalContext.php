@@ -4,6 +4,7 @@ namespace Drupal\DrupalExtension\Context;
 
 use Behat\MinkExtension\Context\MinkContext;
 use Behat\Behat\Exception\PendingException;
+use Behat\Behat\Event\ScenarioEvent;
 use Behat\Mink\Exception\UnsupportedDriverActionException;
 
 use Drupal\Drupal;
@@ -219,7 +220,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface {
    *
    * @AfterScenario
    */
-  public function afterScenario($event) {
+  public function afterScenario(ScenarioEvent $event) {
     // Remove any nodes that were created.
     if (!empty($this->nodes)) {
       foreach ($this->nodes as $node) {
