@@ -53,11 +53,6 @@ class Drupal7 implements CoreInterface {
    * Implements CoreInterface::nodeCreate().
    */
   public function nodeCreate(\stdClass $node) {
-    // Default status to 1 if not set.
-    if (!isset($node->status)) {
-      $node->status = 1;
-    }
-
     // Set original if not set.
     if (!isset($node->original)) {
       $node->original = clone $node;
@@ -73,6 +68,11 @@ class Drupal7 implements CoreInterface {
 
     // Attempt to decipher any fields that may be specified.
     $node = $this->expandEntityFields($node);
+
+    // Set defaults that haven't already been set.
+    $defaults = clone $node;
+    node_object_prepare($defaults);
+    $node = (object) array_merge((array) $defaults, (array) $node);
 
     node_save($node);
     return $node;
