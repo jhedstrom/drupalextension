@@ -77,6 +77,9 @@ class Extension implements ExtensionInterface {
         scalarNode('api_driver')->
           defaultValue('drush')->
         end()->
+        scalarNode('drush_driver')->
+          defaultValue('drush')->
+        end()->
         arrayNode('region_map')->
           useAttributeAsKey('key')->
           prototype('variable')->end()->
