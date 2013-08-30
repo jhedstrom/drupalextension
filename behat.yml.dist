@@ -44,7 +44,7 @@ drush:
     tags: "@drush"
   extensions:
     Behat\MinkExtension\Extension:
-      base_url: http://localhost:8888
+      base_url: http://localhost:8887
     Drupal\DrupalExtension\Extension:
       drush_driver: "drush"
       drush:
@@ -59,12 +59,12 @@ drupal8:
     tags: "@d8"
   extensions:
     Behat\MinkExtension\Extension:
-      base_url: http://d8.dev
+      base_url: http://localhost:8888
     Drupal\DrupalExtension\Extension:
       api_driver: "drupal"
       drupal:
         # Change this to the absolute path to Drupal install.
-        drupal_root: "/home/jhedstrom/work/drupal-8"
+        drupal_root: "drupal8"
       region_map:
         left sidebar: "#sidebar-first"
         content: "#content"
