@@ -3,7 +3,6 @@
 namespace Drupal\Driver;
 
 use Drupal\Exception\BootstrapException,
-    Drupal\Exception\UnsupportedDriverActionException,
     Drupal\DrupalExtension\Context\DrupalSubContextFinderInterface;
 
 use Symfony\Component\Process\Process;
@@ -11,7 +10,7 @@ use Symfony\Component\Process\Process;
 /**
  * Implements DriverInterface.
  */
-class DrushDriver implements DriverInterface {
+class DrushDriver extends BaseDriver {
   /**
    * Store a drush alias for tests requiring shell access.
    */
@@ -156,20 +155,6 @@ class DrushDriver implements DriverInterface {
   }
 
   /**
-   * Implements DriverInterface::createNode().
-   */
-  public function createNode(\stdClass $node) {
-    throw new UnsupportedDriverActionException('No ability to create nodes in %s', $this);
-  }
-
-  /**
-   * Implements DriverInterface::nodeDelete().
-   */
-  public function nodeDelete(\stdClass $node) {
-    throw new UnsupportedDriverActionException('No ability to delete nodes in %s', $this);
-  }
-
-  /**
    * Implements DriverInterface::processBatch().
    */
   public function processBatch() {
@@ -198,34 +183,6 @@ class DrushDriver implements DriverInterface {
     $path = reset(explode('#', $path));
 
     return $path;
-  }
-
-  /**
-   * Implements DriverInterface::createTerm().
-   */
-  public function createTerm(\stdClass $term) {
-    throw new UnsupportedDriverActionException('No ability to create terms in %s', $this);
-  }
-
-  /**
-   * Implements DriverInterface::termDelete().
-   */
-  public function termDelete(\stdClass $term) {
-    throw new UnsupportedDriverActionException('No ability to delete terms in %s', $this);
-  }
-
-  /**
-   * Implements DriverInterface::roleCreate().
-   */
-  public function roleCreate(array $permissions) {
-    throw new UnsupportedDriverActionException('No ability to create roles in %s', $this);
-  }
-
-  /**
-   * Implements DriverInterface::roleCreate().
-   */
-  public function roleDelete($rid) {
-    throw new UnsupportedDriverActionException('No ability to create roles in %s', $this);
   }
 
 }
