@@ -113,8 +113,8 @@ class DrupalAwareInitializer implements InitializerInterface, EventSubscriberInt
     $driver = $this->parameters['default_driver'];
 
     foreach ($scenario->getTags() as $tag) {
-      if ('api' === $tag) {
-        $driver = $this->parameters['api_driver'];
+      if (isset($this->parameters[$tag . '_driver'])) {
+        $driver = $this->parameters[$tag . '_driver'];
       }
     }
 
