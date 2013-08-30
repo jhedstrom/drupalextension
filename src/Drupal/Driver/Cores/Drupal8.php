@@ -200,13 +200,20 @@ class Drupal8 implements CoreInterface {
    * Implements CoreInterface::userAddRole().
    */
   public function userAddRole(\stdClass $user, $role_name) {
+    // Allow both machine and human role names.
+    $roles = user_role_names();
+    if ($id = array_search($role_name, $roles)) {
+      $role_name = $id;
+    }
     $role = user_role_load($role_name);
 
     if (!$role) {
       throw new \RuntimeException(sprintf('No role "%s" exists.', $role_name));
     }
 
-    user_multiple_role_edit(array($user->uid), 'add_role', $role->rid);
+    $account = \user_load($user->uid);
+    $account->addRole($role->id);
+    $account->save();
   }
 
   /**
