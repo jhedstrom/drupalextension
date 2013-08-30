@@ -43,7 +43,7 @@ class DrushDriver extends BaseDriver {
     $this->alias = $alias;
     }
     elseif ($root_path) {
-      $this->root = $root_path;
+      $this->root = realpath($root_path);
     }
     else {
       throw new \BootstrapException('A drush alias or root path is required.');
