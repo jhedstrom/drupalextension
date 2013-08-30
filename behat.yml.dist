@@ -35,3 +35,20 @@ drupal7:
       region_map:
         left sidebar: "#sidebar-first"
         content: "#content"
+
+# Separate profile for testing using the Drush driver. Assumes a stock
+# Drupal 7 install.
+drush:
+  filters:
+    tags: "@drush"
+  extensions:
+  extensions:
+    Behat\MinkExtension\Extension:
+      base_url: http://localhost:8888
+    Drupal\DrupalExtension\Extension:
+      drush_driver: "drush"
+      drush:
+        root: drupal
+      region_map:
+        left sidebar: "#sidebar-first"
+        content: "#content"
