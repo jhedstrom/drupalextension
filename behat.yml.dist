@@ -48,7 +48,7 @@ drush:
     Drupal\DrupalExtension\Extension:
       drush_driver: "drush"
       drush:
-        root: drupal
+        root: "drupal7"
       region_map:
         left sidebar: "#sidebar-first"
         content: "#content"

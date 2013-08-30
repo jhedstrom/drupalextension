@@ -28,3 +28,4 @@ before_script:
 script:
   - vendor/bin/behat -fprogress
   - vendor/bin/behat -fprogress --profile=drupal7
+  - vendor/bin/behat -fprogress --profile=drush
