@@ -13,7 +13,6 @@ The Drupal Extension is an integration layer between [Behat](http://behat.org), 
       "require": {
         "drupal/drupal-extension": "*"
       },
-      "minimum-stability": "dev",
       "config": {
         "bin-dir": "bin/"
       }

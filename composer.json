@@ -22,7 +22,6 @@
   "require-dev": {
     "phpunit/phpunit": "3.7.*"
   },
-  "minimum-stability": "dev",
   "autoload": {
     "psr-0": {
       "Drupal\\Component": "src/",
