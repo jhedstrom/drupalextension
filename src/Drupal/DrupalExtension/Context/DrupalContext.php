@@ -230,7 +230,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    *
    * @AfterScenario
    */
-  public function afterScenario(ScenarioEvent $event) {
+  public function afterScenario($event) {
     // Remove any nodes that were created.
     if (!empty($this->nodes)) {
       foreach ($this->nodes as $node) {
