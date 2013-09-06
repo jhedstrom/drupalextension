@@ -62,6 +62,7 @@ Feature: DrupalContext
     And I should see "First article"
     And I should see "Second article"
 
+  @d8
   Scenario: Create nodes with fields
     Given "article" nodes:
     | title                     | promote | body             |
@@ -77,6 +78,7 @@ Feature: DrupalContext
     Then I should see the heading "My article with fields!"
     And I should see the text "A placeholder"
 
+  @d8
   Scenario: Create users
     Given users:
     | name     | mail            | status |
@@ -85,6 +87,7 @@ Feature: DrupalContext
     When I visit "admin/people"
     Then I should see the link "Joe User"
 
+  @d8
   Scenario: Login as a user created during this scenario
     Given users:
     | name      | status |
