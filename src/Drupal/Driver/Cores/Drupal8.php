@@ -58,12 +58,12 @@ class Drupal8 implements CoreInterface {
   /**
    * Implements CoreInterface::nodeCreate().
    */
-  public function nodeCreate(\stdClass $node) {
+  public function nodeCreate($node) {
     // Default status to 1 if not set.
     if (!isset($node->status)) {
       $node->status = 1;
     }
-    $node = entity_create('node', array($node));
+    $node = entity_create('node', (array) $node);
     $node->save();
 
     return $node;
@@ -72,8 +72,8 @@ class Drupal8 implements CoreInterface {
   /**
    * Implements CoreInterface::nodeDelete().
    */
-  public function nodeDelete(\stdClass $node) {
-    node_delete($node->nid);
+  public function nodeDelete($node) {
+    $node->delete();
   }
 
   /**

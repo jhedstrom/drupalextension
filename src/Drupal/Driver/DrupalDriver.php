@@ -189,14 +189,14 @@ class DrupalDriver implements DriverInterface, DrupalSubContextFinderInterface {
   /**
    * Implements DriverInterface::createNode().
    */
-  public function createNode(\stdClass $node) {
+  public function createNode($node) {
     return $this->getCore()->nodeCreate($node);
   }
 
   /**
    * Implements CoreInterface::nodeDelete().
    */
-  public function nodeDelete(\stdClass $node) {
+  public function nodeDelete($node) {
     return $this->getCore()->nodeDelete($node);
   }
 

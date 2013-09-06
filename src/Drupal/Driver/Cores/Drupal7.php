@@ -56,7 +56,7 @@ class Drupal7 implements CoreInterface {
   /**
    * Implements CoreInterface::nodeCreate().
    */
-  public function nodeCreate(\stdClass $node) {
+  public function nodeCreate($node) {
     // Set original if not set.
     if (!isset($node->original)) {
       $node->original = clone $node;
@@ -85,7 +85,7 @@ class Drupal7 implements CoreInterface {
   /**
    * Implements CoreInterface::nodeDelete().
    */
-  public function nodeDelete(\stdClass $node) {
+  public function nodeDelete($node) {
     node_delete($node->nid);
   }
 

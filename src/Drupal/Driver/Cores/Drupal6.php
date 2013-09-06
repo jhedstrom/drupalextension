@@ -55,7 +55,7 @@ class Drupal6 implements CoreInterface {
   /**
    * Implements CoreInterface::nodeCreate().
    */
-  public function nodeCreate(\stdClass $node) {
+  public function nodeCreate($node) {
     // Default status to 1 if not set.
     if (!isset($node->status)) {
       $node->status = 1;
@@ -67,7 +67,7 @@ class Drupal6 implements CoreInterface {
   /**
    * Implements CoreInterface::nodeDelete().
    */
-  public function nodeDelete(\stdClass $node) {
+  public function nodeDelete($node) {
     node_delete($node->nid);
   }
 

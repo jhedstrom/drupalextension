@@ -70,7 +70,7 @@ interface DriverInterface {
    * @return object
    *   The node object including the node ID in the case of new nodes.
    */
-  public function createNode(\stdClass $node);
+  public function createNode($node);
 
   /**
    * Delete a node.
@@ -78,7 +78,7 @@ interface DriverInterface {
    * @param object $node
    *   Fully loaded node object.
    */
-  public function nodeDelete(\stdClass $node);
+  public function nodeDelete($node);
 
   /**
    * Run cron.
