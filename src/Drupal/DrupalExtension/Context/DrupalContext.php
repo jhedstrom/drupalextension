@@ -891,6 +891,25 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
+   * Asserts that a given node type is editable.
+   *
+   * @Then /^I should be able to edit a "([^"]*)" node$/
+   */
+  public function assertEditNodeOfType($type) {
+    $node = (object) array('type' => $type);
+    $saved = $this->getDriver()->createNode($node);
+    $this->nodes[] = $saved;
+
+    // Set internal browser on the node edit page.
+    $this->getSession()->visit($this->locatePath('/node/' . $saved->nid . '/edit'));
+
+    // Test status.
+    return new Then("I should not get a \"403\" HTTP response");
+
+  }
+
+
+  /**
    * @Given /^I am viewing (?:a|an) "(?P<vocabulary>[^"]*)" term with the name "(?P<name>[^"]*)"$/
    * @Given /^(?:a|an) "(?P<vocabulary>[^"]*)" term with the name "(?P<name>[^"]*)"$/
    */
