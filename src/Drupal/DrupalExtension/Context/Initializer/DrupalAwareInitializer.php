@@ -55,7 +55,7 @@ class DrupalAwareInitializer implements InitializerInterface, EventSubscriberInt
 
       // Additional subcontext locations may be specified manually in behat.yml.
       if (isset($this->parameters['subcontexts']['paths'])) {
-        $paths += $this->parameters['subcontexts']['paths'];
+        $paths = array_merge($paths, $this->parameters['subcontexts']['paths']);
       }
 
       foreach ($paths as $path) {
