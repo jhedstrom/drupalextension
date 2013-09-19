@@ -904,7 +904,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
     $this->getSession()->visit($this->locatePath('/node/' . $saved->nid . '/edit'));
 
     // Test status.
-    return new Then("I should not get a \"403\" HTTP response");
+    return new Then("I should get a \"200\" HTTP response");
 
   }
 
