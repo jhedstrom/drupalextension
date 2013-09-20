@@ -148,6 +148,10 @@ Feature: DrupalContext
     When I am on the homepage
     Then I should see the text "Sat, 04/27/2013 - 11:11"
 
+  Scenario: Node edit access by administrator
+    Given I am logged in as a user with the "administrator" role
+    Then I should be able to edit an "Article" node
+
   Scenario: User hooks are functioning
     Given users:
     | First name | Last name | E-mail               |
