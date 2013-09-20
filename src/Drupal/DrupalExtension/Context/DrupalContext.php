@@ -893,7 +893,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   /**
    * Asserts that a given node type is editable.
    *
-   * @Then /^I should be able to edit a "([^"]*)" node$/
+   * @Then /^I should be able to edit (?:a|an) "([^"]*)" node$/
    */
   public function assertEditNodeOfType($type) {
     $node = (object) array('type' => $type);
