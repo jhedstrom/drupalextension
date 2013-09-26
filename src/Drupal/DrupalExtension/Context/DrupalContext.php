@@ -195,7 +195,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    *
    * @return \Behat\Mink\Element\NodeElement|NULL
    */
-  private function getRegion($region) {
+  protected function getRegion($region) {
     $session = $this->getSession();
     $regionObj = $session->getPage()->find('region', $region);
     if (!$regionObj) {
