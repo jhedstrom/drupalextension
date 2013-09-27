@@ -42,7 +42,6 @@ drush:
   filters:
     tags: "@drush"
   extensions:
-  extensions:
     Behat\MinkExtension\Extension:
       base_url: http://localhost:8888
     Drupal\DrupalExtension\Extension:
