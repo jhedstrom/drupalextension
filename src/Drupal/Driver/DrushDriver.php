@@ -148,10 +148,21 @@ class DrushDriver extends BaseDriver {
     $process = new Process("drush {$alias} {$command} {$string_options} {$arguments}");
     $process->setTimeout(3600);
     $process->run();
+
     if (!$process->isSuccessful()) {
       throw new \RuntimeException($process->getErrorOutput());
     }
-    return $process->getOutput();
+
+    // Some drush commands write to standard error output (for example enable
+    // use drush_log which default to _drush_print_log) instead of returning a string
+    // (drush status use drush_print_pipe).
+    if (!$process->getOutput()) {
+      return $process->getErrorOutput();
+    }
+    else {
+      return $process->getOutput();
+    }
+
   }
 
   /**
@@ -183,6 +194,13 @@ class DrushDriver extends BaseDriver {
     $path = reset(explode('#', $path));
 
     return $path;
+  }
+
+  /**
+   * Run Drush commands dynamically from a DrupalContext.
+   */
+  public function __call($name, $arguments) {
+    return $this->drush($name, $arguments);
   }
 
 }

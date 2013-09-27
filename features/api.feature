@@ -32,10 +32,23 @@ Feature: DrupalContext
     When I am on the homepage
     Then I should get a "200" HTTP response
 
-  Scenario: Create a node
-    Given I am logged in as a user with the "administrator" role
-    When I am viewing an "article" node with the title "My article"
-    Then I should see the heading "My article"
+  @drush
+  Scenario: drush command with text matching: drush output correct status
+    Given I run drush "st"
+    Then drush output should contain "Drupal version"
+    Then drush output should contain "Site URI"
+    Then drush output should contain "Database driver"
+    Then drush output should contain "Successful"
+
+  @drush
+  Scenario: drush command with arguments: re-enable toolbar
+    Given I run drush "en" "toolbar -y"
+      And I run drush "en" "toolbar -y"
+    Then drush output should contain "toolbar is already enabled."
+
+  @drush
+  Scenario: try text matching with no drush command return an error.
+    Then drush output should contain "something"
 
   @drush
   Scenario: Run cron
@@ -43,6 +56,11 @@ Feature: DrupalContext
     When I run cron
     And am on "admin/reports/dblog"
     Then I should see the link "Cron run completed"
+
+  Scenario: Create a node
+    Given I am logged in as a user with the "administrator" role
+    When I am viewing an "article" node with the title "My article"
+    Then I should see the heading "My article"
 
   Scenario: Create many nodes
     Given "page" nodes:

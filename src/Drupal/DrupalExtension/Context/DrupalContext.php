@@ -84,6 +84,13 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   private $roles = array();
 
   /**
+   * Keep track of drush output.
+   *
+   * @var string
+   */
+  private $drushOutput;
+
+  /**
    * Initialize subcontexts.
    *
    * @param array $subcontexts
@@ -277,6 +284,18 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
     else {
       return parent::locatePath($path);
     }
+  }
+
+  /**
+   * Return the most recent drush command output.
+   *
+   * @return string
+   */
+  public function readDrushOutput() {
+    if (!isset($this->drushOutput)) {
+      throw new pendingException('This scenario has no drush command.');
+    }
+    return $this->drushOutput;
   }
 
   /**
@@ -1136,6 +1155,37 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
 
   /**
    * @} End of defgroup "drupal extensions"
+   */
+  /**
+   * @defgroup drush steps
+   * @{
+   */
+
+  /**
+   * @Given /^I run drush "(?P<command>[^"]*)"$/
+   */
+  public function assertDrushCommand($command) {
+    $this->drushOutput = $this->getDriver('drush')->$command();
+  }
+
+  /**
+   * @Given /^I run drush "(?P<command>[^"]*)" "(?P<arguments>[^"]*)"$/
+   */
+  public function assertDrushCommandWithArgument($command, $arguments) {
+    $this->drushOutput = $this->getDriver('drush')->$command($arguments);
+  }
+
+  /**
+   * @Then /^drush output should contain "(?P<output>[^"]*)"$/
+   */
+  public function assertDrushOutput($output) {
+    if (strpos($this->readDrushOutput(), $output) === FALSE) {
+      throw new \Exception(sprintf("The last drush command output did not contain '%s'.\nInstead, it was:\n\n%s'", $output, $this->drushOutput));
+    }
+  }
+
+  /**
+   * @} End of defgroup "drush steps"
    */
   /**
    * @defgroup "debugging steps"
