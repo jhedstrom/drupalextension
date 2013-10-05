@@ -1204,6 +1204,15 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
+   * @Then /^drush output should not contain "(?P<output>[^"]*)"$/
+   */
+  public function drushOutputShouldNotContain($output) {
+    if (strpos($this->readDrushOutput(), $output) !== FALSE) {
+        throw new \Exception(sprintf("The last drush command output did contain '%s' although it should not.\nOutput:\n\n%s'", $output, $this->drushOutput));
+    }
+  }
+
+  /**
    * @} End of defgroup "drush steps"
    */
   /**
