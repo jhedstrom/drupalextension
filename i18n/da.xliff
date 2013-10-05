@@ -1,0 +1,191 @@
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="en" datatype="plaintext" original="global" target-language="da">
+    <header />
+    <body>
+      <trans-unit id="i-am-at-page">
+	<source><![CDATA[/^(?:that I|I) am at "(?P[^"]*)"$/]]></source>
+	<target><![CDATA[/^(?:at jeg|jeg) er på siden "(?P[^"]*)"$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-visit-page">
+	<source><![CDATA[/^I visit "(?P[^"]*)"$/]]></source>
+	<target><![CDATA[/^jeg besøger "(?P[^"]*)"$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-click-link">
+	<source><![CDATA[/^I click "(?P<link>[^"]*)"$/]]></source>
+	<target><![CDATA[/^jeg klikker på linket "(?P<link>[^"]*)"$/]]></target>
+	</trans-unit>
+	<trans-unit id="for-fields-i-enter-value">
+	<source><![CDATA[/^for "(?P<field>[^"]*)" I enter "(?P<value>[^"]*)"$/]]></source>
+	<target><![CDATA[/^for "(?P<felt>[^"]*)" indtaster jeg værdien "(?P<value>[^"]*)"$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-enter-value-for-fields">
+	<source><![CDATA[/^I enter "(?P<value>[^"]*)" for "(?P<field>[^"]*)"$/]]></source>
+	<target><![CDATA[/^jeg indtaster "(?P<value>[^"]*)" i feltet "(?P<felt>[^"]*)"$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-press-the-button-button">
+	<source><![CDATA[/^I press the "(?P<button>[^"]*)" button$/]]></source>
+	<target><![CDATA[/^jeg trykker på "(?P<knap>[^"]*)" knappen$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-should-see-the-link-link">
+	<source><![CDATA[/^I should see the link "(?P<link>[^"]*)"$/]]></source>
+	<target><![CDATA[/^(?:|bør jeg )se linket "(?P<link>[^"]*)"$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-should-not-see-the-link-link">
+	<source><![CDATA[/^I should not see the link "(?P<link>[^"]*)"$/]]></source>
+	<target><![CDATA[/^(?:|bør jeg )ikke se linket "(?P<link>[^"]*)"$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-should-see-the-heading-heading">
+	<source><![CDATA[/^I (?:|should )see the heading "(?P<heading>[^"]*)"$/]]></source>
+	<target><![CDATA[/^(?:|bør jeg )se overskriften "(?P<overskrift>[^"]*)"$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-should-see-the-heading-heading-in-the-region">
+	<source><![CDATA[/^I should see the heading "(?P<heading>[^"]*)" in the "(?P<region>[^"]*)"(?:| region)$/]]></source>
+	<target><![CDATA[/^(?:|bør jeg )se overskriften "(?P<overskrift>[^"]*)" i (?:|regionen )"(?P<region>[^"]*)"$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-should-see-the-heading-in-the-region">
+	<source><![CDATA[/^I should see the "(?P<heading>[^"]*)" heading in the "(?P<region>[^"]*)"(?:| region)$/]]></source>
+	<target><![CDATA[/^(?:|bør jeg )se "(?P<overskrift>[^"]*)" overskriften i "(?P<region>[^"]*)"(?:| regionen)$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-follow-link-in-the-region-region">
+	<source><![CDATA[/^I (?:follow|click) "(?P<link>[^"]*)" in the "(?P<region>[^"]*)"(?:| region)$/]]></source>
+	<target><![CDATA[/^jeg (?:følger|klikker) "(?P<link>[^"]*)" i "(?P<region>[^"]*)"(?:| regionen)$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-should-see-the-link-in-the-region">
+	<source><![CDATA[/^I should see the link "(?P<link>[^"]*)" in the "(?P<region>[^"]*)"(?:| region)$/]]></source>
+	<target><![CDATA[/^(?:|bør jeg )se linket "(?P<link>[^"]*)" i "(?P<region>[^"]*)"(?:| regionen)$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-should-see-the-text-in-the-region">
+	<source><![CDATA[/^I should see (?:the text |)"(?P<text>[^"]*)" in the "(?P<region>[^"]*)"(?:| region)$/]]></source>
+	<target><![CDATA[/^(?:|bør jeg )se (?:teksten |)"(?P<tekst>[^"]*)" i "(?P<region>[^"]*)"(?:| regionen)$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-should-not-see-the-text-in-the-region">
+	<source><![CDATA[/^I should not see (?:the text |)"(?P<text>[^"]*)" in the "(?P<region>[^"]*)"(?:| region)$/]]></source>
+	<target><![CDATA[/^(?:|bør jeg )ikke se (?:teksten |)"(?P<tekst>[^"]*)" i "(?P<region>[^"]*)"(?:| regionen)$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-press-button-in-the-region">
+	<source><![CDATA[/^I press "(?P<button>[^"]*)" in the "(?P<region>[^"]*)"(?:| region)$/]]></source>
+	<target><![CDATA[/^jeg trykker "(?P<knap>[^"]*)" i "(?P<region>[^"]*)"(?:| regionen)$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-should-see-the-text">
+	<source><![CDATA[/^(?:I|I should) see the text "(?P<text>[^"]*)"$/]]></source>
+	<target><![CDATA[/^(?:|bør jeg )se teksten "(?P<tekst>[^"]*)"$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-should-not-see-the-text">
+	<source><![CDATA[/^I should not see the text "(?P<text>[^"]*)"$/]]></source>
+	<target><![CDATA[/^(?:|bør jeg )ikke se teksten "(?P<tekst>[^"]*)"$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-should-get-a-code-http-response">
+	<source><![CDATA[/^I should get a "(?P<code>[^"]*)" HTTP response$/]]></source>
+	<target><![CDATA[/^(?:|bør jeg )få HTTP responset "(?P<kode>[^"]*)"$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-should-not-get-a-code-http-response">
+	<source><![CDATA[/^I should not get a "(?P<code>[^"]*)" HTTP response$/]]></source>
+	<target><![CDATA[/^(?:|bør jeg )ikke få HTTP responset "(?P<kode>[^"]*)"$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-check-the-box">
+	<source><![CDATA[/^I check the box "(?P<checkbox>[^"]*)"$/]]></source>
+	<target><![CDATA[/^jeg sætter kryds i boksen "(?P<checkbox>[^"]*)"$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-uncheck-the-box">
+	<source><![CDATA[/^I uncheck the box "(?P<checkbox>[^"]*)"$/]]></source>
+	<target><![CDATA[/^jeg fjerner kryds i boksen "(?P<checkbox>[^"]*)"$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-select-the-radio-button-with-the-id">
+	<source><![CDATA[/^I select the radio button "(?P<label>[^"]*)" with the id "(?P<id>[^"]*)"$/]]></source>
+	<target><![CDATA[/^jeg vælger radioknappen "(?P<label>[^"]*)" med id "(?P<id>[^"]*)"$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-select-the-radio-button">
+	<source><![CDATA[/^I select the radio button "(?P<label>[^"]*)"$/]]></source>
+	<target><![CDATA[/^jeg vælger radioknappen "(?P<label>[^"]*)"$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-am-an-anonymous-user">
+	<source><![CDATA[/^I am an anonymous user$/]]></source>
+	<target><![CDATA[/^jeg er en anonym bruger$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-am-not-logged-in">
+	<source><![CDATA[/^I am not logged in$/]]></source>
+	<target><![CDATA[/^jeg ikke er logget ind$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-am-logged-in-as-a-user-with-the-role">
+	<source><![CDATA[/^I am logged in as a user with the "(?P<role>[^"]*)" role$/]]></source>
+	<target><![CDATA[/^jeg er logget ind som bruger med rollen "(?P<rolle>[^"]*)"$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-click-link-in-the-row">
+	<source><![CDATA[/^I click "(?P<link>[^"]*)" in the "(?P<row_text>[^"]*)" row$/]]></source>
+	<target><![CDATA[/^jeg klikker "(?P<link>[^"]*)" i rækken "(?P<row_text>[^"]*)"$/]]></target>
+      </trans-unit>
+      <trans-unit id="the-cache-has-been-cleared">
+	<source><![CDATA[/^the cache has been cleared$/]]></source>
+	<target><![CDATA[/^cachen er clearet$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-run-cron">
+	<source><![CDATA[/^I run cron$/]]></source>
+	<target><![CDATA[/^jeg kører cron$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-am-viewing-a-type-node-with-the-title">
+	<source><![CDATA[/^I am viewing (?:a|an) "(?P<type>[^"]*)" node with the title "(?P<title>[^"]*)"$/]]></source>
+	<target><![CDATA[/^jeg ser en "(?P<type>[^"]*)" node med titlen "(?P<titel>[^"]*)"$/]]></target>
+      </trans-unit>
+      <trans-unit id="a-type-node-with-the-title">
+	<source><![CDATA[/^(?:a|an) "(?P<type>[^"]*)" node with the title "(?P<title>[^"]*)"$/]]></source>
+	<target><![CDATA[/^en "(?P<type>[^"]*)" node med titlen "(?P<title>[^"]*)"$/]]></target>
+      </trans-unit>
+      <trans-unit id="type-nodes">
+	<source><![CDATA[/^"(?P<type>[^"]*)" nodes:$/]]></source>
+	<target><![CDATA[/^"(?P<type>[^"]*)" noder:$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-am-viewing-a-vocabulary-term-with-the-name">
+	<source><![CDATA[/^I am viewing (?:a|an) "(?P<vocabulary>[^"]*)" term with the name "(?P<name>[^"]*)"$/]]></source>
+	<target><![CDATA[/^jeg ser et "(?P<vocabulary>[^"]*)" term med navnet "(?P<navn>[^"]*)"$/]]></target>
+      </trans-unit>
+      <trans-unit id="a-vocabulary-term-with-the-name">
+	<source><![CDATA[/^(?:a|an) "(?P<vocabulary>[^"]*)" term with the name "(?P<name>[^"]*)"$/]]></source>
+	<target><![CDATA[/^et "(?P<vocabulary>[^"]*)" term med navnet "(?P<navn>[^"]*)"$/]]></target>
+      </trans-unit>
+      <trans-unit id="vocabulary-terms">
+	<source><![CDATA[/^"(?P<vocabulary>[^"]*)" terms:$/]]></source>
+	<target><![CDATA[/^"(?P<vocabulary>[^"]*)" termer:$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-should-see-the-error-message">
+	<source><![CDATA[/^I should see the error message(?:| containing) "([^"]*)"$/]]></source>
+	<target><![CDATA[/^(?:|bør jeg )se fejlbeskeden(?:| indeholdende) "([^"]*)"$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-should-see-the-following-error-messages">
+	<source><![CDATA[/^I should see the following <error messages>$/]]></source>
+	<target><![CDATA[/^(?:|bør jeg )se følgende <error messages>$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-should-not-see-the-error-message">
+	<source><![CDATA[/^I should not see the error message(?:| containing) "([^"]*)"$/]]></source>
+	<target><![CDATA[/^(?:|bør jeg )ikke se fejlbeskeden(?:| indeholdende) "([^"]*)"$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-should-not-see-the-following-error">
+	<source><![CDATA[/^I should not see the following <error messages>$/]]></source>
+	<target><![CDATA[/^(?:|bør jeg )ikke se følgende <error messages>$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-should-see-the-success-message">
+	<source><![CDATA[/^I should see the success message(?:| containing) "([^"]*)"$/]]></source>
+	<target><![CDATA[/^(?:|bør jeg )se succes beskeden(?:| indeholdende) "([^"]*)"$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-should-see-the-following-success">
+	<source><![CDATA[/^I should see the following <success messages>$/]]></source>
+	<target><![CDATA[/^(?:|bør jeg )se følgende <success messages>$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-should-not-see-the-success-message">
+	<source><![CDATA[/^I should not see the success message(?:| containing) "([^"]*)"$/]]></source>
+	<target><![CDATA[/^(?:|bør jeg )ikke se succes beskederne(?:| indeholdende) "([^"]*)"$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-should-not-see-the-following-success-messages">
+	<source><![CDATA[/^I should not see the following <success messages>$/]]></source>
+	<target><![CDATA[/^(?:|bør jeg )ikke se følgende <success messages>$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-should-see-the-message">
+	<source><![CDATA[/^I should see the message(?:| containing) "([^"]*)"$/]]></source>
+	<target><![CDATA[/^(?:|bør jeg )se beskeden(?:| indeholdende) "([^"]*)"$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-should-not-see-the-message">
+	<source><![CDATA[/^I should not see the message(?:| containing) "([^"]*)"$/]]></source>
+	<target><![CDATA[/^(?:|bør jeg )ikke se beskeden(?:| indeholdende) "([^"]*)"$/]]></target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
