@@ -439,8 +439,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    * @param mixed $char could be either char ('b') or char-code (98)
    * @throws \Exception
    */
-  public function pressKey($char, $field)
-  {
+  public function pressKey($char, $field) {
     static $keys = array(
       // @todo Add character codes for more special keys; arrows, caps, shift,
       // backspace, delete, ctrl, command, alt, option, spacebar, page up/down,
