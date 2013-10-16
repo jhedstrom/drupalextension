@@ -415,7 +415,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    * @When /^(?:|I )press the "(?P<button>[^"]*)" button$/
    */
   public function pressButton($button) {
-    // Wait for any open autocomplete boxes to finish closint.  They block
+    // Wait for any open autocomplete boxes to finish closing.  They block
     // form-submission if they are still open.
     // Use a step 'I press the "Esc" key in the "LABEL" field' to close
     // autocomplete suggestion boxes with Mink.  "Click" events on the
