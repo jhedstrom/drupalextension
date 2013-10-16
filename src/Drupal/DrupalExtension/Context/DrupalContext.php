@@ -410,11 +410,67 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
-   * @When /^I press the "(?P<button>[^"]*)" button$/
+   * Presses button with specified id|name|title|alt|value.
+   *
+   * @When /^(?:|I )press the "(?P<button>[^"]*)" button$/
    */
-  public function assertPressButton($button) {
-    // Use the Mink Extenstion step definition.
-    return new Given("I press \"$button\"");
+  public function pressButton($button) {
+    // Wait for any open autocomplete boxes to finish closing.  They block
+    // form-submission if they are still open.
+    // Use a step 'I press the "Esc" key in the "LABEL" field' to close
+    // autocomplete suggestion boxes with Mink.  "Click" events on the
+    // autocomplete suggestion do not work.
+    try {
+      $this->getSession()->wait(1000, 'jQuery("#autocomplete").length === 0');
+    }
+    catch (UnsupportedDriverActionException $e) {
+      // The jQuery probably failed because the driver does not support
+      // javascript.  That is okay, because if the driver does not support
+      // javascript, it does not support autocomplete boxes either.
+    }
+
+    // Use the Mink Extension step definition.
+    return parent::pressButton($button);
+  }
+
+  /**
+   * @Given /^(?:|I )press the "([^"]*)" key in the "([^"]*)" field$/
+   *
+   * @param mixed $char could be either char ('b') or char-code (98)
+   * @throws \Exception
+   */
+  public function pressKey($char, $field) {
+    static $keys = array(
+      // @todo Add character codes for more special keys; arrows, caps, shift,
+      // backspace, delete, ctrl, command, alt, option, spacebar, page up/down,
+      // home, end.
+      'tab' => 9,
+      'enter' => 13,
+      'return' => 13,
+      'esc' => 27,
+      'escape' => 27,
+    );
+
+    if (is_string($char)) {
+      if (strlen($char) < 1) {
+        throw new \Exception('FeatureContext->keyPress($char, $field) was invoked but the $char parameter was empty.');
+      } else if (strlen($char) > 1) {
+        $char = $keys[strtolower($char)];
+      }
+    }
+
+    $element = $this->getSession()->getPage()->findField($field);
+    if (!$element) {
+      throw new \Exception("Field '$field' not found");
+    }
+
+    $driver = $this->getSession()->getDriver();
+    // $driver->keyPress($element->getXpath(), $char);
+    // This alternative to Driver->keyPress() handles cases that depend on
+    // javascript which binds to key down/up events directly, such as Drupal's
+    // autocomplete.js.
+    $driver->keyDown($element->getXpath(), $char);
+    $driver->keyUp($element->getXpath(), $char);
   }
 
   /**
