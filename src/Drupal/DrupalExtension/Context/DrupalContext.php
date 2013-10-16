@@ -420,7 +420,14 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
     // Use a step 'I press the "Esc" key in the "LABEL" field' to close
     // autocomplete suggestion boxes with Mink.  "Click" events on the
     // autocomplete suggestion do not work.
-    $this->getSession()->wait(1000, 'jQuery("#autocomplete").length === 0');
+    try {
+      $this->getSession()->wait(1000, 'jQuery("#autocomplete").length === 0');
+    }
+    catch (UnsupportedDriverActionException $e) {
+      // The jQuery probably failed because the driver does not support
+      // javascript.  That is okay, because if the driver does not support
+      // javascript, it does not support autocomplete boxes either.
+    }
 
     // Use the Mink Extension step definition.
     return parent::pressButton($button);
