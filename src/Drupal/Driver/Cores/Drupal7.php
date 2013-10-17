@@ -380,6 +380,10 @@ class Drupal7 implements CoreInterface {
       }
     }
 
+    if (empty($term->vid)) {
+      throw new \Exception(sprintf('No "%s" vocabulary found.'));
+    }
+
     \taxonomy_term_save($term);
 
     // Loading a term by name returns an array of term objects, but there should
