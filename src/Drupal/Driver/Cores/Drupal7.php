@@ -360,7 +360,18 @@ class Drupal7 implements CoreInterface {
    * Implements CoreInterface::termCreate.
    */
   public function termCreate(\stdClass $term) {
+    // Map vocabulary names to vid, these take precedence over machine names.
     if (!isset($term->vid)) {
+      $vocabularies = \taxonomy_get_vocabularies();
+      foreach ($vocabularies as $vid => $vocabulary) {
+        if ($vocabulary->name == $term->vocabulary_machine_name) {
+          $term->vid = $vocabulary->vid;
+        }
+      }
+    }
+
+    if (!isset($term->vid)) {
+
       // Try to load vocabulary by machine name.
       $vocabularies = \taxonomy_vocabulary_load_multiple(FALSE, array(
         'machine_name' => $term->vocabulary_machine_name

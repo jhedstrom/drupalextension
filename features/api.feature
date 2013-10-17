@@ -105,6 +105,16 @@ Feature: DrupalContext
     Then I should see "Tag one"
     And I should see "Tag two"
 
+  Scenario: Create terms using vocabulary title rather than machine name.
+    Given "Tags" terms:
+    | name    |
+    | Tag one |
+    | Tag two |
+    And I am logged in as a user with the "administrator" role
+    When I go to "admin/structure/taxonomy/tags"
+    Then I should see "Tag one"
+    And I should see "Tag two"
+
   Scenario: Create nodes with specific authorship
     Given users:
     | name     | mail            | status |
