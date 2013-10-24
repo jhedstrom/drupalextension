@@ -324,6 +324,13 @@ class Drupal7 implements CoreInterface {
                     $i++;
                   }
                 }
+
+                elseif (is_array($value)) {
+                  foreach ($value as $key => $data) {
+                    $new_entity->{$param}[LANGUAGE_NONE][0][$key] = $data;
+                  }
+                }
+
                 else {
                   $new_entity->{$param}[LANGUAGE_NONE][0][$column] = $value;
                 }
