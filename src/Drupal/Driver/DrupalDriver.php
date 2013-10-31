@@ -140,6 +140,7 @@ class DrupalDriver implements DriverInterface, DrupalSubContextFinderInterface {
         // Drupal 7.
         '/includes/bootstrap.inc',
         // Drupal 8.
+        '/core/vendor/autoload.php',
         '/core/includes/bootstrap.inc',
       );
       foreach ($version_constant_paths as $path) {
@@ -149,6 +150,9 @@ class DrupalDriver implements DriverInterface, DrupalSubContextFinderInterface {
       }
       if (defined('VERSION')) {
         $version = VERSION;
+      }
+      elseif (defined('\Drupal::VERSION')) {
+        $version = \Drupal::VERSION;
       }
       else {
         throw new BootstrapException('Unable to determine Drupal core version. Supported versions are 6, 7, and 8.');
