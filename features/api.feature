@@ -1,4 +1,4 @@
-@api
+@d7 @api
 Feature: DrupalContext
   In order to prove the Drupal context is working properly
   As a developer

@@ -24,7 +24,7 @@ default:
 # stock Drupal 7 install.
 drupal7:
   filters:
-    tags: "@api"
+    tags: "@d7"
   extensions:
     Behat\MinkExtension\Extension:
       base_url: http://localhost:8887
