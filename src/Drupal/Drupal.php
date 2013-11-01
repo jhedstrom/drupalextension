@@ -3,6 +3,7 @@
 namespace Drupal;
 
 use Drupal\Driver\DriverInterface;
+use Drupal\Component\Utility\Random;
 
 /**
  * Drupal driver manager.
@@ -25,10 +26,11 @@ class Drupal {
   /**
    * Initialize the driver manager.
    */
-  public function __construct(array $drivers = array()) {
+  public function __construct(array $drivers = array(), Random $random) {
     foreach ($drivers as $name => $driver) {
       $this->registerDriver($name, $driver);
     }
+    $this->random = $random;
   }
 
   /**
