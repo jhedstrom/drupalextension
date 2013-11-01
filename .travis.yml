@@ -18,6 +18,7 @@ install:
   - sudo apt-get --quiet=2 install php5-cgi php5-curl php5-gd php5-mysql > /dev/null
   - sudo git clone https://github.com/drush-ops/drush.git -b master /usr/local/lib/drush
   - sudo ln -s /usr/local/lib/drush/drush /usr/local/bin/drush
+  - sudo drush && sudo chown -R $USER:$USER /home/$USER/.drush
   - phpenv rehash
 
 before_script:
