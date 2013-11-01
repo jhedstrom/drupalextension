@@ -18,6 +18,7 @@ class Drupal7 implements CoreInterface {
   public function __construct($drupalRoot, $uri = 'default') {
     $this->drupalRoot = realpath($drupalRoot);
     $this->uri = $uri;
+    $this->random = new Random();
   }
 
   /**
@@ -196,7 +197,7 @@ class Drupal7 implements CoreInterface {
 
     // Create new role.
     $role = new \stdClass();
-    $role->name = Random::name(8);
+    $role->name = $this->random->name(8);
     user_role_save($role);
     user_role_grant_permissions($role->rid, $permissions);
 

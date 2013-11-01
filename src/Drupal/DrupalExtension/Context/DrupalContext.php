@@ -825,8 +825,8 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
     }
     // Create user.
     $user = (object) array(
-      'name' => $this->getDrupal()->name(8),
-      'pass' => $this->getDrupal()->name(16),
+      'name' => $this->getDrupal()->random->name(8),
+      'pass' => $this->getDrupal()->random->name(16),
       'roles' => array($rid),
     );
     $user->mail = "{$user->name}@example.com";
@@ -904,7 +904,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
     $node = (object) array(
       'title' => $title,
       'type' => $type,
-      'body' => $this->getDrupal()->string(255),
+      'body' => $this->getDrupal()->random->string(255),
     );
     $this->dispatcher->dispatch('beforeNodeCreate', new EntityEvent($this, $node));
     $saved = $this->getDriver()->createNode($node);
