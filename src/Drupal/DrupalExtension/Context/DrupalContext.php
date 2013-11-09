@@ -124,7 +124,10 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    * @return array
    */
   public function getTranslationResources() {
-    return glob(__DIR__ . '/../../../../i18n/*.xliff');
+      $translationFilesParent = parent::getTranslationResources();
+      $translationFilesDrupal = glob(__DIR__ . '/../../../../i18n/*.xliff');
+      $translationFilesCombined = array_merge($translationFilesParent, $translationFilesDrupal);
+      return $translationFilesCombined;
   }
 
   /**
