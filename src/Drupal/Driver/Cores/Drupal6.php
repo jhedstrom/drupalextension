@@ -86,6 +86,9 @@ class Drupal6 implements CoreInterface {
     // Clone user object, otherwise user_save() changes the password to the
     // hashed password.
     $account = clone $user;
+    if (!isset($account->uid)) {
+      $account->uid = NULL;
+    }
 
     user_save($account, (array) $user);
 
