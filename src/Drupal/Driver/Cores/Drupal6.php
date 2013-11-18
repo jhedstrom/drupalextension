@@ -8,8 +8,8 @@ use Drupal\Exception\BootstrapException;
  * Drupal 6 core.
  */
 class Drupal6 implements CoreInterface {
-  private $drupalRoot;
-  private $uri;
+  public $drupalRoot;
+  public $uri;
 
   /**
    * Set drupalRoot.
@@ -100,7 +100,7 @@ class Drupal6 implements CoreInterface {
    * Implements CoreInterface::userDelete().
    */
   public function userDelete(\stdClass $user) {
-    user_delete(array(), $user->uid);
+//    user_delete(array(), $user->uid);
   }
 
   /**
