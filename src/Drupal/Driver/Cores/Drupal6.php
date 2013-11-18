@@ -90,34 +90,34 @@ class Drupal6 implements CoreInterface {
       $account->uid = NULL;
     }
 
-    user_save($account, (array) $user);
+    $new_user = user_save($account, (array) $user);
 
     // Store UID.
-    $user->uid = $account->uid;
+    $user->uid = $new_user->uid;
   }
 
   /**
    * Implements CoreInterface::userDelete().
    */
   public function userDelete(\stdClass $user) {
-    user_cancel(array(), $user->uid, 'user_cancel_delete');
+    user_delete(array(), $user->uid);
   }
 
   /**
    * Implements CoreInterface::userAddRole().
    */
   public function userAddRole(\stdClass $user, $role_name) {
-    $role = user_role_load_by_name($role_name);
+    $result = db_fetch_array(db_query("SELECT rid FROM {role} WHERE name = '%s'", $role_name));
 
-    if (!$role) {
+    if (!$result) {
       throw new \RuntimeException(sprintf('No role "%s" exists.', $role_name));
     }
 
-    user_multiple_role_edit(array($user->uid), 'add_role', $role->rid);
+    user_multiple_role_edit(array($user->uid), 'add_role', $result['rid']);
   }
 
   /**
-   * Impelements CoreInterface::validateDrupalSite().
+   * Implements CoreInterface::validateDrupalSite().
    */
   public function validateDrupalSite() {
     if ('default' !== $this->uri) {
