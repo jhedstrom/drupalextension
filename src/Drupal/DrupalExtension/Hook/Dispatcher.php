@@ -21,7 +21,8 @@ class Dispatcher implements EventSubscriberInterface {
    */
   public static function getSubscribedEvents() {
     $events = array(
-      'beforeNodeCreate', 'beforeTermCreate', 'beforeUserCreate'
+      'afterNodeCreate', 'afterTermCreate', 'afterUserCreate',
+      'beforeNodeCreate', 'beforeTermCreate', 'beforeUserCreate',
     );
 
     return array_combine($events, $events);
@@ -55,6 +56,39 @@ class Dispatcher implements EventSubscriberInterface {
   public function clean() {
     $this->hooks = array();
   }
+
+  /**
+   * Listens to "afterNodeCreate" event.
+   *
+   * @param EntityEvent $event
+   *
+   * @uses fireStepHooks()
+   */
+    public function afterNodeCreate(EntityEvent $event) {
+      $this->fireHooks(__FUNCTION__, $event);
+    }
+
+  /**
+   * Listens to "afterTermCreate" event.
+   *
+   * @param EntityEvent $event
+   *
+   * @uses fireStepHooks()
+   */
+    public function afterTermCreate(EntityEvent $event) {
+      $this->fireHooks(__FUNCTION__, $event);
+    }
+
+  /**
+   * Listens to "afterUserCreate" event.
+   *
+   * @param EntityEvent $event
+   *
+   * @uses fireStepHooks()
+   */
+    public function afterUserCreate(EntityEvent $event) {
+      $this->fireHooks(__FUNCTION__, $event);
+    }
 
   /**
    * Listens to "beforeNodeCreate" event.

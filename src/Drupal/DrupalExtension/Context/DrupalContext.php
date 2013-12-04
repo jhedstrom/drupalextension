@@ -909,6 +909,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
     );
     $this->dispatcher->dispatch('beforeNodeCreate', new EntityEvent($this, $node));
     $saved = $this->getDriver()->createNode($node);
+    $this->dispatcher->dispatch('afterNodeCreate', new EntityEvent($this, $node));
     $this->nodes[] = $saved;
 
     // Set internal page on the new node.
@@ -930,6 +931,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
     );
     $this->dispatcher->dispatch('beforeNodeCreate', new EntityEvent($this, $node));
     $saved = $this->getDriver()->createNode($node);
+    $this->dispatcher->dispatch('afterNodeCreate', new EntityEvent($this, $node));
     $this->nodes[] = $saved;
 
     // Set internal page on the new node.
@@ -945,6 +947,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
       $node->type = $type;
       $this->dispatcher->dispatch('beforeNodeCreate', new EntityEvent($this, $node));
       $saved = $this->getDriver()->createNode($node);
+      $this->dispatcher->dispatch('afterNodeCreate', new EntityEvent($this, $node));
       $this->nodes[] = $saved;
     }
   }
@@ -962,6 +965,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
 
     $this->dispatcher->dispatch('beforeNodeCreate', new EntityEvent($this, $node));
     $saved = $this->getDriver()->createNode($node);
+    $this->dispatcher->dispatch('afterNodeCreate', new EntityEvent($this, $node));
     $this->nodes[] = $saved;
 
     // Set internal browser on the node.
@@ -1000,6 +1004,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
     );
     $this->dispatcher->dispatch('beforeTermCreate', new EntityEvent($this, $term));
     $saved = $this->getDriver()->createTerm($term);
+    $this->dispatcher->dispatch('afterTermCreate', new EntityEvent($this, $term));
     $this->terms[] = $saved;
 
     // Set internal page on the term.
@@ -1020,6 +1025,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
 
       $this->dispatcher->dispatch('beforeUserCreate', new EntityEvent($this, $user));
       $this->getDriver()->userCreate($user);
+      $this->dispatcher->dispatch('afterUserCreate', new EntityEvent($this, $user));
 
       $this->users[$user->name] = $user;
     }
@@ -1034,6 +1040,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
       $term->vocabulary_machine_name = $vocabulary;
       $this->dispatcher->dispatch('beforeTermCreate', new EntityEvent($this, $term));
       $saved = $this->getDriver()->createTerm($term);
+      $this->dispatcher->dispatch('afterTermCreate', new EntityEvent($this, $term));
       $this->terms[] = $saved;
     }
   }

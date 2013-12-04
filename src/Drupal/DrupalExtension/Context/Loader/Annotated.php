@@ -17,6 +17,9 @@ use Drupal\DrupalExtension\Hook\Dispatcher;
 class Annotated implements LoaderInterface {
   private $hookDispatcher;
   private $annotationClasses = array(
+    'afternodecreate' => 'Drupal\DrupalExtension\Hook\Annotation\AfterNodeCreate',
+    'aftertermcreate' => 'Drupal\DrupalExtension\Hook\Annotation\AfterTermCreate',
+    'afterusercreate' => 'Drupal\DrupalExtension\Hook\Annotation\AfterUserCreate',
     'beforenodecreate' => 'Drupal\DrupalExtension\Hook\Annotation\BeforeNodeCreate',
     'beforetermcreate' => 'Drupal\DrupalExtension\Hook\Annotation\BeforeTermCreate',
     'beforeusercreate' => 'Drupal\DrupalExtension\Hook\Annotation\BeforeUserCreate',
