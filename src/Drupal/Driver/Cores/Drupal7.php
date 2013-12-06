@@ -34,6 +34,10 @@ class Drupal7 implements CoreInterface {
     // Bootstrap Drupal.
     $current_path = getcwd();
     chdir(DRUPAL_ROOT);
+    drupal_bootstrap(DRUPAL_BOOTSTRAP_CONFIGURATION);
+    if (empty($GLOBALS['databases'])) {
+      throw new BootstrapException('Missing database setting, verify the database configuration in settings.php.');
+    }
     drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
     chdir($current_path);
   }
