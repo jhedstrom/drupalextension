@@ -909,7 +909,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
     );
     $this->dispatcher->dispatch('beforeNodeCreate', new EntityEvent($this, $node));
     $saved = $this->getDriver()->createNode($node);
-    $this->dispatcher->dispatch('afterNodeCreate', new EntityEvent($this, $node));
+    $this->dispatcher->dispatch('afterNodeCreate', new EntityEvent($this, $saved));
     $this->nodes[] = $saved;
 
     // Set internal page on the new node.
@@ -931,7 +931,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
     );
     $this->dispatcher->dispatch('beforeNodeCreate', new EntityEvent($this, $node));
     $saved = $this->getDriver()->createNode($node);
-    $this->dispatcher->dispatch('afterNodeCreate', new EntityEvent($this, $node));
+    $this->dispatcher->dispatch('afterNodeCreate', new EntityEvent($this, $saved));
     $this->nodes[] = $saved;
 
     // Set internal page on the new node.
@@ -947,7 +947,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
       $node->type = $type;
       $this->dispatcher->dispatch('beforeNodeCreate', new EntityEvent($this, $node));
       $saved = $this->getDriver()->createNode($node);
-      $this->dispatcher->dispatch('afterNodeCreate', new EntityEvent($this, $node));
+      $this->dispatcher->dispatch('afterNodeCreate', new EntityEvent($this, $saved));
       $this->nodes[] = $saved;
     }
   }
@@ -965,7 +965,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
 
     $this->dispatcher->dispatch('beforeNodeCreate', new EntityEvent($this, $node));
     $saved = $this->getDriver()->createNode($node);
-    $this->dispatcher->dispatch('afterNodeCreate', new EntityEvent($this, $node));
+    $this->dispatcher->dispatch('afterNodeCreate', new EntityEvent($this, $saved));
     $this->nodes[] = $saved;
 
     // Set internal browser on the node.
