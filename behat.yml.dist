@@ -18,6 +18,7 @@ default:
         message_selector: '.messages'
         error_message_selector: '.messages.error'
         success_message_selector: '.messages.status'
+        warning_message_selector: '.messages.warning'
 
 # Separate profile for testing using the api driver. This assumes a
 # stock Drupal 7 install.

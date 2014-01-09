@@ -106,6 +106,7 @@ class Extension implements ExtensionInterface {
             scalarNode('message_selector')->end()->
             scalarNode('error_message_selector')->end()->
             scalarNode('success_message_selector')->end()->
+            scalarNode('warning_message_selector')->end()->
           end()->
         end()->
         // Drupal drivers.

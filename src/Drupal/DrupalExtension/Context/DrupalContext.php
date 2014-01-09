@@ -1188,6 +1188,77 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
+   * Checks if the current page contains the given warning message
+   *
+   * @param $message
+   *   string The text to be checked
+   *
+   * @Then /^I should see the warning message(?:| containing) "([^"]*)"$/
+   */
+  public function assertWarningMessage($message) {
+    $warningSelector = $this->getDrupalSelector('warning_message_selector');
+    $warningSelectorObj = $this->getSession()->getPage()->find("css", $warningSelector);
+    if(empty($warningSelectorObj)) {
+      throw new \Exception(sprintf("The page '%s' does not contain any warning messages", $this->getSession()->getCurrentUrl()));
+    }
+    if (strpos(trim($warningSelectorObj->getText()), $message) === FALSE) {
+      throw new \Exception(sprintf("The page '%s' does not contain the warning message '%s'", $this->getSession()->getCurrentUrl(), $message));
+    }
+  }
+
+  /**
+   * Checks if the current page contains the given set of warning messages
+   *
+   * @param $message
+   *   array An array of texts to be checked
+   *
+   * @Then /^I should see the following <warning messages>$/
+   */
+  public function assertMultipleWarningMessage(TableNode $messages) {
+    $steps = array();
+    foreach ($messages->getHash() as $key => $value) {
+      $message = trim($value['warning messages']);
+      $steps[] = new Then("I should see the warning message \"$message\"");
+    }
+    return $steps;
+  }
+
+  /**
+   * Checks if the current page does not contain the given set of warning message
+   *
+   * @param $message
+   *   string The text to be checked
+   *
+   * @Given /^I should not see the warning message(?:| containing) "([^"]*)"$/
+   */
+  public function assertNotWarningMessage($message) {
+    $warningSelector = $this->getDrupalSelector('warning_message_selector');
+    $warningSelectorObj = $this->getSession()->getPage()->find("css", $warningSelector);
+    if(!empty($warningSelectorObj)) {
+      if (strpos(trim($warningSelectorObj->getText()), $message) !== FALSE) {
+        throw new \Exception(sprintf("The page '%s' contains the warning message '%s'", $this->getSession()->getCurrentUrl(), $message));
+      }
+    }
+  }
+
+  /**
+   * Checks if the current page does not contain the given set of warning messages
+   *
+   * @param $message
+   *   array An array of texts to be checked
+   *
+   * @Then /^I should not see the following <warning messages>$/
+   */
+  public function assertNotMultipleWarningMessage(TableNode $messages) {
+    $steps = array();
+    foreach ($messages->getHash() as $key => $value) {
+      $message = trim($value['warning messages']);
+      $steps[] = new Then("I should not see the warning message \"$message\"");
+    }
+    return $steps;
+  }
+
+  /**
    * Checks if the current page contain the given message
    *
    * @param $message

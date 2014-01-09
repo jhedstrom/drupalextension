@@ -178,6 +178,22 @@
 	<source><![CDATA[/^I should not see the following <success messages>$/]]></source>
 	<target><![CDATA[/^I should not see the following <success messages>$/]]></target>
       </trans-unit>
+      <trans-unit id="i-should-see-the-warning-message">
+	<source><![CDATA[/^I should see the warning message(?:| containing) "([^"]*)"$/]]></source>
+	<target><![CDATA[/^I should see the warning message(?:| containing) "([^"]*)"$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-should-see-the-following-warning">
+	<source><![CDATA[/^I should see the following <warning messages>$/]]></source>
+	<target><![CDATA[/^I should see the following <warning messages>$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-should-not-see-the-warning-message">
+	<source><![CDATA[/^I should not see the warning message(?:| containing) "([^"]*)"$/]]></source>
+	<target><![CDATA[/^I should not see the warning message(?:| containing) "([^"]*)"$/]]></target>
+      </trans-unit>
+      <trans-unit id="i-should-not-see-the-following-warning-messages">
+	<source><![CDATA[/^I should not see the following <warning messages>$/]]></source>
+	<target><![CDATA[/^I should not see the following <warning messages>$/]]></target>
+      </trans-unit>
       <trans-unit id="i-should-see-the-message">
 	<source><![CDATA[/^I should see the message(?:| containing) "([^"]*)"$/]]></source>
 	<target><![CDATA[/^I should see the message(?:| containing) "([^"]*)"$/]]></target>
