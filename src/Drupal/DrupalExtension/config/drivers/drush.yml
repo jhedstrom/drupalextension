@@ -7,5 +7,6 @@ services:
     arguments:
       - %drupal.driver.drush.alias%
       - %drupal.driver.drush.root%
+      - %drupal.driver.drush.binary%
     tags:
       - { name: drupal.driver, alias: drush }

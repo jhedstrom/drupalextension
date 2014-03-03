@@ -23,6 +23,11 @@ class DrushDriver extends BaseDriver {
   public $root = FALSE;
 
   /**
+   * Store the path to drush binary.
+   */
+  public $binary = FALSE;
+
+  /**
    * Track bootstrapping.
    */
   private $bootstrapped = FALSE;
@@ -34,13 +39,15 @@ class DrushDriver extends BaseDriver {
    *   A drush alias
    * @param string $root_path
    *   The root path of the Drupal install. This is an alternative to using aliases.
+   * @param string $binary
+   *   The path to the drush binary.
    */
-  public function __construct($alias = NULL, $root_path = NULL) {
+  public function __construct($alias = NULL, $root_path = NULL, $binary = 'drush') {
     if ($alias) {
-    // Trim off the '@' symbol if it has been added.
-    $alias = ltrim($alias, '@');
+      // Trim off the '@' symbol if it has been added.
+      $alias = ltrim($alias, '@');
 
-    $this->alias = $alias;
+      $this->alias = $alias;
     }
     elseif ($root_path) {
       $this->root = realpath($root_path);
@@ -48,6 +55,8 @@ class DrushDriver extends BaseDriver {
     else {
       throw new \BootstrapException('A drush alias or root path is required.');
     }
+
+    $this->binary = $binary;
   }
 
   /**
@@ -145,7 +154,7 @@ class DrushDriver extends BaseDriver {
 
     $alias = $this->alias ? "@{$this->alias}" : '--root=' . $this->root;
 
-    $process = new Process("drush {$alias} {$command} {$string_options} {$arguments}");
+    $process = new Process("{$this->binary} {$alias} {$command} {$string_options} {$arguments}");
     $process->setTimeout(3600);
     $process->run();
 

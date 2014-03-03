@@ -51,6 +51,9 @@ class Extension implements ExtensionInterface {
       $config['drush']['alias'] = isset($config['drush']['alias']) ? $config['drush']['alias'] : FALSE;
       $container->setParameter('drupal.driver.drush.alias', $config['drush']['alias']);
 
+      $config['drush']['binary'] = isset($config['drush']['binary']) ? $config['drush']['binary'] : 'drush';
+      $container->setParameter('drupal.driver.drush.binary', $config['drush']['binary']);
+
       $config['drush']['root'] = isset($config['drush']['root']) ? $config['drush']['root'] : FALSE;
       $container->setParameter('drupal.driver.drush.root', $config['drush']['root']);
     }
@@ -120,6 +123,7 @@ class Extension implements ExtensionInterface {
         arrayNode('drush')->
           children()->
             scalarNode('alias')->end()->
+            scalarNode('binary')->defaultValue('drush')->end()->
             scalarNode('root')->end()->
           end()->
         end()->
