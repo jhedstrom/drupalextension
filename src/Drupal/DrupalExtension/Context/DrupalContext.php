@@ -96,17 +96,8 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    * @param array $subcontexts
    *   Array of sub-context class names to initiate, keyed by sub-context alias.
    */
-  public function initializeSubContexts(array $subcontexts) {
-    foreach ($subcontexts as $path => $subcontext) {
-      if (!file_exists($path)) {
-        throw new \RuntimeException(sprintf('Subcontext path %s path does not exist.', $path));
-      }
+  public function initializeSubContexts() {
 
-      // Load file.
-      require_once $path;
-    }
-
-    // @todo this seems overkill.
     $classes = get_declared_classes();
     $subcontext_classes = array();
     foreach ($classes as $class) {

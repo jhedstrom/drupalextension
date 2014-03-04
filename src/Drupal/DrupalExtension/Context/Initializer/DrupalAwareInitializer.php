@@ -63,6 +63,18 @@ class DrupalAwareInitializer implements InitializerInterface, EventSubscriberInt
           $context->initializeSubContexts($subcontexts);
         }
       }
+      $context->initializeSubContexts();
+    }
+  }
+
+  public function loadSubContexts($subcontexts) {
+    foreach ($subcontexts as $path => $subcontext) {
+      if (!file_exists($path)) {
+        throw new \RuntimeException(sprintf('Subcontext path %s path does not exist.', $path));
+      }
+
+      // Load file.
+      require_once $path;
     }
   }
 
