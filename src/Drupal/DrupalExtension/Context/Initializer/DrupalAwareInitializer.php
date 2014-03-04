@@ -60,7 +60,7 @@ class DrupalAwareInitializer implements InitializerInterface, EventSubscriberInt
 
       foreach ($paths as $path) {
         if ($subcontexts = $this->findAvailableSubContexts($path)) {
-          $context->initializeSubContexts($subcontexts);
+          $this->loadSubContexts($subcontexts);
         }
       }
       $context->initializeSubContexts();
