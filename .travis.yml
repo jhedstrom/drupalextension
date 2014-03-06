@@ -4,6 +4,9 @@ php:
   - 5.3
   - 5.4
 
+env:
+  - PATH=$PATH:/home/travis/.composer/vendor/bin
+
 mysql:
   database: drupal
   username: root
@@ -16,10 +19,7 @@ install:
   - "mysql -e 'create database drupal8;'"
   - sudo apt-get update > /dev/null
   - sudo apt-get --quiet=2 install php5-cli php5-cgi php5-curl php5-gd php5-mysql > /dev/null
-  - sudo git clone https://github.com/drush-ops/drush.git -b master /usr/local/lib/drush
-  - sudo ln -s /usr/local/lib/drush/drush /usr/local/bin/drush
-  - sudo drush && sudo chown -R $USER:$USER /home/$USER/.drush
-  - phpenv rehash
+  - composer global require drush/drush:dev-master --prefer-source
 
 before_script:
   # Setup a stock Drupal 7 install to test api abilities.
