@@ -22,6 +22,8 @@ install:
   - composer global require drush/drush:dev-master --prefer-source
 
 before_script:
+  # Set sendmail so drush doesn't throw an error during site install.
+  - echo "sendmail_path='true'" >> `php --ini | grep "Loaded Configuration" | awk '{print $4}'`
   # Setup a stock Drupal 7 install to test api abilities.
   - drush --quiet dl drupal-7 --drupal-project-rename=drupal7
   - drush --quiet --yes --root=$PWD/drupal7 site-install --db-url=mysql://root:@127.0.0.1/drupal7
