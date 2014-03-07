@@ -18,6 +18,7 @@ class Drupal7 implements CoreInterface {
   public function __construct($drupalRoot, $uri = 'default') {
     $this->drupalRoot = realpath($drupalRoot);
     $this->uri = $uri;
+    $this->random = new Random();
   }
 
   /**
@@ -56,7 +57,7 @@ class Drupal7 implements CoreInterface {
   /**
    * Implements CoreInterface::nodeCreate().
    */
-  public function nodeCreate(\stdClass $node) {
+  public function nodeCreate($node) {
     // Set original if not set.
     if (!isset($node->original)) {
       $node->original = clone $node;
@@ -85,7 +86,7 @@ class Drupal7 implements CoreInterface {
   /**
    * Implements CoreInterface::nodeDelete().
    */
-  public function nodeDelete(\stdClass $node) {
+  public function nodeDelete($node) {
     node_delete($node->nid);
   }
 
@@ -196,7 +197,7 @@ class Drupal7 implements CoreInterface {
 
     // Create new role.
     $role = new \stdClass();
-    $role->name = Random::name(8);
+    $role->name = $this->random->name(8);
     user_role_save($role);
     user_role_grant_permissions($role->rid, $permissions);
 

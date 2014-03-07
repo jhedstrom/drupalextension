@@ -8,7 +8,6 @@ use Behat\Behat\Event\ScenarioEvent;
 use Behat\Mink\Exception\UnsupportedDriverActionException;
 
 use Drupal\Drupal;
-use Drupal\Component\Utility\Random;
 use Drupal\DrupalExtension\Event\EntityEvent;
 use Drupal\DrupalExtension\Context\DrupalSubContextInterface;
 
@@ -774,8 +773,8 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
 
     // Create user (and project)
     $user = (object) array(
-      'name' => Random::name(8),
-      'pass' => Random::name(16),
+      'name' => $this->getDrupal()->random->name(8),
+      'pass' => $this->getDrupal()->random->name(16),
       'role' => $role,
     );
     $user->mail = "{$user->name}@example.com";
@@ -826,8 +825,8 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
     }
     // Create user.
     $user = (object) array(
-      'name' => Random::name(8),
-      'pass' => Random::name(16),
+      'name' => $this->getDrupal()->random->name(8),
+      'pass' => $this->getDrupal()->random->name(16),
       'roles' => array($rid),
     );
     $user->mail = "{$user->name}@example.com";
@@ -905,7 +904,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
     $node = (object) array(
       'title' => $title,
       'type' => $type,
-      'body' => Random::string(255),
+      'body' => $this->getDrupal()->random->string(255),
     );
     $this->dispatcher->dispatch('beforeNodeCreate', new EntityEvent($this, $node));
     $saved = $this->getDriver()->createNode($node);
@@ -926,7 +925,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
     $node = (object) array(
       'title' => $title,
       'type' => $type,
-      'body' => Random::string(255),
+      'body' => $this->getDrupal()->string(255),
       'uid' => $this->user->uid,
     );
     $this->dispatcher->dispatch('beforeNodeCreate', new EntityEvent($this, $node));
@@ -1000,7 +999,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
     $term = (object) array(
       'name' => $name,
       'vocabulary_machine_name' => $vocabulary,
-      'description' => Random::string(255),
+      'description' => $this->getDrupal()->random->string(255),
     );
     $this->dispatcher->dispatch('beforeTermCreate', new EntityEvent($this, $term));
     $saved = $this->getDriver()->createTerm($term);
@@ -1020,7 +1019,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
 
       // Set a password.
       if (!isset($user->pass)) {
-        $user->pass = Random::name();
+        $user->pass = $this->getDrupal()->random->name();
       }
 
       $this->dispatcher->dispatch('beforeUserCreate', new EntityEvent($this, $user));

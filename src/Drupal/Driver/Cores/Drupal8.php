@@ -58,12 +58,12 @@ class Drupal8 implements CoreInterface {
   /**
    * Implements CoreInterface::nodeCreate().
    */
-  public function nodeCreate(\stdClass $node) {
+  public function nodeCreate($node) {
     // Default status to 1 if not set.
     if (!isset($node->status)) {
       $node->status = 1;
     }
-    $node = entity_create('node', array($node));
+    $node = entity_create('node', (array) $node);
     $node->save();
 
     return $node;
@@ -72,8 +72,8 @@ class Drupal8 implements CoreInterface {
   /**
    * Implements CoreInterface::nodeDelete().
    */
-  public function nodeDelete(\stdClass $node) {
-    node_delete($node->nid);
+  public function nodeDelete($node) {
+    $node->delete();
   }
 
   /**
@@ -100,7 +100,7 @@ class Drupal8 implements CoreInterface {
     $account->save();
 
     // Store UID.
-    $user->uid = $account->uid;
+    $user->uid = $account->id();
   }
 
   /**
@@ -200,13 +200,20 @@ class Drupal8 implements CoreInterface {
    * Implements CoreInterface::userAddRole().
    */
   public function userAddRole(\stdClass $user, $role_name) {
+    // Allow both machine and human role names.
+    $roles = user_role_names();
+    if ($id = array_search($role_name, $roles)) {
+      $role_name = $id;
+    }
     $role = user_role_load($role_name);
 
     if (!$role) {
       throw new \RuntimeException(sprintf('No role "%s" exists.', $role_name));
     }
 
-    user_multiple_role_edit(array($user->uid), 'add_role', $role->rid);
+    $account = \user_load($user->uid);
+    $account->addRole($role->id);
+    $account->save();
   }
 
   /**

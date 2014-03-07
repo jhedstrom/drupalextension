@@ -1,4 +1,4 @@
-@api
+@d7 @api
 Feature: DrupalContext
   In order to prove the Drupal context is working properly
   As a developer
@@ -20,30 +20,32 @@ Feature: DrupalContext
     Then I should be on "admin/structure/types/manage/article/fields"
     And I should see text matching "Add new field"
 
-  @drush
+  @drush @d8
   Scenario: Find a heading in a region
     Given I am not logged in
     When I am on the homepage
     Then I should see the heading "User login" in the "left sidebar" region
 
-  @drush
+  @drush @d8
   Scenario: Clear cache
     Given the cache has been cleared
     When I am on the homepage
     Then I should get a "200" HTTP response
 
-  @drush
+  @d8 @d8wip
+  Scenario: Create a node
+    Given I am logged in as a user with the "administrator" role
+    When I am viewing an "article" node with the title "My article"
+    Then I should see the heading "My article"
+
+  @drush @d8 @d8wip
   Scenario: Run cron
     Given I am logged in as a user with the "administrator" role
     When I run cron
     And am on "admin/reports/dblog"
     Then I should see the link "Cron run completed"
 
-  Scenario: Create a node
-    Given I am logged in as a user with the "administrator" role
-    When I am viewing an "article" node with the title "My article"
-    Then I should see the heading "My article"
-
+  @d8 @d8wip
   Scenario: Create many nodes
     Given "page" nodes:
     | title    |
@@ -60,6 +62,7 @@ Feature: DrupalContext
     And I should see "First article"
     And I should see "Second article"
 
+  @d8 @d8wip
   Scenario: Create nodes with fields
     Given "article" nodes:
     | title                     | promote | body             |
@@ -75,6 +78,7 @@ Feature: DrupalContext
     Then I should see the heading "My article with fields!"
     And I should see the text "A placeholder"
 
+  @d8 @d8wip
   Scenario: Create users
     Given users:
     | name     | mail            | status |
@@ -83,6 +87,7 @@ Feature: DrupalContext
     When I visit "admin/people"
     Then I should see the link "Joe User"
 
+  @d8 @d8wip
   Scenario: Login as a user created during this scenario
     Given users:
     | name      | status |

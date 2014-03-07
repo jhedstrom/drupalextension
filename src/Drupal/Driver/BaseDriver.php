@@ -62,14 +62,14 @@ abstract class BaseDriver implements DriverInterface {
   /**
    * Implements DriverInterface::createNode().
    */
-  public function createNode(\stdClass $node) {
+  public function createNode($node) {
     throw new UnsupportedDriverActionException($this->errorString('create nodes'), $this);
   }
 
   /**
    * Implements DriverInterface::nodeDelete().
    */
-  public function nodeDelete(\stdClass $node) {
+  public function nodeDelete($node) {
     throw new UnsupportedDriverActionException($this->errorString('delete nodes'), $this);
   }
 

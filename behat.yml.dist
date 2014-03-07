@@ -24,10 +24,10 @@ default:
 # stock Drupal 7 install.
 drupal7:
   filters:
-    tags: "@api"
+    tags: "@d7"
   extensions:
     Behat\MinkExtension\Extension:
-      base_url: http://localhost:8888
+      base_url: http://localhost:8887
     Drupal\DrupalExtension\Extension:
       api_driver: "drupal"
       drupal:
@@ -44,11 +44,27 @@ drush:
     tags: "@drush"
   extensions:
     Behat\MinkExtension\Extension:
-      base_url: http://localhost:8888
+      base_url: http://localhost:8887
     Drupal\DrupalExtension\Extension:
       drush_driver: "drush"
       drush:
         root: "drupal7"
+      region_map:
+        left sidebar: "#sidebar-first"
+        content: "#content"
+
+# Separate profile for testing D8. Assumes a stock Drupal 8 install.
+drupal8:
+  filters:
+    tags: "@d8&&~@d8wip"
+  extensions:
+    Behat\MinkExtension\Extension:
+      base_url: http://localhost:8888
+    Drupal\DrupalExtension\Extension:
+      api_driver: "drupal"
+      drupal:
+        # Change this to the absolute path to Drupal install.
+        drupal_root: "drupal8"
       region_map:
         left sidebar: "#sidebar-first"
         content: "#content"

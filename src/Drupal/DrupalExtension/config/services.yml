@@ -7,6 +7,9 @@ parameters:
   drupal.drupal.default_session: blackbox
   drupal.drupal.api_driver: drush
 
+  # Random generator.
+  drupal.random.class: Drupal\Component\Utility\Random
+
   # Context initializer.
   drupal.context.initializer.class: Drupal\DrupalExtension\Context\Initializer\DrupalAwareInitializer
 
@@ -33,6 +36,11 @@ parameters:
 services:
   drupal.drupal:
     class: %drupal.drupal.class%
+    arguments:
+      - {}
+      - @drupal.random
+  drupal.random:
+    class: %drupal.random.class%
   drupal.context.initializer:
     class: %drupal.context.initializer.class%
     arguments:

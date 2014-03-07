@@ -140,6 +140,7 @@ class DrupalDriver implements DriverInterface, DrupalSubContextFinderInterface {
         // Drupal 7.
         '/includes/bootstrap.inc',
         // Drupal 8.
+        '/core/vendor/autoload.php',
         '/core/includes/bootstrap.inc',
       );
       foreach ($version_constant_paths as $path) {
@@ -149,6 +150,9 @@ class DrupalDriver implements DriverInterface, DrupalSubContextFinderInterface {
       }
       if (defined('VERSION')) {
         $version = VERSION;
+      }
+      elseif (defined('\Drupal::VERSION')) {
+        $version = \Drupal::VERSION;
       }
       else {
         throw new BootstrapException('Unable to determine Drupal core version. Supported versions are 6, 7, and 8.');
@@ -189,14 +193,14 @@ class DrupalDriver implements DriverInterface, DrupalSubContextFinderInterface {
   /**
    * Implements DriverInterface::createNode().
    */
-  public function createNode(\stdClass $node) {
+  public function createNode($node) {
     return $this->getCore()->nodeCreate($node);
   }
 
   /**
    * Implements CoreInterface::nodeDelete().
    */
-  public function nodeDelete(\stdClass $node) {
+  public function nodeDelete($node) {
     return $this->getCore()->nodeDelete($node);
   }
 
