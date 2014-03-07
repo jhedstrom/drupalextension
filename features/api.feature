@@ -32,7 +32,7 @@ Feature: DrupalContext
     When I am on the homepage
     Then I should get a "200" HTTP response
 
-  @drush @d8
+  @d8
   Scenario: Create a node
     Given I am logged in as a user with the "administrator" role
     When I am viewing an "article" node with the title "My article"
