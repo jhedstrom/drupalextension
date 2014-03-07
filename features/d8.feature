@@ -1,4 +1,4 @@
-@d8 @api
+@d8 @d8wip @api
 Feature: DrupalContext
   In order to prove the Drupal context is working properly for Drupal 8
   As a developer

@@ -56,7 +56,7 @@ drush:
 # Separate profile for testing D8. Assumes a stock Drupal 8 install.
 drupal8:
   filters:
-    tags: "@d8"
+    tags: "@d8&&~@d8wip"
   extensions:
     Behat\MinkExtension\Extension:
       base_url: http://localhost:8888
