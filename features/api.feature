@@ -20,13 +20,13 @@ Feature: DrupalContext
     Then I should be on "admin/structure/types/manage/article/fields"
     And I should see text matching "Add new field"
 
-  @drush @d8
+  @drush @d8 @d8wip
   Scenario: Find a heading in a region
     Given I am not logged in
     When I am on the homepage
     Then I should see the heading "User login" in the "left sidebar" region
 
-  @drush @d8
+  @drush @d8 @d8wip
   Scenario: Clear cache
     Given the cache has been cleared
     When I am on the homepage
