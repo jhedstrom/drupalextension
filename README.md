@@ -167,3 +167,4 @@ If the step definitions aren't listed, try running this command:
 
  * [Complex node creation, with field collections and entity references](https://gist.github.com/jhedstrom/5708233)
  * [Achievements module support](https://gist.github.com/jhedstrom/9633067)
+ * [Drupal form element visibility](https://gist.github.com/pbuyle/7698675)
