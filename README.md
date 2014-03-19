@@ -166,3 +166,4 @@ If the step definitions aren't listed, try running this command:
 #### Examples and code snippets
 
  * [Complex node creation, with field collections and entity references](https://gist.github.com/jhedstrom/5708233)
+ * [Achievements module support](https://gist.github.com/jhedstrom/9633067)
