@@ -1324,10 +1324,10 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
-   * @Given /^I run drush "(?P<command>[^"]*)" "(?P<arguments>[^"]*)"$/
+   * @Given /^I run drush "(?P<command>[^"]*)" "(?P<arguments>(?:[^"]|\\")*)"$/
    */
   public function assertDrushCommandWithArgument($command, $arguments) {
-    $this->drushOutput = $this->getDriver('drush')->$command($arguments);
+    $this->drushOutput = $this->getDriver('drush')->$command($this->fixStepArgument($arguments));
   }
 
   /**
