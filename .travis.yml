@@ -25,7 +25,7 @@ before_script:
   - drush --quiet --yes --root=$PWD/drupal7 runserver :8887 > /dev/null 2>&1 &
   # Setup a stock Drupal 8 install to test api abilities.
   - mysql -e 'create database drupal8'
-  - drush --quiet dl drupal-8.0-alpha9 --drupal-project-rename=drupal8
+  - drush --quiet dl drupal-8.x-dev --drupal-project-rename=drupal8
   - drush --yes --root=$PWD/drupal8 site-install --db-url=mysql://travis:@127.0.0.1/drupal8
   - drush --quiet --yes --root=$PWD/drupal8 runserver :8888 > /dev/null 2>&1 &
   - sleep 4s
