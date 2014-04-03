@@ -3,6 +3,7 @@
 namespace Drupal\Driver\Cores;
 
 use Drupal\Component\Utility\Random;
+use Drupal\Component\Utility\Settings;
 use Drupal\Exception\BootstrapException;
 
 /**
@@ -38,7 +39,7 @@ class Drupal8 implements CoreInterface {
     drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
 
     // Initialise an anonymous session. required for the bootstrap.
-    require_once DRUPAL_ROOT . '/' . settings()->get('session_inc', 'core/includes/session.inc');
+    require_once DRUPAL_ROOT . '/' . Settings::get('session_inc', 'core/includes/session.inc');
     drupal_session_initialize();
 
     chdir($current_path);
