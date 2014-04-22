@@ -80,7 +80,7 @@ class Drupal8 implements CoreInterface {
    * Implements CoreInterface::runCron().
    */
   public function runCron() {
-    return drupal_cron_run();
+    return \Drupal::service('cron')->run();
   }
 
   /**
