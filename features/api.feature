@@ -38,7 +38,7 @@ Feature: DrupalContext
     When I am viewing an "article" node with the title "My article"
     Then I should see the heading "My article"
 
-  @drush @d8 @d8wip
+  @drush @d8
   Scenario: Run cron
     Given I am logged in as a user with the "administrator" role
     When I run cron
