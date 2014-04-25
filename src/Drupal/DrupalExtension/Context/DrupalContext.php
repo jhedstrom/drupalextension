@@ -403,6 +403,39 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
+   * For javascript enabled scenarios, always wait for AJAX before clicking.
+   *
+   * @BeforeStep @javascript
+   */
+  public function beforeJavascriptStep($event) {
+    $text = $event->getStep()->getText();
+    if (preg_match('/(follow|press|click|submit)/i', $text)) {
+      $this->iWaitForAjaxToFinish();
+    }
+  }
+
+  /**
+   * For javascript enabled scenarios, always wait for AJAX after clicking.
+   *
+   * @AfterStep @javascript
+   */
+  public function afterJavascriptStep($event) {
+    $text = $event->getStep()->getText();
+    if (preg_match('/(follow|press|click|submit)/i', $text)) {
+      $this->iWaitForAjaxToFinish();
+    }
+  }
+
+  /**
+   * Wait for AJAX to finish.
+   *
+   * @Given /^I wait for AJAX to finish$/
+   */
+  public function iWaitForAjaxToFinish() {
+    $this->getSession()->wait(5000, '(typeof(jQuery)=="undefined" || (0 === jQuery.active && 0 === jQuery(\':animated\').length))');
+  }
+
+  /**
    * Presses button with specified id|name|title|alt|value.
    *
    * @When /^(?:|I )press the "(?P<button>[^"]*)" button$/
