@@ -66,7 +66,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    *
    * @var array
    */
-  private $users = array();
+  protected $users = array();
 
   /**
    * Keep track of all terms that are created so they can easily be removed.
@@ -1073,10 +1073,24 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
+   * Creates multiple users.
+   *
+   * Provide user data in the following format:
+   *
+   * | name     | mail         | roles        |
+   * | user foo | foo@bar.com  | role1, role2 |
+   *
    * @Given /^users:$/
    */
   public function createUsers(TableNode $usersTable) {
     foreach ($usersTable->getHash() as $userHash) {
+
+      // If we have roles convert it to array.
+      if (isset($userHash['roles'])) {
+        $userHash['roles'] = explode(',', $userHash['roles']);
+        $userHash['roles'] = array_map('trim', $userHash['roles']);
+      }
+
       $user = (object) $userHash;
 
       // Set a password.
