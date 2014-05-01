@@ -519,6 +519,18 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   public function assertLinkVisible($link) {
     $element = $this->getSession()->getPage();
     $result = $element->findLink($link);
+
+    try {
+      if (!$result->isVisible()) {
+        throw new \Exception(sprintf("No link to '%s' on the page %s", $link, $this->getSession()->getCurrentUrl()));
+      }
+    }
+    catch (UnsupportedDriverActionException $e) {
+      // We catch the UnsupportedDriverActionException exception in case
+      // this step is not being performed by a driver that supports javascript.
+      // All other exceptions are valid.
+    }
+
     if (empty($result)) {
       throw new \Exception(sprintf("No link to '%s' on the page %s", $link, $this->getSession()->getCurrentUrl()));
     }
@@ -530,6 +542,18 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   public function assertNotLinkVisible($link) {
     $element = $this->getSession()->getPage();
     $result = $element->findLink($link);
+
+    try {
+      if ($result->isVisible()) {
+        throw new \Exception(sprintf("The link '%s' was present on the page %s and was not supposed to be", $link, $this->getSession()->getCurrentUrl()));
+      }
+    }
+    catch (UnsupportedDriverActionException $e) {
+      // We catch the UnsupportedDriverActionException exception in case
+      // this step is not being performed by a driver that supports javascript.
+      // All other exceptions are valid.
+    }
+
     if ($result) {
       throw new \Exception(sprintf("The link '%s' was present on the page %s and was not supposed to be", $link, $this->getSession()->getCurrentUrl()));
     }
