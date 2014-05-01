@@ -167,6 +167,10 @@ class Drupal6 implements CoreInterface {
     if (!file_exists($conf_file)) {
       throw new BootstrapException(sprintf('Could not find a Drupal settings.php file at "%s"', $conf_file));
     }
+    $drushrc_file = $this->drupalRoot . "/$conf_path/drushrc.php";
+    if (file_exists($drushrc_file)) {
+      require_once $drushrc_file;
+    }
   }
 
   /**
