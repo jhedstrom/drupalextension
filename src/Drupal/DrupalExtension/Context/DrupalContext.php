@@ -467,21 +467,35 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    */
   public function pressKey($char, $field) {
     static $keys = array(
-      // @todo Add character codes for more special keys; arrows, caps, shift,
-      // backspace, delete, ctrl, command, alt, option, spacebar, page up/down,
-      // home, end.
+      'backspace' => 8,
       'tab' => 9,
       'enter' => 13,
-      'return' => 13,
-      'esc' => 27,
-      'escape' => 27,
+      'shift' => 16,
+      'ctrl' =>  17,
+      'alt' => 18,
+      'pause' => 19,
+      'break' => 19,
+      'escape' =>  27,
+      'esc' =>  27,
+      'end' => 35,
+      'home' =>  36,
+      'left' => 37,
+      'up' => 38,
+      'right' =>39,
+      'down' => 40,
+      'insert' =>  45,
+      'delete' =>  46,
+      'pageup' => 33,
+      'pagedown' => 34,
+      'capslock' => 20,
     );
 
     if (is_string($char)) {
       if (strlen($char) < 1) {
         throw new \Exception('FeatureContext->keyPress($char, $field) was invoked but the $char parameter was empty.');
       } else if (strlen($char) > 1) {
-        $char = $keys[strtolower($char)];
+        // Support for all variations, e.g. ESC, Esc, page up, pageup.
+        $char = $keys[strtolower(str_replace(' ', '', $char))];
       }
     }
 
