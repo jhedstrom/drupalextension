@@ -13,7 +13,7 @@ Drupal Extension 1.0 supports Behat 2.4, and Drupal 6 and 7 (with Drupal 8 suppo
   ```
     {
       "require": {
-        "drupal/drupal-extension": "*"
+        "drupal/drupal-extension": "1.0.*@stable"
       },
       "config": {
         "bin-dir": "bin/"
