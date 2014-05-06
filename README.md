@@ -162,6 +162,7 @@ If the step definitions aren't listed, try running this command:
 
  * [Behat documentation](http://docs.behat.org)
  * [Mink documentation](http://mink.behat.org)
+ * [Drupal Extension documentation](http://dspeak.com/drupalextension)
 
 #### Examples and code snippets
 
