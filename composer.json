@@ -8,8 +8,7 @@
   "authors": [
      {
        "name": "Jonathan Hedstrom",
-       "email": "jhedstrom@gmail.com",
-       "homepage": "http://professorbikeybike.com"
+       "email": "jhedstrom@gmail.com"
      }
   ],
   "require": {
