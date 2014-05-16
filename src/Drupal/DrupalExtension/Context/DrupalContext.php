@@ -521,7 +521,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
     $result = $element->findLink($link);
 
     try {
-      if (!$result->isVisible()) {
+      if ($result && !$result->isVisible()) {
         throw new \Exception(sprintf("No link to '%s' on the page %s", $link, $this->getSession()->getCurrentUrl()));
       }
     }
@@ -544,7 +544,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
     $result = $element->findLink($link);
 
     try {
-      if ($result->isVisible()) {
+      if ($result && $result->isVisible()) {
         throw new \Exception(sprintf("The link '%s' was present on the page %s and was not supposed to be", $link, $this->getSession()->getCurrentUrl()));
       }
     }
