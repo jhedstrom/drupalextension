@@ -447,7 +447,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
     // autocomplete suggestion boxes with Mink.  "Click" events on the
     // autocomplete suggestion do not work.
     try {
-      $this->getSession()->wait(1000, 'jQuery("#autocomplete").length === 0');
+      $this->getSession()->wait(1000, 'typeof(jQuery)=="undefined" || jQuery("#autocomplete").length === 0');
     }
     catch (UnsupportedDriverActionException $e) {
       // The jQuery probably failed because the driver does not support
