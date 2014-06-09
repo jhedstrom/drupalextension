@@ -70,7 +70,7 @@ services:
     class: %drupal.context.region_selector.class%
     arguments:
       # inject the CSSSelector
-      - "@behat.mink.selector.css"
+      - "@mink.selector.css"
       - %drupal.region_map%
     tags:
-      - { name: behat.mink.selector, alias: region }
+      - { name: mink.selector, alias: region }

@@ -1,12 +1,15 @@
 default:
-  filters:
-    tags: "~@api&&~@drush"
+  suites:
+    default:
+      contexts: [Behat\MinkExtension\Context\MinkContext, Drupal\DrupalExtension\Context\DrupalContext]
+      filters:
+        tags: "~@api&&~@drush"
   extensions:
-    Behat\MinkExtension\Extension:
+    Behat\MinkExtension:
       goutte: ~
       selenium2: ~
       base_url: http://drupal.org
-    Drupal\DrupalExtension\Extension:
+    Drupal\DrupalExtension:
       blackbox: ~
       region_map:
         content: "#content"

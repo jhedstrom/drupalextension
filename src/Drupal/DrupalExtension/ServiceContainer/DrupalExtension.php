@@ -1,25 +1,43 @@
 <?php
 
-namespace Drupal\DrupalExtension;
+namespace Drupal\DrupalExtension\ServiceContainer;
 
-use Symfony\Component\DependencyInjection\ContainerBuilder,
-    Symfony\Component\DependencyInjection\Loader\YamlFileLoader,
-    Symfony\Component\Config\FileLocator,
-    Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
+use Behat\Testwork\ServiceContainer\Extension as ExtensionInterface;
+use Behat\Testwork\ServiceContainer\ExtensionManager;
+use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
+use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
-use Behat\Behat\Extension\ExtensionInterface;
-
-class Extension implements ExtensionInterface {
+class DrupalExtension implements ExtensionInterface {
 
   /**
-   * Loads a specific configuration.
-   *
-   * @param array $config
-   *   Extension configuration (from behat.yml).
-   * @param ContainerBuilder $container
-   *   ContainerBuilder instance.
+   * Extension configuration ID.
    */
-  public function load(array $config, ContainerBuilder $container) {
+  const DRUPAL_ID = 'drupal';
+
+  /**
+   * Selectors handler ID.
+   */
+  const SELECTORS_HANDLER_ID = 'drupal.selectors_handler';
+
+  /**
+   * {@inheritDoc}
+   */
+  public function getConfigKey() {
+    return SELF::DRUPAL_ID;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function initialize(ExtensionManager $extensionManager) {
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function load(ContainerBuilder $container, array $config) {
     $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/config'));
     $loader->load('services.yml');
     $container->setParameter('drupal.drupal.default_driver', $config['default_driver']);
@@ -60,12 +78,18 @@ class Extension implements ExtensionInterface {
   }
 
   /**
+   * {@inheritDoc}
+   */
+  public function process(ContainerBuilder $container) {
+  }
+
+  /**
    * Setup configuration for this extension.
    *
    * @param ArrayNodeDefinition $builder
    *   ArrayNodeDefinition instance.
    */
-  public function getConfig(ArrayNodeDefinition $builder) {
+  public function configure(ArrayNodeDefinition $builder) {
     $builder->
       children()->
         arrayNode('basic_auth')->
@@ -142,6 +166,13 @@ class Extension implements ExtensionInterface {
         end()->
       end()->
     end();
+  }
+
+  /**
+   * Load Drupal Extension selectors handler.
+   */
+  private function loadSelectorsHandler(ContainerBuilder $container) {
+    $container->setDefinition(self::SELECTORS_HANDLER_ID);
   }
 
   /**

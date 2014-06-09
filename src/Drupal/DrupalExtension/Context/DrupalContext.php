@@ -14,10 +14,9 @@ use Drupal\DrupalExtension\Context\DrupalSubContextInterface;
 use Symfony\Component\Process\Process;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
-use Behat\Behat\Context\Step\Given;
-use Behat\Behat\Context\Step\When;
-use Behat\Behat\Context\Step\Then;
-use Behat\Behat\Context\TranslatedContextInterface;
+use Behat\Behat\Definition\Call\Given;
+use Behat\Behat\Definition\Call\Then;
+use Behat\Behat\Context\TranslatableContext;
 
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
@@ -27,7 +26,7 @@ use Behat\Mink\Driver\Selenium2Driver as Selenium2Driver;
 /**
  * Features context.
  */
-class DrupalContext extends MinkContext implements DrupalAwareInterface, TranslatedContextInterface {
+class DrupalContext implements DrupalAwareInterface, TranslatableContext {
 
   private $drupal, $drupalParameters;
 
@@ -113,11 +112,8 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    *
    * @return array
    */
-  public function getTranslationResources() {
-      $translationFilesParent = parent::getTranslationResources();
-      $translationFilesDrupal = glob(__DIR__ . '/../../../../i18n/*.xliff');
-      $translationFilesCombined = array_merge($translationFilesParent, $translationFilesDrupal);
-      return $translationFilesCombined;
+  public static function getTranslationResources() {
+    return glob(__DIR__ . '/../../../../i18n/*.xliff');
   }
 
   /**
