@@ -25,7 +25,7 @@ class DrupalExtension implements ExtensionInterface {
    * {@inheritDoc}
    */
   public function getConfigKey() {
-    return SELF::DRUPAL_ID;
+    return self::DRUPAL_ID;
   }
 
   /**
@@ -84,10 +84,7 @@ class DrupalExtension implements ExtensionInterface {
   }
 
   /**
-   * Setup configuration for this extension.
-   *
-   * @param ArrayNodeDefinition $builder
-   *   ArrayNodeDefinition instance.
+   * {@inheritDoc}
    */
   public function configure(ArrayNodeDefinition $builder) {
     $builder->
@@ -166,13 +163,6 @@ class DrupalExtension implements ExtensionInterface {
         end()->
       end()->
     end();
-  }
-
-  /**
-   * Load Drupal Extension selectors handler.
-   */
-  private function loadSelectorsHandler(ContainerBuilder $container) {
-    $container->setDefinition(self::SELECTORS_HANDLER_ID);
   }
 
   /**

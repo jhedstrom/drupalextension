@@ -2,21 +2,22 @@
 
 namespace Drupal\DrupalExtension\Context\Initializer;
 
-use Behat\Behat\Context\Initializer\InitializerInterface,
-    Behat\Behat\Context\ContextInterface,
+use Behat\Behat\Context\Initializer\ContextInitializer,
+    Behat\Behat\Context\Context,
     Behat\Behat\Event\ScenarioEvent,
     Behat\Behat\Event\OutlineEvent;
 
-use Drupal\Drupal,
-    Drupal\DrupalExtension\Context\DrupalContext,
-    Drupal\DrupalExtension\Context\DrupalSubContextFinderInterface;
+use Drupal\Drupal;
+use Drupal\DrupalExtension\Context\DrupalContext;
+use Drupal\DrupalExtension\Context\DrupalAwareInterface;
+use Drupal\DrupalExtension\Context\DrupalSubContextFinderInterface;
 
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 use Symfony\Component\Finder\Finder;
 
-class DrupalAwareInitializer implements InitializerInterface, EventSubscriberInterface {
+class DrupalAwareInitializer implements ContextInitializer, EventSubscriberInterface {
   private $drupal, $parameters, $dispatcher;
 
   public function __construct(Drupal $drupal, array $parameters, EventDispatcher $dispatcher) {
@@ -25,7 +26,10 @@ class DrupalAwareInitializer implements InitializerInterface, EventSubscriberInt
     $this->dispatcher = $dispatcher;
   }
 
-  public function initialize(ContextInterface $context) {
+  /**
+   * {@inheritdocs}
+   */
+  public function initializeContext(Context $context) {
     // Set Drupal driver manager.
     $context->setDrupal($this->drupal);
 

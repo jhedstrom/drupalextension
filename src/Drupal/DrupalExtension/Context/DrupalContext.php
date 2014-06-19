@@ -14,8 +14,8 @@ use Drupal\DrupalExtension\Context\DrupalSubContextInterface;
 use Symfony\Component\Process\Process;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
-use Behat\Behat\Definition\Call\Given;
-use Behat\Behat\Definition\Call\Then;
+use Behat\ChainedStepsExtension\Step\Given;
+use Behat\ChainedStepsExtension\Step\Then;
 use Behat\Behat\Context\TranslatableContext;
 
 use Behat\Gherkin\Node\PyStringNode;
@@ -25,8 +25,10 @@ use Behat\Mink\Driver\Selenium2Driver as Selenium2Driver;
 
 /**
  * Features context.
+ *
+ * @todo is there a way to inject a MinkContext instead?
  */
-class DrupalContext implements DrupalAwareInterface, TranslatableContext {
+class DrupalContext extends MinkContext implements DrupalAwareInterface, TranslatableContext {
 
   private $drupal, $drupalParameters;
 
