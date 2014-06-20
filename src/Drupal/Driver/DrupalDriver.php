@@ -143,6 +143,11 @@ class DrupalDriver implements DriverInterface, DrupalSubContextFinderInterface {
         '/core/vendor/autoload.php',
         '/core/includes/bootstrap.inc',
       );
+
+      if ($this->drupalRoot === FALSE) {
+        throw new BootstrapException('drupal_root must be defined.');
+      }
+
       foreach ($version_constant_paths as $path) {
         if (file_exists($this->drupalRoot . $path)) {
           require_once $this->drupalRoot . $path;
