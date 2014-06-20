@@ -123,14 +123,13 @@ class DrupalAwareInitializer implements ContextInitializer, EventSubscriberInter
 
     // Set the default driver.
     $driver = $this->parameters['default_driver'];
+    $this->drupal->setDefaultDriverName($driver);
 
     foreach (array_merge($feature->getTags(), $scenario->getTags()) as $tag) {
       if (isset($this->parameters[$tag . '_driver'])) {
         $driver = $this->parameters[$tag . '_driver'];
       }
     }
-
-    $this->drupal->setDefaultDriverName($driver);
   }
 
   /**
