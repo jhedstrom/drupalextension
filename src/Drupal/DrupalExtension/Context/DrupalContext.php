@@ -14,8 +14,6 @@ use Drupal\DrupalExtension\Context\DrupalSubContextInterface;
 use Symfony\Component\Process\Process;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
-use Behat\ChainedStepsExtension\Step\Given;
-use Behat\ChainedStepsExtension\Step\Then;
 use Behat\Behat\Context\TranslatableContext;
 
 use Behat\Gherkin\Node\PyStringNode;
@@ -359,6 +357,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    * Visit a given path, and additionally check for HTTP response code 200.
    *
    * @Given /^(?:that I|I) am at "(?P<path>[^"]*)"$/
+   * @When /^I visit "(?P<path>[^"]*)"$/
    *
    * @throws UnsupportedDriverActionException
    */
@@ -368,7 +367,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
     // If available, add extra validation that this is a 200 response.
     try {
       $this->getSession()->getStatusCode();
-      return new Given('I should get a "200" HTTP response');
+      $this->assertHttpResponse('200');
     }
     catch (UnsupportedDriverActionException $e) {
       // Simply continue on, as this driver doesn't support HTTP response codes.
@@ -376,19 +375,11 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
-   * @When /^I visit "(?P<path>[^"]*)"$/
-   */
-  public function assertVisit($path) {
-    // Use Drupal Context 'I am at'.
-    return new Given("I am at \"$path\"");
-  }
-
-  /**
    * @When /^I click "(?P<link>[^"]*)"$/
    */
   public function assertClick($link) {
     // Use the Mink Extenstion step definition.
-    return new Given("I follow \"$link\"");
+    $this->clickLink($link);
   }
 
   /**
@@ -397,7 +388,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    */
   public function assertEnterField($field, $value) {
     // Use the Mink Extenstion step definition.
-    return new Given("I fill in \"$field\" with \"$value\"");
+    $this->fillField($field, $value);
   }
 
   /**
@@ -737,7 +728,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    */
   public function assertTextVisible($text) {
     // Use the Mink Extension step definition.
-    return new Given("I should see text matching \"$text\"");
+    $this->assertPageMatchesText($text);
   }
 
   /**
@@ -745,7 +736,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    */
   public function assertNotTextVisible($text) {
     // Use the Mink Extension step definition.
-    return new Given("I should not see text matching \"$text\"");
+    $this->assertPageNotContainsText($text);
   }
 
   /**
@@ -753,7 +744,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    */
   public function assertHttpResponse($code) {
     // Use the Mink Extension step definition.
-    return new Given("the response status code should be $code");
+    $this->assertResponseStatus($code);
   }
 
   /**
@@ -761,7 +752,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    */
   public function assertNotHttpResponse($code) {
     // Use the Mink Extension step definition.
-    return new Given("the response status code should not be $code");
+    $this->assertResponseStatusIsNot($code);
   }
 
   /**
@@ -769,7 +760,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    */
   public function assertCheckBox($checkbox) {
     // Use the Mink Extension step definition.
-    return new Given("I check \"$checkbox\"");
+    $this->checkOption($checkbox);
   }
 
   /**
@@ -777,7 +768,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    */
   public function assertUncheckBox($checkbox) {
     // Use the Mink Extension step definition.
-    return new Given("I uncheck \"$checkbox\"");
+    $this->uncheckOption($checkbox);
   }
 
   /**
@@ -1045,8 +1036,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
     $this->getSession()->visit($this->locatePath('/node/' . $saved->nid . '/edit'));
 
     // Test status.
-    return new Then("I should get a \"200\" HTTP response");
-
+    $this->assertHttpResponse('200');
   }
 
 
