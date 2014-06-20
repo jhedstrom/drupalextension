@@ -2,22 +2,21 @@
 
 namespace Drupal\DrupalExtension\Event;
 
-use Behat\Behat\Context\ContextInterface,
-    Behat\Behat\Event\EventInterface;
+use Behat\Behat\Context\Context;
 
 use Symfony\Component\EventDispatcher\Event;
 
 /**
  * Drupal entity event.
  */
-class EntityEvent extends Event implements EventInterface {
+class EntityEvent extends Event {
 
   private $context, $entity;
 
   /**
    * Initializes an entity event.
    */
-  public function __construct(ContextInterface $context, $entity) {
+  public function __construct(Context $context, $entity) {
     $this->context = $context;
     $this->entity = $entity;
   }
