@@ -4,6 +4,8 @@ namespace Drupal\DrupalExtension\ServiceContainer;
 
 use Behat\Testwork\ServiceContainer\Extension as ExtensionInterface;
 use Behat\Testwork\ServiceContainer\ExtensionManager;
+use Drupal\DrupalExtension\Compiler\DriverPass;
+use Drupal\DrupalExtension\Compiler\EventSubscriberPass;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -81,6 +83,11 @@ class DrupalExtension implements ExtensionInterface {
    * {@inheritDoc}
    */
   public function process(ContainerBuilder $container) {
+    $driverPass = new DriverPass();
+    $eventSubscriberPass = new EventSubscriberPass();
+
+    $driverPass->process($container);
+    $eventSubscriberPass->process($container);
   }
 
   /**
@@ -163,17 +170,5 @@ class DrupalExtension implements ExtensionInterface {
         end()->
       end()->
     end();
-  }
-
-  /**
-   * Returns compiler passes used by mink extension.
-   *
-   * @return array
-   */
-  public function getCompilerPasses() {
-    return array(
-      new Compiler\DriverPass(),
-      new Compiler\EventSubscriberPass(),
-    );
   }
 }
