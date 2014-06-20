@@ -145,7 +145,7 @@ class DrupalDriver implements DriverInterface, DrupalSubContextFinderInterface {
       );
 
       if ($this->drupalRoot === FALSE) {
-        throw new BootstrapException('drupal_root must be defined.');
+        throw new BootstrapException('`drupal_root` parameter must be defined.');
       }
 
       foreach ($version_constant_paths as $path) {
