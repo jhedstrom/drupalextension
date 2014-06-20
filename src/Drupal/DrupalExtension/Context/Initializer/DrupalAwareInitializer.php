@@ -31,6 +31,12 @@ class DrupalAwareInitializer implements ContextInitializer, EventSubscriberInter
    * {@inheritdocs}
    */
   public function initializeContext(Context $context) {
+
+    // All contexts are passed here, only DrupalAwareInterface is allowed.
+    if (!$context instanceof DrupalAwareInterface) {
+      return;
+    }
+
     // Set Drupal driver manager.
     $context->setDrupal($this->drupal);
 

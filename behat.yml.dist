@@ -1,7 +1,7 @@
 default:
   suites:
     default:
-      contexts: [Drupal\DrupalExtension\Context\DrupalContext]
+      contexts: [Drupal\DrupalExtension\Context\DrupalContext, FeatureContext]
       filters:
         tags: "~@api&&~@drush"
   extensions:
