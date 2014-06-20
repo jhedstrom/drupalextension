@@ -26,8 +26,11 @@ default:
 # Separate profile for testing using the api driver. This assumes a
 # stock Drupal 7 install.
 drupal7:
-  filters:
-    tags: "@d7"
+  suites:
+    default:
+      contexts: [Drupal\DrupalExtension\Context\DrupalContext]
+      filters:
+        tags: "@d7"
   extensions:
     Behat\MinkExtension\Extension:
       base_url: http://localhost:8887
@@ -43,8 +46,11 @@ drupal7:
 # Separate profile for testing using the Drush driver. Assumes a stock
 # Drupal 7 install.
 drush:
-  filters:
-    tags: "@drush"
+  suites:
+    default:
+      contexts: [Drupal\DrupalExtension\Context\DrupalContext]
+      filters:
+        tags: "@drush"
   extensions:
     Behat\MinkExtension\Extension:
       base_url: http://localhost:8887
@@ -58,8 +64,11 @@ drush:
 
 # Separate profile for testing D8. Assumes a stock Drupal 8 install.
 drupal8:
-  filters:
-    tags: "@d8&&~@d8wip"
+  suites:
+    default:
+      contexts: [Drupal\DrupalExtension\Context\DrupalContext]
+      filters:
+        tags: "@d8&&~@d8wip"
   extensions:
     Behat\MinkExtension\Extension:
       base_url: http://localhost:8888
