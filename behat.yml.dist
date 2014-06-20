@@ -28,7 +28,7 @@ default:
 drupal7:
   suites:
     default:
-      contexts: [Drupal\DrupalExtension\Context\DrupalContext]
+      contexts: [Drupal\DrupalExtension\Context\DrupalContext, FeatureContext]
       filters:
         tags: "@d7"
   extensions:
@@ -48,7 +48,7 @@ drupal7:
 drush:
   suites:
     default:
-      contexts: [Drupal\DrupalExtension\Context\DrupalContext]
+      contexts: [Drupal\DrupalExtension\Context\DrupalContext, FeatureContext]
       filters:
         tags: "@drushTest"
   extensions:
@@ -67,7 +67,7 @@ drush:
 drupal8:
   suites:
     default:
-      contexts: [Drupal\DrupalExtension\Context\DrupalContext]
+      contexts: [Drupal\DrupalExtension\Context\DrupalContext, FeatureContext]
       filters:
         tags: "@d8&&~@d8wip"
   extensions:
