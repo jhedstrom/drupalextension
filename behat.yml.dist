@@ -3,7 +3,7 @@ default:
     default:
       contexts: [Drupal\DrupalExtension\Context\DrupalContext, FeatureContext]
       filters:
-        tags: "~@api&&~@drush"
+        tags: "~@api&&~@drushTest"
   extensions:
     Behat\MinkExtension:
       goutte: ~
@@ -50,7 +50,7 @@ drush:
     default:
       contexts: [Drupal\DrupalExtension\Context\DrupalContext]
       filters:
-        tags: "@drush"
+        tags: "@drushTest"
   extensions:
     Behat\MinkExtension:
       base_url: http://localhost:8887
