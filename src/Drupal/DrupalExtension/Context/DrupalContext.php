@@ -1136,12 +1136,10 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    * @Then /^I should see the following <error messages>$/
    */
   public function assertMultipleErrors(TableNode $messages) {
-    $steps = array();
     foreach ($messages->getHash() as $key => $value) {
       $message = trim($value['error messages']);
-      $steps[] = new Then("I should see the error message \"$message\"");
+      $this->assertErrorVisible($message);
     }
-    return $steps;
   }
 
   /**
@@ -1171,12 +1169,10 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    * @Then /^I should not see the following <error messages>$/
    */
   public function assertNotMultipleErrors(TableNode $messages) {
-    $steps = array();
     foreach ($messages->getHash() as $key => $value) {
       $message = trim($value['error messages']);
-      $steps[] = new Then("I should not see the error message \"$message\"");
+      $this->assertNotErrorVisible($message);
     }
-    return $steps;
   }
 
   /**
@@ -1207,12 +1203,10 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    * @Then /^I should see the following <success messages>$/
    */
   public function assertMultipleSuccessMessage(TableNode $messages) {
-    $steps = array();
     foreach ($messages->getHash() as $key => $value) {
       $message = trim($value['success messages']);
-      $steps[] = new Then("I should see the success message \"$message\"");
+      $this->assertSuccessMessage($message);
     }
-    return $steps;
   }
 
   /**
@@ -1242,12 +1236,10 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    * @Then /^I should not see the following <success messages>$/
    */
   public function assertNotMultipleSuccessMessage(TableNode $messages) {
-    $steps = array();
     foreach ($messages->getHash() as $key => $value) {
       $message = trim($value['success messages']);
-      $steps[] = new Then("I should not see the success message \"$message\"");
+      $this->assertNotSuccessMessage($message);
     }
-    return $steps;
   }
 
   /**
@@ -1278,12 +1270,10 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    * @Then /^I should see the following <warning messages>$/
    */
   public function assertMultipleWarningMessage(TableNode $messages) {
-    $steps = array();
     foreach ($messages->getHash() as $key => $value) {
       $message = trim($value['warning messages']);
-      $steps[] = new Then("I should see the warning message \"$message\"");
+      $this->assertWarningMessage($message);
     }
-    return $steps;
   }
 
   /**
@@ -1313,12 +1303,10 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    * @Then /^I should not see the following <warning messages>$/
    */
   public function assertNotMultipleWarningMessage(TableNode $messages) {
-    $steps = array();
     foreach ($messages->getHash() as $key => $value) {
       $message = trim($value['warning messages']);
-      $steps[] = new Then("I should not see the warning message \"$message\"");
+      $this->assertNotWarningMessage($message);
     }
-    return $steps;
   }
 
   /**
