@@ -55,6 +55,7 @@ drush:
     Behat\MinkExtension:
       base_url: http://localhost:8887
     Drupal\DrupalExtension:
+      api_driver: "drush"
       drush_driver: "drush"
       drush:
         root: "drupal7"
