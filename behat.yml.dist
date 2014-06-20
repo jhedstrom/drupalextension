@@ -32,9 +32,9 @@ drupal7:
       filters:
         tags: "@d7"
   extensions:
-    Behat\MinkExtension\Extension:
+    Behat\MinkExtension:
       base_url: http://localhost:8887
-    Drupal\DrupalExtension\Extension:
+    Drupal\DrupalExtension:
       api_driver: "drupal"
       drupal:
         # Change this to the absolute path to Drupal install.
@@ -52,9 +52,9 @@ drush:
       filters:
         tags: "@drush"
   extensions:
-    Behat\MinkExtension\Extension:
+    Behat\MinkExtension:
       base_url: http://localhost:8887
-    Drupal\DrupalExtension\Extension:
+    Drupal\DrupalExtension:
       drush_driver: "drush"
       drush:
         root: "drupal7"
@@ -70,9 +70,9 @@ drupal8:
       filters:
         tags: "@d8&&~@d8wip"
   extensions:
-    Behat\MinkExtension\Extension:
+    Behat\MinkExtension:
       base_url: http://localhost:8888
-    Drupal\DrupalExtension\Extension:
+    Drupal\DrupalExtension:
       api_driver: "drupal"
       drupal:
         # Change this to the absolute path to Drupal install.
