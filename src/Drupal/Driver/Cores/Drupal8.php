@@ -66,6 +66,8 @@ class Drupal8 implements CoreInterface {
     $node = entity_create('node', (array) $node);
     $node->save();
 
+    $node->nid =  $node->nid->value();
+
     return $node;
   }
 
