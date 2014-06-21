@@ -724,11 +724,11 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
-   * @Then /^(?:I|I should) see the text "(?P<text>[^"]*)"$/
+   * @Then /^(?:I|I should) see the text "(?P<text>(?:[^"]|\\")*)"$/
    */
   public function assertTextVisible($text) {
     // Use the Mink Extension step definition.
-    $this->assertPageMatchesText($text);
+    $this->assertPageContainsText($text);
   }
 
   /**
