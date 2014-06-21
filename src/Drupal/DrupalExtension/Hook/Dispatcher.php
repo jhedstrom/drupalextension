@@ -2,11 +2,12 @@
 
 namespace Drupal\DrupalExtension\Hook;
 
-use Behat\Behat\Event\EventInterface,
-    Behat\Behat\Hook\HookInterface;
+use Behat\Behat\Event\EventInterface;
+use Behat\Behat\Hook\HookInterface;
 
-use Symfony\Component\EventDispatcher\EventDispatcher,
-    Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\EventDispatcher\Event;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 use Drupal\DrupalExtension\Event\EntityEvent;
 
@@ -126,12 +127,14 @@ class Dispatcher implements EventSubscriberInterface {
     /**
      * Runs hooks with specified name.
      *
-     * @param string         $name  hooks name
-     * @param EventInterface $event event to which hooks glued
+     * @param string $name
+     *   Hook name.
+     * @param Event $event
+     *   \Symfony\Component\EventDispatcher\Event to which hooks glued.
      *
      * @throws \Exception
      */
-    protected function fireHooks($name, EventInterface $event) {
+    protected function fireHooks($name, Event $event) {
       $hooks = isset($this->hooks[$name]) ? $this->hooks[$name] : array();
 
       foreach ($hooks as $hook) {
