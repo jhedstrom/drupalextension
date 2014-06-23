@@ -3,7 +3,7 @@
 namespace Drupal\DrupalExtension\Context;
 
 use Behat\MinkExtension\Context\MinkContext;
-use Behat\Behat\Exception\PendingException;
+use Behat\Behat\Tester\Exception\PendingException;
 use Behat\Behat\Event\ScenarioEvent;
 use Behat\Mink\Exception\UnsupportedDriverActionException;
 
@@ -282,7 +282,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    */
   public function readDrushOutput() {
     if (!isset($this->drushOutput)) {
-      throw new pendingException('This scenario has no drush command.');
+      throw new PendingException('This scenario has no drush command.');
     }
     return $this->drushOutput;
   }

@@ -5,7 +5,7 @@ namespace Drupal\Driver;
 use Drupal\Exception\BootstrapException,
     Drupal\DrupalExtension\Context\DrupalSubContextFinderInterface;
 
-use Behat\Behat\Exception\PendingException;
+use Behat\Behat\Tester\Exception\PendingException;
 
 /**
  * Fully bootstraps Drupal and uses native API calls.
