@@ -21,12 +21,16 @@ before_script:
   - mysql -e 'create database drupal7'
   - drush --quiet dl drupal-7 --drupal-project-rename=drupal7
   - drush --yes --root=$PWD/drupal7 site-install --db-url=mysql://travis:@127.0.0.1/drupal7
-  - drush --quiet --yes --root=$PWD/drupal7 runserver :8887 > /dev/null 2>&1 &
+  - cd drupal7
+  - drush --debug runserver :8887 > ~/debug7.txt 2>&1 &
+  - cd -
   # Setup a stock Drupal 8 install to test api abilities.
   - mysql -e 'create database drupal8'
   - (cd drupal8 && git pull && cd -) || git clone --branch 8.x http://git.drupal.org/project/drupal.git drupal8
   - drush --yes --root=$PWD/drupal8 site-install --db-url=mysql://travis:@127.0.0.1/drupal8
-  - drush --quiet --yes --root=$PWD/drupal8 runserver :8888 > /dev/null 2>&1 &
+  - cd drupal8
+  - drush --quiet --yes --root=$PWD/drupal8 runserver :8888 > ~/debug8.txt 2>&1 &
+  - cd -
   - sleep 4s
 
 script:
@@ -35,3 +39,6 @@ script:
   - vendor/bin/behat -fprogress --profile=drush
   - vendor/bin/behat -fprogress --profile=drupal8
 
+after_failure:
+  - cat ~/debug7.txt
+  - cat ~/debug8.txt
