@@ -2,7 +2,6 @@ parameters:
   drupal.driver.drupal.class: Drupal\Driver\DrupalDriver
 
   # Core controllers.
-  drupal.driver.cores.6.class: Drupal\Driver\Cores\Drupal6
   drupal.driver.cores.7.class: Drupal\Driver\Cores\Drupal7
   drupal.driver.cores.8.class: Drupal\Driver\Cores\Drupal8
 
@@ -14,13 +13,6 @@ services:
       - %mink.base_url%
     tags:
       - { name: drupal.driver, alias: drupal }
-  drupal.driver.cores.6:
-    class: %drupal.driver.cores.6.class%
-    tags:
-      - { name: drupal.core, alias: 6 }
-    arguments:
-      - %drupal.driver.drupal.drupal_root%
-      - %mink.base_url%
   drupal.driver.cores.7:
     class: %drupal.driver.cores.7.class%
     tags:
