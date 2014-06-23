@@ -13,7 +13,6 @@ install:
   - sudo apt-get update > /dev/null
   - sudo apt-get --quiet=2 install php5-cli php5-cgi php5-curl php5-gd php5-mysql > /dev/null
   - composer global require drush/drush:dev-master --prefer-source
-  - cd /home/travis/.composer/vendor/drush/drush && composer require youngj/httpserver:dev-master#41dd2b7 && cd -
 
 before_script:
   # Set sendmail so drush doesn't throw an error during site install.
