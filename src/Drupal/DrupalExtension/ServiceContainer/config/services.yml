@@ -16,14 +16,8 @@ parameters:
   # Context class guesser.
   drupal.context.class_guesser.class: Drupal\DrupalExtension\Context\ClassGuesser\DrupalContextClassGuesser
 
-  # Event dispatcher.
-  drupal.event_dispatcher.class: Symfony\Component\EventDispatcher\EventDispatcher
-
-  # Hook dispatcher.
-  drupal.hook.dispatcher.class: Drupal\DrupalExtension\Hook\Dispatcher
-
   # Hook loader.
-  drupal.context.loader.annotated.class: Drupal\DrupalExtension\Context\Loader\Annotated
+  drupal.context.annotation.reader.class: Drupal\DrupalExtension\Context\Annotation\Reader
 
   # Region selector class.
   drupal.context.region_selector.class: Drupal\DrupalExtension\Selector\RegionSelector
@@ -46,26 +40,18 @@ services:
     arguments:
       - @drupal.drupal
       - %drupal.parameters%
-      - @drupal.event_dispatcher
+      - @hook.dispatcher
     tags:
       - { name: context.initializer }
-      - { name: event_dispatcher.subscriber, priority: 0 }
   drupal.context.class_guesser:
     class: %drupal.context.class_guesser.class%
     tags:
       - { name: behat.context.class_guesser }
-  drupal.event_dispatcher:
-    class: %drupal.event_dispatcher.class%
-  drupal.hook.dispatcher:
-    class: %drupal.hook.dispatcher.class%
-    tags:
-      - { name: drupal.event_subscriber }
   drupal.context.loader.annotated:
-    class: %drupal.context.loader.annotated.class%
+    class: %drupal.context.annotation.reader.class%
     arguments:
-      - @drupal.hook.dispatcher
     tags:
-      - { name: behat.context.loader }
+      - { name: context.annotation_reader }
   drupal.region_selector:
     class: %drupal.context.region_selector.class%
     arguments:

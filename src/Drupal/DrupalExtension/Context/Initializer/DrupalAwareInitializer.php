@@ -7,21 +7,19 @@ use Behat\Behat\Context\Context;
 use Behat\Behat\EventDispatcher\Event\OutlineTested;
 use Behat\Behat\EventDispatcher\Event\ScenarioLikeTested;
 use Behat\Behat\EventDispatcher\Event\ScenarioTested;
+use Behat\Testwork\Hook\HookDispatcher;
 
 use Drupal\Drupal;
 use Drupal\DrupalExtension\Context\DrupalContext;
 use Drupal\DrupalExtension\Context\DrupalAwareInterface;
 use Drupal\DrupalExtension\Context\DrupalSubContextFinderInterface;
 
-use Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-
 use Symfony\Component\Finder\Finder;
 
-class DrupalAwareInitializer implements ContextInitializer, EventSubscriberInterface {
+class DrupalAwareInitializer implements ContextInitializer {
   private $drupal, $parameters, $dispatcher;
 
-  public function __construct(Drupal $drupal, array $parameters, EventDispatcher $dispatcher) {
+  public function __construct(Drupal $drupal, array $parameters, HookDispatcher $dispatcher) {
     $this->drupal = $drupal;
     $this->parameters = $parameters;
     $this->dispatcher = $dispatcher;

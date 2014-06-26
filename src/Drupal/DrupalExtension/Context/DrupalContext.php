@@ -6,13 +6,11 @@ use Behat\MinkExtension\Context\MinkContext;
 use Behat\Behat\Tester\Exception\PendingException;
 use Behat\Behat\Event\ScenarioEvent;
 use Behat\Mink\Exception\UnsupportedDriverActionException;
+use Behat\Testwork\Hook\HookDispatcher;
 
 use Drupal\Drupal;
-use Drupal\DrupalExtension\Event\EntityEvent;
 use Drupal\DrupalExtension\Context\DrupalSubContextInterface;
-
-use Symfony\Component\Process\Process;
-use Symfony\Component\EventDispatcher\EventDispatcher;
+use Drupal\DrupalExtension\Hook\Scope\BeforeNodeCreateScope;
 
 use Behat\Behat\Context\TranslatableContext;
 
@@ -133,7 +131,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   /**
    * Set event dispatcher.
    */
-  public function setDispatcher(EventDispatcher $dispatcher) {
+  public function setDispatcher(HookDispatcher $dispatcher) {
     $this->dispatcher = $dispatcher;
   }
 
@@ -996,9 +994,9 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
     foreach ($nodesTable->getHash() as $nodeHash) {
       $node = (object) $nodeHash;
       $node->type = $type;
-      $this->dispatcher->dispatch('beforeNodeCreate', new EntityEvent($this, $node));
+      $this->dispatcher->dispatchScopeHooks(new BeforeNodeCreateScope($this, $node));
       $saved = $this->getDriver()->createNode($node);
-      $this->dispatcher->dispatch('afterNodeCreate', new EntityEvent($this, $saved));
+      $this->dispatcher->dispatchScopeHooks(new AfterNodeCreateScope($this, $saved));
       $this->nodes[] = $saved;
     }
   }
