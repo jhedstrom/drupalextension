@@ -104,16 +104,19 @@ class DrupalExtension implements ExtensionInterface {
         end()->
         scalarNode('default_driver')->
           defaultValue('blackbox')->
+          info('Use "blackbox" to test remote site. See "api_driver" for easier integration.')->
         end()->
         scalarNode('api_driver')->
           defaultValue('drush')->
+          info('Bootstraps drupal through "drupal8" or "drush".')->
         end()->
         scalarNode('drush_driver')->
           defaultValue('drush')->
         end()->
         arrayNode('region_map')->
           useAttributeAsKey('key')->
-          prototype('variable')->end()->
+          prototype('variable')->
+          end()->
         end()->
         arrayNode('text')->
           addDefaultsIfNotSet()->
