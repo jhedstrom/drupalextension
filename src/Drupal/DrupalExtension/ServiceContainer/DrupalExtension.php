@@ -114,11 +114,23 @@ class DrupalExtension implements ExtensionInterface {
           defaultValue('drush')->
         end()->
         arrayNode('region_map')->
+          info("Targeting content in specific regions can be accomplished once those regions have been defined." . PHP_EOL
+            . '  My region: "#css-selector"' . PHP_EOL
+            . '  Content: "#main .region-content"'. PHP_EOL
+            . '  Right sidebar: "#sidebar-second"'. PHP_EOL
+          )->
           useAttributeAsKey('key')->
           prototype('variable')->
           end()->
         end()->
         arrayNode('text')->
+          info(
+              'Text strings, such as Log out or the Username field can be altered via behat.yml if they vary from the default values.' . PHP_EOL
+            . '  log_out: "Sign out"' . PHP_EOL
+            . '  log_in: "Sign in"' . PHP_EOL
+            . '  password_field: "Enter your password"' . PHP_EOL
+            . '  username_field: "Nickname"'
+          )->
           addDefaultsIfNotSet()->
           children()->
             scalarNode('log_in')->
@@ -160,9 +172,19 @@ class DrupalExtension implements ExtensionInterface {
         end()->
         // Subcontext paths.
         arrayNode('subcontexts')->
+          info(
+              'The Drupal Extension is capable of discovering additional step-definitions provided by subcontexts.' . PHP_EOL
+            . 'Module authors can provide these in files following the naming convention of foo.behat.inc. Once that module is enabled, the Drupal Extension will load these.' . PHP_EOL
+            . PHP_EOL
+            . 'Additional subcontexts can be loaded by either placing them in the bootstrap directory (typically features/bootstrap) or by adding them to behat.yml.'
+          )->
           addDefaultsIfNotSet()->
           children()->
             arrayNode('paths')->
+              info(
+                '- /path/to/additional/subcontexts' . PHP_EOL
+              . '- /another/path'
+              )->
               useAttributeAsKey('key')->
               prototype('variable')->end()->
             end()->
