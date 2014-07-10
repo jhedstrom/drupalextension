@@ -101,7 +101,7 @@ class Drupal6 implements CoreInterface {
    * Implements CoreInterface::userDelete().
    */
   public function userDelete(\stdClass $user) {
-    user_cancel(array(), $user->uid, 'user_cancel_delete');
+    user_delete(array(), $user->uid);
   }
 
   /**
