@@ -213,4 +213,6 @@ class Drupal6 implements CoreInterface {
     }
   }
 
+  public function processBatch() {
+  }
 }
