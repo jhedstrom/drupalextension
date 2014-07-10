@@ -115,7 +115,7 @@ class Drupal6 implements CoreInterface {
       throw new \RuntimeException(sprintf('No role "%s" exists.', $role_name));
     }
 
-    user_multiple_role_edit(array($user->uid), 'add_role', $role->rid);
+    user_multiple_role_edit(array($user->uid), 'add_role', $role);
   }
 
   /**
