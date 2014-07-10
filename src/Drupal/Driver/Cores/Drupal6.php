@@ -108,7 +108,8 @@ class Drupal6 implements CoreInterface {
    * Implements CoreInterface::userAddRole().
    */
   public function userAddRole(\stdClass $user, $role_name) {
-    $role = user_role_load_by_name($role_name);
+    $roles = array_flip(user_roles());
+    $role = $roles[$role_name];
 
     if (!$role) {
       throw new \RuntimeException(sprintf('No role "%s" exists.', $role_name));
