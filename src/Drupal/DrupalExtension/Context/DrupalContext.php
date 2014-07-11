@@ -984,10 +984,11 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
     if (!$this->user->uid) {
       throw new \Exception(sprintf('There is no current logged in user to create a node for.'));
     }
+
     $node = (object) array(
       'title' => $title,
       'type' => $type,
-      'body' => $this->getDrupal()->string(255),
+      'body' => $this->getDrupal()->random->string(255),
       'uid' => $this->user->uid,
     );
     $this->dispatcher->dispatch('beforeNodeCreate', new EntityEvent($this, $node));
