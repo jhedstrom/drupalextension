@@ -39,7 +39,7 @@ class Drupal8 implements CoreInterface {
     drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
 
     // Initialise an anonymous session. required for the bootstrap.
-    \Drupal::service('session_manager')->initialize();
+    \Drupal::service('session_manager')->startLazy();
 
     chdir($current_path);
   }
@@ -63,11 +63,10 @@ class Drupal8 implements CoreInterface {
     if (!isset($node->status)) {
       $node->status = 1;
     }
-    $node = entity_create('node', (array) $node);
-    $node->save();
+    $entity = entity_create('node', (array) $node);
+    $entity->save();
 
-    $node->nid =  $node->nid->value();
-
+    $node->nid = $entity->id();
     return $node;
   }
 
@@ -214,7 +213,7 @@ class Drupal8 implements CoreInterface {
     }
 
     $account = \user_load($user->uid);
-    $account->addRole($role->id);
+    $account->addRole($role->id());
     $account->save();
   }
 
