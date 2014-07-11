@@ -74,6 +74,7 @@ class Drupal8 implements CoreInterface {
    * Implements CoreInterface::nodeDelete().
    */
   public function nodeDelete($node) {
+    $node = $node instanceof NodeInterface ? $node : Node::load($node->nid);
     $node->delete();
   }
 
