@@ -15,8 +15,8 @@
     "behat/mink": "1.5.*@stable",
     "behat/mink-goutte-driver": "*",
     "behat/mink-selenium2-driver": "*",
-    "behat/behat": "~3.0,>=3.0.5",
-    "behat/mink-extension": "2.0.x-dev"
+    "behat/behat": "2.5.*@stable",
+    "behat/mink-extension": "*"
   },
   "require-dev": {
     "phpunit/phpunit": "3.7.*"
