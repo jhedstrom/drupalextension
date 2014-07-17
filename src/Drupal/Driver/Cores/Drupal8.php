@@ -5,6 +5,7 @@ namespace Drupal\Driver\Cores;
 use Drupal\Component\Utility\Random;
 use Drupal\Component\Utility\Settings;
 use Drupal\Exception\BootstrapException;
+use Drupal\taxonomy\Entity\Term;
 
 /**
  * Drupal 8 core.
@@ -271,22 +272,22 @@ class Drupal8 implements CoreInterface {
 
   /**
    * Implements CoreInterface::termCreate.
-   * @todo implement for drupal8
    */
   public function termCreate(\stdClass $term) {
-    throw new UnsupportedDriverActionException(
-      'No ability to create create terms in %s', $this
-    );
+    $term->vid = $term->vocabulary_machine_name;
+    $entity = Term::create((array) $term);
+    $entity->save();
+
+    $term->tid = $entity->id();
+    return $term;
   }
 
   /**
    * Implements CoreInterface::termDelete.
-   * @todo implement for drupal8
    */
   public function termDelete(\stdClass $term) {
-    throw new UnsupportedDriverActionException(
-      'No ability to delete terms in %s', $this
-    );
+    $term = Term::load($term->tid);
+    $term->delete();
   }
 
 }
