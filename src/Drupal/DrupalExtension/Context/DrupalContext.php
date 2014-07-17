@@ -3,7 +3,7 @@
 namespace Drupal\DrupalExtension\Context;
 
 use Behat\MinkExtension\Context\MinkContext;
-use Behat\Behat\Exception\PendingException;
+use Behat\Behat\Tester\Exception\PendingException;
 use Behat\Behat\Event\ScenarioEvent;
 use Behat\Mink\Exception\UnsupportedDriverActionException;
 
@@ -14,10 +14,7 @@ use Drupal\DrupalExtension\Context\DrupalSubContextInterface;
 use Symfony\Component\Process\Process;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
-use Behat\Behat\Context\Step\Given;
-use Behat\Behat\Context\Step\When;
-use Behat\Behat\Context\Step\Then;
-use Behat\Behat\Context\TranslatedContextInterface;
+use Behat\Behat\Context\TranslatableContext;
 
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
@@ -26,8 +23,10 @@ use Behat\Mink\Driver\Selenium2Driver as Selenium2Driver;
 
 /**
  * Features context.
+ *
+ * @todo is there a way to inject a MinkContext instead?
  */
-class DrupalContext extends MinkContext implements DrupalAwareInterface, TranslatedContextInterface {
+class DrupalContext extends MinkContext implements DrupalAwareInterface, TranslatableContext {
 
   private $drupal, $drupalParameters;
 
@@ -113,11 +112,8 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    *
    * @return array
    */
-  public function getTranslationResources() {
-      $translationFilesParent = parent::getTranslationResources();
-      $translationFilesDrupal = glob(__DIR__ . '/../../../../i18n/*.xliff');
-      $translationFilesCombined = array_merge($translationFilesParent, $translationFilesDrupal);
-      return $translationFilesCombined;
+  public static function getTranslationResources() {
+    return glob(__DIR__ . '/../../../../i18n/*.xliff');
   }
 
   /**
@@ -286,7 +282,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    */
   public function readDrushOutput() {
     if (!isset($this->drushOutput)) {
-      throw new pendingException('This scenario has no drush command.');
+      throw new PendingException('This scenario has no drush command.');
     }
     return $this->drushOutput;
   }
@@ -361,6 +357,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    * Visit a given path, and additionally check for HTTP response code 200.
    *
    * @Given /^(?:that I|I) am at "(?P<path>[^"]*)"$/
+   * @When /^I visit "(?P<path>[^"]*)"$/
    *
    * @throws UnsupportedDriverActionException
    */
@@ -370,7 +367,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
     // If available, add extra validation that this is a 200 response.
     try {
       $this->getSession()->getStatusCode();
-      return new Given('I should get a "200" HTTP response');
+      $this->assertHttpResponse('200');
     }
     catch (UnsupportedDriverActionException $e) {
       // Simply continue on, as this driver doesn't support HTTP response codes.
@@ -378,19 +375,11 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
-   * @When /^I visit "(?P<path>[^"]*)"$/
-   */
-  public function assertVisit($path) {
-    // Use Drupal Context 'I am at'.
-    return new Given("I am at \"$path\"");
-  }
-
-  /**
    * @When /^I click "(?P<link>[^"]*)"$/
    */
   public function assertClick($link) {
     // Use the Mink Extenstion step definition.
-    return new Given("I follow \"$link\"");
+    $this->clickLink($link);
   }
 
   /**
@@ -399,7 +388,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    */
   public function assertEnterField($field, $value) {
     // Use the Mink Extenstion step definition.
-    return new Given("I fill in \"$field\" with \"$value\"");
+    $this->fillField($field, $value);
   }
 
   /**
@@ -735,11 +724,11 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
-   * @Then /^(?:I|I should) see the text "(?P<text>[^"]*)"$/
+   * @Then /^(?:I|I should) see the text "(?P<text>(?:[^"]|\\")*)"$/
    */
   public function assertTextVisible($text) {
     // Use the Mink Extension step definition.
-    return new Given("I should see text matching \"$text\"");
+    $this->assertPageContainsText($text);
   }
 
   /**
@@ -747,7 +736,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    */
   public function assertNotTextVisible($text) {
     // Use the Mink Extension step definition.
-    return new Given("I should not see text matching \"$text\"");
+    $this->assertPageNotContainsText($text);
   }
 
   /**
@@ -755,7 +744,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    */
   public function assertHttpResponse($code) {
     // Use the Mink Extension step definition.
-    return new Given("the response status code should be $code");
+    $this->assertResponseStatus($code);
   }
 
   /**
@@ -763,7 +752,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    */
   public function assertNotHttpResponse($code) {
     // Use the Mink Extension step definition.
-    return new Given("the response status code should not be $code");
+    $this->assertResponseStatusIsNot($code);
   }
 
   /**
@@ -771,7 +760,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    */
   public function assertCheckBox($checkbox) {
     // Use the Mink Extension step definition.
-    return new Given("I check \"$checkbox\"");
+    $this->checkOption($checkbox);
   }
 
   /**
@@ -779,7 +768,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    */
   public function assertUncheckBox($checkbox) {
     // Use the Mink Extension step definition.
-    return new Given("I uncheck \"$checkbox\"");
+    $this->uncheckOption($checkbox);
   }
 
   /**
@@ -1048,8 +1037,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
     $this->getSession()->visit($this->locatePath('/node/' . $saved->nid . '/edit'));
 
     // Test status.
-    return new Then("I should get a \"200\" HTTP response");
-
+    $this->assertHttpResponse('200');
   }
 
 
@@ -1149,12 +1137,10 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    * @Then /^I should see the following <error messages>$/
    */
   public function assertMultipleErrors(TableNode $messages) {
-    $steps = array();
     foreach ($messages->getHash() as $key => $value) {
       $message = trim($value['error messages']);
-      $steps[] = new Then("I should see the error message \"$message\"");
+      $this->assertErrorVisible($message);
     }
-    return $steps;
   }
 
   /**
@@ -1184,12 +1170,10 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    * @Then /^I should not see the following <error messages>$/
    */
   public function assertNotMultipleErrors(TableNode $messages) {
-    $steps = array();
     foreach ($messages->getHash() as $key => $value) {
       $message = trim($value['error messages']);
-      $steps[] = new Then("I should not see the error message \"$message\"");
+      $this->assertNotErrorVisible($message);
     }
-    return $steps;
   }
 
   /**
@@ -1220,12 +1204,10 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    * @Then /^I should see the following <success messages>$/
    */
   public function assertMultipleSuccessMessage(TableNode $messages) {
-    $steps = array();
     foreach ($messages->getHash() as $key => $value) {
       $message = trim($value['success messages']);
-      $steps[] = new Then("I should see the success message \"$message\"");
+      $this->assertSuccessMessage($message);
     }
-    return $steps;
   }
 
   /**
@@ -1255,12 +1237,10 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    * @Then /^I should not see the following <success messages>$/
    */
   public function assertNotMultipleSuccessMessage(TableNode $messages) {
-    $steps = array();
     foreach ($messages->getHash() as $key => $value) {
       $message = trim($value['success messages']);
-      $steps[] = new Then("I should not see the success message \"$message\"");
+      $this->assertNotSuccessMessage($message);
     }
-    return $steps;
   }
 
   /**
@@ -1291,12 +1271,10 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    * @Then /^I should see the following <warning messages>$/
    */
   public function assertMultipleWarningMessage(TableNode $messages) {
-    $steps = array();
     foreach ($messages->getHash() as $key => $value) {
       $message = trim($value['warning messages']);
-      $steps[] = new Then("I should see the warning message \"$message\"");
+      $this->assertWarningMessage($message);
     }
-    return $steps;
   }
 
   /**
@@ -1326,12 +1304,10 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    * @Then /^I should not see the following <warning messages>$/
    */
   public function assertNotMultipleWarningMessage(TableNode $messages) {
-    $steps = array();
     foreach ($messages->getHash() as $key => $value) {
       $message = trim($value['warning messages']);
-      $steps[] = new Then("I should not see the warning message \"$message\"");
+      $this->assertNotWarningMessage($message);
     }
-    return $steps;
   }
 
   /**

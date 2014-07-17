@@ -1,25 +1,45 @@
 <?php
 
-namespace Drupal\DrupalExtension;
+namespace Drupal\DrupalExtension\ServiceContainer;
 
-use Symfony\Component\DependencyInjection\ContainerBuilder,
-    Symfony\Component\DependencyInjection\Loader\YamlFileLoader,
-    Symfony\Component\Config\FileLocator,
-    Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
+use Behat\Testwork\ServiceContainer\Extension as ExtensionInterface;
+use Behat\Testwork\ServiceContainer\ExtensionManager;
+use Drupal\DrupalExtension\Compiler\DriverPass;
+use Drupal\DrupalExtension\Compiler\EventSubscriberPass;
+use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
+use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
-use Behat\Behat\Extension\ExtensionInterface;
-
-class Extension implements ExtensionInterface {
+class DrupalExtension implements ExtensionInterface {
 
   /**
-   * Loads a specific configuration.
-   *
-   * @param array $config
-   *   Extension configuration (from behat.yml).
-   * @param ContainerBuilder $container
-   *   ContainerBuilder instance.
+   * Extension configuration ID.
    */
-  public function load(array $config, ContainerBuilder $container) {
+  const DRUPAL_ID = 'drupal';
+
+  /**
+   * Selectors handler ID.
+   */
+  const SELECTORS_HANDLER_ID = 'drupal.selectors_handler';
+
+  /**
+   * {@inheritDoc}
+   */
+  public function getConfigKey() {
+    return self::DRUPAL_ID;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function initialize(ExtensionManager $extensionManager) {
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function load(ContainerBuilder $container, array $config) {
     $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/config'));
     $loader->load('services.yml');
     $container->setParameter('drupal.drupal.default_driver', $config['default_driver']);
@@ -60,12 +80,20 @@ class Extension implements ExtensionInterface {
   }
 
   /**
-   * Setup configuration for this extension.
-   *
-   * @param ArrayNodeDefinition $builder
-   *   ArrayNodeDefinition instance.
+   * {@inheritDoc}
    */
-  public function getConfig(ArrayNodeDefinition $builder) {
+  public function process(ContainerBuilder $container) {
+    $driverPass = new DriverPass();
+    $eventSubscriberPass = new EventSubscriberPass();
+
+    $driverPass->process($container);
+    $eventSubscriberPass->process($container);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function configure(ArrayNodeDefinition $builder) {
     $builder->
       children()->
         arrayNode('basic_auth')->
@@ -76,18 +104,33 @@ class Extension implements ExtensionInterface {
         end()->
         scalarNode('default_driver')->
           defaultValue('blackbox')->
+          info('Use "blackbox" to test remote site. See "api_driver" for easier integration.')->
         end()->
         scalarNode('api_driver')->
           defaultValue('drush')->
+          info('Bootstraps drupal through "drupal8" or "drush".')->
         end()->
         scalarNode('drush_driver')->
           defaultValue('drush')->
         end()->
         arrayNode('region_map')->
+          info("Targeting content in specific regions can be accomplished once those regions have been defined." . PHP_EOL
+            . '  My region: "#css-selector"' . PHP_EOL
+            . '  Content: "#main .region-content"'. PHP_EOL
+            . '  Right sidebar: "#sidebar-second"'. PHP_EOL
+          )->
           useAttributeAsKey('key')->
-          prototype('variable')->end()->
+          prototype('variable')->
+          end()->
         end()->
         arrayNode('text')->
+          info(
+              'Text strings, such as Log out or the Username field can be altered via behat.yml if they vary from the default values.' . PHP_EOL
+            . '  log_out: "Sign out"' . PHP_EOL
+            . '  log_in: "Sign in"' . PHP_EOL
+            . '  password_field: "Enter your password"' . PHP_EOL
+            . '  username_field: "Nickname"'
+          )->
           addDefaultsIfNotSet()->
           children()->
             scalarNode('log_in')->
@@ -129,9 +172,19 @@ class Extension implements ExtensionInterface {
         end()->
         // Subcontext paths.
         arrayNode('subcontexts')->
+          info(
+              'The Drupal Extension is capable of discovering additional step-definitions provided by subcontexts.' . PHP_EOL
+            . 'Module authors can provide these in files following the naming convention of foo.behat.inc. Once that module is enabled, the Drupal Extension will load these.' . PHP_EOL
+            . PHP_EOL
+            . 'Additional subcontexts can be loaded by either placing them in the bootstrap directory (typically features/bootstrap) or by adding them to behat.yml.'
+          )->
           addDefaultsIfNotSet()->
           children()->
             arrayNode('paths')->
+              info(
+                '- /path/to/additional/subcontexts' . PHP_EOL
+              . '- /another/path'
+              )->
               useAttributeAsKey('key')->
               prototype('variable')->end()->
             end()->
@@ -142,17 +195,5 @@ class Extension implements ExtensionInterface {
         end()->
       end()->
     end();
-  }
-
-  /**
-   * Returns compiler passes used by mink extension.
-   *
-   * @return array
-   */
-  public function getCompilerPasses() {
-    return array(
-      new Compiler\DriverPass(),
-      new Compiler\EventSubscriberPass(),
-    );
   }
 }

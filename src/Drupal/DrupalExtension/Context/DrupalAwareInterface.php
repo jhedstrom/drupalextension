@@ -2,10 +2,11 @@
 
 namespace Drupal\DrupalExtension\Context;
 
+use Behat\Behat\Context\Context;
 use Drupal\Drupal;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
-interface DrupalAwareInterface {
+interface DrupalAwareInterface extends Context {
 
   /**
    * Sets Drupal instance.

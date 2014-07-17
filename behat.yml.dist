@@ -1,12 +1,15 @@
 default:
-  filters:
-    tags: "~@api&&~@drush"
+  suites:
+    default:
+      contexts: [Drupal\DrupalExtension\Context\DrupalContext, FeatureContext]
+      filters:
+        tags: "~@api&&~@drushTest"
   extensions:
-    Behat\MinkExtension\Extension:
+    Behat\MinkExtension:
       goutte: ~
       selenium2: ~
       base_url: http://drupal.org
-    Drupal\DrupalExtension\Extension:
+    Drupal\DrupalExtension:
       blackbox: ~
       region_map:
         content: "#content"
@@ -23,12 +26,15 @@ default:
 # Separate profile for testing using the api driver. This assumes a
 # stock Drupal 7 install.
 drupal7:
-  filters:
-    tags: "@d7"
+  suites:
+    default:
+      contexts: [Drupal\DrupalExtension\Context\DrupalContext, FeatureContext]
+      filters:
+        tags: "@d7"
   extensions:
-    Behat\MinkExtension\Extension:
+    Behat\MinkExtension:
       base_url: http://localhost:8887
-    Drupal\DrupalExtension\Extension:
+    Drupal\DrupalExtension:
       api_driver: "drupal"
       drupal:
         # Change this to the absolute path to Drupal install.
@@ -40,12 +46,16 @@ drupal7:
 # Separate profile for testing using the Drush driver. Assumes a stock
 # Drupal 7 install.
 drush:
-  filters:
-    tags: "@drush"
+  suites:
+    default:
+      contexts: [Drupal\DrupalExtension\Context\DrupalContext, FeatureContext]
+      filters:
+        tags: "@drushTest"
   extensions:
-    Behat\MinkExtension\Extension:
+    Behat\MinkExtension:
       base_url: http://localhost:8887
-    Drupal\DrupalExtension\Extension:
+    Drupal\DrupalExtension:
+      api_driver: "drush"
       drush_driver: "drush"
       drush:
         root: "drupal7"
@@ -55,12 +65,15 @@ drush:
 
 # Separate profile for testing D8. Assumes a stock Drupal 8 install.
 drupal8:
-  filters:
-    tags: "@d8&&~@d8wip"
+  suites:
+    default:
+      contexts: [Drupal\DrupalExtension\Context\DrupalContext, FeatureContext]
+      filters:
+        tags: "@d8&&~@d8wip"
   extensions:
-    Behat\MinkExtension\Extension:
+    Behat\MinkExtension:
       base_url: http://localhost:8888
-    Drupal\DrupalExtension\Extension:
+    Drupal\DrupalExtension:
       api_driver: "drupal"
       drupal:
         # Change this to the absolute path to Drupal install.

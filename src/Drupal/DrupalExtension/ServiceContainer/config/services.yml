@@ -48,8 +48,8 @@ services:
       - %drupal.parameters%
       - @drupal.event_dispatcher
     tags:
-      - { name: behat.context.initializer }
-      - { name: behat.event_subscriber, priority: 0 }
+      - { name: context.initializer }
+      - { name: event_dispatcher.subscriber, priority: 0 }
   drupal.context.class_guesser:
     class: %drupal.context.class_guesser.class%
     tags:
@@ -70,7 +70,7 @@ services:
     class: %drupal.context.region_selector.class%
     arguments:
       # inject the CSSSelector
-      - "@behat.mink.selector.css"
+      - "@mink.selector.css"
       - %drupal.region_map%
     tags:
-      - { name: behat.mink.selector, alias: region }
+      - { name: mink.selector, alias: region }

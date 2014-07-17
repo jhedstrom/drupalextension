@@ -5,7 +5,7 @@ namespace Drupal\Driver;
 use Drupal\Exception\BootstrapException,
     Drupal\DrupalExtension\Context\DrupalSubContextFinderInterface;
 
-use Behat\Behat\Exception\PendingException;
+use Behat\Behat\Tester\Exception\PendingException;
 
 /**
  * Fully bootstraps Drupal and uses native API calls.
@@ -143,6 +143,11 @@ class DrupalDriver implements DriverInterface, DrupalSubContextFinderInterface {
         '/core/vendor/autoload.php',
         '/core/includes/bootstrap.inc',
       );
+
+      if ($this->drupalRoot === FALSE) {
+        throw new BootstrapException('`drupal_root` parameter must be defined.');
+      }
+
       foreach ($version_constant_paths as $path) {
         if (file_exists($this->drupalRoot . $path)) {
           require_once $this->drupalRoot . $path;

@@ -68,6 +68,7 @@ class Drupal8 implements CoreInterface {
     $entity->save();
 
     $node->nid = $entity->id();
+
     return $node;
   }
 

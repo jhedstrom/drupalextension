@@ -2,21 +2,23 @@
 
 namespace Drupal\DrupalExtension\Context\Initializer;
 
-use Behat\Behat\Context\Initializer\InitializerInterface,
-    Behat\Behat\Context\ContextInterface,
-    Behat\Behat\Event\ScenarioEvent,
-    Behat\Behat\Event\OutlineEvent;
+use Behat\Behat\Context\Initializer\ContextInitializer;
+use Behat\Behat\Context\Context;
+use Behat\Behat\EventDispatcher\Event\OutlineTested;
+use Behat\Behat\EventDispatcher\Event\ScenarioLikeTested;
+use Behat\Behat\EventDispatcher\Event\ScenarioTested;
 
-use Drupal\Drupal,
-    Drupal\DrupalExtension\Context\DrupalContext,
-    Drupal\DrupalExtension\Context\DrupalSubContextFinderInterface;
+use Drupal\Drupal;
+use Drupal\DrupalExtension\Context\DrupalContext;
+use Drupal\DrupalExtension\Context\DrupalAwareInterface;
+use Drupal\DrupalExtension\Context\DrupalSubContextFinderInterface;
 
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 use Symfony\Component\Finder\Finder;
 
-class DrupalAwareInitializer implements InitializerInterface, EventSubscriberInterface {
+class DrupalAwareInitializer implements ContextInitializer, EventSubscriberInterface {
   private $drupal, $parameters, $dispatcher;
 
   public function __construct(Drupal $drupal, array $parameters, EventDispatcher $dispatcher) {
@@ -25,7 +27,16 @@ class DrupalAwareInitializer implements InitializerInterface, EventSubscriberInt
     $this->dispatcher = $dispatcher;
   }
 
-  public function initialize(ContextInterface $context) {
+  /**
+   * {@inheritdocs}
+   */
+  public function initializeContext(Context $context) {
+
+    // All contexts are passed here, only DrupalAwareInterface is allowed.
+    if (!$context instanceof DrupalAwareInterface) {
+      return;
+    }
+
     // Set Drupal driver manager.
     $context->setDrupal($this->drupal);
 
@@ -78,12 +89,6 @@ class DrupalAwareInitializer implements InitializerInterface, EventSubscriberInt
     }
   }
 
-  public function supports(ContextInterface $context) {
-    // @todo Create a DrupalAwareInterface instead, so developers don't have to
-    // directly extend the DrupalContext class.
-    return $context instanceof DrupalContext;
-  }
-
   /**
    * Returns an array of event names this subscriber wants to listen to.
    *
@@ -104,8 +109,8 @@ class DrupalAwareInitializer implements InitializerInterface, EventSubscriberInt
    */
   public static function getSubscribedEvents() {
     return array(
-      'beforeScenario' => array('prepareDefaultDrupalDriver', 11),
-      'beforeOutline' => array('prepareDefaultDrupalDriver', 11),
+      ScenarioTested::BEFORE => array('prepareDefaultDrupalDriver', 11),
+      OutlineTested::BEFORE => array('prepareDefaultDrupalDriver', 11),
     );
   }
 
@@ -119,17 +124,19 @@ class DrupalAwareInitializer implements InitializerInterface, EventSubscriberInt
    * @param ScenarioEvent|OutlineEvent $event
    */
   public function prepareDefaultDrupalDriver($event) {
-    $scenario = $event instanceof ScenarioEvent ? $event->getScenario() : $event->getOutline();
+    $feature = $event->getFeature();
+    $scenario = $event instanceof ScenarioLikeTested ? $event->getScenario() : $event->getOutline();
 
-    // Set the default driver.
+    // Get the default driver.
     $driver = $this->parameters['default_driver'];
 
-    foreach ($scenario->getTags() as $tag) {
-      if (isset($this->parameters[$tag . '_driver'])) {
+    foreach (array_merge($feature->getTags(), $scenario->getTags()) as $tag) {
+      if (!empty($this->parameters[$tag . '_driver'])) {
         $driver = $this->parameters[$tag . '_driver'];
       }
     }
 
+    // Set the default driver.
     $this->drupal->setDefaultDriverName($driver);
   }
 
