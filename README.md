@@ -1,5 +1,4 @@
-Drupal Extension
-====================
+# Drupal Extension
 
 The Drupal Extension is an integration layer between [Behat](http://behat.org), [Mink Extension](http://extensions.behat.org/mink/), and Drupal. It provides step definitions for common testing scenarios specific to Drupal sites.
 
@@ -7,7 +6,8 @@ The Drupal Extension is an integration layer between [Behat](http://behat.org), 
 
 Drupal Extension 1.0 supports Behat 2.4, and Drupal 6 and 7 (with Drupal 8 support being backported as it changes). Drupal Extension 2.0 aims to work with Behat 3, and focus on Drupal 8.
 
-### Using the Drupal Extension for testing your own projects.
+## Use it for testing your Drupal site.
+
 1. You'll need something resembling this `composer.json` file
 
   ```
@@ -54,7 +54,7 @@ Drupal Extension 1.0 supports Behat 2.4, and Drupal 6 and 7 (with Drupal 8 suppo
   bin/behat -dl
   ```
 
-If the step definitions aren't listed, try running this command:
+  If the step definitions aren't listed, try running this command:
 
   ```
   bin/behat --init
@@ -160,13 +160,13 @@ If the step definitions aren't listed, try running this command:
 
    Other available tags include `@beforeTermCreate` and `@beforeUserCreate`
 
-### Additional resources
+## Additional resources
 
  * [Behat documentation](http://docs.behat.org)
  * [Mink documentation](http://mink.behat.org)
  * [Drupal Extension documentation](http://dspeak.com/drupalextension)
 
-#### Examples and code snippets
+## Examples and code snippets
 
  * [Complex node creation, with field collections and entity references](https://gist.github.com/jhedstrom/5708233)
  * [Achievements module support](https://gist.github.com/jhedstrom/9633067)
