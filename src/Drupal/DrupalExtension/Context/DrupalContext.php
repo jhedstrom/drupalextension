@@ -239,7 +239,10 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
       foreach ($this->users as $user) {
         $this->getDriver()->userDelete($user);
       }
-      $this->getDriver()->processBatch();
+      // Drupal 6 don't use batch for user delete.
+      if (!isset($this->getDriver()->version) || $this->getDriver()->version > 6) {
+        $this->getDriver()->processBatch();
+      }
     }
 
     // Remove any terms that were created.

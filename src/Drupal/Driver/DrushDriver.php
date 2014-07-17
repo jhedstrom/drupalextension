@@ -101,6 +101,7 @@ class DrushDriver extends BaseDriver {
     $options = array(
       'yes' => NULL,
       'delete-content' => NULL,
+      'strict' => 0,
     );
     $this->drush('user-cancel', $arguments, $options);
   }
