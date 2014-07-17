@@ -36,16 +36,16 @@ Drupal Extension 1.0 supports Behat 2.4, and Drupal 6 and 7 (with Drupal 8 suppo
 1. At a minimum, your `behat.yml` file will look like this
 
   ```
-    default:
-      paths:
-        features: 'features'
-      extensions:
-        Behat\MinkExtension\Extension:
-          goutte: ~
-          selenium2: ~
-          base_url: http://git6site.devdrupal.org/
-        Drupal\DrupalExtension\Extension:
-          blackbox: ~
+  default:
+    paths:
+      features: 'features'
+    extensions:
+      Behat\MinkExtension\Extension:
+        goutte: ~
+        selenium2: ~
+        base_url: http://git6site.devdrupal.org/
+      Drupal\DrupalExtension\Extension:
+        blackbox: ~
   ```
 
 1. To see a list of available step definitions
