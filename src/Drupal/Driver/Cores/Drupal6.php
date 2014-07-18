@@ -91,6 +91,15 @@ class Drupal6 implements CoreInterface {
     // hashed password.
     $account = clone $user;
 
+    // Convert role array to a keyed array.
+    if (isset($user->roles)) {
+      $roles = array();
+      foreach ($user->roles as $rid) {
+        $roles[$rid] = $rid;
+      }
+      $user->roles = $roles;
+    }
+
     user_save($account, (array) $user);
 
     // Store UID.
@@ -198,9 +207,24 @@ class Drupal6 implements CoreInterface {
    * Implements CoreInterface::roleCreate().
    */
   public function roleCreate(array $permissions) {
-    // TODO: fill in.
-    throw new UnsupportedDriverActionException('No ability to create roles in %s', $this);
-    //db_query("INSERT INTO {permission} (rid, perm) VALUES (%d, '%s')", $role->rid, implode(', ', array_keys($form_state['values'][$role->rid])));
+    // Verify permissions exist.
+    $all_permissions = module_invoke_all('perm');
+    foreach ($permissions as $name) {
+      $search = array_search($name, $all_permissions);
+      if (!$search) {
+        throw new \RuntimeException(sprintf("No permission '%s' exists.", $name));
+      }
+    }
+
+    // Create new role.
+    $name = $this->random->name(8);
+    db_query("INSERT INTO {role} SET name = '%s'", $name);
+
+    // Add permissions to role.
+    $rid = db_last_insert_id('role', 'rid');
+    db_query("INSERT INTO {permission} (rid, perm) VALUES (%d, '%s')", $rid, implode(', ', $permissions));
+
+    return $rid;
   }
 
   /**
