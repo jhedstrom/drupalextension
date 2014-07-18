@@ -994,9 +994,9 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
     foreach ($nodesTable->getHash() as $nodeHash) {
       $node = (object) $nodeHash;
       $node->type = $type;
-      $this->dispatcher->dispatchScopeHooks(new BeforeNodeCreateScope($this, $node));
+      $this->dispatcher->dispatchScopeHooks(new BeforeNodeCreateScope($this->getDrupal()->getEnvironment(), $this, $node));
       $saved = $this->getDriver()->createNode($node);
-      $this->dispatcher->dispatchScopeHooks(new AfterNodeCreateScope($this, $saved));
+      $this->dispatcher->dispatchScopeHooks(new AfterNodeCreateScope($this->getDrupal()->getEnvironment(), $this, $saved));
       $this->nodes[] = $saved;
     }
   }

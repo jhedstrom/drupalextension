@@ -4,9 +4,6 @@ namespace Drupal\DrupalExtension\Context\Initializer;
 
 use Behat\Behat\Context\Initializer\ContextInitializer;
 use Behat\Behat\Context\Context;
-use Behat\Behat\EventDispatcher\Event\OutlineTested;
-use Behat\Behat\EventDispatcher\Event\ScenarioLikeTested;
-use Behat\Behat\EventDispatcher\Event\ScenarioTested;
 use Behat\Testwork\Hook\HookDispatcher;
 
 use Drupal\Drupal;
@@ -34,6 +31,9 @@ class DrupalAwareInitializer implements ContextInitializer {
     if (!$context instanceof DrupalAwareInterface) {
       return;
     }
+
+    // Store for reference during scenario/outline setup.
+    $this->context = $context;
 
     // Set Drupal driver manager.
     $context->setDrupal($this->drupal);
@@ -85,57 +85,6 @@ class DrupalAwareInitializer implements ContextInitializer {
       // Load file.
       require_once $path;
     }
-  }
-
-  /**
-   * Returns an array of event names this subscriber wants to listen to.
-   *
-   * The array keys are event names and the value can be:
-   *
-   *  * The method name to call (priority defaults to 0)
-   *  * An array composed of the method name to call and the priority
-   *  * An array of arrays composed of the method names to call and respective
-   *    priorities, or 0 if unset
-   *
-   * For instance:
-   *
-   *  * array('eventName' => 'methodName')
-   *  * array('eventName' => array('methodName', $priority))
-   *  * array('eventName' => array(array('methodName1', $priority), array('methodName2'))
-   *
-   * @return array The event names to listen to
-   */
-  public static function getSubscribedEvents() {
-    return array(
-      ScenarioTested::BEFORE => array('prepareDefaultDrupalDriver', 11),
-      OutlineTested::BEFORE => array('prepareDefaultDrupalDriver', 11),
-    );
-  }
-
-  /**
-   * Configures default Drupal driver to use before each scenario or outline.
-   *
-   * `@api` tagged scenarios will get the `api_driver` as the default driver.
-   *
-   * Other scenarios get the `default_driver` as the default driver.
-   *
-   * @param ScenarioEvent|OutlineEvent $event
-   */
-  public function prepareDefaultDrupalDriver($event) {
-    $feature = $event->getFeature();
-    $scenario = $event instanceof ScenarioLikeTested ? $event->getScenario() : $event->getOutline();
-
-    // Get the default driver.
-    $driver = $this->parameters['default_driver'];
-
-    foreach (array_merge($feature->getTags(), $scenario->getTags()) as $tag) {
-      if (!empty($this->parameters[$tag . '_driver'])) {
-        $driver = $this->parameters[$tag . '_driver'];
-      }
-    }
-
-    // Set the default driver.
-    $this->drupal->setDefaultDriverName($driver);
   }
 
   /**

@@ -13,6 +13,9 @@ parameters:
   # Context initializer.
   drupal.context.initializer.class: Drupal\DrupalExtension\Context\Initializer\DrupalAwareInitializer
 
+  # Event listeners.
+  drupal.listener.drivers.class: Drupal\DrupalExtension\Listener\DriverListener
+
   # Context class guesser.
   drupal.context.class_guesser.class: Drupal\DrupalExtension\Context\ClassGuesser\DrupalContextClassGuesser
 
@@ -52,6 +55,13 @@ services:
     arguments:
     tags:
       - { name: context.annotation_reader }
+  drupal.listener.driver:
+    class: %drupal.listener.drivers.class%
+    arguments:
+      - @drupal.drupal
+      - %drupal.parameters%
+    tags:
+      - { name: event_dispatcher.subscriber, priority: 0 }
   drupal.region_selector:
     class: %drupal.context.region_selector.class%
     arguments:
