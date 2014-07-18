@@ -6,13 +6,13 @@ Feature: DrupalContext
 
   # These scenarios assume a "standard" install of Drupal 7.
 
-  @drushTest
+  @drush
   Scenario: Create and log in as a user
     Given I am logged in as a user with the "authenticated user" role
     When I click "My account"
     Then I should see the heading "History"
 
-  @drushTest
+  @drush
   Scenario: Target links within table rows
     Given I am logged in as a user with the "administrator" role
     When I am at "admin/structure/types"
@@ -20,13 +20,13 @@ Feature: DrupalContext
     Then I should be on "admin/structure/types/manage/article/fields"
     And I should see text matching "Add new field"
 
-  @drushTest @d8 @d8wip
+  @drush @d8 @d8wip
   Scenario: Find a heading in a region
     Given I am not logged in
     When I am on the homepage
     Then I should see the heading "User login" in the "left sidebar" region
 
-  @drushTest @d8 @d8wip
+  @drush @d8 @d8wip
   Scenario: Clear cache
     Given the cache has been cleared
     When I am on the homepage
@@ -38,7 +38,7 @@ Feature: DrupalContext
     When I am viewing an "article" node with the title "My article"
     Then I should see the heading "My article"
 
-  @drushTest @d8 @d8wip
+  @drush @d8 @d8wip
   Scenario: Run cron
     Given I am logged in as a user with the "administrator" role
     When I run cron
