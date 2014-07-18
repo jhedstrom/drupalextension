@@ -1,45 +1,25 @@
 <?php
 
-namespace Drupal\DrupalExtension\ServiceContainer;
+namespace Drupal\DrupalExtension;
 
-use Behat\Testwork\ServiceContainer\Extension as ExtensionInterface;
-use Behat\Testwork\ServiceContainer\ExtensionManager;
-use Drupal\DrupalExtension\Compiler\DriverPass;
-use Drupal\DrupalExtension\Compiler\EventSubscriberPass;
-use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
-use Symfony\Component\Config\FileLocator;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
+use Symfony\Component\DependencyInjection\ContainerBuilder,
+    Symfony\Component\DependencyInjection\Loader\YamlFileLoader,
+    Symfony\Component\Config\FileLocator,
+    Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 
-class DrupalExtension implements ExtensionInterface {
+use Behat\Behat\Extension\ExtensionInterface;
+
+class Extension implements ExtensionInterface {
 
   /**
-   * Extension configuration ID.
+   * Loads a specific configuration.
+   *
+   * @param array $config
+   *   Extension configuration (from behat.yml).
+   * @param ContainerBuilder $container
+   *   ContainerBuilder instance.
    */
-  const DRUPAL_ID = 'drupal';
-
-  /**
-   * Selectors handler ID.
-   */
-  const SELECTORS_HANDLER_ID = 'drupal.selectors_handler';
-
-  /**
-   * {@inheritDoc}
-   */
-  public function getConfigKey() {
-    return self::DRUPAL_ID;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public function initialize(ExtensionManager $extensionManager) {
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public function load(ContainerBuilder $container, array $config) {
+  public function load(array $config, ContainerBuilder $container) {
     $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/config'));
     $loader->load('services.yml');
     $container->setParameter('drupal.drupal.default_driver', $config['default_driver']);
@@ -80,20 +60,12 @@ class DrupalExtension implements ExtensionInterface {
   }
 
   /**
-   * {@inheritDoc}
+   * Setup configuration for this extension.
+   *
+   * @param ArrayNodeDefinition $builder
+   *   ArrayNodeDefinition instance.
    */
-  public function process(ContainerBuilder $container) {
-    $driverPass = new DriverPass();
-    $eventSubscriberPass = new EventSubscriberPass();
-
-    $driverPass->process($container);
-    $eventSubscriberPass->process($container);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public function configure(ArrayNodeDefinition $builder) {
+  public function getConfig(ArrayNodeDefinition $builder) {
     $builder->
       children()->
         arrayNode('basic_auth')->
@@ -195,5 +167,17 @@ class DrupalExtension implements ExtensionInterface {
         end()->
       end()->
     end();
+  }
+
+  /**
+   * Returns compiler passes used by mink extension.
+   *
+   * @return array
+   */
+  public function getCompilerPasses() {
+    return array(
+      new Compiler\DriverPass(),
+      new Compiler\EventSubscriberPass(),
+    );
   }
 }

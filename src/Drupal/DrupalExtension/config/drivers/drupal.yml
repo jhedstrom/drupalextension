@@ -11,7 +11,7 @@ services:
     class: %drupal.driver.drupal.class%
     arguments:
       - %drupal.driver.drupal.drupal_root%
-      - %mink.base_url%
+      - %behat.mink.base_url%
     tags:
       - { name: drupal.driver, alias: drupal }
   drupal.driver.cores.6:
@@ -20,18 +20,18 @@ services:
       - { name: drupal.core, alias: 6 }
     arguments:
       - %drupal.driver.drupal.drupal_root%
-      - %mink.base_url%
+      - %behat.mink.base_url%
   drupal.driver.cores.7:
     class: %drupal.driver.cores.7.class%
     tags:
       - { name: drupal.core, alias: 7 }
     arguments:
       - %drupal.driver.drupal.drupal_root%
-      - %mink.base_url%
+      - %behat.mink.base_url%
   drupal.driver.cores.8:
     class: %drupal.driver.cores.8.class%
     tags:
       - { name: drupal.core, alias: 8 }
     arguments:
       - %drupal.driver.drupal.drupal_root%
-      - %mink.base_url%
+      - %behat.mink.base_url%
