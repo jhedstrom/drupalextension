@@ -37,7 +37,7 @@ abstract class BaseEntityScope implements EntityScope {
   public function __construct(Environment $environment, Context $context, $entity) {
     $this->context = $context;
     $this->entity = $entity;
-    $this->envirionment = $environment;
+    $this->environment = $environment;
   }
 
   /**
