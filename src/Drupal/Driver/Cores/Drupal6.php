@@ -100,7 +100,7 @@ class Drupal6 implements CoreInterface {
       $user->roles = $roles;
     }
 
-    user_save($account, (array) $user);
+    user_save('', (array) $account);
 
     // Store UID.
     $user->uid = $account->uid;
