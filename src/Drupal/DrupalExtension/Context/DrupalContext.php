@@ -841,7 +841,6 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
     );
     $user->mail = "{$user->name}@example.com";
 
-
     // Create a new user.
     $this->getDriver()->userCreate($user);
 
