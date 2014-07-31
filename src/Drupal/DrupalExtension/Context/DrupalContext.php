@@ -10,6 +10,7 @@ use Behat\Testwork\Hook\HookDispatcher;
 
 use Drupal\Drupal;
 use Drupal\DrupalExtension\Context\DrupalSubContextInterface;
+use Drupal\DrupalExtension\Hook\Scope\AfterNodeCreateScope;
 use Drupal\DrupalExtension\Hook\Scope\BeforeNodeCreateScope;
 
 use Behat\Behat\Context\TranslatableContext;

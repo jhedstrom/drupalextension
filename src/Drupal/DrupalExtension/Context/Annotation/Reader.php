@@ -43,7 +43,7 @@ class Reader implements AnnotationReader {
     $class = self::$classes[$type];
     $pattern = isset($match[2]) ? $match[2] : null;
     $callable = array($contextClass, $method->getName());
-    xdebug_break();
+
     return new $class($pattern, $callable, $description);
   }
 

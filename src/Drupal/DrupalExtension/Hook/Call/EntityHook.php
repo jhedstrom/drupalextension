@@ -11,18 +11,10 @@ use Behat\Testwork\Hook\Scope\HookScope;
 abstract class EntityHook extends RuntimeFilterableHook {
 
   /**
-   * Initializes hook.
-   */
-  public function __construct($filterString, $callable, $description = null) {
-    xdebug_break();
-    parent::__construct('scope', $filterString, $callable, $description);
-  }
-
-  /**
    * {@inheritDoc}
    */
   public function filterMatches(HookScope $scope) {
-    if (NULL === ($filterString = $this->getFilter())) {
+    if (NULL === ($filterString = $this->getFilterString())) {
       return TRUE;
     }
   }
