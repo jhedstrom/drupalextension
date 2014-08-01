@@ -835,7 +835,9 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
 
 
     // Create a new user.
+    $this->dispatcher->dispatchScopeHooks(new BeforeUserCreateScope($this->getDrupal()->getEnvironment(), $this, $user));
     $this->getDriver()->userCreate($user);
+    $this->dispatcher->dispatchScopeHooks(new AfterUserCreateScope($this->getDrupal()->getEnvironment(), $this, $user));
 
     $this->users[$user->name] = $this->user = $user;
 
@@ -886,7 +888,9 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
     $user->mail = "{$user->name}@example.com";
 
     // Create a new user.
+    $this->dispatcher->dispatchScopeHooks(new BeforeUserCreateScope($this->getDrupal()->getEnvironment(), $this, $user));
     $this->getDriver()->userCreate($user);
+    $this->dispatcher->dispatchScopeHooks(new AfterUserCreateScope($this->getDrupal()->getEnvironment(), $this, $user));
 
     $this->users[] = $this->user = $user;
     $this->roles[] = $rid;

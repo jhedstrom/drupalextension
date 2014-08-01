@@ -65,6 +65,39 @@ class FeatureContext implements Context {
   }
 
   /**
+   * Test that a node is returned after node create.
+   *
+   * @afterNodeCreate
+   */
+  public function afterNodeCreate(EntityScope $scope) {
+    if (!$node = $scope->getEntity()) {
+      throw new \Exception('Failed to find a node in @afterNodeCreate hook.');
+    }
+  }
+
+  /**
+   * Test that a term is returned after term create.
+   *
+   * @afterTermCreate
+   */
+  public function afterTermCreate(EntityScope $scope) {
+    if (!$term = $scope->getEntity()) {
+      throw new \Exception('Failed to find a term in @afterTermCreate hook.');
+    }
+  }
+
+  /**
+   * Test that a user is returned after user create.
+   *
+   * @afterUserCreate
+   */
+  public function afterUserCreate(EntityScope $scope) {
+    if (!$user = $scope->getEntity()) {
+      throw new \Exception('Failed to find a user in @afterUserCreate hook.');
+    }
+  }
+
+  /**
    * From here down is the Behat FeatureContext.
    *
    * @defgroup Behat FeatureContext
