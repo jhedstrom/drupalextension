@@ -2,7 +2,7 @@
 
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
-use Drupal\DrupalExtension\Hook\Scope\NodeScope;
+use Drupal\DrupalExtension\Hook\Scope\EntityScope;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
 
@@ -19,7 +19,7 @@ class FeatureContext implements Context {
    *
    * @beforeNodeCreate
    */
-  public function alterNodeParameters(NodeScope $scope) {
+  public function alterNodeParameters(EntityScope $scope) {
     // @see `features/api.feature`
     // Change 'published on' to the expected 'created'.
     $node = $scope->getEntity();
@@ -34,10 +34,10 @@ class FeatureContext implements Context {
    *
    * @beforeTermCreate
    */
-  public function alterTermParameters(EntityEvent $event) {
+  public function alterTermParameters(EntityScope $scope) {
     // @see `features/api.feature`
     // Change 'Label' to expected 'name'.
-    $term = $event->getEntity();
+    $term = $scope->getEntity();
     if (isset($term->{'Label'})) {
       $term->name = $term->{'Label'};
       unset($term->{'Label'});
@@ -49,10 +49,10 @@ class FeatureContext implements Context {
    *
    * @beforeUserCreate
    */
-  public function alterUserParameters(EntityEvent $event) {
+  public function alterUserParameters(EntityScope $scope) {
     // @see `features/api.feature`
     // Concatenate 'First name' and 'Last name' to form user name.
-    $user = $event->getEntity();
+    $user = $scope->getEntity();
     if (isset($user->{"First name"}) && isset($user->{"Last name"})) {
       $user->name = $user->{"First name"} . ' ' . $user->{"Last name"};
       unset($user->{"First name"}, $user->{"Last name"});

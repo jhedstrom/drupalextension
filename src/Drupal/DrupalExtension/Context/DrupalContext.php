@@ -11,7 +11,11 @@ use Behat\Testwork\Hook\HookDispatcher;
 use Drupal\Drupal;
 use Drupal\DrupalExtension\Context\DrupalSubContextInterface;
 use Drupal\DrupalExtension\Hook\Scope\AfterNodeCreateScope;
+use Drupal\DrupalExtension\Hook\Scope\AfterTermCreateScope;
+use Drupal\DrupalExtension\Hook\Scope\AfterUserCreateScope;
 use Drupal\DrupalExtension\Hook\Scope\BeforeNodeCreateScope;
+use Drupal\DrupalExtension\Hook\Scope\BeforeUserCreateScope;
+use Drupal\DrupalExtension\Hook\Scope\BeforeTermCreateScope;
 
 use Behat\Behat\Context\TranslatableContext;
 
@@ -1053,9 +1057,9 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
       'vocabulary_machine_name' => $vocabulary,
       'description' => $this->getDrupal()->random->string(255),
     );
-    $this->dispatcher->dispatch('beforeTermCreate', new EntityEvent($this, $term));
+    $this->dispatcher->dispatchScopeHooks(new BeforeTermCreateScope($this->getDrupal()->getEnvironment(), $this, $term));
     $saved = $this->getDriver()->createTerm($term);
-    $this->dispatcher->dispatch('afterTermCreate', new EntityEvent($this, $term));
+    $this->dispatcher->dispatchScopeHooks(new AfterTermCreateScope($this->getDrupal()->getEnvironment(), $this, $saved));
     $this->terms[] = $saved;
 
     // Set internal page on the term.
@@ -1088,9 +1092,9 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
         $user->pass = $this->getDrupal()->random->name();
       }
 
-      $this->dispatcher->dispatch('beforeUserCreate', new EntityEvent($this, $user));
+      $this->dispatcher->dispatchScopeHooks(new BeforeUserCreateScope($this->getDrupal()->getEnvironment(), $this, $user));
       $this->getDriver()->userCreate($user);
-      $this->dispatcher->dispatch('afterUserCreate', new EntityEvent($this, $user));
+      $this->dispatcher->dispatchScopeHooks(new AfterUserCreateScope($this->getDrupal()->getEnvironment(), $this, $user));
 
       $this->users[$user->name] = $user;
     }
@@ -1103,9 +1107,9 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
     foreach ($termsTable->getHash() as $termsHash) {
       $term = (object) $termsHash;
       $term->vocabulary_machine_name = $vocabulary;
-      $this->dispatcher->dispatch('beforeTermCreate', new EntityEvent($this, $term));
+      $this->dispatcher->dispatchScopeHooks(new BeforeTermCreateScope($this->getDrupal()->getEnvironment(), $this, $term));
       $saved = $this->getDriver()->createTerm($term);
-      $this->dispatcher->dispatch('afterTermCreate', new EntityEvent($this, $term));
+      $this->dispatcher->dispatchScopeHooks(new AfterTermCreateScope($this->getDrupal()->getEnvironment(), $this, $saved));
       $this->terms[] = $saved;
     }
   }
