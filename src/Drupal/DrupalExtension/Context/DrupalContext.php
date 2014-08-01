@@ -956,9 +956,9 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
       'type' => $type,
       'body' => $this->getDrupal()->random->string(255),
     );
-    $this->dispatcher->dispatch('beforeNodeCreate', new EntityEvent($this, $node));
+    $this->dispatcher->dispatchScopeHooks(new BeforeNodeCreateScope($this->getDrupal()->getEnvironment(), $this, $node));
     $saved = $this->getDriver()->createNode($node);
-    $this->dispatcher->dispatch('afterNodeCreate', new EntityEvent($this, $saved));
+    $this->dispatcher->dispatchScopeHooks(new AfterNodeCreateScope($this->getDrupal()->getEnvironment(), $this, $saved));
     $this->nodes[] = $saved;
 
     // Set internal page on the new node.
@@ -979,9 +979,10 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
       'body' => $this->getDrupal()->random->string(255),
       'uid' => $this->user->uid,
     );
-    $this->dispatcher->dispatch('beforeNodeCreate', new EntityEvent($this, $node));
+    // @todo this doesn't properly throw exceptions.
+    $this->dispatcher->dispatchScopeHooks(new BeforeNodeCreateScope($this->getDrupal()->getEnvironment(), $this, $node));
     $saved = $this->getDriver()->createNode($node);
-    $this->dispatcher->dispatch('afterNodeCreate', new EntityEvent($this, $saved));
+    $this->dispatcher->dispatchScopeHooks(new AfterNodeCreateScope($this->getDrupal()->getEnvironment(), $this, $saved));
     $this->nodes[] = $saved;
 
     // Set internal page on the new node.
@@ -995,6 +996,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
     foreach ($nodesTable->getHash() as $nodeHash) {
       $node = (object) $nodeHash;
       $node->type = $type;
+      // @todo this doesn't properly throw exceptions.
       $this->dispatcher->dispatchScopeHooks(new BeforeNodeCreateScope($this->getDrupal()->getEnvironment(), $this, $node));
       $saved = $this->getDriver()->createNode($node);
       $this->dispatcher->dispatchScopeHooks(new AfterNodeCreateScope($this->getDrupal()->getEnvironment(), $this, $saved));
@@ -1013,9 +1015,9 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
       $node->{$field} = $value;
     }
 
-    $this->dispatcher->dispatch('beforeNodeCreate', new EntityEvent($this, $node));
+    $this->dispatcher->dispatchScopeHooks(new BeforeNodeCreateScope($this->getDrupal()->getEnvironment(), $this, $node));
     $saved = $this->getDriver()->createNode($node);
-    $this->dispatcher->dispatch('afterNodeCreate', new EntityEvent($this, $saved));
+    $this->dispatcher->dispatchScopeHooks(new AfterNodeCreateScope($this->getDrupal()->getEnvironment(), $this, $saved));
     $this->nodes[] = $saved;
 
     // Set internal browser on the node.

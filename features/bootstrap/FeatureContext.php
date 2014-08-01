@@ -2,7 +2,7 @@
 
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
-use Drupal\DrupalExtension\Event\EntityEvent;
+use Drupal\DrupalExtension\Hook\Scope\NodeScope;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
 
@@ -19,10 +19,10 @@ class FeatureContext implements Context {
    *
    * @beforeNodeCreate
    */
-  public function alterNodeParameters(EntityEvent $event) {
+  public function alterNodeParameters(NodeScope $scope) {
     // @see `features/api.feature`
     // Change 'published on' to the expected 'created'.
-    $node = $event->getEntity();
+    $node = $scope->getEntity();
     if (isset($node->{"published on"})) {
       $node->created = $node->{"published on"};
       unset($node->{"published on"});

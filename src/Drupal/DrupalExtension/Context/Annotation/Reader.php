@@ -34,7 +34,7 @@ class Reader implements AnnotationReader {
    * {@inheritDoc}
    */
   public function readCallee($contextClass, ReflectionMethod $method, $docLine, $description) {
-      xdebug_break();
+
     if (!preg_match(self::$regex, $docLine, $match)) {
       return null;
     }
