@@ -37,14 +37,12 @@ Drupal Extension 1.0 supports Behat 2.4, and Drupal 6 and 7 (with Drupal 8 suppo
 
   ```
   default:
-    paths:
-      features: 'features'
     extensions:
-      Behat\MinkExtension\Extension:
+      Behat\MinkExtension:
         goutte: ~
         selenium2: ~
         base_url: http://git6site.devdrupal.org/
-      Drupal\DrupalExtension\Extension:
+      Drupal\DrupalExtension:
         blackbox: ~
   ```
 
