@@ -91,6 +91,11 @@ class DrushDriver extends BaseDriver {
       'mail' => $user->mail,
     );
     $this->drush('user-create', $arguments, $options);
+    if (isset($user->roles) && is_array($user->roles)) {
+      foreach ($user->roles as $role) {
+        $this->userAddRole($user, $role);
+      }
+    }
   }
 
   /**
