@@ -15,9 +15,7 @@ Drupal Extension 1.0 supports Behat 2.4, and Drupal 6 and 7 (with Drupal 8 suppo
       "require": {
         "drupal/drupal-extension": "1.0.*@stable"
       },
-      "config": {
-        "bin-dir": "bin/"
-      }
+      "minimum-stability": "dev"
     }
   ```
 
@@ -51,13 +49,13 @@ Drupal Extension 1.0 supports Behat 2.4, and Drupal 6 and 7 (with Drupal 8 suppo
 1. To see a list of available step definitions
 
   ```
-  bin/behat -dl
+  vendor/bin/behat -dl
   ```
 
   If the step definitions aren't listed, try running this command:
 
   ```
-  bin/behat --init
+  vendor/bin/behat --init
   ```
 
 1. Start adding your feature files to the `features` directory of your repository.
