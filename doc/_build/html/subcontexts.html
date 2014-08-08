@@ -1,0 +1,287 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Contributed Module Subcontexts &mdash; the Drupal Extension to Behat and Mink 1.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+    <link rel="top" title="the Drupal Extension to Behat and Mink 1.1 documentation" href="index.html" />
+    <link rel="prev" title="Drupal API Driver" href="drupalapi.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="drupalapi.html" title="Drupal API Driver"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">the Drupal Extension to Behat and Mink 1.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="contributed-module-subcontexts">
+<h1>Contributed Module Subcontexts<a class="headerlink" href="#contributed-module-subcontexts" title="Permalink to this headline">¶</a></h1>
+<p>Although not yet a wide-spread practice, the Drupal Extension to Behat and Mink
+makes it easy for maintainers to include custom step definitions in their
+contributed projects.</p>
+<div class="section" id="discovering-subcontexts">
+<h2>Discovering SubContexts<a class="headerlink" href="#discovering-subcontexts" title="Permalink to this headline">¶</a></h2>
+<p>In order to use contributed step definitions, define the search path in the
+behat.yml</p>
+<p>// sites/default/behat-tests/behat.yml</p>
+<div class="highlight-yaml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20</pre></div></td><td class="code"><div class="highlight"><pre><span class="l-Scalar-Plain">default</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">paths</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">features</span><span class="p-Indicator">:</span> <span class="s">&#39;features&#39;</span>
+  <span class="l-Scalar-Plain">extensions</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">Behat\MinkExtension\Extension</span><span class="p-Indicator">:</span>
+      <span class="l-Scalar-Plain">goutte</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">~</span>
+      <span class="l-Scalar-Plain">selenium2</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">~</span>
+      <span class="l-Scalar-Plain">base_url</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">http://seven.l</span>
+    <span class="l-Scalar-Plain">Drupal\DrupalExtension\Extension</span><span class="p-Indicator">:</span>
+      <span class="l-Scalar-Plain">blackbox</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">~</span>
+      <span class="l-Scalar-Plain">api_driver</span><span class="p-Indicator">:</span> <span class="s">&#39;drupal&#39;</span> 
+      <span class="l-Scalar-Plain">drush</span><span class="p-Indicator">:</span>
+        <span class="l-Scalar-Plain">alias</span><span class="p-Indicator">:</span> <span class="s">&#39;local&#39;</span>
+      <span class="l-Scalar-Plain">drupal</span><span class="p-Indicator">:</span> 
+        <span class="l-Scalar-Plain">drupal_root</span><span class="p-Indicator">:</span> <span class="s">&#39;/var/www/seven/drupal&#39;</span> 
+      <span class="l-Scalar-Plain">region_map</span><span class="p-Indicator">:</span>
+        <span class="l-Scalar-Plain">footer</span><span class="p-Indicator">:</span> <span class="s">&quot;#footer&quot;</span>
+<span class="hll">      <span class="l-Scalar-Plain">subcontexts</span><span class="p-Indicator">:</span>
+</span><span class="hll">        <span class="l-Scalar-Plain">paths</span><span class="p-Indicator">:</span>
+</span><span class="hll">          <span class="p-Indicator">-</span> <span class="s">&quot;/var/www/seven/drupal/sites/all&quot;</span>
+</span></pre></div>
+</td></tr></table></div>
+<p>The Drupal Extension will search recursively within the directory or
+directories specified to discover and load any file ending in behat.inc This
+system, although created with Drupal contrib projects in mind, searches where
+it&#8217;s pointed, so you can also use it for your own subcontexts, a strategy you
+might employ to re-use step definitions particular to your shop or company&#8217;s
+development patterns.</p>
+</div>
+<div class="section" id="disable-autoloading">
+<h2>Disable autoloading<a class="headerlink" href="#disable-autoloading" title="Permalink to this headline">¶</a></h2>
+<p>Autoloading can be disabled in the behat.yml file temorarily with the
+following:</p>
+<div class="highlight-yaml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21</pre></div></td><td class="code"><div class="highlight"><pre><span class="l-Scalar-Plain">default</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">paths</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">features</span><span class="p-Indicator">:</span> <span class="s">&#39;features&#39;</span>
+  <span class="l-Scalar-Plain">extensions</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">Behat\MinkExtension\Extension</span><span class="p-Indicator">:</span>
+      <span class="l-Scalar-Plain">goutte</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">~</span>
+      <span class="l-Scalar-Plain">selenium2</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">~</span>
+      <span class="l-Scalar-Plain">base_url</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">http://seven.l</span>
+    <span class="l-Scalar-Plain">Drupal\DrupalExtension\Extension</span><span class="p-Indicator">:</span>
+      <span class="l-Scalar-Plain">blackbox</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">~</span>
+      <span class="l-Scalar-Plain">api_driver</span><span class="p-Indicator">:</span> <span class="s">&#39;drupal&#39;</span> 
+      <span class="l-Scalar-Plain">drush</span><span class="p-Indicator">:</span>
+        <span class="l-Scalar-Plain">alias</span><span class="p-Indicator">:</span> <span class="s">&#39;local&#39;</span>
+      <span class="l-Scalar-Plain">drupal</span><span class="p-Indicator">:</span> 
+        <span class="l-Scalar-Plain">drupal_root</span><span class="p-Indicator">:</span> <span class="s">&#39;/var/www/seven/drupal&#39;</span> 
+      <span class="l-Scalar-Plain">region_map</span><span class="p-Indicator">:</span>
+        <span class="l-Scalar-Plain">footer</span><span class="p-Indicator">:</span> <span class="s">&quot;#footer&quot;</span>
+      <span class="l-Scalar-Plain">subcontexts</span><span class="p-Indicator">:</span>
+        <span class="l-Scalar-Plain">paths</span><span class="p-Indicator">:</span>
+          <span class="p-Indicator">-</span> <span class="s">&quot;/var/www/seven/drupal/sites/all&quot;</span>
+<span class="hll">        <span class="l-Scalar-Plain">autoload</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">0</span>
+</span></pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="for-contributors">
+<h2>For Contributors<a class="headerlink" href="#for-contributors" title="Permalink to this headline">¶</a></h2>
+<p>Read a detailed discussion of <a class="reference external" href="http://docs.behat.org/guides/4.context.html#using-subcontexts">using sucontexts</a> on the Behat
+site.</p>
+<p>With regard to the Drupal Extension:</p>
+<ul class="simple">
+<li>Save custom step definitions in a file ending with <cite>.behat.inc</cite> Just like
+functions, preface the filename with the project&#8217;s machine name to prevent
+namespace collisions.</li>
+<li>Writing step definitions for the subcontext is only slighly different than
+writing them for the main context.</li>
+</ul>
+<p>Your subcontext must include, at a minimum, lines 7 and 8 below.</p>
+<p>// sites/all/modules/beanslide/beanslide.behat.inc</p>
+<div class="highlight-php"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">&lt;?php</span>
+<span class="sd">/**</span>
+<span class="sd"> * @file</span>
+<span class="sd"> * Provide Behat step-definitions as Drupal Extension subcontexts.</span>
+<span class="sd"> */</span>
+
+<span class="hll"><span class="k">use</span> <span class="nx">Drupal\DrupalExtension\Context\DrupalSubContextInterface</span><span class="p">;</span>
+</span><span class="hll"><span class="k">use</span> <span class="nx">Behat\Behat\Context\BehatContext</span><span class="p">;</span>
+</span>
+<span class="hll"><span class="k">class</span> <span class="nc">BeanslideSubContext</span> <span class="k">extends</span> <span class="nx">BehatContext</span> <span class="k">implements</span> 
+</span><span class="hll">  <span class="nx">DrupalSubContextInterface</span> <span class="p">{</span>
+</span><span class="hll">  <span class="k">public</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">getAlias</span><span class="p">()</span> <span class="p">{</span>
+</span>    <span class="k">return</span> <span class="s1">&#39;beanslide&#39;</span><span class="p">;</span>
+  <span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>You&#8217;ll also need to call the main context in order to access the session:</p>
+<p>// sites/all/modules/beanslide/beanslide.behat.inc</p>
+<div class="highlight-php"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">&lt;?php</span> 
+
+  <span class="sd">/**</span>
+<span class="sd">   * @Then /^I should see a slideshow$/</span>
+<span class="hll"><span class="sd">   */</span>
+</span>  <span class="k">public</span> <span class="k">function</span> <span class="nf">assertSlideshowExists</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nv">$slideshow</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getMainContext</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">getSession</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">getPage</span><span class="p">()</span>
+    <span class="o">-&gt;</span><span class="na">find</span><span class="p">(</span><span class="s1">&#39;css&#39;</span><span class="p">,</span> <span class="s1">&#39;.beanslide&#39;</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nv">$slideshow</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">throw</span> <span class="k">new</span> <span class="nx">\Exception</span><span class="p">(</span><span class="nb">sprintf</span><span class="p">(</span><span class="s2">&quot;No slideshow found on the page %s&quot;</span><span class="p">,</span> 
+      <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getSession</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">getCurrentUrl</span><span class="p">()));</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Contributed Module Subcontexts</a><ul>
+<li><a class="reference internal" href="#discovering-subcontexts">Discovering SubContexts</a></li>
+<li><a class="reference internal" href="#disable-autoloading">Disable autoloading</a></li>
+<li><a class="reference internal" href="#for-contributors">For Contributors</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="drupalapi.html"
+                        title="previous chapter">Drupal API Driver</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/subcontexts.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="drupalapi.html" title="Drupal API Driver"
+             >previous</a> |</li>
+        <li><a href="index.html">the Drupal Extension to Behat and Mink 1.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

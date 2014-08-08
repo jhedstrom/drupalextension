@@ -1,0 +1,164 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>System Requirements &mdash; the Drupal Extension to Behat and Mink 1.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+    <link rel="top" title="the Drupal Extension to Behat and Mink 1.1 documentation" href="index.html" />
+    <link rel="next" title="Stand-alone installation" href="localinstall.html" />
+    <link rel="prev" title="Testing your site with the Drupal Extension to Behat and Mink" href="intro.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="localinstall.html" title="Stand-alone installation"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="intro.html" title="Testing your site with the Drupal Extension to Behat and Mink"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">the Drupal Extension to Behat and Mink 1.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="system-requirements">
+<h1>System Requirements<a class="headerlink" href="#system-requirements" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="meet-the-system-requirements">
+<h2>Meet the system requirements<a class="headerlink" href="#meet-the-system-requirements" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic">
+<li><p class="first">Check your PHP version:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">php</span> <span class="o">--</span><span class="n">version</span>
+</pre></div>
+</div>
+<p>It must be higher than 5.3.5! Note: This means you cannot use the same
+version of PHP for testing that you might use to run a Drual 5 site.</p>
+</li>
+</ol>
+<blockquote>
+<div><p>PHP will also need to have the following libraries installed:</p>
+<ul class="simple">
+<li><a class="reference external" href="http://curl.haxx.se/libcurl/php/install.html">curl</a></li>
+<li><a class="reference external" href="http://php.net/manual/en/mbstring.installation.php">mbstring</a></li>
+<li><a class="reference external" href="http://www.php.net/manual/en/dom.setup.php#102046">xml</a></li>
+</ul>
+</div></blockquote>
+<ol class="arabic" start="2">
+<li><p class="first">Check for Java:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">java</span> <span class="o">-</span><span class="n">version</span>
+</pre></div>
+</div>
+<p>It doesn&#8217;t necessarily matter what version, but it will be required for
+Selenium.</p>
+</li>
+<li><p class="first">Directions are written to use commandline cURL. You can make sure it&#8217;s
+installed with:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">curl</span> <span class="o">--</span><span class="n">version</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Selenium</p>
+</li>
+</ol>
+<blockquote>
+<div><p>Download the latest version of <a class="reference external" href="http://docs.seleniumhq.org/download/">Selenium Server</a> It&#8217;s under the heading Selenium
+Server (formerly the Selenium RC Server).   This is a single file which can be
+placed any where you like on your system and run with the following command:</p>
+<div class="highlight-python"><div class="highlight"><pre>java -jar selenium-server-standalone-2.33.0.jar &amp;
+// replace with the name of the version you downloaded
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">System Requirements</a><ul>
+<li><a class="reference internal" href="#meet-the-system-requirements">Meet the system requirements</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="intro.html"
+                        title="previous chapter">Testing your site with the Drupal Extension to Behat and Mink</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="localinstall.html"
+                        title="next chapter">Stand-alone installation</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/requirements.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="localinstall.html" title="Stand-alone installation"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="intro.html" title="Testing your site with the Drupal Extension to Behat and Mink"
+             >previous</a> |</li>
+        <li><a href="index.html">the Drupal Extension to Behat and Mink 1.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>
