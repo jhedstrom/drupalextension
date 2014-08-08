@@ -22,10 +22,11 @@ Feature: Test DrupalContext
     Given I am on the homepage
     Then I should not see the text "Proprietary software is cutting edge" in the "left header"
 
-  Scenario: Press a button in a region
+  Scenario: Submit a form in a region
     Given I am on the homepage
-    When I press "Search" in the "right header" region
-    Then I should see the text "Filter by content type" in the "content" region
+    When I fill in "Search Drupal.org" with "Views" in the "right header" region
+    And I press "Search" in the "right header" region
+    Then I should see the text "Search again" in the "right sidebar" region
 
   Scenario: Check a link should not exist in a region
     Given I am on the homepage
