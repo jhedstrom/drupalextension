@@ -165,7 +165,6 @@ Drupal Extension 1.0 supports Behat 2.4, and Drupal 6 and 7 (with Drupal 8 suppo
  * [Behat documentation](http://docs.behat.org)
  * [Mink documentation](http://mink.behat.org)
  * [Drupal Extension documentation](http://behat-drupal-extension.readthedocs.org/en/latest/)
- * [Local documentation copy](_build/html)
 
 ## Examples and code snippets
 
