@@ -2,7 +2,7 @@
 
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
-use Drupal\DrupalExtension\Event\EntityEvent;
+use Drupal\DrupalExtension\Hook\Scope\EntityScope;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
 
@@ -19,10 +19,10 @@ class FeatureContext implements Context {
    *
    * @beforeNodeCreate
    */
-  public function alterNodeParameters(EntityEvent $event) {
+  public function alterNodeParameters(EntityScope $scope) {
     // @see `features/api.feature`
     // Change 'published on' to the expected 'created'.
-    $node = $event->getEntity();
+    $node = $scope->getEntity();
     if (isset($node->{"published on"})) {
       $node->created = $node->{"published on"};
       unset($node->{"published on"});
@@ -34,10 +34,10 @@ class FeatureContext implements Context {
    *
    * @beforeTermCreate
    */
-  public function alterTermParameters(EntityEvent $event) {
+  public function alterTermParameters(EntityScope $scope) {
     // @see `features/api.feature`
     // Change 'Label' to expected 'name'.
-    $term = $event->getEntity();
+    $term = $scope->getEntity();
     if (isset($term->{'Label'})) {
       $term->name = $term->{'Label'};
       unset($term->{'Label'});
@@ -49,10 +49,10 @@ class FeatureContext implements Context {
    *
    * @beforeUserCreate
    */
-  public function alterUserParameters(EntityEvent $event) {
+  public function alterUserParameters(EntityScope $scope) {
     // @see `features/api.feature`
     // Concatenate 'First name' and 'Last name' to form user name.
-    $user = $event->getEntity();
+    $user = $scope->getEntity();
     if (isset($user->{"First name"}) && isset($user->{"Last name"})) {
       $user->name = $user->{"First name"} . ' ' . $user->{"Last name"};
       unset($user->{"First name"}, $user->{"Last name"});
@@ -61,6 +61,39 @@ class FeatureContext implements Context {
     if (isset($user->{"E-mail"})) {
       $user->mail = $user->{"E-mail"};
       unset($user->{"E-mail"});
+    }
+  }
+
+  /**
+   * Test that a node is returned after node create.
+   *
+   * @afterNodeCreate
+   */
+  public function afterNodeCreate(EntityScope $scope) {
+    if (!$node = $scope->getEntity()) {
+      throw new \Exception('Failed to find a node in @afterNodeCreate hook.');
+    }
+  }
+
+  /**
+   * Test that a term is returned after term create.
+   *
+   * @afterTermCreate
+   */
+  public function afterTermCreate(EntityScope $scope) {
+    if (!$term = $scope->getEntity()) {
+      throw new \Exception('Failed to find a term in @afterTermCreate hook.');
+    }
+  }
+
+  /**
+   * Test that a user is returned after user create.
+   *
+   * @afterUserCreate
+   */
+  public function afterUserCreate(EntityScope $scope) {
+    if (!$user = $scope->getEntity()) {
+      throw new \Exception('Failed to find a user in @afterUserCreate hook.');
     }
   }
 

@@ -2,6 +2,8 @@
 
 namespace Drupal;
 
+use Behat\Testwork\Environment\Environment;
+
 use Drupal\Driver\DriverInterface;
 use Drupal\Component\Utility\Random;
 
@@ -22,6 +24,13 @@ class Drupal {
    * @var array
    */
   private $drivers = array();
+
+  /**
+   * Behat environment.
+   *
+   * @var \Behat\Testwork\Environment\Environment
+   */
+  private $environment;
 
   /**
    * Initialize the driver manager.
@@ -96,4 +105,19 @@ class Drupal {
   public function getDrivers() {
     return $this->drivers;
   }
+
+  /**
+   * Sets the Behat Environment.
+   */
+  public function setEnvironment(Environment $environment) {
+    $this->environment = $environment;
+  }
+
+  /**
+   * Returns the Behat Environment.
+   */
+  public function getEnvironment() {
+    return $this->environment;
+  }
+
 }
