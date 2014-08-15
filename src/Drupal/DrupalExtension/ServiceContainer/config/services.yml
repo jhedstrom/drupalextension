@@ -13,6 +13,9 @@ parameters:
   # Context initializer.
   drupal.context.initializer.class: Drupal\DrupalExtension\Context\Initializer\DrupalAwareInitializer
 
+  # Environment reader.
+  drupal.context.environment.reader.class: Drupal\DrupalExtension\Context\Environment\Reader\Reader
+
   # Event listeners.
   drupal.listener.drivers.class: Drupal\DrupalExtension\Listener\DriverListener
 
@@ -50,6 +53,10 @@ services:
     class: %drupal.context.class_guesser.class%
     tags:
       - { name: behat.context.class_guesser }
+  drupal.context.environment.reader:
+    class: %drupal.context.environment.reader.class%
+    tags:
+      - { name: environment.reader }
   drupal.context.loader.annotated:
     class: %drupal.context.annotation.reader.class%
     arguments:

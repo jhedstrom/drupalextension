@@ -2,8 +2,10 @@
 
 namespace Drupal\DrupalExtension\ServiceContainer;
 
+use Behat\Behat\Context\ServiceContainer\ContextExtension;
 use Behat\Testwork\ServiceContainer\Extension as ExtensionInterface;
 use Behat\Testwork\ServiceContainer\ExtensionManager;
+use Behat\Testwork\ServiceContainer\ServiceProcessor;
 use Drupal\DrupalExtension\Compiler\DriverPass;
 use Drupal\DrupalExtension\Compiler\EventSubscriberPass;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
@@ -22,6 +24,20 @@ class DrupalExtension implements ExtensionInterface {
    * Selectors handler ID.
    */
   const SELECTORS_HANDLER_ID = 'drupal.selectors_handler';
+
+  /**
+   * @var ServiceProcessor
+   */
+  private $processor;
+
+  /**
+   * Initializes compiler pass.
+   *
+   * @param null|ServiceProcessor $processor
+   */
+  public function __construct(ServiceProcessor $processor = null) {
+    $this->processor = $processor ? : new ServiceProcessor();
+  }
 
   /**
    * {@inheritDoc}
@@ -88,6 +104,14 @@ class DrupalExtension implements ExtensionInterface {
 
     $driverPass->process($container);
     $eventSubscriberPass->process($container);
+
+    // Register Behat context readers.
+    $references = $this->processor->findAndSortTaggedServices($container, ContextExtension::READER_TAG);
+    $definition = $container->getDefinition('drupal.context.environment.reader');
+
+    foreach ($references as $reference) {
+      $definition->addMethodCall('registerContextReader', array($reference));
+    }
   }
 
   /**
