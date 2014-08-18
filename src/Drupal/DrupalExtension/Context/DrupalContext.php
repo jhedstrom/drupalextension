@@ -1393,19 +1393,19 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
-   * @Then /^drush output should contain "(?P<output>[^"]*)"$/
+   * @Then /^drush output should contain "(?P<output>(?:[^"]|\\")*)"$/
    */
   public function assertDrushOutput($output) {
-    if (strpos($this->readDrushOutput(), $output) === FALSE) {
+    if (strpos($this->readDrushOutput(), $this->fixStepArgument($output)) === FALSE) {
       throw new \Exception(sprintf("The last drush command output did not contain '%s'.\nInstead, it was:\n\n%s'", $output, $this->drushOutput));
     }
   }
 
   /**
-   * @Then /^drush output should not contain "(?P<output>[^"]*)"$/
+   * @Then /^drush output should not contain "(?P<output>(?:[^"]|\\")*)"$/
    */
   public function drushOutputShouldNotContain($output) {
-    if (strpos($this->readDrushOutput(), $output) !== FALSE) {
+    if (strpos($this->readDrushOutput(), $this->fixStepArgument($output)) !== FALSE) {
         throw new \Exception(sprintf("The last drush command output did contain '%s' although it should not.\nOutput:\n\n%s'", $output, $this->drushOutput));
     }
   }
