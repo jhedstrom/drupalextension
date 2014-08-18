@@ -37,14 +37,12 @@ The Drupal Extension 2.0 supports Drupal 7 and 8, and utilized Behat 3. For Drup
 
   ```
   default:
-    paths:
-      features: 'features'
     extensions:
-      Behat\MinkExtension\Extension:
+      Behat\MinkExtension:
         goutte: ~
         selenium2: ~
         base_url: http://git6site.devdrupal.org/
-      Drupal\DrupalExtension\Extension:
+      Drupal\DrupalExtension:
         blackbox: ~
   ```
 
