@@ -40,7 +40,7 @@ Feature: Ability to find Drupal sub-contexts
             subcontexts:
               paths: { foo: './' }
       """
-   When I run "behat --no-ansi -dl"
+   When I run "behat --no-colors -dl"
    Then the output should contain:
       """
       Then /^I should have a subcontext definition$/
