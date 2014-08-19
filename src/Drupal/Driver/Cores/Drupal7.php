@@ -307,7 +307,7 @@ class Drupal7 implements CoreInterface {
    * @param string $bundle
    *   Entity bundle.
    */
-  function expandEntityFields(\stdClass $entity, $entityType = 'node', $bundle = '') {
+  protected function expandEntityFields(\stdClass $entity, $entityType = 'node', $bundle = '') {
     if ($entityType === 'node' && !$bundle) {
       $bundle = $entity->type;
     }
