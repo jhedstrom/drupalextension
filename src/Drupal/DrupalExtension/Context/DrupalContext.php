@@ -92,25 +92,6 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   private $drushOutput;
 
   /**
-   * Initialize subcontexts.
-   *
-   * @param array $subcontexts
-   *   Array of sub-context class names to initiate, keyed by sub-context alias.
-   */
-  public function initializeSubContexts() {
-
-    $classes = get_declared_classes();
-    $subcontext_classes = array();
-    foreach ($classes as $class) {
-      $reflect = new \ReflectionClass($class);
-      if ($reflect->implementsInterface('Drupal\DrupalExtension\Context\DrupalSubContextInterface')) {
-        $alias = $class::getAlias();
-        $this->useContext($alias, new $class);
-      }
-    }
-  }
-
-  /**
    * Returns list of definition translation resources paths.
    *
    * @return array

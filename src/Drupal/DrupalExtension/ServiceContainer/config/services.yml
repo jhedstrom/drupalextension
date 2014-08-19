@@ -55,6 +55,9 @@ services:
       - { name: behat.context.class_guesser }
   drupal.context.environment.reader:
     class: %drupal.context.environment.reader.class%
+    arguments:
+      - @drupal.drupal
+      - %drupal.parameters%
     tags:
       - { name: environment.reader }
   drupal.context.loader.annotated:

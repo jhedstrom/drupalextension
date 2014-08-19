@@ -9,6 +9,11 @@ use Behat\Testwork\Environment\Environment;
 use Behat\Testwork\Environment\Exception\EnvironmentReadException;
 use Behat\Testwork\Environment\Reader\EnvironmentReader;
 
+use Drupal\Drupal;
+use Drupal\DrupalExtension\Context\DrupalSubContextFinderInterface;
+
+use Symfony\Component\Finder\Finder;
+
 /**
  * Read in additional contexts provided by core and contrib.
  */
@@ -19,6 +24,25 @@ final class Reader implements EnvironmentReader {
    */
   private $contextReaders = array();
 
+  /**
+   * Drupal driver manager.
+   *
+   * @var \Drupal\Drupal
+   */
+  private $drupal;
+
+  /**
+   * Configuration parameters for this suite.
+   */
+  private $parameters;
+
+  /**
+   * Register the Drupal driver manager.
+   */
+  public function __construct(Drupal $drupal, array $parameters) {
+    $this->drupal = $drupal;
+    $this->parameters = $parameters;
+  }
 
   /**
    * Registers context loader.
@@ -49,14 +73,13 @@ final class Reader implements EnvironmentReader {
     }
 
     $callees = array();
-    // @todo find contexts provided by core/contrib and call:
-    // foreach ($contextClasses as $contextClass) {
-    //
-    //  $callees = array_merge(
-    //    $callees,
-    //    $this->readContextCallees($environment, $contextClass)
-    //  );
-    //}
+    $contextClasses = $this->findSubContextClasses($environment);
+    foreach ($contextClasses as $contextClass) {
+      $callees = array_merge(
+        $callees,
+        $this->readContextCallees($environment, $contextClass)
+      );
+    }
 
     return $callees;
   }
@@ -81,4 +104,94 @@ final class Reader implements EnvironmentReader {
 
         return $callees;
     }
+
+  /**
+   * Finds and loads available subcontext classes.
+   */
+  private function findSubContextClasses(ContextEnvironment $environment) {
+    $class_names = array();
+
+    // Initialize any available sub-contexts.
+    if (isset($this->parameters['subcontexts'])) {
+      $paths = array();
+      // Drivers may specify paths to subcontexts.
+      if ($this->parameters['subcontexts']['autoload']) {
+        foreach ($this->drupal->getDrivers() as $name => $driver) {
+          if ($driver instanceof DrupalSubContextFinderInterface) {
+            $paths += $driver->getSubContextPaths();
+          }
+        }
+      }
+
+      // Additional subcontext locations may be specified manually in behat.yml.
+      if (isset($this->parameters['subcontexts']['paths'])) {
+        $paths = array_merge($paths, $this->parameters['subcontexts']['paths']);
+      }
+
+      // Load each class.
+      foreach ($paths as $path) {
+        if ($subcontexts = $this->findAvailableSubContexts($path)) {
+          $this->loadSubContexts($subcontexts);
+        }
+      }
+
+      // Find all subcontexts.
+      $classes = get_declared_classes();
+      $subcontext_classes = array();
+      foreach ($classes as $class) {
+        $reflect = new \ReflectionClass($class);
+        if ($reflect->implementsInterface('Drupal\DrupalExtension\Context\DrupalSubContextInterface')) {
+          $class_names[] = $class;
+        }
+      }
+
+    }
+
+    return $class_names;
+  }
+
+  /**
+   * Find Sub-contexts matching a given pattern located at the passed path.
+   *
+   * @param string $path
+   *   Absolute path to the directory to search for sub-contexts.
+   * @param string $pattern
+   *   File pattern to match. Defaults to `*.behat.inc`.
+   *
+   * @return array
+   *   An array of paths.
+   */
+  private function findAvailableSubContexts($path, $pattern = '*.behat.inc') {
+    $paths = array();
+
+    $finder = new Finder();
+    $iterator = $finder
+      ->files()
+      ->name($pattern)
+      ->in($path);
+
+    foreach ($iterator as $found) {
+      $paths[$found->getRealPath()] = $found->getFileName();
+    }
+
+    return $paths;
+  }
+
+  /**
+   * Load each subcontext file.
+   *
+   * @param array $subcontexts
+   *   An array of files to include.
+   */
+  private function loadSubContexts($subcontexts) {
+    foreach ($subcontexts as $path => $subcontext) {
+      if (!file_exists($path)) {
+        throw new \RuntimeException(sprintf('Subcontext path %s path does not exist.', $path));
+      }
+
+      // Load file.
+      require_once $path;
+    }
+  }
+
 }

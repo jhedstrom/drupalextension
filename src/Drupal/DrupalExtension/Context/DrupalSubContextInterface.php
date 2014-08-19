@@ -8,5 +8,5 @@ interface DrupalSubContextInterface {
    *
    * @return string
    */
-  public static function getAlias();
+  public function __construct(DrupalContext $context);
 }
