@@ -12,15 +12,34 @@ use Drupal\taxonomy\Entity\Term;
  * Drupal 8 core.
  */
 class Drupal8 implements CoreInterface {
+  /**
+   * System path to the Drupal installation.
+   *
+   * @var string
+   */
   private $drupalRoot;
+
+  /**
+   * URI for the Drupal installation.
+   *
+   * @var string
+   */
   private $uri;
 
   /**
-   * Set drupalRoot.
+   * Random generator.
+   *
+   * @var \Drupal\Component\Utility\Random
    */
-  public function __construct($drupalRoot, $uri = 'default') {
+  private $random;
+
+  /**
+   * {@inheritDoc}
+   */
+  public function __construct($drupalRoot, $uri = 'default', Random $random) {
     $this->drupalRoot = realpath($drupalRoot);
     $this->uri = $uri;
+    $this->random = $random;
   }
 
   /**

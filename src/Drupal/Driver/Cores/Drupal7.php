@@ -9,16 +9,34 @@ use Drupal\Exception\BootstrapException;
  * Drupal 7 core.
  */
 class Drupal7 implements CoreInterface {
+  /**
+   * System path to the Drupal installation.
+   *
+   * @var string
+   */
   private $drupalRoot;
+
+  /**
+   * URI for the Drupal installation.
+   *
+   * @var string
+   */
   private $uri;
+
+  /**
+   * Random generator.
+   *
+   * @var \Drupal\Component\Utility\Random
+   */
+  private $random;
 
   /**
    * Set drupalRoot.
    */
-  public function __construct($drupalRoot, $uri = 'default') {
+  public function __construct($drupalRoot, $uri = 'default', Random $random) {
     $this->drupalRoot = realpath($drupalRoot);
     $this->uri = $uri;
-    $this->random = new Random();
+    $this->random = $random;
   }
 
   /**
