@@ -8,13 +8,17 @@ Feature: Ability to find Drupal sub-contexts
       """
       <?php
 
-      use Drupal\DrupalExtension\Context\DrupalSubContextInterface;
-      use Behat\Behat\Context\BehatContext;
       use Behat\Behat\Exception\PendingException;
 
-      class FooFoo extends BehatContext implements DrupalSubContextInterface {
-        public static function getAlias() {
-          return 'foo';
+      use Drupal\DrupalExtension\Context\DrupalSubContextInterface;
+      use Drupal\DrupalExtension\Context\DrupalContext;
+
+      class FooFoo implements DrupalSubContextInterface {
+
+        private $drupalContext;
+
+        public function __construct(DrupalContext $context) {
+          $this->drupalContext = $context;
         }
 
         /**
@@ -30,6 +34,9 @@ Feature: Ability to find Drupal sub-contexts
     Given a file named "behat.yml" with:
       """
       default:
+        suites:
+          default:
+            contexts: [Drupal\DrupalExtension\Context\DrupalContext]
         extensions:
           Behat\MinkExtension:
             goutte: ~
