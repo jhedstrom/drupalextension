@@ -33,11 +33,11 @@ Feature: Ability to find Drupal sub-contexts
         paths:
           features: 'features'
         extensions:
-          Behat\MinkExtension\Extension:
+          Behat\MinkExtension:
             goutte: ~
             selenium2: ~
             base_url: http://drupal.org
-          Drupal\DrupalExtension\Extension:
+          Drupal\DrupalExtension:
             blackbox: ~
             subcontexts:
               paths: { foo: './' }
