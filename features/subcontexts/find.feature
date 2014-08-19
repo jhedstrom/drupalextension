@@ -30,8 +30,6 @@ Feature: Ability to find Drupal sub-contexts
     Given a file named "behat.yml" with:
       """
       default:
-        paths:
-          features: 'features'
         extensions:
           Behat\MinkExtension:
             goutte: ~
