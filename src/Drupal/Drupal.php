@@ -33,6 +33,13 @@ class Drupal {
   private $environment;
 
   /**
+   * Random generator.
+   *
+   * @var \Drupal\Component\Utility\Random
+   */
+  private $random;
+
+  /**
    * Initialize the driver manager.
    */
   public function __construct(array $drivers = array(), Random $random) {
