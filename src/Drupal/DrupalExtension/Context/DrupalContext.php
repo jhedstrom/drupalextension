@@ -31,12 +31,24 @@ use Behat\Mink\Driver\Selenium2Driver as Selenium2Driver;
  */
 class DrupalContext extends MinkContext implements DrupalAwareInterface, TranslatableContext {
 
-  private $drupal, $drupalParameters;
+  /**
+   * Drupal driver manager.
+   *
+   * @var \Drupal\Drupal
+   */
+  private $drupal;
+
+  /**
+   * Test parameters.
+   *
+   * @var array
+   */
+  private $drupalParameters;
 
   /**
    * Event dispatcher object.
    *
-   * @var \Symfony\Component\EventDispatcher\EventDispatcher
+   * @var \Behat\Testwork\Hook\HookDispatcher
    */
   protected $dispatcher;
 
