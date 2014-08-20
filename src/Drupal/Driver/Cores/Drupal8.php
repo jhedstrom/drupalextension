@@ -12,19 +12,38 @@ use Drupal\taxonomy\Entity\Term;
  * Drupal 8 core.
  */
 class Drupal8 implements CoreInterface {
+  /**
+   * System path to the Drupal installation.
+   *
+   * @var string
+   */
   private $drupalRoot;
+
+  /**
+   * URI for the Drupal installation.
+   *
+   * @var string
+   */
   private $uri;
 
   /**
-   * Set drupalRoot.
+   * Random generator.
+   *
+   * @var \Drupal\Component\Utility\Random
    */
-  public function __construct($drupalRoot, $uri = 'default') {
+  private $random;
+
+  /**
+   * {@inheritDoc}
+   */
+  public function __construct($drupalRoot, $uri = 'default', Random $random) {
     $this->drupalRoot = realpath($drupalRoot);
     $this->uri = $uri;
+    $this->random = $random;
   }
 
   /**
-   * Implements CoreInterface::bootstrap().
+   * {@inheritDoc}
    */
   public function bootstrap() {
     // Validate, and prepare environment for Drupal bootstrap.
@@ -47,7 +66,7 @@ class Drupal8 implements CoreInterface {
   }
 
   /**
-   * Implements CoreInterface::clearCache().
+   * {@inheritDoc}
    */
   public function clearCache() {
     // Need to change into the Drupal root directory or the registry explodes.
@@ -58,7 +77,7 @@ class Drupal8 implements CoreInterface {
   }
 
   /**
-   * Implements CoreInterface::nodeCreate().
+   * {@inheritDoc}
    */
   public function nodeCreate($node) {
     // Default status to 1 if not set.
@@ -74,7 +93,7 @@ class Drupal8 implements CoreInterface {
   }
 
   /**
-   * Implements CoreInterface::nodeDelete().
+   * {@inheritDoc}
    */
   public function nodeDelete($node) {
     $node = $node instanceof NodeInterface ? $node : Node::load($node->nid);
@@ -82,14 +101,14 @@ class Drupal8 implements CoreInterface {
   }
 
   /**
-   * Implements CoreInterface::runCron().
+   * {@inheritDoc}
    */
   public function runCron() {
     return \Drupal::service('cron')->run();
   }
 
   /**
-   * Implements CoreInterface::userCreate().
+   * {@inheritDoc}
    */
   public function userCreate(\stdClass $user) {
     $this->validateDrupalSite();
@@ -109,7 +128,7 @@ class Drupal8 implements CoreInterface {
   }
 
   /**
-   * Implements CoreInterface::roleCreate().
+   * {@inheritDoc}
    */
   public function roleCreate(array $permissions) {
     // Generate a random, lowercase machine name.
@@ -150,7 +169,7 @@ class Drupal8 implements CoreInterface {
   }
 
   /**
-   * Implements CoreInterface::roleDelete().
+   * {@inheritDoc}
    */
   public function roleDelete($rid) {
     $role = user_role_load($rid);
@@ -195,14 +214,14 @@ class Drupal8 implements CoreInterface {
   }
 
   /**
-   * Implements CoreInterface::userDelete().
+   * {@inheritDoc}
    */
   public function userDelete(\stdClass $user) {
     user_cancel(array(), $user->uid, 'user_cancel_delete');
   }
 
   /**
-   * Implements CoreInterface::userAddRole().
+   * {@inheritDoc}
    */
   public function userAddRole(\stdClass $user, $role_name) {
     // Allow both machine and human role names.
@@ -222,7 +241,7 @@ class Drupal8 implements CoreInterface {
   }
 
   /**
-   * Impelements CoreInterface::validateDrupalSite().
+   * {@inheritDoc}
    */
   public function validateDrupalSite() {
     if ('default' !== $this->uri) {
@@ -273,7 +292,7 @@ class Drupal8 implements CoreInterface {
   }
 
   /**
-   * Implements CoreInterface::termCreate.
+   * {@inheritDoc}
    */
   public function termCreate(\stdClass $term) {
     $term->vid = $term->vocabulary_machine_name;
@@ -285,7 +304,7 @@ class Drupal8 implements CoreInterface {
   }
 
   /**
-   * Implements CoreInterface::termDelete.
+   * {@inheritDoc}
    */
   public function termDelete(\stdClass $term) {
     $term = Term::load($term->tid);
