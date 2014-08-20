@@ -251,7 +251,6 @@ class Drupal7 implements CoreInterface {
       // If there's no url scheme set, add http:// and re-parse the url
       // so the host and path values are set accurately.
       if (!array_key_exists('scheme', $drupal_base_url)) {
-        $drush_uri = 'http://' . $this->uri;
         $drupal_base_url = parse_url($this->uri);
       }
       // Fill in defaults.

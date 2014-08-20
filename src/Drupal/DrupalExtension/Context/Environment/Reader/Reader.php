@@ -73,7 +73,7 @@ final class Reader implements EnvironmentReader {
     }
 
     $callees = array();
-    $contextClasses = $this->findSubContextClasses($environment);
+    $contextClasses = $this->findSubContextClasses();
     foreach ($contextClasses as $contextClass) {
       $callees = array_merge(
         $callees,
@@ -108,7 +108,7 @@ final class Reader implements EnvironmentReader {
   /**
    * Finds and loads available subcontext classes.
    */
-  private function findSubContextClasses(ContextEnvironment $environment) {
+  private function findSubContextClasses() {
     $class_names = array();
 
     // Initialize any available sub-contexts.
