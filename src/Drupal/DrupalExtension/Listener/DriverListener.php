@@ -16,7 +16,20 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  * Determines which Drupal driver to use for a given scenario or outline.
  */
 class DriverListener implements EventSubscriberInterface {
-  private $drupal, $parameters;
+
+  /**
+   * Drupal driver manager.
+   *
+   * @var \Drupal\Drupal
+   */
+  private $drupal;
+
+  /**
+   * Test parameters.
+   *
+   * @var array
+   */
+  private $parameters;
 
   public function __construct(Drupal $drupal, array $parameters) {
     $this->drupal = $drupal;
