@@ -2,6 +2,8 @@
 
 namespace Drupal\Driver\Cores;
 
+use Drupal\Component\Utility\Random;
+
 /**
  * Drupal core interface.
  */
@@ -13,8 +15,11 @@ interface CoreInterface {
    *
    * @param string $uri
    *   URI that is accessing Drupal. Defaults to 'default'.
+   *
+   * @param \Drupal\Component\Utility\Random $random
+   *   Random string generator.
    */
-  public function __construct($drupalRoot, $uri = 'default');
+  public function __construct($drupalRoot, $uri = 'default', Random $random);
 
   /**
    * Bootstrap Drupal.

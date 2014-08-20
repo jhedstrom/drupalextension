@@ -9,20 +9,38 @@ use Drupal\Exception\BootstrapException;
  * Drupal 7 core.
  */
 class Drupal7 implements CoreInterface {
+  /**
+   * System path to the Drupal installation.
+   *
+   * @var string
+   */
   private $drupalRoot;
+
+  /**
+   * URI for the Drupal installation.
+   *
+   * @var string
+   */
   private $uri;
 
   /**
-   * Set drupalRoot.
+   * Random generator.
+   *
+   * @var \Drupal\Component\Utility\Random
    */
-  public function __construct($drupalRoot, $uri = 'default') {
+  private $random;
+
+  /**
+   * {@inheritDoc}
+   */
+  public function __construct($drupalRoot, $uri = 'default', Random $random) {
     $this->drupalRoot = realpath($drupalRoot);
     $this->uri = $uri;
-    $this->random = new Random();
+    $this->random = $random;
   }
 
   /**
-   * Implements CoreInterface::bootstrap().
+   * {@inheritDoc}
    */
   public function bootstrap() {
     // Validate, and prepare environment for Drupal bootstrap.
@@ -44,7 +62,7 @@ class Drupal7 implements CoreInterface {
   }
 
   /**
-   * Implements CoreInterface::clearCache().
+   * {@inheritDoc}
    */
   public function clearCache() {
     // Need to change into the Drupal root directory or the registry explodes.
@@ -55,7 +73,7 @@ class Drupal7 implements CoreInterface {
   }
 
   /**
-   * Implements CoreInterface::nodeCreate().
+   * {@inheritDoc}
    */
   public function nodeCreate($node) {
     // Set original if not set.
@@ -84,7 +102,7 @@ class Drupal7 implements CoreInterface {
   }
 
   /**
-   * Implements CoreInterface::nodeDelete().
+   * {@inheritDoc}
    */
   public function nodeDelete($node) {
     node_delete($node->nid);
@@ -98,7 +116,7 @@ class Drupal7 implements CoreInterface {
   }
 
   /**
-   * Implements CoreInterface::userCreate().
+   * {@inheritDoc}
    */
   public function userCreate(\stdClass $user) {
     // Default status to TRUE if not explicitly creating a blocked user.
@@ -127,7 +145,7 @@ class Drupal7 implements CoreInterface {
   }
 
   /**
-   * Implements CoreInterface::userDelete().
+   * {@inheritDoc}
    */
   public function userDelete(\stdClass $user) {
     user_cancel(array(), $user->uid, 'user_cancel_delete');
@@ -140,7 +158,7 @@ class Drupal7 implements CoreInterface {
   }
 
   /**
-   * Implements CoreInterface::userAddRole().
+   * {@inheritDoc}
    */
   public function userAddRole(\stdClass $user, $role_name) {
     $role = user_role_load_by_name($role_name);
@@ -178,7 +196,7 @@ class Drupal7 implements CoreInterface {
   }
 
   /**
-   * Implements CoreInterface::roleCreate().
+   * {@inheritDoc}
    */
   public function roleCreate(array $permissions) {
 
@@ -217,14 +235,14 @@ class Drupal7 implements CoreInterface {
   }
 
   /**
-   * Implements CoreInterface::roleDelete().
+   * {@inheritDoc}
    */
   public function roleDelete($rid) {
     user_role_delete((int) $rid);
   }
 
   /**
-   * Impelements CoreInterface::validateDrupalSite().
+   * {@inheritDoc}
    */
   public function validateDrupalSite() {
     if ('default' !== $this->uri) {
@@ -289,7 +307,7 @@ class Drupal7 implements CoreInterface {
    * @param string $bundle
    *   Entity bundle.
    */
-  function expandEntityFields(\stdClass $entity, $entityType = 'node', $bundle = '') {
+  protected function expandEntityFields(\stdClass $entity, $entityType = 'node', $bundle = '') {
     if ($entityType === 'node' && !$bundle) {
       $bundle = $entity->type;
     }
@@ -377,8 +395,8 @@ class Drupal7 implements CoreInterface {
     }
   }
 
-  /*
-   * Implements CoreInterface::termCreate.
+  /**
+   * {@inheritDoc}
    */
   public function termCreate(\stdClass $term) {
     // Map vocabulary names to vid, these take precedence over machine names.
@@ -428,7 +446,7 @@ class Drupal7 implements CoreInterface {
   }
 
   /**
-   * Implements CoreInterface::termDelete.
+   * {@inheritDoc}
    */
   public function termDelete(\stdClass $term) {
     $status = 0;

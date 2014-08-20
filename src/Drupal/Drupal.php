@@ -24,6 +24,13 @@ class Drupal {
   private $drivers = array();
 
   /**
+   * Random generator.
+   *
+   * @var \Drupal\Component\Utility\Random
+   */
+  public $random;
+
+  /**
    * Initialize the driver manager.
    */
   public function __construct(array $drivers = array(), Random $random) {

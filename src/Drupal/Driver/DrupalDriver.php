@@ -27,6 +27,20 @@ class DrupalDriver implements DriverInterface, DrupalSubContextFinderInterface {
   public $core;
 
   /**
+   * System path to the Drupal installation.
+   *
+   * @var string
+   */
+  private $drupalRoot;
+
+  /**
+   * URI for the Drupal installation.
+   *
+   * @var string
+   */
+  private $uri;
+
+  /**
    * Drupal core version.
    *
    * @var numeric
@@ -132,7 +146,7 @@ class DrupalDriver implements DriverInterface, DrupalSubContextFinderInterface {
    * @see drush_drupal_version()
    */
   function getDrupalVersion() {
-    if (!isset($this->drupalVersion)) {
+    if (!isset($this->version)) {
       // Support 6, 7 and 8.
       $version_constant_paths = array(
         // Drupal 6.
@@ -166,13 +180,13 @@ class DrupalDriver implements DriverInterface, DrupalSubContextFinderInterface {
       // Extract the major version from VERSION.
       $version_parts = explode('.', $version);
       if (is_numeric($version_parts[0])) {
-        $this->drupalVersion = (integer) $version_parts[0];
+        $this->version = (integer) $version_parts[0];
       }
       else {
         throw new BootstrapException(sprintf('Unable to extract major Drupal core version from version string %s.', $version));
       }
     }
-    return $this->drupalVersion;
+    return $this->version;
   }
 
   /**

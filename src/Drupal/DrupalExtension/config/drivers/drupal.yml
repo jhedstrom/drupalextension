@@ -12,6 +12,7 @@ services:
     arguments:
       - %drupal.driver.drupal.drupal_root%
       - %behat.mink.base_url%
+      - @drupal.random
     tags:
       - { name: drupal.driver, alias: drupal }
   drupal.driver.cores.6:
@@ -28,6 +29,7 @@ services:
     arguments:
       - %drupal.driver.drupal.drupal_root%
       - %behat.mink.base_url%
+      - @drupal.random
   drupal.driver.cores.8:
     class: %drupal.driver.cores.8.class%
     tags:
@@ -35,3 +37,5 @@ services:
     arguments:
       - %drupal.driver.drupal.drupal_root%
       - %behat.mink.base_url%
+      - @drupal.random
+
