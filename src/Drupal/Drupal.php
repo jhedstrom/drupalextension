@@ -37,7 +37,7 @@ class Drupal {
    *
    * @var \Drupal\Component\Utility\Random
    */
-  private $random;
+  public $random;
 
   /**
    * Initialize the driver manager.
