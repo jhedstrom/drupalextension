@@ -22,6 +22,7 @@ services:
     arguments:
       - %drupal.driver.drupal.drupal_root%
       - %behat.mink.base_url%
+      - @drupal.random
   drupal.driver.cores.7:
     class: %drupal.driver.cores.7.class%
     tags:
