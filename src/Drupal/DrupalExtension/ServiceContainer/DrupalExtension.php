@@ -11,6 +11,7 @@ use Drupal\DrupalExtension\Compiler\EventSubscriberPass;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Loader\FileLoader;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
 class DrupalExtension implements ExtensionInterface {
@@ -60,39 +61,12 @@ class DrupalExtension implements ExtensionInterface {
     $loader->load('services.yml');
     $container->setParameter('drupal.drupal.default_driver', $config['default_driver']);
 
-    // Store config in parameters array to be passed into the DrupalContext.
-    $drupal_parameters = array();
-    foreach ($config as $key => $value) {
-      $drupal_parameters[$key] = $value;
-    }
-    $container->setParameter('drupal.parameters', $drupal_parameters);
-
-    $container->setParameter('drupal.region_map', $config['region_map']);
+    $this->loadParameters($container, $config);
 
     // Setup any drivers if requested.
-    if (isset($config['blackbox'])) {
-      $loader->load('drivers/blackbox.yml');
-    }
-
-    if (isset($config['drupal'])) {
-      $loader->load('drivers/drupal.yml');
-      $container->setParameter('drupal.driver.drupal.drupal_root', $config['drupal']['drupal_root']);
-    }
-
-    if (isset($config['drush'])) {
-      $loader->load('drivers/drush.yml');
-      if (!isset($config['drush']['alias']) && !isset($config['drush']['root'])) {
-        throw new \RuntimeException('Drush `alias` or `root` path is required for the Drush driver.');
-      }
-      $config['drush']['alias'] = isset($config['drush']['alias']) ? $config['drush']['alias'] : FALSE;
-      $container->setParameter('drupal.driver.drush.alias', $config['drush']['alias']);
-
-      $config['drush']['binary'] = isset($config['drush']['binary']) ? $config['drush']['binary'] : 'drush';
-      $container->setParameter('drupal.driver.drush.binary', $config['drush']['binary']);
-
-      $config['drush']['root'] = isset($config['drush']['root']) ? $config['drush']['root'] : FALSE;
-      $container->setParameter('drupal.driver.drush.root', $config['drush']['root']);
-    }
+    $this->loadBlackbox($loader, $config);
+    $this->loadDrupal($loader, $container, $config);
+    $this->loadDrush($loader, $container, $config);
   }
 
   /**
@@ -220,4 +194,58 @@ class DrupalExtension implements ExtensionInterface {
       end()->
     end();
   }
+
+  /**
+   * Load test parameters.
+   */
+  private function loadParameters(ContainerBuilder $container, array $config) {
+    // Store config in parameters array to be passed into the DrupalContext.
+    $drupal_parameters = array();
+    foreach ($config as $key => $value) {
+      $drupal_parameters[$key] = $value;
+    }
+    $container->setParameter('drupal.parameters', $drupal_parameters);
+
+    $container->setParameter('drupal.region_map', $config['region_map']);
+  }
+
+  /**
+   * Load the blackbox driver.
+   */
+  private function loadBlackBox(FileLoader $loader, array $config) {
+    if (isset($config['blackbox'])) {
+      $loader->load('drivers/blackbox.yml');
+    }
+  }
+
+  /**
+   * Load the Drupal driver.
+   */
+  private function loadDrupal(FileLoader $loader, ContainerBuilder $container, array $config) {
+    if (isset($config['drupal'])) {
+      $loader->load('drivers/drupal.yml');
+      $container->setParameter('drupal.driver.drupal.drupal_root', $config['drupal']['drupal_root']);
+    }
+  }
+
+  /**
+   * Load the Drush driver.
+   */
+  private function loadDrush(FileLoader $loader, ContainerBuilder $container, array $config) {
+    if (isset($config['drush'])) {
+      $loader->load('drivers/drush.yml');
+      if (!isset($config['drush']['alias']) && !isset($config['drush']['root'])) {
+        throw new \RuntimeException('Drush `alias` or `root` path is required for the Drush driver.');
+      }
+      $config['drush']['alias'] = isset($config['drush']['alias']) ? $config['drush']['alias'] : FALSE;
+      $container->setParameter('drupal.driver.drush.alias', $config['drush']['alias']);
+
+      $config['drush']['binary'] = isset($config['drush']['binary']) ? $config['drush']['binary'] : 'drush';
+      $container->setParameter('drupal.driver.drush.binary', $config['drush']['binary']);
+
+      $config['drush']['root'] = isset($config['drush']['root']) ? $config['drush']['root'] : FALSE;
+      $container->setParameter('drupal.driver.drush.root', $config['drush']['root']);
+    }
+  }
+
 }
