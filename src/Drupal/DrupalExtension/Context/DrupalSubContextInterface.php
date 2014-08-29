@@ -2,11 +2,18 @@
 
 namespace Drupal\DrupalExtension\Context;
 
-interface DrupalSubContextInterface {
+use Behat\Behat\Context\Context;
+
+use Drupal\Drupal;
+
+interface DrupalSubContextInterface extends Context {
   /**
-   * Return a unique alias for this sub-context.
+   * Instantiates the subcontext.
+   *
+   * @param \Drupal\Drupal
+   *   The Drupal Driver manager.
    *
    * @return string
    */
-  public function __construct(DrupalContext $context);
+  public function __construct(Drupal $context);
 }

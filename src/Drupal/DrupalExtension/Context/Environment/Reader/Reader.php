@@ -74,11 +74,17 @@ final class Reader implements EnvironmentReader {
 
     $callees = array();
     $contextClasses = $this->findSubContextClasses();
+
     foreach ($contextClasses as $contextClass) {
       $callees = array_merge(
         $callees,
         $this->readContextCallees($environment, $contextClass)
       );
+
+      // Register context.
+      if ($environment instanceof UninitializedContextEnvironment) {
+        $environment->registerContextClass($contextClass, array($this->drupal));
+      }
     }
 
     return $callees;

@@ -11,14 +11,14 @@ Feature: Ability to find Drupal sub-contexts
       use Behat\Behat\Exception\PendingException;
 
       use Drupal\DrupalExtension\Context\DrupalSubContextInterface;
-      use Drupal\DrupalExtension\Context\DrupalContext;
+      use Drupal\Drupal;
 
       class FooFoo implements DrupalSubContextInterface {
 
-        private $drupalContext;
+        private $drupal;
 
-        public function __construct(DrupalContext $context) {
-          $this->drupalContext = $context;
+        public function __construct(Drupal $drupal) {
+          $this->drupal = $drupal;
         }
 
         /**
@@ -29,9 +29,14 @@ Feature: Ability to find Drupal sub-contexts
         }
       }
       """
+    And a file named "features/foo.feature" with:
+      """
+      Feature: Test foo subcontext
 
-  Scenario: Step-definitions in sub-contexts are available
-    Given a file named "behat.yml" with:
+        Scenario: Test foo subcontext
+          Given I should have a subcontext definition
+      """
+    And a file named "behat.yml" with:
       """
       default:
         suites:
@@ -47,8 +52,17 @@ Feature: Ability to find Drupal sub-contexts
             subcontexts:
               paths: { foo: './' }
       """
+
+  Scenario: Step-definitions in sub-contexts are available
    When I run "behat --no-colors -dl"
    Then the output should contain:
       """
       Then /^I should have a subcontext definition$/
       """
+
+ Scenario: Subcontext can be instantiated
+   When I run "behat --no-colors"
+   Then the output should contain:
+     """
+     fooxdsfsfd
+     """
