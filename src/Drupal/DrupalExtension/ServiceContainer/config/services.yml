@@ -19,9 +19,6 @@ parameters:
   # Event listeners.
   drupal.listener.drivers.class: Drupal\DrupalExtension\Listener\DriverListener
 
-  # Context class guesser.
-  drupal.context.class_guesser.class: Drupal\DrupalExtension\Context\ClassGuesser\DrupalContextClassGuesser
-
   # Hook loader.
   drupal.context.annotation.reader.class: Drupal\DrupalExtension\Context\Annotation\Reader
 
@@ -49,10 +46,6 @@ services:
       - @hook.dispatcher
     tags:
       - { name: context.initializer }
-  drupal.context.class_guesser:
-    class: %drupal.context.class_guesser.class%
-    tags:
-      - { name: behat.context.class_guesser }
   drupal.context.environment.reader:
     class: %drupal.context.environment.reader.class%
     arguments:
