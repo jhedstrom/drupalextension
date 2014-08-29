@@ -197,11 +197,12 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
     return $regionObj;
   }
 
-
   /**
    * Run before every scenario.
    *
    * @BeforeScenario
+   *
+   * @todo move this elsewhere
    */
   public function beforeScenario($event) {
     if (isset($this->basic_auth)) {
@@ -251,6 +252,51 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
         $this->getDriver()->roleDelete($rid);
       }
     }
+  }
+
+  /**
+   * Helper function to create a node.
+   *
+   * @return object
+   *   The created node.
+   */
+  public function nodeCreate($node) {
+    // @todo this doesn't properly throw exceptions.
+    $this->dispatcher->dispatchScopeHooks(new BeforeNodeCreateScope($this->getDrupal()->getEnvironment(), $this, $node));
+    $saved = $this->getDriver()->createNode($node);
+    $this->dispatcher->dispatchScopeHooks(new AfterNodeCreateScope($this->getDrupal()->getEnvironment(), $this, $saved));
+    $this->nodes[] = $saved;
+    return $saved;
+  }
+
+  /**
+   * Helper function to create a user.
+   *
+   * @return object
+   *   The created user.
+   */
+  public function userCreate($user) {
+    // @todo this doesn't properly throw exceptions.
+    $this->dispatcher->dispatchScopeHooks(new BeforeUserCreateScope($this->getDrupal()->getEnvironment(), $this, $user));
+    $this->getDriver()->userCreate($user);
+    $this->dispatcher->dispatchScopeHooks(new AfterUserCreateScope($this->getDrupal()->getEnvironment(), $this, $user));
+    $this->users[$user->name] = $this->user = $user;
+    return $user;
+  }
+
+  /**
+   * Helper function to create a term.
+   *
+   * @return object
+   *   The created term.
+   */
+  public function termCreate($term) {
+    // @todo this doesn't properly throw exceptions.
+    $this->dispatcher->dispatchScopeHooks(new BeforeTermCreateScope($this->getDrupal()->getEnvironment(), $this, $term));
+    $saved = $this->getDriver()->createTerm($term);
+    $this->dispatcher->dispatchScopeHooks(new AfterTermCreateScope($this->getDrupal()->getEnvironment(), $this, $saved));
+    $this->terms[] = $saved;
+    return $saved;
   }
 
   /**
@@ -478,7 +524,8 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
     if (is_string($char)) {
       if (strlen($char) < 1) {
         throw new \Exception('FeatureContext->keyPress($char, $field) was invoked but the $char parameter was empty.');
-      } else if (strlen($char) > 1) {
+      }
+      elseif (strlen($char) > 1) {
         // Support for all variations, e.g. ESC, Esc, page up, pageup.
         $char = $keys[strtolower(str_replace(' ', '', $char))];
       }
@@ -826,13 +873,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
     );
     $user->mail = "{$user->name}@example.com";
 
-
-    // Create a new user.
-    $this->dispatcher->dispatchScopeHooks(new BeforeUserCreateScope($this->getDrupal()->getEnvironment(), $this, $user));
-    $this->getDriver()->userCreate($user);
-    $this->dispatcher->dispatchScopeHooks(new AfterUserCreateScope($this->getDrupal()->getEnvironment(), $this, $user));
-
-    $this->users[$user->name] = $this->user = $user;
+    $this->userCreate($user);
 
     if ($role == 'authenticated user') {
       // Nothing to do.
@@ -870,8 +911,9 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
 
     $rid = $this->getDriver()->roleCreate($permissions);
     if (!$rid) {
-      return FALSE;
+      throw new \Exception(sprintf('No role with permissions (%s) was created!', implode(', ', $permissions)));
     }
+
     // Create user.
     $user = (object) array(
       'name' => $this->getDrupal()->random->name(8),
@@ -880,18 +922,11 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
     );
     $user->mail = "{$user->name}@example.com";
 
-    // Create a new user.
-    $this->dispatcher->dispatchScopeHooks(new BeforeUserCreateScope($this->getDrupal()->getEnvironment(), $this, $user));
-    $this->getDriver()->userCreate($user);
-    $this->dispatcher->dispatchScopeHooks(new AfterUserCreateScope($this->getDrupal()->getEnvironment(), $this, $user));
-
-    $this->users[] = $this->user = $user;
+    $this->userCreate($user);
     $this->roles[] = $rid;
 
     // Login.
     $this->login();
-
-    return TRUE;
   }
 
   /**
@@ -957,11 +992,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
       'type' => $type,
       'body' => $this->getDrupal()->random->string(255),
     );
-    $this->dispatcher->dispatchScopeHooks(new BeforeNodeCreateScope($this->getDrupal()->getEnvironment(), $this, $node));
-    $saved = $this->getDriver()->createNode($node);
-    $this->dispatcher->dispatchScopeHooks(new AfterNodeCreateScope($this->getDrupal()->getEnvironment(), $this, $saved));
-    $this->nodes[] = $saved;
-
+    $saved = $this->nodeCreate($node);
     // Set internal page on the new node.
     $this->getSession()->visit($this->locatePath('/node/' . $saved->nid));
   }
@@ -980,11 +1011,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
       'body' => $this->getDrupal()->random->string(255),
       'uid' => $this->user->uid,
     );
-    // @todo this doesn't properly throw exceptions.
-    $this->dispatcher->dispatchScopeHooks(new BeforeNodeCreateScope($this->getDrupal()->getEnvironment(), $this, $node));
-    $saved = $this->getDriver()->createNode($node);
-    $this->dispatcher->dispatchScopeHooks(new AfterNodeCreateScope($this->getDrupal()->getEnvironment(), $this, $saved));
-    $this->nodes[] = $saved;
+    $saved = $this->nodeCreate($node);
 
     // Set internal page on the new node.
     $this->getSession()->visit($this->locatePath('/node/' . $saved->nid));
@@ -997,11 +1024,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
     foreach ($nodesTable->getHash() as $nodeHash) {
       $node = (object) $nodeHash;
       $node->type = $type;
-      // @todo this doesn't properly throw exceptions.
-      $this->dispatcher->dispatchScopeHooks(new BeforeNodeCreateScope($this->getDrupal()->getEnvironment(), $this, $node));
-      $saved = $this->getDriver()->createNode($node);
-      $this->dispatcher->dispatchScopeHooks(new AfterNodeCreateScope($this->getDrupal()->getEnvironment(), $this, $saved));
-      $this->nodes[] = $saved;
+      $this->nodeCreate($node);
     }
   }
 
@@ -1016,10 +1039,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
       $node->{$field} = $value;
     }
 
-    $this->dispatcher->dispatchScopeHooks(new BeforeNodeCreateScope($this->getDrupal()->getEnvironment(), $this, $node));
-    $saved = $this->getDriver()->createNode($node);
-    $this->dispatcher->dispatchScopeHooks(new AfterNodeCreateScope($this->getDrupal()->getEnvironment(), $this, $saved));
-    $this->nodes[] = $saved;
+    $saved = $this->nodeCreate($node);
 
     // Set internal browser on the node.
     $this->getSession()->visit($this->locatePath('/node/' . $saved->nid));
@@ -1032,8 +1052,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    */
   public function assertEditNodeOfType($type) {
     $node = (object) array('type' => $type);
-    $saved = $this->getDriver()->createNode($node);
-    $this->nodes[] = $saved;
+    $saved = $this->nodeCreate($node);
 
     // Set internal browser on the node edit page.
     $this->getSession()->visit($this->locatePath('/node/' . $saved->nid . '/edit'));
@@ -1054,10 +1073,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
       'vocabulary_machine_name' => $vocabulary,
       'description' => $this->getDrupal()->random->string(255),
     );
-    $this->dispatcher->dispatchScopeHooks(new BeforeTermCreateScope($this->getDrupal()->getEnvironment(), $this, $term));
-    $saved = $this->getDriver()->createTerm($term);
-    $this->dispatcher->dispatchScopeHooks(new AfterTermCreateScope($this->getDrupal()->getEnvironment(), $this, $saved));
-    $this->terms[] = $saved;
+    $saved = $this->termCreate($term);
 
     // Set internal page on the term.
     $this->getSession()->visit($this->locatePath('/taxonomy/term/' . $saved->tid));
@@ -1089,11 +1105,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
         $user->pass = $this->getDrupal()->random->name();
       }
 
-      $this->dispatcher->dispatchScopeHooks(new BeforeUserCreateScope($this->getDrupal()->getEnvironment(), $this, $user));
-      $this->getDriver()->userCreate($user);
-      $this->dispatcher->dispatchScopeHooks(new AfterUserCreateScope($this->getDrupal()->getEnvironment(), $this, $user));
-
-      $this->users[$user->name] = $user;
+      $this->userCreate($user);
     }
   }
 
@@ -1104,10 +1116,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
     foreach ($termsTable->getHash() as $termsHash) {
       $term = (object) $termsHash;
       $term->vocabulary_machine_name = $vocabulary;
-      $this->dispatcher->dispatchScopeHooks(new BeforeTermCreateScope($this->getDrupal()->getEnvironment(), $this, $term));
-      $saved = $this->getDriver()->createTerm($term);
-      $this->dispatcher->dispatchScopeHooks(new AfterTermCreateScope($this->getDrupal()->getEnvironment(), $this, $saved));
-      $this->terms[] = $saved;
+      $this->termCreate($term);
     }
   }
 
