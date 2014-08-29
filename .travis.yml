@@ -34,6 +34,7 @@ before_script:
   - sleep 4s
 
 script:
+  - vendor/bin/phpspec run -f pretty --no-interaction
   - vendor/bin/behat -fprogress
   - vendor/bin/behat -fprogress --profile=drupal7
   - vendor/bin/behat -fprogress --profile=drush

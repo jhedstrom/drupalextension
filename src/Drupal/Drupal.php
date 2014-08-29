@@ -127,4 +127,12 @@ class Drupal {
     return $this->environment;
   }
 
+  /**
+   * Returns random generator.
+   *
+   * @return \Drupal\Component\Utility\Random
+   */
+  public function getRandom() {
+    return $this->random;
+  }
 }
