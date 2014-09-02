@@ -73,19 +73,9 @@ class DrupalExtension implements ExtensionInterface {
    * {@inheritDoc}
    */
   public function process(ContainerBuilder $container) {
-    $driverPass = new DriverPass();
-    $eventSubscriberPass = new EventSubscriberPass();
-
-    $driverPass->process($container);
-    $eventSubscriberPass->process($container);
-
-    // Register Behat context readers.
-    $references = $this->processor->findAndSortTaggedServices($container, ContextExtension::READER_TAG);
-    $definition = $container->getDefinition('drupal.context.environment.reader');
-
-    foreach ($references as $reference) {
-      $definition->addMethodCall('registerContextReader', array($reference));
-    }
+    $this->processDriverPass($container);
+    $this->processEventSubscriberPass($container);
+    $this->processEnvironmentReaderPass($container);
   }
 
   /**
@@ -245,6 +235,35 @@ class DrupalExtension implements ExtensionInterface {
 
       $config['drush']['root'] = isset($config['drush']['root']) ? $config['drush']['root'] : FALSE;
       $container->setParameter('drupal.driver.drush.root', $config['drush']['root']);
+    }
+  }
+
+  /**
+   * Process the Driver Pass.
+   */
+  private function processDriverPass(ContainerBuilder $container){
+    $driverPass = new DriverPass();
+    $driverPass->process($container);
+  }
+
+  /**
+   * Process the Event Subscriber Pass.
+   */
+  private function processEventSubscriberPass(ContainerBuilder $container){
+    $eventSubscriberPass = new EventSubscriberPass();
+    $eventSubscriberPass->process($container);
+  }
+
+  /**
+   * Process the Environment Reader pass.
+   */
+  private function processEnvironmentReaderPass(ContainerBuilder $container){
+    // Register Behat context readers.
+    $references = $this->processor->findAndSortTaggedServices($container, ContextExtension::READER_TAG);
+    $definition = $container->getDefinition('drupal.context.environment.reader');
+
+    foreach ($references as $reference) {
+      $definition->addMethodCall('registerContextReader', array($reference));
     }
   }
 
