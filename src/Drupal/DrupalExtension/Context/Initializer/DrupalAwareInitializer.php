@@ -37,12 +37,6 @@ class DrupalAwareInitializer implements ContextInitializer {
 
     // Add all parameters to the context.
     $context->setDrupalParameters($this->parameters);
-
-    // Add commonly used parameters as proper class variables.
-    if (isset($this->parameters['basic_auth'])) {
-      $context->basic_auth = $this->parameters['basic_auth'];
-    }
-
   }
 
 }
