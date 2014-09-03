@@ -204,7 +204,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    *
    * @todo move this elsewhere
    */
-  public function beforeScenario($event) {
+  public function beforeScenario() {
     if (isset($this->basic_auth)) {
       $driver = $this->getSession()->getDriver();
       if ($driver instanceof Selenium2Driver) {
@@ -219,18 +219,23 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
-   * Run after every scenario.
+   * Remove any created nodes.
    *
    * @AfterScenario
    */
-  public function afterScenario($event) {
+  public function cleanNodes() {
     // Remove any nodes that were created.
-    if (!empty($this->nodes)) {
-      foreach ($this->nodes as $node) {
-        $this->getDriver()->nodeDelete($node);
-      }
+    foreach ($this->nodes as $node) {
+      $this->getDriver()->nodeDelete($node);
     }
+  }
 
+  /**
+   * Remove any created users.
+   *
+   * @AfterScenario
+   */
+  public function cleanUsers() {
     // Remove any users that were created.
     if (!empty($this->users)) {
       foreach ($this->users as $user) {
@@ -238,19 +243,29 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
       }
       $this->getDriver()->processBatch();
     }
+  }
 
+  /**
+   * Remove any created terms.
+   *
+   * @AfterScenario
+   */
+  public function cleanTerms() {
     // Remove any terms that were created.
-    if (!empty($this->terms)) {
-      foreach ($this->terms as $term) {
-        $this->getDriver()->termDelete($term);
-      }
+    foreach ($this->terms as $term) {
+      $this->getDriver()->termDelete($term);
     }
+  }
 
+  /**
+   * Remove any created roles.
+   *
+   * @AfterScenario
+   */
+  public function cleanRoles () {
     // Remove any roles that were created.
-    if (!empty($this->roles)) {
-      foreach ($this->roles as $rid) {
-        $this->getDriver()->roleDelete($rid);
-      }
+    foreach ($this->roles as $rid) {
+      $this->getDriver()->roleDelete($rid);
     }
   }
 

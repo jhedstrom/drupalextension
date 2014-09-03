@@ -137,7 +137,6 @@ final class Reader implements EnvironmentReader {
 
       // Find all subcontexts.
       $classes = get_declared_classes();
-      $subcontext_classes = array();
       foreach ($classes as $class) {
         $reflect = new \ReflectionClass($class);
         if ($reflect->implementsInterface('Drupal\DrupalExtension\Context\DrupalSubContextInterface')) {

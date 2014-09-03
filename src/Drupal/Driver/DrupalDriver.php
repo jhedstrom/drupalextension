@@ -120,8 +120,6 @@ class DrupalDriver implements DriverInterface, DrupalSubContextFinderInterface {
       $this->bootstrap();
     }
 
-    $paths = array();
-
     // Get enabled modules.
     $modules = \module_list();
     $paths = array();
