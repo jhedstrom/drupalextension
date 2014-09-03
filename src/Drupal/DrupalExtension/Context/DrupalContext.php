@@ -834,7 +834,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    * @When /^I select the radio button "(?P<label>[^"]*)"$/
    * @TODO convert to mink extension.
    */
-  public function assertSelectRadioById($label, $id = FALSE) {
+  public function assertSelectRadioById($label, $id = '') {
     $element = $this->getSession()->getPage();
     $radiobutton = $id ? $element->findById($id) : $element->find('named', array('radio', $this->getSession()->getSelectorsHandler()->xpathLiteral($label)));
     if ($radiobutton === NULL) {
