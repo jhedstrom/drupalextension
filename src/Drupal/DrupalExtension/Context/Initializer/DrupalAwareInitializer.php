@@ -29,9 +29,6 @@ class DrupalAwareInitializer implements ContextInitializer {
       return;
     }
 
-    // Store for reference during scenario/outline setup.
-    $this->context = $context;
-
     // Set Drupal driver manager.
     $context->setDrupal($this->drupal);
 
