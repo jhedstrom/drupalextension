@@ -3,9 +3,9 @@
 namespace Drupal\Driver\Cores;
 
 use Drupal\Component\Utility\Random;
-use Drupal\Component\Utility\Settings;
 use Drupal\Exception\BootstrapException;
 use Drupal\node\Entity\Node;
+use Drupal\node\NodeInterface;
 use Drupal\taxonomy\Entity\Term;
 
 /**
@@ -132,10 +132,10 @@ class Drupal8 implements CoreInterface {
    */
   public function roleCreate(array $permissions) {
     // Generate a random, lowercase machine name.
-    $rid = strtolower(Random::name(8, TRUE));
+    $rid = strtolower($this->random->name(8, TRUE));
 
     // Generate a random label.
-    $name = trim(Random::name(8, TRUE));
+    $name = trim($this->random->name(8, TRUE));
 
     // Check the all the permissions strings are valid.
     if (!$this->checkPermissions($permissions)) {
@@ -201,7 +201,7 @@ class Drupal8 implements CoreInterface {
     $available = &drupal_static(__FUNCTION__);
 
     if (!isset($available) || $reset) {
-      $available = array_keys(module_invoke_all('permission'));
+      $available = array_keys(\Drupal::moduleHandler()->invokeAll('permission'));
     }
 
     $valid = TRUE;
