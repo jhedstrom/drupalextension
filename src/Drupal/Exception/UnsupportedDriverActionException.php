@@ -4,18 +4,8 @@ namespace Drupal\Exception;
 
 use Drupal\Driver\DriverInterface;
 
-/*
- * This file is part of the Behat\Mink.
- * (c) Konstantin Kudryashov <ever.zet@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 /**
- * Mink "element not found" exception.
- *
- * @author Konstantin Kudryashov <ever.zet@gmail.com>
+ * Unsupported driver action.
  */
 class UnsupportedDriverActionException extends Exception {
   /**
@@ -25,12 +15,14 @@ class UnsupportedDriverActionException extends Exception {
    *   What is unsupported?
    * @param DriverInterface $driver
    *   Driver instance.
+   * @param integer $code
+   *   The exception code.
    * @param \Exception $previous
    *   Previous exception.
    */
-  public function __construct($template, DriverInterface $driver, \Exception $previous = null) {
+  public function __construct($template, DriverInterface $driver, $code = 0, \Exception $previous = null) {
     $message = sprintf($template, get_class($driver));
 
-    parent::__construct($message, $driver, $previous);
+    parent::__construct($message, $driver, $code, $previous);
   }
 }
