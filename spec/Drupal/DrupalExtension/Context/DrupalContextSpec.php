@@ -17,6 +17,11 @@ class DrupalContextSpec extends ObjectBehavior
         $this->shouldHaveType('Drupal\DrupalExtension\Context\DrupalContext');
     }
 
+    function it_is_a_translatable_context()
+    {
+        $this->shouldHaveType('Behat\Behat\Context\TranslatableContext');
+    }
+
     function it_can_set_and_get_drupal_manager(Drupal $drupal)
     {
         $this->setDrupal($drupal);
