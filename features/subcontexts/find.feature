@@ -8,7 +8,7 @@ Feature: Ability to find Drupal sub-contexts
       """
       <?php
 
-      use Behat\Behat\Exception\PendingException;
+      use Behat\Behat\Tester\Exception\PendingException;
 
       use Drupal\DrupalExtension\Context\DrupalSubContextInterface;
       use Drupal\Drupal;
@@ -64,5 +64,5 @@ Feature: Ability to find Drupal sub-contexts
    When I run "behat --no-colors"
    Then the output should contain:
      """
-     fooxdsfsfd
+     TODO: write pending definition
      """

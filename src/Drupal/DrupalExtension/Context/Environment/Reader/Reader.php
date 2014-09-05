@@ -2,6 +2,7 @@
 
 namespace Drupal\DrupalExtension\Context\Environment\Reader;
 
+use Behat\Behat\Context\Environment\UninitializedContextEnvironment;
 use Behat\Behat\Context\Environment\ContextEnvironment;
 use Behat\Behat\Context\Reader\ContextReader;
 use Behat\Testwork\Call\Callee;
@@ -73,6 +74,10 @@ final class Reader implements EnvironmentReader {
     }
 
     $callees = array();
+    if (!$environment instanceof UninitializedContextEnvironment) {
+      return $callees;
+    }
+
     $contextClasses = $this->findSubContextClasses();
 
     foreach ($contextClasses as $contextClass) {
@@ -82,9 +87,7 @@ final class Reader implements EnvironmentReader {
       );
 
       // Register context.
-      if ($environment instanceof UninitializedContextEnvironment) {
-        $environment->registerContextClass($contextClass, array($this->drupal));
-      }
+      $environment->registerContextClass($contextClass, array($this->drupal));
     }
 
     return $callees;
