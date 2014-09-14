@@ -19,6 +19,13 @@ use Symfony\Component\Finder\Finder;
 class DrupalAwareInitializer implements InitializerInterface, EventSubscriberInterface {
   private $drupal, $parameters, $dispatcher;
 
+  /**
+   * Statically cached lists of subcontexts by path.
+   *
+   * @var array
+   */
+  static protected $subContexts;
+
   public function __construct(Drupal $drupal, array $parameters, EventDispatcher $dispatcher) {
     $this->drupal = $drupal;
     $this->parameters = $parameters;
@@ -145,7 +152,12 @@ class DrupalAwareInitializer implements InitializerInterface, EventSubscriberInt
    *   An array of paths.
    */
   public function findAvailableSubContexts($path, $pattern = '*.behat.inc') {
-    $paths = array();
+
+    if (isset(static::$subContexts[$pattern][$path])) {
+      return static::$subContexts[$pattern][$path];
+    }
+
+    static::$subContexts[$pattern][$path] = array();
 
     $finder = new Finder();
     $iterator = $finder
@@ -154,9 +166,9 @@ class DrupalAwareInitializer implements InitializerInterface, EventSubscriberInt
       ->in($path);
 
     foreach ($iterator as $found) {
-      $paths[$found->getRealPath()] = $found->getFileName();
+      static::$subContexts[$pattern][$path][$found->getRealPath()] = $found->getFileName();
     }
 
-    return $paths;
+    return static::$subContexts[$pattern][$path];
   }
 }
