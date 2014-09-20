@@ -60,7 +60,7 @@ class Drupal8 implements CoreInterface {
     drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
 
     // Initialise an anonymous session. required for the bootstrap.
-    \Drupal::service('session_manager')->startLazy();
+    \Drupal::service('session_manager')->start();
 
     chdir($current_path);
   }
