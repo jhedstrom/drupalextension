@@ -162,7 +162,7 @@ The Drupal Extension 2.0 supports Drupal 7 and 8, and utilized Behat 3. For Drup
 
  * [Behat documentation](http://docs.behat.org)
  * [Mink documentation](http://mink.behat.org)
- * [Drupal Extension documentation](http://dspeak.com/drupalextension)
+ * [Drupal Extension documentation](http://behat-drupal-extension.readthedocs.org)
 
 ## Examples and code snippets
 
