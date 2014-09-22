@@ -38,6 +38,13 @@ final class Reader implements EnvironmentReader {
   private $parameters;
 
   /**
+   * Statically cached lists of subcontexts by path.
+   *
+   * @var array
+   */
+  static protected $subContexts;
+
+  /**
    * Register the Drupal driver manager.
    */
   public function __construct(Drupal $drupal, array $parameters) {
@@ -170,7 +177,12 @@ final class Reader implements EnvironmentReader {
    *   An array of paths.
    */
   private function findAvailableSubContexts($path, $pattern = '*.behat.inc') {
-    $paths = array();
+
+    if (isset(static::$subContexts[$pattern][$path])) {
+      return static::$subContexts[$pattern][$path];
+    }
+
+    static::$subContexts[$pattern][$path] = array();
 
     $finder = new Finder();
     $iterator = $finder
@@ -179,10 +191,10 @@ final class Reader implements EnvironmentReader {
       ->in($path);
 
     foreach ($iterator as $found) {
-      $paths[$found->getRealPath()] = $found->getFileName();
+      static::$subContexts[$pattern][$path][$found->getRealPath()] = $found->getFileName();
     }
 
-    return $paths;
+    return static::$subContexts[$pattern][$path];
   }
 
   /**
