@@ -181,3 +181,4 @@ Drupal Extension 1.0 supports Behat 2.4, and Drupal 6 and 7 (with Drupal 8 suppo
  * [Complex node creation, with field collections and entity references](https://gist.github.com/jhedstrom/5708233)
  * [Achievements module support](https://gist.github.com/jhedstrom/9633067)
  * [Drupal form element visibility](https://gist.github.com/pbuyle/7698675)
+ * [Track down PHP notices](https://www.godel.com.au/blog/use-behat-track-down-php-notices-they-take-over-your-drupal-site-forever)
