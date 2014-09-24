@@ -1425,6 +1425,13 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
+   * @Then /^print last drush output$/
+   */
+  public function printLastDrushOutput() {
+    echo $this->readDrushOutput();
+  }
+
+  /**
    * @} End of defgroup "drush steps"
    */
   /**
