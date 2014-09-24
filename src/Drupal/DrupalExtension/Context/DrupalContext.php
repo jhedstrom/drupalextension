@@ -50,7 +50,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    *
    * @var array
    */
-  public $nodes = array();
+  protected $nodes = array();
 
   /**
    * Current authenticated user.
@@ -59,7 +59,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    *
    * @var mixed
    */
-  public $user = FALSE;
+  protected $user = FALSE;
 
   /**
    * Keep track of all users that are created so they can easily be removed.
@@ -73,14 +73,14 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    *
    * @var array
    */
-  public $terms = array();
+  protected $terms = array();
 
   /**
    * Keep track of any roles that are created so they can easily be removed.
    *
    * @var array
    */
-  private $roles = array();
+  protected $roles = array();
 
   /**
    * Keep track of drush output.
