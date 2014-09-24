@@ -1085,10 +1085,20 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   public function createUsers(TableNode $usersTable) {
     foreach ($usersTable->getHash() as $userHash) {
 
-      // If we have roles convert it to array.
+      // If we have roles convert it to array and convert role names to rids.
       if (isset($userHash['roles'])) {
         $userHash['roles'] = explode(',', $userHash['roles']);
         $userHash['roles'] = array_map('trim', $userHash['roles']);
+
+        foreach ($userHash['roles'] as &$input_role)  {
+          $role = user_role_load_by_name($input_role);
+          if ($role) {
+            $input_role = $role->rid;
+          }
+          else {
+            throw new \Exception(sprintf('No such role: %s', $input_role));
+          }
+        }
       }
 
       $user = (object) $userHash;
