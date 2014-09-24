@@ -179,3 +179,4 @@ The Drupal Extension 2.0 supports Drupal 7 and 8, and utilized Behat 3. For Drup
  * [Complex node creation, with field collections and entity references](https://gist.github.com/jhedstrom/5708233)
  * [Achievements module support](https://gist.github.com/jhedstrom/9633067)
  * [Drupal form element visibility](https://gist.github.com/pbuyle/7698675)
+ * [Track down PHP notices](https://www.godel.com.au/blog/use-behat-track-down-php-notices-they-take-over-your-drupal-site-forever)
