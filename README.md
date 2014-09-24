@@ -99,6 +99,16 @@ Drupal Extension 1.0 supports Behat 2.4, and Drupal 6 and 7 (with Drupal 8 suppo
 	    Right sidebar: "#sidebar-second"
   ```
 
+1. The drupal extension makes use of three selectors by default for messages:
+
+  ```
+    Drupal\DrupalExtension\Extension:
+      selectors:
+        message_selector: '.messages'
+        error_message_selector: '.messages.messages-error'
+        success_message_selector: '.messages.messages-status'
+  ```
+
 1. Text strings, such as *Log out* or the *Username* field can be altered via `behat.yml` if they vary from the default values.
 
    ```
