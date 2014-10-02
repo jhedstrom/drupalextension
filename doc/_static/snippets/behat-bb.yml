@@ -1,0 +1,12 @@
+default:
+  paths:
+    features: 'features'
+  extensions:
+    Behat\MinkExtension\Extension:
+      goutte: ~
+      selenium2: ~
+      base_url: http://seven.l
+    Drupal\DrupalExtension\Extension:
+      blackbox: ~
+      region_map:
+        footer: "#footer"
