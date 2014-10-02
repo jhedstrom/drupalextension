@@ -1,6 +1,6 @@
 # Drupal Extension
 
-The Drupal Extension is an integration layer between [Behat](http://behat.org), [Mink Extension](http://extensions.behat.org/mink/), and Drupal. It provides step definitions for common testing scenarios specific to Drupal sites.
+The Drupal Extension is an integration layer between [Behat](http://behat.org), [Mink Extension](https://github.com/Behat/MinkExtension), and Drupal. It provides step definitions for common testing scenarios specific to Drupal sites.
 
 [![Build Status](https://travis-ci.org/jhedstrom/drupalextension.png?branch=1.0)](https://travis-ci.org/jhedstrom/drupalextension)
 
@@ -174,7 +174,7 @@ Drupal Extension 1.0 supports Behat 2.4, and Drupal 6 and 7 (with Drupal 8 suppo
 
  * [Behat documentation](http://docs.behat.org)
  * [Mink documentation](http://mink.behat.org)
- * [Drupal Extension documentation](http://behat-drupal-extension.readthedocs.org)
+ * [Drupal Extension documentation](http://behat-drupal-extension.readthedocs.org/en/latest/)
 
 ## Examples and code snippets
 
