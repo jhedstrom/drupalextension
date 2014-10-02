@@ -16,16 +16,15 @@
     "behat/mink-goutte-driver": "*",
     "behat/mink-selenium2-driver": "*",
     "behat/behat": "~3.0,>=3.0.5",
-    "behat/mink-extension": "2.0.*@dev"
+    "behat/mink-extension": "2.0.*@dev",
+    "drupal/drupal-driver": "1.0.*@dev"
   },
   "require-dev": {
-    "phpspec/phpspec":               "~2.0",
+    "phpspec/phpspec": "~2.0",
     "phpunit/phpunit": "3.7.*"
   },
   "autoload": {
     "psr-0": {
-      "Drupal\\Component": "src/",
-      "Drupal\\Driver": "src/",
       "Drupal\\Drupal": "src/",
       "Drupal\\Exception": "src/",
       "Drupal\\DrupalExtension": "src/"

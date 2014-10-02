@@ -170,6 +170,13 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
+   * Get driver's random generator.
+   */
+  public function getRandom() {
+    return $this->getDriver()->getRandom();
+  }
+
+  /**
    * Return a region from the current page.
    *
    * @throws \Exception
@@ -875,8 +882,8 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
 
     // Create user (and project)
     $user = (object) array(
-      'name' => $this->getDriver()->random->name(8),
-      'pass' => $this->getDriver()->random->name(16),
+      'name' => $this->getRandom()->name(8),
+      'pass' => $this->getRandom()->name(16),
       'role' => $role,
     );
     $user->mail = "{$user->name}@example.com";
@@ -924,8 +931,8 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
 
     // Create user.
     $user = (object) array(
-      'name' => $this->getDriver()->random->name(8),
-      'pass' => $this->getDriver()->random->name(16),
+      'name' => $this->getRandom()->name(8),
+      'pass' => $this->getRandom()->name(16),
       'roles' => array($rid),
     );
     $user->mail = "{$user->name}@example.com";
@@ -998,7 +1005,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
     $node = (object) array(
       'title' => $title,
       'type' => $type,
-      'body' => $this->getDriver()->random->string(255),
+      'body' => $this->getRandom()->string(255),
     );
     $saved = $this->nodeCreate($node);
     // Set internal page on the new node.
@@ -1016,7 +1023,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
     $node = (object) array(
       'title' => $title,
       'type' => $type,
-      'body' => $this->getDriver()->random->string(255),
+      'body' => $this->getRandom()->string(255),
       'uid' => $this->user->uid,
     );
     $saved = $this->nodeCreate($node);
@@ -1079,7 +1086,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
     $term = (object) array(
       'name' => $name,
       'vocabulary_machine_name' => $vocabulary,
-      'description' => $this->getDriver()->random->string(255),
+      'description' => $this->getRandom()->string(255),
     );
     $saved = $this->termCreate($term);
 
@@ -1121,7 +1128,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
 
       // Set a password.
       if (!isset($user->pass)) {
-        $user->pass = $this->getDriver()->random->name();
+        $user->pass = $this->getRandom()->name();
       }
 
       $this->userCreate($user);
