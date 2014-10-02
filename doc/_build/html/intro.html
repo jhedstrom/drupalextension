@@ -1,0 +1,223 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Testing your site with the Drupal Extension to Behat and Mink &mdash; the Drupal Extension to Behat and Mink 1.1 documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="the Drupal Extension to Behat and Mink 1.1 documentation" href="index.html"/>
+        <link rel="next" title="System Requirements" href="requirements.html"/>
+        <link rel="prev" title="Welcome to the Drupal Extension to Behat and Mink’s documentation!" href="index.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="index.html" class="fa fa-home"> the Drupal Extension to Behat and Mink</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="">Testing your site with the Drupal Extension to Behat and Mink</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#what-do-behat-and-mink-do">What do Behat and Mink Do?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#what-does-the-drupal-extension-add">What does the Drupal Extension add?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="requirements.html">System Requirements</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="requirements.html#meet-the-system-requirements">Meet the system requirements</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="localinstall.html">Stand-alone installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="globalinstall.html">System-wide installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="globalinstall.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="globalinstall.html#install-composer">Install Composer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="globalinstall.html#install-the-drupal-extension">Install the Drupal Extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="globalinstall.html#set-up-tests">Set up tests</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="drivers.html">Drupal Extension Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="blackbox.html">Blackbox Driver</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="blackbox.html#region-steps">Region steps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="blackbox.html#example">Example:</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="drush.html">Drush Driver</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="drush.html#install-drush">Install Drush</a></li>
+<li class="toctree-l2"><a class="reference internal" href="drush.html#create-a-drush-alias">Create a Drush alias</a></li>
+<li class="toctree-l2"><a class="reference internal" href="drush.html#enable-the-drush-driver-in-the-behat-yml">Enable the Drush driver in the behat.yml</a></li>
+<li class="toctree-l2"><a class="reference internal" href="drush.html#calling-the-drush-driver">Calling the Drush driver</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="drupalapi.html">Drupal API Driver</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="drupalapi.html#enable-the-drupal-api-driver">Enable the Drupal API Driver</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="subcontexts.html">Contributed Module Subcontexts</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="subcontexts.html#discovering-subcontexts">Discovering SubContexts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcontexts.html#disable-autoloading">Disable autoloading</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcontexts.html#for-contributors">For Contributors</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">the Drupal Extension to Behat and Mink</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Testing your site with the Drupal Extension to Behat and Mink</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="_sources/intro.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="testing-your-site-with-the-drupal-extension-to-behat-and-mink">
+<h1>Testing your site with the Drupal Extension to Behat and Mink<a class="headerlink" href="#testing-your-site-with-the-drupal-extension-to-behat-and-mink" title="Permalink to this headline">¶</a></h1>
+<div class="clear container">
+<a class="reference internal image-reference" href="_images/beehat.png"><img alt="_images/beehat.png" class="align-left" src="_images/beehat.png" style="height: 125px;" /></a>
+</div>
+<p>The <a class="reference external" href="https://drupal.org/project/drupalextension">Drupal Extension to Behat and Mink</a> provides Drupal-specific functionality for the <a class="reference external" href="http://dannorth.net/introducing-bdd/">Behavior-Driven Development</a> testing frameworks of <a class="reference external" href="http://extensions.behat.org/mink/">Behat and Mink</a>.</p>
+<div class="section" id="what-do-behat-and-mink-do">
+<h2>What do Behat and Mink Do?<a class="headerlink" href="#what-do-behat-and-mink-do" title="Permalink to this headline">¶</a></h2>
+<p>Behat and Mink allow you to describe the behavior of a web site in plain, but stylized language, and then turn that description into an automated test that will visit the site and perform each step you describe. Such functional tests can help site builders ensure that the added value they&#8217;ve created when building a Drupal site continues to behave as expected after any sort of site change &#8211; security updates, new module versions, changes to custom code, etc.</p>
+</div>
+<div class="section" id="what-does-the-drupal-extension-add">
+<h2>What does the Drupal Extension add?<a class="headerlink" href="#what-does-the-drupal-extension-add" title="Permalink to this headline">¶</a></h2>
+<p>The Drupal Extension to Behat and Mink assists in the performance of these common Drupal testing tasks:</p>
+<ul class="simple">
+<li>Set up test data with Drush or the Drupal API</li>
+<li>Define theme regions and test data appears within them</li>
+<li>Clear the cache, log out, and other useful steps</li>
+<li>Detect and discover steps provided by contributed modules and themes</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="requirements.html" class="btn btn-neutral float-right" title="System Requirements"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="Welcome to the Drupal Extension to Behat and Mink’s documentation!"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,402 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Blackbox Driver &mdash; the Drupal Extension to Behat and Mink 1.1 documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="the Drupal Extension to Behat and Mink 1.1 documentation" href="index.html"/>
+        <link rel="next" title="Drush Driver" href="drush.html"/>
+        <link rel="prev" title="Drupal Extension Drivers" href="drivers.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="index.html" class="fa fa-home"> the Drupal Extension to Behat and Mink</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Testing your site with the Drupal Extension to Behat and Mink</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="intro.html#what-do-behat-and-mink-do">What do Behat and Mink Do?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intro.html#what-does-the-drupal-extension-add">What does the Drupal Extension add?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="requirements.html">System Requirements</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="requirements.html#meet-the-system-requirements">Meet the system requirements</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="localinstall.html">Stand-alone installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="globalinstall.html">System-wide installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="globalinstall.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="globalinstall.html#install-composer">Install Composer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="globalinstall.html#install-the-drupal-extension">Install the Drupal Extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="globalinstall.html#set-up-tests">Set up tests</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="drivers.html">Drupal Extension Drivers</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Blackbox Driver</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#region-steps">Region steps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#example">Example:</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="drush.html">Drush Driver</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="drush.html#install-drush">Install Drush</a></li>
+<li class="toctree-l2"><a class="reference internal" href="drush.html#create-a-drush-alias">Create a Drush alias</a></li>
+<li class="toctree-l2"><a class="reference internal" href="drush.html#enable-the-drush-driver-in-the-behat-yml">Enable the Drush driver in the behat.yml</a></li>
+<li class="toctree-l2"><a class="reference internal" href="drush.html#calling-the-drush-driver">Calling the Drush driver</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="drupalapi.html">Drupal API Driver</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="drupalapi.html#enable-the-drupal-api-driver">Enable the Drupal API Driver</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="subcontexts.html">Contributed Module Subcontexts</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="subcontexts.html#discovering-subcontexts">Discovering SubContexts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcontexts.html#disable-autoloading">Disable autoloading</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcontexts.html#for-contributors">For Contributors</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">the Drupal Extension to Behat and Mink</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Blackbox Driver</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="_sources/blackbox.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="blackbox-driver">
+<h1>Blackbox Driver<a class="headerlink" href="#blackbox-driver" title="Permalink to this headline">¶</a></h1>
+<p>The blackbox driver assumes no privileged access to the site. You can run the
+tests on a local or remote server, and all the actions will take place through
+the site&#8217;s user interface. This driver was enabled as part of the installation
+instructions by lines 9 and 10, highlighted below.</p>
+<div class="highlight-yaml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12</pre></div></td><td class="code"><div class="highlight"><pre><span class="l-Scalar-Plain">default</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">paths</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">features</span><span class="p-Indicator">:</span> <span class="s">&#39;features&#39;</span>
+  <span class="l-Scalar-Plain">extensions</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">Behat\MinkExtension\Extension</span><span class="p-Indicator">:</span>
+      <span class="l-Scalar-Plain">goutte</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">~</span>
+      <span class="l-Scalar-Plain">selenium2</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">~</span>
+      <span class="l-Scalar-Plain">base_url</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">http://seven.l</span>
+<span class="hll">    <span class="l-Scalar-Plain">Drupal\DrupalExtension\Extension</span><span class="p-Indicator">:</span>
+</span><span class="hll">      <span class="l-Scalar-Plain">blackbox</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">~</span>
+</span>      <span class="l-Scalar-Plain">region_map</span><span class="p-Indicator">:</span>
+        <span class="l-Scalar-Plain">footer</span><span class="p-Indicator">:</span> <span class="s">&quot;#footer&quot;</span>
+</pre></div>
+</td></tr></table></div>
+<div class="section" id="region-steps">
+<h2>Region steps<a class="headerlink" href="#region-steps" title="Permalink to this headline">¶</a></h2>
+<p>It may be really important that a block is in the correct region, or you may
+have a link or button that doesn&#8217;t have a unique label. The blackbox driver
+allows you to create a map between a CSS selector and a user-readable region
+name so you can use steps like the following without having to write any custom
+PHP:</p>
+<div class="highlight-python"><div class="highlight"><pre>I press &quot;Search&quot; in the &quot;header&quot; region
+I fill in &quot;a value&quot; for &quot;a field&quot; in the &quot;content&quot; region
+I fill in &quot;a field&quot; with &quot;Stuff&quot; in the &quot;header&quot; region
+I click &quot;About us&quot; in the &quot;footer&quot; region
+</pre></div>
+</div>
+</div>
+<div class="section" id="example">
+<h2>Example:<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<p>A stock Drupal 7 installation has a footer area identified by the CSS Id
+&#8220;footer&#8221;. By editing the behat.yml file and adding lines 11 and 12 below:</p>
+<div class="highlight-yaml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12</pre></div></td><td class="code"><div class="highlight"><pre><span class="l-Scalar-Plain">default</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">paths</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">features</span><span class="p-Indicator">:</span> <span class="s">&#39;features&#39;</span>
+  <span class="l-Scalar-Plain">extensions</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">Behat\MinkExtension\Extension</span><span class="p-Indicator">:</span>
+      <span class="l-Scalar-Plain">goutte</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">~</span>
+      <span class="l-Scalar-Plain">selenium2</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">~</span>
+      <span class="l-Scalar-Plain">base_url</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">http://seven.l</span>
+    <span class="l-Scalar-Plain">Drupal\DrupalExtension\Extension</span><span class="p-Indicator">:</span>
+      <span class="l-Scalar-Plain">blackbox</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">~</span>
+<span class="hll">      <span class="l-Scalar-Plain">region_map</span><span class="p-Indicator">:</span>
+</span><span class="hll">        <span class="l-Scalar-Plain">footer</span><span class="p-Indicator">:</span> <span class="s">&quot;#footer&quot;</span>
+</span></pre></div>
+</td></tr></table></div>
+<p>You can use a step like the following without writing any custom PHP:</p>
+<div class="highlight-python"><div class="highlight"><pre>When I click &quot;About us&quot; in the &quot;footer&quot; region.
+</pre></div>
+</div>
+<p>Using the blackbox driver, you can use all of the steps in the examples below.</p>
+<div class="highlight-gherkin"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">Feature:</span><span class="nf"> Test DrupalContext</span>
+<span class="nf">  In order to prove the Drupal context using the blackbox driver is working </span>
+<span class="nf">    properly</span>
+<span class="nf">  As a developer</span>
+<span class="nf">  I need to use the step definitions of this context</span>
+
+<span class="nf">  </span><span class="k">Scenario:</span><span class="nf"> Test the ability to find a heading in a region</span>
+<span class="k">    Given </span><span class="nf">I am on the homepage</span>
+<span class="nf">    </span><span class="k">When </span><span class="nf">I click &quot;</span><span class="s">Download &amp; Extend</span><span class="nf">&quot;</span>
+<span class="nf">    </span><span class="k">Then </span><span class="nf">I should see the heading &quot;</span><span class="s">Core</span><span class="nf">&quot; in the &quot;</span><span class="s">content</span><span class="nf">&quot; region</span>
+
+<span class="nf">  </span><span class="k">Scenario:</span><span class="nf"> Clicking content in a region</span>
+<span class="k">    Given </span><span class="nf">I am at &quot;</span><span class="s">download</span><span class="nf">&quot;</span>
+<span class="nf">    </span><span class="k">When </span><span class="nf">I click &quot;</span><span class="s">About Distributions</span><span class="nf">&quot; in the &quot;</span><span class="s">content</span><span class="nf">&quot; region</span>
+<span class="nf">    </span><span class="k">Then </span><span class="nf">I should see &quot;</span><span class="s">Page status</span><span class="nf">&quot; in the &quot;</span><span class="s">right sidebar</span><span class="nf">&quot;</span>
+<span class="nf">    </span><span class="k">And </span><span class="nf">I should see the link &quot;</span><span class="s">Drupal News</span><span class="nf">&quot; in the &quot;</span><span class="s">footer</span><span class="nf">&quot; region</span>
+
+<span class="nf">  </span><span class="k">Scenario:</span><span class="nf"> Viewing content in a region</span>
+<span class="k">    Given </span><span class="nf">I am on the homepage</span>
+<span class="nf">    </span><span class="k">Then </span><span class="nf">I should see &quot;</span><span class="s">Come for the software, stay for the community</span><span class="nf">&quot; </span>
+<span class="nf">      in the &quot;</span><span class="s">left header</span><span class="nf">&quot;</span>
+
+<span class="nf">  </span><span class="k">Scenario:</span><span class="nf"> Test ability to find text that should not appear in a region</span>
+<span class="k">    Given </span><span class="nf">I am on the homepage</span>
+<span class="nf">    </span><span class="k">Then </span><span class="nf">I should not see the text &quot;</span><span class="s">Proprietary software is cutting edge</span><span class="nf">&quot; </span>
+<span class="nf">      in the &quot;</span><span class="s">left header</span><span class="nf">&quot;</span>
+
+<span class="nf">  </span><span class="k">Scenario:</span><span class="nf"> Press a button in a region</span>
+<span class="k">    Given </span><span class="nf">I am on the homepage</span>
+<span class="nf">    </span><span class="k">When </span><span class="nf">I press &quot;</span><span class="s">Search</span><span class="nf">&quot; in the &quot;</span><span class="s">right header</span><span class="nf">&quot; region</span>
+<span class="nf">    </span><span class="k">Then </span><span class="nf">I should see the text &quot;</span><span class="s">Filter by content type</span><span class="nf">&quot; in the &quot;</span><span class="s">content</span><span class="nf">&quot; region</span>
+
+<span class="nf">  </span><span class="k">Scenario:</span><span class="nf"> Check a link should not exist in a region</span>
+<span class="k">    Given </span><span class="nf">I am on the homepage</span>
+<span class="nf">    </span><span class="k">Then </span><span class="nf">I should not see the link &quot;</span><span class="s">This link should never exist in a </span>
+<span class="s">      default Drupal install</span><span class="nf">&quot; in the &quot;</span><span class="s">right header</span><span class="nf">&quot;</span>
+
+<span class="nf">  </span><span class="k">Scenario:</span><span class="nf"> Error messages</span>
+<span class="k">   Given </span><span class="nf">I am on &quot;</span><span class="s">/user</span><span class="nf">&quot;</span>
+<span class="nf">   </span><span class="k">When </span><span class="nf">I press &quot;</span><span class="s">Log in</span><span class="nf">&quot;</span>
+<span class="nf">   </span><span class="k">Then </span><span class="nf">I should see the error message &quot;</span><span class="s">Password field is required</span><span class="nf">&quot;</span>
+<span class="nf">   </span><span class="k">And </span><span class="nf">I should not see the error message &quot;</span><span class="s">Sorry, </span>
+<span class="s">     unrecognized username or password</span><span class="nf">&quot;</span>
+<span class="nf">   </span><span class="k">And </span><span class="nf">I should see the following </span><span class="nv">&lt;error messages&gt;</span><span class="nf"></span>
+<span class="k">   |</span><span class="s"> error messages</span><span class="k">             |</span><span class="nf"></span>
+<span class="k">   |</span><span class="s"> Username field is required</span><span class="k"> |</span><span class="nf"></span>
+<span class="k">   |</span><span class="s"> Password field is required</span><span class="k"> |</span><span class="nf"></span>
+<span class="nf">   </span><span class="k">And </span><span class="nf">I should not see the following </span><span class="nv">&lt;error messages&gt;</span><span class="nf"></span>
+<span class="k">   |</span><span class="s"> error messages</span><span class="k">                                                          |</span><span class="nf"></span>
+<span class="k">   |</span><span class="s"> Sorry, unrecognized username or password</span><span class="k">                                | </span><span class="nf"></span>
+<span class="k">   |</span><span class="s"> Unable to send e-mail. Contact the site administrator if the problem </span>
+<span class="s">     persists</span><span class="k">                                                                |</span>
+
+<span class="nf"> </span><span class="k">Scenario:</span><span class="nf"> Messages</span>
+<span class="k">   Given </span><span class="nf">I am on &quot;</span><span class="s">/user/register</span><span class="nf">&quot;</span>
+<span class="nf">   </span><span class="k">When </span><span class="nf">I press &quot;</span><span class="s">Create new account</span><span class="nf">&quot;</span>
+<span class="nf">   </span><span class="k">Then </span><span class="nf">I should see the message &quot;</span><span class="s">Username field is required</span><span class="nf">&quot;</span>
+<span class="nf">   </span><span class="k">But </span><span class="nf">I should not see the message &quot;</span><span class="s">Registration successful. You are </span>
+<span class="s">     now logged in</span><span class="nf">&quot;</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="drush.html" class="btn btn-neutral float-right" title="Drush Driver"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="drivers.html" class="btn btn-neutral" title="Drupal Extension Drivers"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

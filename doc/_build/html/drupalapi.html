@@ -1,0 +1,383 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Drupal API Driver &mdash; the Drupal Extension to Behat and Mink 1.1 documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="the Drupal Extension to Behat and Mink 1.1 documentation" href="index.html"/>
+        <link rel="next" title="Contributed Module Subcontexts" href="subcontexts.html"/>
+        <link rel="prev" title="Drush Driver" href="drush.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="index.html" class="fa fa-home"> the Drupal Extension to Behat and Mink</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Testing your site with the Drupal Extension to Behat and Mink</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="intro.html#what-do-behat-and-mink-do">What do Behat and Mink Do?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intro.html#what-does-the-drupal-extension-add">What does the Drupal Extension add?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="requirements.html">System Requirements</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="requirements.html#meet-the-system-requirements">Meet the system requirements</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="localinstall.html">Stand-alone installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="globalinstall.html">System-wide installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="globalinstall.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="globalinstall.html#install-composer">Install Composer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="globalinstall.html#install-the-drupal-extension">Install the Drupal Extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="globalinstall.html#set-up-tests">Set up tests</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="drivers.html">Drupal Extension Drivers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="blackbox.html">Blackbox Driver</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="blackbox.html#region-steps">Region steps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="blackbox.html#example">Example:</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="drush.html">Drush Driver</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="drush.html#install-drush">Install Drush</a></li>
+<li class="toctree-l2"><a class="reference internal" href="drush.html#create-a-drush-alias">Create a Drush alias</a></li>
+<li class="toctree-l2"><a class="reference internal" href="drush.html#enable-the-drush-driver-in-the-behat-yml">Enable the Drush driver in the behat.yml</a></li>
+<li class="toctree-l2"><a class="reference internal" href="drush.html#calling-the-drush-driver">Calling the Drush driver</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Drupal API Driver</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#enable-the-drupal-api-driver">Enable the Drupal API Driver</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="subcontexts.html">Contributed Module Subcontexts</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="subcontexts.html#discovering-subcontexts">Discovering SubContexts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcontexts.html#disable-autoloading">Disable autoloading</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subcontexts.html#for-contributors">For Contributors</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">the Drupal Extension to Behat and Mink</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Drupal API Driver</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="_sources/drupalapi.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="drupal-api-driver">
+<h1>Drupal API Driver<a class="headerlink" href="#drupal-api-driver" title="Permalink to this headline">¶</a></h1>
+<p>The Drupal API Driver is the fastest and the most powerful of the three
+drivers. Its biggest limitation is that the tests must run on the same server
+as the Drupal site.</p>
+<div class="section" id="enable-the-drupal-api-driver">
+<h2>Enable the Drupal API Driver<a class="headerlink" href="#enable-the-drupal-api-driver" title="Permalink to this headline">¶</a></h2>
+<p>To enable the Drupal API driver, edit the behat.yml file, change the api_driver
+to drupal and add the path to the local Drupal installation as shown below:</p>
+<div class="highlight-php"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17</pre></div></td><td class="code"><div class="highlight"><pre><span class="x">default:</span>
+<span class="x">  paths:</span>
+<span class="x">    features: &#39;features&#39;</span>
+<span class="x">  extensions:</span>
+<span class="x">    Behat\MinkExtension\Extension:</span>
+<span class="x">      goutte: ~</span>
+<span class="x">      selenium2: ~</span>
+<span class="x">      base_url: http://seven.l</span>
+<span class="x">    Drupal\DrupalExtension\Extension:</span>
+<span class="x">      blackbox: ~</span>
+<span class="hll"><span class="x">      api_driver: &#39;drupal&#39; </span>
+</span><span class="x">      drush:</span>
+<span class="x">        alias: &#39;local&#39;</span>
+<span class="x">      drupal: </span>
+<span class="x">        drupal_root: &#39;/var/www/seven/drupal&#39; </span>
+<span class="x">      region_map:</span>
+<span class="x">        footer: &quot;#footer&quot;</span>
+</pre></div>
+</td></tr></table></div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">It&#8217;s fine to leave the information for the drush driver in the file. It&#8217;s
+the api_driver value that declares which setting will be used for scenarios
+tagged &#64;api.</p>
+</div>
+<p>Using this driver, you gain the ability to use all the steps in the
+examples below:</p>
+<div class="highlight-gherkin"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">    |</span><span class="s"> First article with fields</span><span class="k"> |</span><span class="s">       1</span><span class="k"> |</span><span class="s"> PLACEHOLDER BODY</span><span class="k"> |</span><span class="nf"></span>
+<span class="nf">    </span><span class="k">When </span><span class="nf">I am on the homepage</span>
+<span class="nf">    </span><span class="k">And </span><span class="nf">follow &quot;</span><span class="s">First article with fields</span><span class="nf">&quot;</span>
+<span class="nf">    </span><span class="k">Then </span><span class="nf">I should see the text &quot;</span><span class="s">PLACEHOLDER BODY</span><span class="nf">&quot;</span>
+
+<span class="nf">  </span><span class="k">Scenario:</span><span class="nf"> Create and view a node with fields</span>
+<span class="k">    Given </span><span class="nf">I am viewing an &quot;</span><span class="s">Article</span><span class="nf">&quot; node:</span>
+<span class="k">    |</span><span class="s"> title</span><span class="k"> |</span><span class="s"> My article with fields!</span><span class="k"> |</span><span class="nf"></span>
+<span class="k">    |</span><span class="s"> body</span><span class="k">  |</span><span class="s"> A placeholder</span><span class="k">           |</span><span class="nf"></span>
+<span class="nf">    </span><span class="k">Then </span><span class="nf">I should see the heading &quot;</span><span class="s">My article with fields!</span><span class="nf">&quot;</span>
+<span class="nf">    </span><span class="k">And </span><span class="nf">I should see the text &quot;</span><span class="s">A placeholder</span><span class="nf">&quot;</span>
+
+<span class="nf">  </span><span class="k">Scenario:</span><span class="nf"> Create users</span>
+<span class="k">    Given </span><span class="nf">users:</span>
+<span class="k">    |</span><span class="s"> name</span><span class="k">     |</span><span class="s"> mail</span><span class="k">            |</span><span class="s"> status</span><span class="k"> |</span><span class="nf"></span>
+<span class="k">    |</span><span class="s"> Joe User</span><span class="k"> |</span><span class="s"> joe@example.com</span><span class="k"> |</span><span class="s"> 1</span><span class="k">      |</span><span class="nf"></span>
+<span class="nf">    </span><span class="k">And </span><span class="nf">I am logged in as a user with the &quot;</span><span class="s">administrator</span><span class="nf">&quot; role</span>
+<span class="nf">    </span><span class="k">When </span><span class="nf">I visit &quot;</span><span class="s">admin/people</span><span class="nf">&quot;</span>
+<span class="nf">    </span><span class="k">Then </span><span class="nf">I should see the link &quot;</span><span class="s">Joe User</span><span class="nf">&quot;</span>
+
+<span class="nf">  </span><span class="k">Scenario:</span><span class="nf"> Login as a user created during this scenario</span>
+<span class="k">    Given </span><span class="nf">users:</span>
+<span class="k">    |</span><span class="s"> name</span><span class="k">      |</span><span class="s"> status</span><span class="k"> |</span><span class="nf"></span>
+<span class="k">    |</span><span class="s"> Test user</span><span class="k"> |</span><span class="s">      1</span><span class="k"> |</span><span class="nf"></span>
+<span class="nf">    </span><span class="k">When </span><span class="nf">I am logged in as &quot;</span><span class="s">Test user</span><span class="nf">&quot;</span>
+<span class="nf">    </span><span class="k">Then </span><span class="nf">I should see the link &quot;</span><span class="s">Log out</span><span class="nf">&quot;</span>
+
+<span class="nf">  </span><span class="k">Scenario:</span><span class="nf"> Create a term</span>
+<span class="k">    Given </span><span class="nf">I am logged in as a user with the &quot;</span><span class="s">administrator</span><span class="nf">&quot; role</span>
+<span class="nf">    </span><span class="k">When </span><span class="nf">I am viewing a &quot;</span><span class="s">tags</span><span class="nf">&quot; term with the name &quot;</span><span class="s">My tag</span><span class="nf">&quot;</span>
+<span class="nf">    </span><span class="k">Then </span><span class="nf">I should see the heading &quot;</span><span class="s">My tag</span><span class="nf">&quot;</span>
+
+<span class="nf">  </span><span class="k">Scenario:</span><span class="nf"> Create many terms</span>
+<span class="k">    Given </span><span class="nf">&quot;</span><span class="s">tags</span><span class="nf">&quot; terms:</span>
+<span class="k">    |</span><span class="s"> name</span><span class="k">    |</span><span class="nf"></span>
+<span class="k">    |</span><span class="s"> Tag one</span><span class="k"> |</span><span class="nf"></span>
+<span class="k">    |</span><span class="s"> Tag two</span><span class="k"> |</span><span class="nf"></span>
+<span class="nf">    </span><span class="k">And </span><span class="nf">I am logged in as a user with the &quot;</span><span class="s">administrator</span><span class="nf">&quot; role</span>
+<span class="nf">    </span><span class="k">When </span><span class="nf">I go to &quot;</span><span class="s">admin/structure/taxonomy/tags</span><span class="nf">&quot;</span>
+<span class="nf">    </span><span class="k">Then </span><span class="nf">I should see &quot;</span><span class="s">Tag one</span><span class="nf">&quot;</span>
+<span class="nf">    </span><span class="k">And </span><span class="nf">I should see &quot;</span><span class="s">Tag two</span><span class="nf">&quot;</span>
+
+<span class="nf">  </span><span class="k">Scenario:</span><span class="nf"> Create nodes with specific authorship</span>
+<span class="k">    Given </span><span class="nf">users:</span>
+<span class="k">    |</span><span class="s"> name</span><span class="k">     |</span><span class="s"> mail</span><span class="k">            |</span><span class="s"> status</span><span class="k"> |</span><span class="nf"></span>
+<span class="k">    |</span><span class="s"> Joe User</span><span class="k"> |</span><span class="s"> joe@example.com</span><span class="k"> |</span><span class="s"> 1</span><span class="k">      |</span><span class="nf"></span>
+<span class="nf">    </span><span class="k">And </span><span class="nf">&quot;</span><span class="s">article</span><span class="nf">&quot; nodes:</span>
+<span class="k">    |</span><span class="s"> title</span><span class="k">          |</span><span class="s"> author</span><span class="k">   |</span><span class="s"> body</span><span class="k">             |</span><span class="s"> promote</span><span class="k"> |</span><span class="nf"></span>
+<span class="k">    |</span><span class="s"> Article by Joe</span><span class="k"> |</span><span class="s"> Joe User</span><span class="k"> |</span><span class="s"> PLACEHOLDER BODY</span><span class="k"> |</span><span class="s"> 1</span><span class="k">       |</span><span class="nf"></span>
+<span class="nf">    </span><span class="k">When </span><span class="nf">I am logged in as a user with the &quot;</span><span class="s">administrator</span><span class="nf">&quot; role</span>
+<span class="nf">    </span><span class="k">And </span><span class="nf">I am on the homepage</span>
+<span class="nf">    </span><span class="k">And </span><span class="nf">I follow &quot;</span><span class="s">Article by Joe</span><span class="nf">&quot;</span>
+<span class="nf">    </span><span class="k">Then </span><span class="nf">I should see the link &quot;</span><span class="s">Joe User</span><span class="nf">&quot;</span>
+
+<span class="nf">  </span><span class="k">Scenario:</span><span class="nf"> Create an article with multiple term references</span>
+<span class="k">    Given </span><span class="nf">&quot;</span><span class="s">tags</span><span class="nf">&quot; terms:</span>
+<span class="k">    |</span><span class="s"> name</span><span class="k">      |</span><span class="nf"></span>
+<span class="k">    |</span><span class="s"> Tag one</span><span class="k">   |</span><span class="nf"></span>
+<span class="k">    |</span><span class="s"> Tag two</span><span class="k">   |</span><span class="nf"></span>
+<span class="k">    |</span><span class="s"> Tag three</span><span class="k"> |</span><span class="nf"></span>
+<span class="k">    |</span><span class="s"> Tag four</span><span class="k">  |</span><span class="nf"></span>
+<span class="nf">    </span><span class="k">And </span><span class="nf">&quot;</span><span class="s">article</span><span class="nf">&quot; nodes:</span>
+<span class="k">    |</span><span class="s"> title</span><span class="k"> |</span><span class="s"> body</span><span class="k"> |</span><span class="s"> promote</span><span class="k"> |</span><span class="s"> field_tags</span><span class="k"> |</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="subcontexts.html" class="btn btn-neutral float-right" title="Contributed Module Subcontexts"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="drush.html" class="btn btn-neutral" title="Drush Driver"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
