@@ -4,7 +4,6 @@ namespace spec\Drupal;
 
 use Behat\Testwork\Environment\Environment;
 
-use Drupal\Component\Utility\Random;
 use Drupal\Driver\DriverInterface;
 
 use PhpSpec\ObjectBehavior;
@@ -12,11 +11,6 @@ use Prophecy\Argument;
 
 class DrupalSpec extends ObjectBehavior
 {
-    function let(Random $random)
-    {
-        $this->beConstructedWith(array(), $random);
-    }
-
     function it_is_initializable()
     {
         $this->shouldHaveType('Drupal\Drupal');
@@ -39,9 +33,4 @@ class DrupalSpec extends ObjectBehavior
         $env->shouldBeAnInstanceOf('Behat\Testwork\Environment\Environment');
     }
 
-    function it_has_a_random_generator()
-    {
-        $random = $this->getRandom();
-        $random->shouldBeAnInstanceOf('Drupal\Component\Utility\Random');
-    }
 }

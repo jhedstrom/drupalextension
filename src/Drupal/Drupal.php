@@ -5,7 +5,6 @@ namespace Drupal;
 use Behat\Testwork\Environment\Environment;
 
 use Drupal\Driver\DriverInterface;
-use Drupal\Component\Utility\Random;
 
 /**
  * Drupal driver manager.
@@ -33,20 +32,12 @@ class Drupal {
   private $environment;
 
   /**
-   * Random generator.
-   *
-   * @var \Drupal\Component\Utility\Random
-   */
-  public $random;
-
-  /**
    * Initialize the driver manager.
    */
-  public function __construct(array $drivers = array(), Random $random) {
+  public function __construct(array $drivers = array()) {
     foreach ($drivers as $name => $driver) {
       $this->registerDriver($name, $driver);
     }
-    $this->random = $random;
   }
 
   /**
@@ -125,14 +116,5 @@ class Drupal {
    */
   public function getEnvironment() {
     return $this->environment;
-  }
-
-  /**
-   * Returns random generator.
-   *
-   * @return \Drupal\Component\Utility\Random
-   */
-  public function getRandom() {
-    return $this->random;
   }
 }
