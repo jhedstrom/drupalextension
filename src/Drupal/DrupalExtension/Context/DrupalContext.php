@@ -1410,7 +1410,9 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    * @Given /^I run drush "(?P<command>[^"]*)"$/
    */
   public function assertDrushCommand($command) {
-    $this->drushOutput = $this->getDriver('drush')->$command();
+    if (!$this->drushOutput = $this->getDriver('drush')->$command()) {
+       $this->drushOutput = TRUE;
+    }
   }
 
   /**
@@ -1418,6 +1420,9 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    */
   public function assertDrushCommandWithArgument($command, $arguments) {
     $this->drushOutput = $this->getDriver('drush')->$command($this->fixStepArgument($arguments));
+    if (!isset($this->drushOutput)) {
+      $this->drushOutput = TRUE;
+    }
   }
 
   /**
