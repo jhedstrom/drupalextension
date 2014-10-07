@@ -84,12 +84,6 @@ class DrupalExtension implements ExtensionInterface {
   public function configure(ArrayNodeDefinition $builder) {
     $builder->
       children()->
-        arrayNode('basic_auth')->
-          children()->
-            scalarNode('username')->end()->
-            scalarNode('password')->end()->
-          end()->
-        end()->
         scalarNode('default_driver')->
           defaultValue('blackbox')->
           info('Use "blackbox" to test remote site. See "api_driver" for easier integration.')->
