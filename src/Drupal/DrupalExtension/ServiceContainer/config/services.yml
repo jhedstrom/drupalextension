@@ -3,7 +3,7 @@ parameters:
   behat.definition.proposal.annotated.class: Drupal\DrupalExtension\Definition\Proposal\AnnotatedDefinitionProposal
 
   # Drupal driver manager.
-  drupal.drupal.class: Drupal\Drupal
+  drupal.drupal.class: Drupal\DrupalDriverManager
   drupal.drupal.default_session: blackbox
   drupal.drupal.api_driver: drush
 

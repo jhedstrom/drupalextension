@@ -10,7 +10,7 @@ use Behat\Testwork\Environment\Environment;
 use Behat\Testwork\Environment\Exception\EnvironmentReadException;
 use Behat\Testwork\Environment\Reader\EnvironmentReader;
 
-use Drupal\Drupal;
+use Drupal\DrupalDriverManager;
 use Drupal\DrupalExtension\Context\DrupalSubContextFinderInterface;
 
 use Symfony\Component\Finder\Finder;
@@ -28,7 +28,7 @@ final class Reader implements EnvironmentReader {
   /**
    * Drupal driver manager.
    *
-   * @var \Drupal\Drupal
+   * @var \Drupal\DrupalDriverManager
    */
   private $drupal;
 
@@ -47,7 +47,7 @@ final class Reader implements EnvironmentReader {
   /**
    * Register the Drupal driver manager.
    */
-  public function __construct(Drupal $drupal, array $parameters) {
+  public function __construct(DrupalDriverManager $drupal, array $parameters) {
     $this->drupal = $drupal;
     $this->parameters = $parameters;
   }

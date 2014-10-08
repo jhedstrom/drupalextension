@@ -9,7 +9,7 @@ use Drupal\Driver\DriverInterface;
 /**
  * Drupal driver manager.
  */
-class Drupal {
+class DrupalDriverManager {
   /**
    * Default driver.
    *

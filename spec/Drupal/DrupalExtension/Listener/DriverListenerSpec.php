@@ -8,14 +8,14 @@ use Behat\Gherkin\Node\ScenarioNode;
 use Behat\Testwork\Environment\Environment;
 use Behat\Testwork\Suite\Suite;
 
-use Drupal\Drupal;
+use Drupal\DrupalDriverManager;
 
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 class DriverListenerSpec extends ObjectBehavior
 {
-    function let(Drupal $drupal, ScenarioTested $event, FeatureNode $feature, ScenarioNode $scenario, Suite $suite, Environment $environment)
+    function let(DrupalDriverManager $drupal, ScenarioTested $event, FeatureNode $feature, ScenarioNode $scenario, Suite $suite, Environment $environment)
     {
         $parameters = array(
             'default_driver' => 'blackbox',

@@ -6,14 +6,14 @@ use Behat\Behat\Context\Initializer\ContextInitializer;
 use Behat\Behat\Context\Context;
 use Behat\Testwork\Hook\HookDispatcher;
 
-use Drupal\Drupal;
+use Drupal\DrupalDriverManager;
 use Drupal\DrupalExtension\Context\DrupalContext;
 use Drupal\DrupalExtension\Context\DrupalAwareInterface;
 
 class DrupalAwareInitializer implements ContextInitializer {
   private $drupal, $parameters, $dispatcher;
 
-  public function __construct(Drupal $drupal, array $parameters, HookDispatcher $dispatcher) {
+  public function __construct(DrupalDriverManager $drupal, array $parameters, HookDispatcher $dispatcher) {
     $this->drupal = $drupal;
     $this->parameters = $parameters;
     $this->dispatcher = $dispatcher;
