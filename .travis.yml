@@ -29,7 +29,7 @@ before_script:
   - (cd drupal8 && git pull && cd -) || git clone --branch 8.0.x http://git.drupal.org/project/drupal.git drupal8
   - drush --yes --root=$PWD/drupal8 site-install --db-url=mysql://travis:@127.0.0.1/drupal8
   - cd drupal8
-  - drush --quiet --yes --root=$PWD/drupal8 runserver :8888 > ~/debug8.txt 2>&1 &
+  - drush runserver :8888 > ~/debug8.txt 2>&1 &
   - cd -
   - sleep 4s
 
