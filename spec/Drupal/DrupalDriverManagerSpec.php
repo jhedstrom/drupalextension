@@ -9,11 +9,11 @@ use Drupal\Driver\DriverInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
-class DrupalSpec extends ObjectBehavior
+class DrupalDriverManagerSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-        $this->shouldHaveType('Drupal\Drupal');
+        $this->shouldHaveType('Drupal\DrupalDriverManager');
     }
 
     function it_registers_drivers(DriverInterface $driver)

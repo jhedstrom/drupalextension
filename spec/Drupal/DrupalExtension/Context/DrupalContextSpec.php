@@ -5,7 +5,7 @@ namespace spec\Drupal\DrupalExtension\Context;
 use Behat\Testwork\Hook\HookDispatcher;
 use Behat\Testwork\Hook\HookRepository;
 
-use Drupal\Drupal;
+use Drupal\DrupalDriverManager;
 
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
@@ -22,10 +22,10 @@ class DrupalContextSpec extends ObjectBehavior
         $this->shouldHaveType('Behat\Behat\Context\TranslatableContext');
     }
 
-    function it_can_set_and_get_drupal_manager(Drupal $drupal)
+    function it_can_set_and_get_drupal_manager(DrupalDriverManager $drupal)
     {
         $this->setDrupal($drupal);
-        $this->getDrupal()->shouldBeAnInstanceOf('Drupal\Drupal');
+        $this->getDrupal()->shouldBeAnInstanceOf('Drupal\DrupalDriverManager');
     }
 
     function it_can_set_and_get_drupal_parameters()
@@ -51,7 +51,7 @@ class DrupalContextSpec extends ObjectBehavior
         $this->shouldThrow('Exception')->duringGetDrupalText('No such string');
     }
 
-    function it_can_get_the_current_drupal_driver(Drupal $drupal)
+    function it_can_get_the_current_drupal_driver(DrupalDriverManager $drupal)
     {
         $this->setDrupal($drupal);
         $this->getDriver();

@@ -4,7 +4,7 @@ namespace spec\Drupal\DrupalExtension\Context\Initializer;
 
 use Behat\Behat\Context\Context;
 
-use Drupal\Drupal;
+use Drupal\DrupalDriverManager;
 use Drupal\DrupalExtension\Context\DrupalAwareInterface;
 
 use Behat\Testwork\Call\CallCenter;
@@ -19,7 +19,7 @@ class DrupalAwareInitializerSpec extends ObjectBehavior
 {
     private $dispatcher;
 
-    function let(Drupal $drupal)
+    function let(DrupalDriverManager $drupal)
     {
         $callCenter = new CallCenter();
         $manager = new EnvironmentManager();

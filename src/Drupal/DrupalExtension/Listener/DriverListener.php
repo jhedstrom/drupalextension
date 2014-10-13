@@ -6,7 +6,7 @@ use Behat\Behat\EventDispatcher\Event\OutlineTested;
 use Behat\Behat\EventDispatcher\Event\ScenarioLikeTested;
 use Behat\Behat\EventDispatcher\Event\ScenarioTested;
 
-use Drupal\Drupal;
+use Drupal\DrupalDriverManager;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -20,7 +20,7 @@ class DriverListener implements EventSubscriberInterface {
   /**
    * Drupal driver manager.
    *
-   * @var \Drupal\Drupal
+   * @var \Drupal\DrupalDriverManager
    */
   private $drupal;
 
@@ -31,7 +31,7 @@ class DriverListener implements EventSubscriberInterface {
    */
   private $parameters;
 
-  public function __construct(Drupal $drupal, array $parameters) {
+  public function __construct(DrupalDriverManager $drupal, array $parameters) {
     $this->drupal = $drupal;
     $this->parameters = $parameters;
   }

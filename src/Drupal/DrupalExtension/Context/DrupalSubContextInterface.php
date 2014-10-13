@@ -4,7 +4,7 @@ namespace Drupal\DrupalExtension\Context;
 
 use Behat\Behat\Context\Context;
 
-use Drupal\Drupal;
+use Drupal\DrupalDriverManager;
 
 interface DrupalSubContextInterface extends Context {
   /**
@@ -15,5 +15,5 @@ interface DrupalSubContextInterface extends Context {
    *
    * @return string
    */
-  public function __construct(Drupal $context);
+  public function __construct(DrupalDriverManager $context);
 }

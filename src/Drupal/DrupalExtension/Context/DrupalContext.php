@@ -8,7 +8,7 @@ use Behat\Behat\Event\ScenarioEvent;
 use Behat\Mink\Exception\UnsupportedDriverActionException;
 use Behat\Testwork\Hook\HookDispatcher;
 
-use Drupal\Drupal;
+use Drupal\DrupalDriverManager;
 use Drupal\DrupalExtension\Context\DrupalSubContextInterface;
 use Drupal\DrupalExtension\Hook\Scope\AfterNodeCreateScope;
 use Drupal\DrupalExtension\Hook\Scope\AfterTermCreateScope;
@@ -34,7 +34,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   /**
    * Drupal driver manager.
    *
-   * @var \Drupal\Drupal
+   * @var \Drupal\DrupalDriverManager
    */
   private $drupal;
 
@@ -108,7 +108,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   /**
    * Set Drupal instance.
    */
-  public function setDrupal(Drupal $drupal) {
+  public function setDrupal(DrupalDriverManager $drupal) {
     $this->drupal = $drupal;
   }
 

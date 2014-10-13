@@ -5,7 +5,7 @@ namespace Drupal\DrupalExtension\Context;
 use Behat\Behat\Context\Context;
 use Behat\Testwork\Hook\HookDispatcher;
 
-use Drupal\Drupal;
+use Drupal\DrupalDriverManager;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 interface DrupalAwareInterface extends Context {
@@ -13,7 +13,7 @@ interface DrupalAwareInterface extends Context {
   /**
    * Sets Drupal instance.
    */
-  public function setDrupal(Drupal $drupal);
+  public function setDrupal(DrupalDriverManager $drupal);
 
   /**
    * Set event dispatcher.

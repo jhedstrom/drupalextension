@@ -20,7 +20,7 @@ Feature: DrupalContext
     Then I should be on "admin/structure/types/manage/article/fields"
     And I should see text matching "Add new field"
 
-  @drushTest @d8 @d8wip
+  @drushTest @d8
   Scenario: Find a heading in a region
     Given I am not logged in
     When I am on the homepage
@@ -32,20 +32,20 @@ Feature: DrupalContext
     When I am on the homepage
     Then I should get a "200" HTTP response
 
-  @d8 @d8wip
+  @d8
   Scenario: Create a node
     Given I am logged in as a user with the "administrator" role
     When I am viewing an "article" node with the title "My article"
     Then I should see the heading "My article"
 
-  @drushTest @d8 @d8wip
+  @drushTest @d8
   Scenario: Run cron
     Given I am logged in as a user with the "administrator" role
     When I run cron
     And am on "admin/reports/dblog"
     Then I should see the link "Cron run completed"
 
-  @d8 @d8wip
+  @d8
   Scenario: Create many nodes
     Given "page" nodes:
     | title    |
@@ -62,7 +62,7 @@ Feature: DrupalContext
     And I should see "First article"
     And I should see "Second article"
 
-  @d8 @d8wip
+  @d8
   Scenario: Create nodes with fields
     Given "article" nodes:
     | title                     | promote | body             |
@@ -78,7 +78,7 @@ Feature: DrupalContext
     Then I should see the heading "My article with fields!"
     And I should see the text "A placeholder"
 
-  @d8 @d8wip
+  @d8
   Scenario: Create users
     Given users:
     | name     | mail            | status |
@@ -87,7 +87,7 @@ Feature: DrupalContext
     When I visit "admin/people"
     Then I should see the link "Joe User"
 
-  @d8 @d8wip
+  @d8
   Scenario: Login as a user created during this scenario
     Given users:
     | name      | status |
