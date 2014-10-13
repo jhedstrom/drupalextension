@@ -545,7 +545,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
-   * @Then /^I should not see the link "(?P<link>[^"]*)"$/
+   * @Then I should not see the link :link
    */
   public function assertNotLinkVisible($link) {
     $element = $this->getSession()->getPage();
@@ -911,9 +911,9 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    * administrative pages such as the administer content types screen found at
    * `admin/structure/types`.
    *
-   * @Given I click :link in the :rowText row$/
+   * @Given I click :link in the :rowText row
    */
-  public function assertClickInTableRow($link, $row_text) {
+  public function assertClickInTableRow($link, $rowText) {
     $page = $this->getSession()->getPage();
     $rows = $page->findAll('css', 'tr');
     if (!$rows) {
@@ -921,7 +921,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
     }
     $row_found = FALSE;
     foreach ($rows as $row) {
-      if (strpos($row->getText(), $row_text) !== FALSE) {
+      if (strpos($row->getText(), $rowText) !== FALSE) {
         $row_found = TRUE;
         // Found text in this row, now find link in a cell.
         $cells = $row->findAll('css', 'td');
@@ -937,10 +937,10 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
       }
     }
     if ($row_found) {
-      throw new \Exception(sprintf('Found a row containing "%s", but no "%s" link on the page %s', $row_text, $link, $this->getSession()->getCurrentUrl()));
+      throw new \Exception(sprintf('Found a row containing "%s", but no "%s" link on the page %s', $rowText, $link, $this->getSession()->getCurrentUrl()));
     }
     else {
-      throw new \Exception(sprintf('Failed to find a row containing "%s" on the page %s', $row_text, $this->getSession()->getCurrentUrl()));
+      throw new \Exception(sprintf('Failed to find a row containing "%s" on the page %s', $rowText, $this->getSession()->getCurrentUrl()));
     }
   }
 
