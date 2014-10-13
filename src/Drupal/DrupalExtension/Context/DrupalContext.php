@@ -959,8 +959,10 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
-   * @Given I am viewing a/an :type node with the title :title
-   * @Given a/an :type node with the title :title
+   * Creates content of the given type.
+   *
+   * @Given I am viewing a/an :type (content )with the title :title
+   * @Given a/an :type (content )with the title :title
    */
   public function createNode($type, $title) {
     // @todo make this easily extensible.
@@ -975,7 +977,9 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
-   * @Given I am viewing my :type node with the title :title
+   * Creates content authored by the current user.
+   *
+   * @Given I am viewing my :type (content )with the title :title
    */
   public function createMyNode($type, $title) {
     if (!$this->user->uid) {
@@ -995,7 +999,12 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
-   * @Given :type nodes:
+   * Creates content of a given type provided in the form:
+   * | title    | author     | status | created           |
+   * | My title | Joe Editor | 1      | 2014-10-17 8:00am |
+   * | ...      | ...        | ...    | ...               |
+   *
+   * @Given :type content:
    */
   public function createNodes($type, TableNode $nodesTable) {
     foreach ($nodesTable->getHash() as $nodeHash) {
@@ -1006,7 +1015,14 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
-   * @Given I am viewing a/an :type node:
+   * Creates content of the given type, provided in the form:
+   * | title     | My node        |
+   * | Field One | My field value |
+   * | author    | Joe Editor     |
+   * | status    | 1              |
+   * | ...       | ...            |
+   *
+   * @Given I am viewing a/an :type( content):
    */
   public function assertViewingNode($type, TableNode $fields) {
     $node = (object) array(
@@ -1023,9 +1039,9 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
-   * Asserts that a given node type is editable.
+   * Asserts that a given content type is editable.
    *
-   * @Then I should be able to edit a/an :type node
+   * @Then I should be able to edit a/an :type( content)
    */
   public function assertEditNodeOfType($type) {
     $node = (object) array('type' => $type);
