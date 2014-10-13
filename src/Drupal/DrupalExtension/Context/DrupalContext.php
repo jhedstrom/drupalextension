@@ -198,27 +198,6 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
-   * Run before every scenario.
-   *
-   * @BeforeScenario
-   *
-   * @todo move this elsewhere
-   */
-  public function beforeScenario() {
-    if ($basic_auth = $this->getDrupalParameter('basic_auth')) {
-      $driver = $this->getSession()->getDriver();
-      if ($driver instanceof Selenium2Driver) {
-        // Continue if this is a Selenium driver, since this is handled in
-        // locatePath().
-      }
-      else {
-        // Setup basic auth.
-        $this->getSession()->setBasicAuth($basic_auth['username'], $basic_auth['password']);
-      }
-    }
-  }
-
-  /**
    * Remove any created nodes.
    *
    * @AfterScenario
@@ -312,24 +291,6 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
     $this->dispatcher->dispatchScopeHooks(new AfterTermCreateScope($this->getDrupal()->getEnvironment(), $this, $saved));
     $this->terms[] = $saved;
     return $saved;
-  }
-
-  /**
-   * Override MinkContext::locatePath() to work around Selenium not supporting
-   * basic auth.
-   */
-  public function locatePath($path) {
-    $driver = $this->getSession()->getDriver();
-    if ($driver instanceof Selenium2Driver && $basic_auth = $this->getDrupalParameter('basic_auth')) {
-      // Add the basic auth parameters to the base url. This only works for
-      // Firefox.
-      $startUrl = rtrim($this->getMinkParameter('base_url'), '/') . '/';
-      $startUrl = str_replace('://', '://' . $basic_auth['username'] . ':' . $basic_auth['password'] . '@', $startUrl);
-      return 0 !== strpos($path, 'http') ? $startUrl . ltrim($path, '/') : $path;
-    }
-    else {
-      return parent::locatePath($path);
-    }
   }
 
   /**

@@ -26,7 +26,6 @@ parameters:
   drupal.context.region_selector.class: Drupal\DrupalExtension\Selector\RegionSelector
 
   # Parameters.
-  drupal.basic_auth: { username: ~, password: ~}
   drupal.parameters: {}
   drupal.region_map: {}
 
