@@ -374,8 +374,8 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   /**
    * Visit a given path, and additionally check for HTTP response code 200.
    *
-   * @Given /^(?:that I|I) am at "(?P<path>[^"]*)"$/
-   * @When /^I visit "(?P<path>[^"]*)"$/
+   * @Given I am at :path
+   * @When I visit :path
    *
    * @throws UnsupportedDriverActionException
    */
@@ -393,7 +393,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
-   * @When /^I click "(?P<link>[^"]*)"$/
+   * @When I click :link
    */
   public function assertClick($link) {
     // Use the Mink Extenstion step definition.
@@ -401,8 +401,8 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
-   * @Given /^for "(?P<field>[^"]*)" I enter "(?P<value>[^"]*)"$/
-   * @Given /^I enter "(?P<value>[^"]*)" for "(?P<field>[^"]*)"$/
+   * @Given for :field I enter :value
+   * @Given I enter :value for :field
    */
   public function assertEnterField($field, $value) {
     // Use the Mink Extenstion step definition.
@@ -436,7 +436,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   /**
    * Wait for AJAX to finish.
    *
-   * @Given /^I wait for AJAX to finish$/
+   * @Given I wait for AJAX to finish
    */
   public function iWaitForAjaxToFinish() {
     $this->getSession()->wait(5000, '(typeof(jQuery)=="undefined" || (0 === jQuery.active && 0 === jQuery(\':animated\').length))');
@@ -445,7 +445,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   /**
    * Presses button with specified id|name|title|alt|value.
    *
-   * @When /^(?:|I )press the "(?P<button>[^"]*)" button$/
+   * @When I press the :button button
    */
   public function pressButton($button) {
     // Wait for any open autocomplete boxes to finish closing.  They block
@@ -467,7 +467,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
-   * @Given /^(?:|I )press the "([^"]*)" key in the "([^"]*)" field$/
+   * @Given I press the :char key in the :field field
    *
    * @param mixed $char could be either char ('b') or char-code (98)
    * @throws \Exception
@@ -522,7 +522,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
-   * @Then /^I should see the link "(?P<link>[^"]*)"$/
+   * @Then I should see the link :link
    */
   public function assertLinkVisible($link) {
     $element = $this->getSession()->getPage();
@@ -545,7 +545,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
-   * @Then /^I should not see the link "(?P<link>[^"]*)"$/
+   * @Then I should not see the link :link
    */
   public function assertNotLinkVisible($link) {
     $element = $this->getSession()->getPage();
@@ -568,7 +568,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
-   * @Then /^I (?:|should )see the heading "(?P<heading>[^"]*)"$/
+   * @Then I (should )see the heading :heading
    */
   public function assertHeading($heading) {
     $element = $this->getSession()->getPage();
@@ -584,7 +584,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
-   * @Then /^I (?:|should )not see the heading "(?P<heading>[^"]*)"$/
+   * @Then I (should )not see the heading :heading
    */
   public function assertNotHeading($heading) {
     $element = $this->getSession()->getPage();
@@ -601,8 +601,8 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   /**
    * Find a heading in a specific region.
    *
-   * @Then /^I should see the heading "(?P<heading>[^"]*)" in the "(?P<region>[^"]*)"(?:| region)$/
-   * @Then /^I should see the "(?P<heading>[^"]*)" heading in the "(?P<region>[^"]*)"(?:| region)$/
+   * @Then I should see the heading :heading in the :region( region)
+   * @Then I should see the :heading heading in the :region( region)
    *
    * @throws \Exception
    *   If region or header within it cannot be found.
@@ -625,7 +625,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
-   * @When /^I (?:follow|click) "(?P<link>[^"]*)" in the "(?P<region>[^"]*)"(?:| region)$/
+   * @When I follow/click :link in the :region( region)
    *
    * @throws \Exception
    *   If region or link within it cannot be found.
@@ -642,7 +642,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
-   * @Then /^I should see the link "(?P<link>[^"]*)" in the "(?P<region>[^"]*)"(?:| region)$/
+   * @Then I should see the link :link in the :region( region)
    *
    * @throws \Exception
    *   If region or link within it cannot be found.
@@ -657,7 +657,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
-   * @Then /^I should not see the link "(?P<link>[^"]*)" in the "(?P<region>[^"]*)"(?:| region)$/
+   * @Then I should not see the link :link in the :region( region)
    *
    * @throws \Exception
    *   If region or link within it cannot be found.
@@ -672,11 +672,11 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
-   * @Then /^I should see (?:the text |)"(?P<text>[^"]*)" in the "(?P<region>[^"]*)"(?:| region)$/
+   * @Then I should see( the text) :text in the :region( region)
    *
    * @throws \Exception
    *   If region or text within it cannot be found.
-*/
+   */
   public function assertRegionText($text, $region) {
     $regionObj = $this->getRegion($region);
 
@@ -688,7 +688,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
-   * @Then /^I should not see (?:the text |)"(?P<text>[^"]*)" in the "(?P<region>[^"]*)"(?:| region)$/
+   * @Then I should not see( the text) :text in the :region( region)
    *
    * @throws \Exception
    *   If region or text within it cannot be found.
@@ -696,7 +696,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   public function assertNotRegionText($text, $region) {
     $regionObj = $this->getRegion($region);
 
-    // Find the text within the region
+    // Find the text within the region.
     $regionText = $regionObj->getText();
     if (strpos($regionText, $text) !== FALSE) {
       throw new \Exception(sprintf('The text "%s" was found in the region "%s" on the page %s', $text, $region, $this->getSession()->getCurrentUrl()));
@@ -706,7 +706,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   /**
    * Checks, if a button with id|name|title|alt|value exists or not and pressess the same
    *
-   * @Given /^I press "(?P<button>[^"]*)" in the "(?P<region>[^"]*)"(?:| region)$/
+   * @Given I press :button in the :region( region)
    *
    * @param $button
    *   string The id|name|title|alt|value of the button to be pressed
@@ -729,8 +729,8 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   /**
    * Fills in a form field with id|name|title|alt|value in the specified region.
    *
-   * @Given /^(?:|I )fill in "(?P<value>(?:[^"]|\\")*)" for "(?P<field>(?:[^"]|\\")*)" in the "(?P<region>[^"]*)"(?:| region)$/
-   * @Given /^(?:|I )fill in "(?P<field>(?:[^"]|\\")*)" with "(?P<value>(?:[^"]|\\")*)" in the "(?P<region>[^"]*)"(?:| region)$/
+   * @Given I fill in :value for :field in the :region( region)
+   * @Given I fill in :field with :value in the :region( region)
    *
    * @throws \Exception
    *   If region cannot be found.
@@ -743,7 +743,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
-   * @Then /^(?:I|I should) see the text "(?P<text>(?:[^"]|\\")*)"$/
+   * @Then I (should )see the text :text
    */
   public function assertTextVisible($text) {
     // Use the Mink Extension step definition.
@@ -751,7 +751,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
-   * @Then /^I should not see the text "(?P<text>[^"]*)"$/
+   * @Then I should not see the text :text
    */
   public function assertNotTextVisible($text) {
     // Use the Mink Extension step definition.
@@ -759,7 +759,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
-   * @Then /^I should get a "(?P<code>[^"]*)" HTTP response$/
+   * @Then I should get a :code HTTP response
    */
   public function assertHttpResponse($code) {
     // Use the Mink Extension step definition.
@@ -767,7 +767,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
-   * @Then /^I should not get a "(?P<code>[^"]*)" HTTP response$/
+   * @Then I should not get a :code HTTP response
    */
   public function assertNotHttpResponse($code) {
     // Use the Mink Extension step definition.
@@ -775,7 +775,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
-   * @Given /^I check the box "(?P<checkbox>[^"]*)"$/
+   * @Given I check the box :checkbox
    */
   public function assertCheckBox($checkbox) {
     // Use the Mink Extension step definition.
@@ -783,7 +783,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
-   * @Given /^I uncheck the box "(?P<checkbox>[^"]*)"$/
+   * @Given I uncheck the box :checkbox
    */
   public function assertUncheckBox($checkbox) {
     // Use the Mink Extension step definition.
@@ -791,8 +791,9 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
-   * @When /^I select the radio button "(?P<label>[^"]*)" with the id "(?P<id>[^"]*)"$/
-   * @When /^I select the radio button "(?P<label>[^"]*)"$/
+   * @When I select the radio button :label with the id :id
+   * @When I select the radio button :label
+   *
    * @TODO convert to mink extension.
    */
   public function assertSelectRadioById($label, $id = '') {
@@ -820,8 +821,8 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    */
 
   /**
-   * @Given /^I am an anonymous user$/
-   * @Given /^I am not logged in$/
+   * @Given I am an anonymous user
+   * @Given I am not logged in
    */
   public function assertAnonymousUser() {
     // Verify the user is logged out.
@@ -833,7 +834,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   /**
    * Creates and authenticates a user with the given role via Drush.
    *
-   * @Given /^I am logged in as a user with the "(?P<role>[^"]*)" role$/
+   * @Given I am logged in as a user with the :role role
    */
   public function assertAuthenticatedByRole($role) {
     // Check if a user with this role is already logged in.
@@ -865,7 +866,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
-   * @Given /^I am logged in as "(?P<name>[^"]*)"$/
+   * @Given I am logged in as :name
    */
   public function assertLoggedInByName($name) {
     if (!isset($this->users[$name])) {
@@ -880,7 +881,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
-   * @Given /^I am logged in as a user with the "(?P<permission>[^"]*)" permission(?:|s)$/
+   * @Given I am logged in as a user with the :permissions permission(s)
    */
   public function assertLoggedInWithPermissions($permissions) {
     $permissions = explode(',', $permissions);
@@ -910,9 +911,9 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    * administrative pages such as the administer content types screen found at
    * `admin/structure/types`.
    *
-   * @Given /^I click "(?P<link>[^"]*)" in the "(?P<row_text>[^"]*)" row$/
+   * @Given I click :link in the :rowText row
    */
-  public function assertClickInTableRow($link, $row_text) {
+  public function assertClickInTableRow($link, $rowText) {
     $page = $this->getSession()->getPage();
     $rows = $page->findAll('css', 'tr');
     if (!$rows) {
@@ -920,7 +921,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
     }
     $row_found = FALSE;
     foreach ($rows as $row) {
-      if (strpos($row->getText(), $row_text) !== FALSE) {
+      if (strpos($row->getText(), $rowText) !== FALSE) {
         $row_found = TRUE;
         // Found text in this row, now find link in a cell.
         $cells = $row->findAll('css', 'td');
@@ -936,30 +937,32 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
       }
     }
     if ($row_found) {
-      throw new \Exception(sprintf('Found a row containing "%s", but no "%s" link on the page %s', $row_text, $link, $this->getSession()->getCurrentUrl()));
+      throw new \Exception(sprintf('Found a row containing "%s", but no "%s" link on the page %s', $rowText, $link, $this->getSession()->getCurrentUrl()));
     }
     else {
-      throw new \Exception(sprintf('Failed to find a row containing "%s" on the page %s', $row_text, $this->getSession()->getCurrentUrl()));
+      throw new \Exception(sprintf('Failed to find a row containing "%s" on the page %s', $rowText, $this->getSession()->getCurrentUrl()));
     }
   }
 
   /**
-   * @Given /^the cache has been cleared$/
+   * @Given the cache has been cleared
    */
   public function assertCacheClear() {
     $this->getDriver()->clearCache();
   }
 
   /**
-   * @Given /^I run cron$/
+   * @Given I run cron
    */
   public function assertCron() {
     $this->getDriver()->runCron();
   }
 
   /**
-   * @Given /^I am viewing (?:a|an) "(?P<type>[^"]*)" node with the title "(?P<title>[^"]*)"$/
-   * @Given /^(?:a|an) "(?P<type>[^"]*)" node with the title "(?P<title>[^"]*)"$/
+   * Creates content of the given type.
+   *
+   * @Given I am viewing a/an :type (content )with the title :title
+   * @Given a/an :type (content )with the title :title
    */
   public function createNode($type, $title) {
     // @todo make this easily extensible.
@@ -974,7 +977,9 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
-   * @Given /^I am viewing my "(?P<type>[^"]*)" node with the title "(?P<title>[^"]*)"$/
+   * Creates content authored by the current user.
+   *
+   * @Given I am viewing my :type (content )with the title :title
    */
   public function createMyNode($type, $title) {
     if (!$this->user->uid) {
@@ -994,7 +999,12 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
-   * @Given /^"(?P<type>[^"]*)" nodes:$/
+   * Creates content of a given type provided in the form:
+   * | title    | author     | status | created           |
+   * | My title | Joe Editor | 1      | 2014-10-17 8:00am |
+   * | ...      | ...        | ...    | ...               |
+   *
+   * @Given :type content:
    */
   public function createNodes($type, TableNode $nodesTable) {
     foreach ($nodesTable->getHash() as $nodeHash) {
@@ -1005,7 +1015,14 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
-   * @Given /^I am viewing (?:a|an) "(?P<type>[^"]*)" node:$/
+   * Creates content of the given type, provided in the form:
+   * | title     | My node        |
+   * | Field One | My field value |
+   * | author    | Joe Editor     |
+   * | status    | 1              |
+   * | ...       | ...            |
+   *
+   * @Given I am viewing a/an :type( content):
    */
   public function assertViewingNode($type, TableNode $fields) {
     $node = (object) array(
@@ -1022,9 +1039,9 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
-   * Asserts that a given node type is editable.
+   * Asserts that a given content type is editable.
    *
-   * @Then /^I should be able to edit (?:a|an) "([^"]*)" node$/
+   * @Then I should be able to edit a/an :type( content)
    */
   public function assertEditNodeOfType($type) {
     $node = (object) array('type' => $type);
@@ -1039,8 +1056,8 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
 
 
   /**
-   * @Given /^I am viewing (?:a|an) "(?P<vocabulary>[^"]*)" term with the name "(?P<name>[^"]*)"$/
-   * @Given /^(?:a|an) "(?P<vocabulary>[^"]*)" term with the name "(?P<name>[^"]*)"$/
+   * @Given I am viewing a/an :vocabulary term with the name :name
+   * @Given a/an :vocabulary term with the name :name
    */
   public function createTerm($vocabulary, $name) {
     // @todo make this easily extensible.
@@ -1063,7 +1080,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    * | name     | mail         | roles        |
    * | user foo | foo@bar.com  | role1, role2 |
    *
-   * @Given /^users:$/
+   * @Given users:
    */
   public function createUsers(TableNode $usersTable) {
     foreach ($usersTable->getHash() as $userHash) {
@@ -1097,7 +1114,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
-   * @Given /^"(?P<vocabulary>[^"]*)" terms:$/
+   * @Given :vocabulary terms:
    */
   public function createTerms($vocabulary, TableNode $termsTable) {
     foreach ($termsTable->getHash() as $termsHash) {
@@ -1113,7 +1130,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    * @param $message
    *   string The text to be checked
    *
-   * @Then /^I should see the error message(?:| containing) "([^"]*)"$/
+   * @Then I should see the error message( containing) :message
    */
   public function assertErrorVisible($message) {
     $errorSelector = $this->getDrupalSelector('error_message_selector');
@@ -1132,7 +1149,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    * @param $messages
    *   array An array of texts to be checked
    *
-   * @Then /^I should see the following <error messages>$/
+   * @Then I should see the following error message(s):
    */
   public function assertMultipleErrors(TableNode $messages) {
     foreach ($messages->getHash() as $key => $value) {
@@ -1147,7 +1164,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    * @param $message
    *   string The text to be checked
    *
-   * @Given /^I should not see the error message(?:| containing) "([^"]*)"$/
+   * @Given I should not see the error message( containing) :message
    */
   public function assertNotErrorVisible($message) {
     $errorSelector = $this->getDrupalSelector('error_message_selector');
@@ -1165,7 +1182,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    * @param $messages
    *   array An array of texts to be checked
    *
-   * @Then /^I should not see the following <error messages>$/
+   * @Then I should not see the following error messages:
    */
   public function assertNotMultipleErrors(TableNode $messages) {
     foreach ($messages->getHash() as $key => $value) {
@@ -1180,7 +1197,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    * @param $message
    *   string The text to be checked
    *
-   * @Then /^I should see the success message(?:| containing) "([^"]*)"$/
+   * @Then I should see the success message( containing) :message
    */
   public function assertSuccessMessage($message) {
     $successSelector = $this->getDrupalSelector('success_message_selector');
@@ -1199,7 +1216,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    * @param $message
    *   array An array of texts to be checked
    *
-   * @Then /^I should see the following <success messages>$/
+   * @Then I should see the following success messages:
    */
   public function assertMultipleSuccessMessage(TableNode $messages) {
     foreach ($messages->getHash() as $key => $value) {
@@ -1214,7 +1231,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    * @param $message
    *   string The text to be checked
    *
-   * @Given /^I should not see the success message(?:| containing) "([^"]*)"$/
+   * @Given I should not see the success message( containing) :message
    */
   public function assertNotSuccessMessage($message) {
     $successSelector = $this->getDrupalSelector('success_message_selector');
@@ -1232,7 +1249,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    * @param $message
    *   array An array of texts to be checked
    *
-   * @Then /^I should not see the following <success messages>$/
+   * @Then I should not see the following success messages:
    */
   public function assertNotMultipleSuccessMessage(TableNode $messages) {
     foreach ($messages->getHash() as $key => $value) {
@@ -1247,7 +1264,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    * @param $message
    *   string The text to be checked
    *
-   * @Then /^I should see the warning message(?:| containing) "([^"]*)"$/
+   * @Then I should see the warning message( containing) :message
    */
   public function assertWarningMessage($message) {
     $warningSelector = $this->getDrupalSelector('warning_message_selector');
@@ -1266,7 +1283,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    * @param $message
    *   array An array of texts to be checked
    *
-   * @Then /^I should see the following <warning messages>$/
+   * @Then I should see the following warning messages:
    */
   public function assertMultipleWarningMessage(TableNode $messages) {
     foreach ($messages->getHash() as $key => $value) {
@@ -1281,7 +1298,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    * @param $message
    *   string The text to be checked
    *
-   * @Given /^I should not see the warning message(?:| containing) "([^"]*)"$/
+   * @Given I should not see the warning message( containing) :message
    */
   public function assertNotWarningMessage($message) {
     $warningSelector = $this->getDrupalSelector('warning_message_selector');
@@ -1299,7 +1316,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    * @param $message
    *   array An array of texts to be checked
    *
-   * @Then /^I should not see the following <warning messages>$/
+   * @Then I should not see the following warning messages:
    */
   public function assertNotMultipleWarningMessage(TableNode $messages) {
     foreach ($messages->getHash() as $key => $value) {
@@ -1314,7 +1331,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    * @param $message
    *   string The message to be checked
    *
-   * @Then /^I should see the message(?:| containing) "([^"]*)"$/
+   * @Then I should see the message( containing) :message
    */
   public function assertMessage($message) {
     $msgSelector = $this->getDrupalSelector('message_selector');
@@ -1333,7 +1350,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    * @param $message
    *   string The message to be checked
    *
-   * @Then /^I should not see the message(?:| containing) "([^"]*)"$/
+   * @Then I should not see the message( containing) :message
    */
   public function assertNotMessage($message) {
     $msgSelector = $this->getDrupalSelector('message_selector');
@@ -1362,13 +1379,14 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   /**
    * @} End of defgroup "drupal extensions"
    */
+
   /**
    * @defgroup drush steps
    * @{
    */
 
   /**
-   * @Given /^I run drush "(?P<command>[^"]*)"$/
+   * @Given I run drush :command
    */
   public function assertDrushCommand($command) {
     if (!$this->drushOutput = $this->getDriver('drush')->$command()) {
@@ -1377,7 +1395,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
-   * @Given /^I run drush "(?P<command>[^"]*)" "(?P<arguments>(?:[^"]|\\")*)"$/
+   * @Given I run drush :command :arguments
    */
   public function assertDrushCommandWithArgument($command, $arguments) {
     $this->drushOutput = $this->getDriver('drush')->$command($this->fixStepArgument($arguments));
@@ -1387,7 +1405,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
-   * @Then /^drush output should contain "(?P<output>(?:[^"]|\\")*)"$/
+   * @Then drush output should contain :output
    */
   public function assertDrushOutput($output) {
     if (strpos($this->readDrushOutput(), $this->fixStepArgument($output)) === FALSE) {
@@ -1396,7 +1414,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
-   * @Then /^drush output should not contain "(?P<output>(?:[^"]|\\")*)"$/
+   * @Then drush output should not contain :output
    */
   public function drushOutputShouldNotContain($output) {
     if (strpos($this->readDrushOutput(), $this->fixStepArgument($output)) !== FALSE) {
@@ -1405,7 +1423,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
-   * @Then /^print last drush output$/
+   * @Then print last drush output
    */
   public function printLastDrushOutput() {
     echo $this->readDrushOutput();
@@ -1414,6 +1432,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   /**
    * @} End of defgroup "drush steps"
    */
+
   /**
    * @defgroup "debugging steps"
    * @{
@@ -1422,7 +1441,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   /**
    * Pauses the scenario until the user presses a key. Useful when debugging a scenario.
    *
-   * @Then /^(?:|I )break$/
+   * @Then (I )break
    */
     public function iPutABreakpoint()
     {

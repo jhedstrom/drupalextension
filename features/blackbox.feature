@@ -37,11 +37,11 @@ Feature: Test DrupalContext
    When I press "Log in"
    Then I should see the error message "Password field is required"
    And I should not see the error message "Sorry, unrecognized username or password"
-   And I should see the following <error messages>
+   And I should see the following error messages:
    | error messages             |
    | Username field is required |
    | Password field is required |
-   And I should not see the following <error messages>
+   And I should not see the following error messages:
    | error messages                                                                |
    | Sorry, unrecognized username or password                                      |
    | Unable to send e-mail. Contact the site administrator if the problem persists |
