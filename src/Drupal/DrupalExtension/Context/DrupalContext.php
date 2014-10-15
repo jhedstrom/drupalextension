@@ -249,16 +249,37 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
+   * Dispatch scope hooks.
+   *
+   * @param string $scope
+   *   The entity scope to dispatch.
+   * @param stdClass $entity
+   *   The entity.
+   */
+  protected function dispatchHooks ($scopeType, \stdClass $entity) {
+    $fullScopeClass = 'Drupal\\DrupalExtension\\Hook\\Scope\\' . $scopeType;
+    $scope = new $fullScopeClass($this->getDrupal()->getEnvironment(), $this, $entity);
+    $callResults = $this->dispatcher->dispatchScopeHooks($scope, $this, $entity);
+
+    // The dispatcher suppresses exceptions, throw them here if there are any.
+    foreach ($callResults as $result) {
+      if ($result->hasException()) {
+        $exception = $result->getException();
+        throw $exception;
+      }
+    }
+  }
+
+  /**
    * Helper function to create a node.
    *
    * @return object
    *   The created node.
    */
   public function nodeCreate($node) {
-    // @todo this doesn't properly throw exceptions.
-    $this->dispatcher->dispatchScopeHooks(new BeforeNodeCreateScope($this->getDrupal()->getEnvironment(), $this, $node));
+    $this->dispatchHooks('BeforeNodeCreateScope', $node);
     $saved = $this->getDriver()->createNode($node);
-    $this->dispatcher->dispatchScopeHooks(new AfterNodeCreateScope($this->getDrupal()->getEnvironment(), $this, $saved));
+    $this->dispatchHooks('AfterNodeCreateScope', $saved);
     $this->nodes[] = $saved;
     return $saved;
   }
@@ -270,10 +291,9 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    *   The created user.
    */
   public function userCreate($user) {
-    // @todo this doesn't properly throw exceptions.
-    $this->dispatcher->dispatchScopeHooks(new BeforeUserCreateScope($this->getDrupal()->getEnvironment(), $this, $user));
+    $this->dispatchHooks('BeforeUserCreateScope', $user);
     $this->getDriver()->userCreate($user);
-    $this->dispatcher->dispatchScopeHooks(new AfterUserCreateScope($this->getDrupal()->getEnvironment(), $this, $user));
+    $this->dispatchHooks('AfterUserCreateScope', $user);
     $this->users[$user->name] = $this->user = $user;
     return $user;
   }
@@ -285,10 +305,9 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    *   The created term.
    */
   public function termCreate($term) {
-    // @todo this doesn't properly throw exceptions.
-    $this->dispatcher->dispatchScopeHooks(new BeforeTermCreateScope($this->getDrupal()->getEnvironment(), $this, $term));
+    $this->dispatchHooks('BeforeTermCreateScope', $term);
     $saved = $this->getDriver()->createTerm($term);
-    $this->dispatcher->dispatchScopeHooks(new AfterTermCreateScope($this->getDrupal()->getEnvironment(), $this, $saved));
+    $this->dispatchHooks('AfterTermCreateScope', $saved);
     $this->terms[] = $saved;
     return $saved;
   }
