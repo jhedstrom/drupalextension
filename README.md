@@ -4,7 +4,7 @@ The Drupal Extension is an integration layer between [Behat](http://behat.org), 
 
 [![Build Status](https://travis-ci.org/jhedstrom/drupalextension.png?branch=1.0)](https://travis-ci.org/jhedstrom/drupalextension)
 
-The Drupal Extension 2.0 supports Drupal 7 and 8, and utilized Behat 3. For Drupal 6 support (or Behat 2), use the 1.0 version.
+The Drupal Extension 3.0 supports Drupal 7 and 8, and utilized Behat 3. For Drupal 6 support (or Behat 2), use the 1.0 version.
 
 ## Use it for testing your Drupal site.
 
