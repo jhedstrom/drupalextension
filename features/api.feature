@@ -35,7 +35,7 @@ Feature: DrupalContext
   @d8
   Scenario: Create a node
     Given I am logged in as a user with the "administrator" role
-    When I am viewing an "article" node with the title "My article"
+    When I am viewing an "article" with the title "My article"
     Then I should see the heading "My article"
 
   @drushTest @d8
@@ -47,11 +47,11 @@ Feature: DrupalContext
 
   @d8
   Scenario: Create many nodes
-    Given "page" nodes:
+    Given "page" content:
     | title    |
     | Page one |
     | Page two |
-    And "article" nodes:
+    And "article" content:
     | title          |
     | First article  |
     | Second article |
@@ -64,7 +64,7 @@ Feature: DrupalContext
 
   @d8
   Scenario: Create nodes with fields
-    Given "article" nodes:
+    Given "article" content:
     | title                     | promote | body             |
     | First article with fields |       1 | PLACEHOLDER BODY |
     When I am on the homepage
@@ -72,7 +72,7 @@ Feature: DrupalContext
     Then I should see the text "PLACEHOLDER BODY"
 
   Scenario: Create and view a node with fields
-    Given I am viewing an "Article" node:
+    Given I am viewing an "Article":
     | title | My article with fields! |
     | body  | A placeholder           |
     Then I should see the heading "My article with fields!"
@@ -124,7 +124,7 @@ Feature: DrupalContext
     Given users:
     | name     | mail            | status |
     | Joe User | joe@example.com | 1      |
-    And "article" nodes:
+    And "article" content:
     | title          | author   | body             | promote |
     | Article by Joe | Joe User | PLACEHOLDER BODY | 1       |
     When I am logged in as a user with the "administrator" role
@@ -139,7 +139,7 @@ Feature: DrupalContext
     | Tag two   |
     | Tag three |
     | Tag four  |
-    And "article" nodes:
+    And "article" content:
     | title           | body             | promote | field_tags                  |
     | Article by Joe  | PLACEHOLDER BODY |       1 | Tag one, Tag two, Tag three |
     | Article by Mike | PLACEHOLDER BODY |       1 | Tag four                    |
@@ -150,14 +150,14 @@ Feature: DrupalContext
     And I should see the link "Tag four"
 
   Scenario: Readable created dates
-    Given "article" nodes:
+    Given "article" content:
     | title        | body             | created            | status | promote |
     | Test article | PLACEHOLDER BODY | 07/27/2014 12:03am |      1 |       1 |
     When I am on the homepage
     Then I should see the text "Sun, 07/27/2014 - 00:03"
 
   Scenario: Node hooks are functioning
-    Given "article" nodes:
+    Given "article" content:
     | title        | body        | published on       | status | promote |
     | Test article | PLACEHOLDER | 04/27/2013 11:11am |      1 |       1 |
     When I am on the homepage
@@ -165,7 +165,7 @@ Feature: DrupalContext
 
   Scenario: Node edit access by administrator
     Given I am logged in as a user with the "administrator" role
-    Then I should be able to edit an "Article" node
+    Then I should be able to edit an "Article"
 
   Scenario: User hooks are functioning
     Given users:
