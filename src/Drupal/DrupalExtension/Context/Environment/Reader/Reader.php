@@ -11,7 +11,7 @@ use Behat\Testwork\Environment\Exception\EnvironmentReadException;
 use Behat\Testwork\Environment\Reader\EnvironmentReader;
 
 use Drupal\DrupalDriverManager;
-use Drupal\DrupalExtension\Context\DrupalSubContextFinderInterface;
+use Drupal\Driver\SubDriverFinderInterface;
 
 use Symfony\Component\Finder\Finder;
 
@@ -133,8 +133,8 @@ final class Reader implements EnvironmentReader {
       // Drivers may specify paths to subcontexts.
       if ($this->parameters['subcontexts']['autoload']) {
         foreach ($this->drupal->getDrivers() as $name => $driver) {
-          if ($driver instanceof DrupalSubContextFinderInterface) {
-            $paths += $driver->getSubContextPaths();
+          if ($driver instanceof SubDriverFinderInterface) {
+            $paths += $driver->getSubDriverPaths();
           }
         }
       }
