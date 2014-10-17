@@ -259,7 +259,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   protected function dispatchHooks ($scopeType, \stdClass $entity) {
     $fullScopeClass = 'Drupal\\DrupalExtension\\Hook\\Scope\\' . $scopeType;
     $scope = new $fullScopeClass($this->getDrupal()->getEnvironment(), $this, $entity);
-    $callResults = $this->dispatcher->dispatchScopeHooks($scope, $this, $entity);
+    $callResults = $this->dispatcher->dispatchScopeHooks($scope);
 
     // The dispatcher suppresses exceptions, throw them here if there are any.
     foreach ($callResults as $result) {
