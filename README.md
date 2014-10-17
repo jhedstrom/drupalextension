@@ -15,7 +15,7 @@ The Drupal Extension 3.0 supports Drupal 7 and 8, and utilized Behat 3. For Drup
   ```
     {
       "require": {
-        "drupal/drupal-extension": "1.0.*@stable"
+        "drupal/drupal-extension": "~3.0"
       },
       "config": {
         "bin-dir": "bin/"
