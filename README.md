@@ -2,7 +2,7 @@
 
 The Drupal Extension is an integration layer between [Behat](http://behat.org), [Mink Extension](https://github.com/Behat/MinkExtension), and Drupal. It provides step definitions for common testing scenarios specific to Drupal sites.
 
-[![Build Status](https://travis-ci.org/jhedstrom/drupalextension.png?branch=1.0)](https://travis-ci.org/jhedstrom/drupalextension)
+[![Build Status](https://travis-ci.org/jhedstrom/drupalextension.png?branch=master)](https://travis-ci.org/jhedstrom/drupalextension)
 
 The Drupal Extension 3.0 supports Drupal 7 and 8, and utilized Behat 3. For Drupal 6 support (or Behat 2), use the 1.0 version.
 
