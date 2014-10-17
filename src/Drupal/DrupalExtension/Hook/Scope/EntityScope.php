@@ -18,7 +18,7 @@ interface EntityScope extends HookScope {
   /**
    * Returns the context.
    *
-   * @return Context
+   * @return \Behat\Behat\Context\Context
    */
   public function getContext();
 

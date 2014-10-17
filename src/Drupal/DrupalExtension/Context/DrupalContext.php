@@ -92,7 +92,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   /**
    * Keep track of drush output.
    *
-   * @var string
+   * @var string|boolean
    */
   private $drushOutput;
 

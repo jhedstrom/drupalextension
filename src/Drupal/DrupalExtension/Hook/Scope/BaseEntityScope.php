@@ -43,7 +43,7 @@ abstract class BaseEntityScope implements EntityScope {
   /**
    * Returns the context.
    *
-   * @return Context
+   * @return \Behat\Behat\Context\Context
    */
   public function getContext() {
     return $this->context;
