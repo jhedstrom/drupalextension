@@ -87,7 +87,6 @@ Feature: DrupalContext
     When I visit "admin/people"
     Then I should see the link "Joe User"
 
-  @d8
   Scenario: Create users with roles
     Given users:
     | name     | mail            | roles         |
