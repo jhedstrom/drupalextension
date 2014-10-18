@@ -1118,6 +1118,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
     foreach ($usersTable->getHash() as $userHash) {
 
       // Split out roles to process after user is created.
+      $roles = array();
       if (isset($userHash['roles'])) {
         $roles = explode(',', $userHash['roles']);
         $roles = array_map('trim', $roles);
