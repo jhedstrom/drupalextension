@@ -88,6 +88,15 @@ Feature: DrupalContext
     Then I should see the link "Joe User"
 
   @d8
+  Scenario: Create users with roles
+    Given users:
+    | name     | mail            | roles         |
+    | Joe User | joe@example.com | administrator |
+    And I am logged in as a user with the "administrator" role
+    When I visit "admin/people"
+    Then I should see the text "administrator" in the "Joe User" row
+
+  @d8
   Scenario: Login as a user created during this scenario
     Given users:
     | name      | status |

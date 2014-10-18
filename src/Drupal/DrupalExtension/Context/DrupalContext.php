@@ -18,6 +18,7 @@ use Drupal\DrupalExtension\Hook\Scope\BeforeUserCreateScope;
 use Drupal\DrupalExtension\Hook\Scope\BeforeTermCreateScope;
 
 use Behat\Behat\Context\TranslatableContext;
+use Behat\Mink\Element\Element;
 
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
@@ -185,9 +186,9 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    * @param string $region
    *   The machine name of the region to return.
    *
-   * @return \Behat\Mink\Element\NodeElement|NULL
+   * @return \Behat\Mink\Element\NodeElement
    */
-  public function getRegion($region) {
+  public function getRegion(Element $region) {
     $session = $this->getSession();
     $regionObj = $session->getPage()->find('region', $region);
     if (!$regionObj) {
@@ -926,41 +927,54 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
+   * Retrieve a table row containing specified text from a given element.
+   *
+   * @param \Behat\Mink\Element\Element
+   * @param string
+   *   The text to search for in the table row.
+   *
+   * @return \Behat\Mink\Element\NodeElement
+   *
+   * @throws \Exception
+   */
+  public function getTableRow(Element $element, $search) {
+    $rows = $element->findAll('css', 'tr');
+    if (!$rows) {
+      throw new \Exception(sprintf('No rows found on the page %s', $this->getSession()->getCurrentUrl()));
+    }
+    foreach ($rows as $row) {
+      if (strpos($row->getText(), $search) !== FALSE) {
+        return $element;
+      }
+    }
+    throw new \Exception(sprintf('Failed to find a row containing "%s" on the page %s', $search, $this->getSession()->getCurrentUrl()));
+  }
+
+  /**
+   * Find text in a table row containing given text.
+   *
+   * @Then I should see (the text ):text in the ":rowText" row
+   */
+  public function assertTextInTableRow($text, $rowText) {
+    $this->getTableRow($this->getSession()->getPage(), $rowText);
+  }
+
+  /**
    * Attempts to find a link in a table row containing giving text. This is for
    * administrative pages such as the administer content types screen found at
    * `admin/structure/types`.
    *
    * @Given I click :link in the :rowText row
+   * @Then I (should )see the :link in the :rowText row
    */
   public function assertClickInTableRow($link, $rowText) {
     $page = $this->getSession()->getPage();
-    $rows = $page->findAll('css', 'tr');
-    if (!$rows) {
-      throw new \Exception(sprintf('No rows found on the page %s', $this->getSession()->getCurrentUrl()));
+    if ($link = $this->getTableRow($page, $link)->findLink($link)) {
+      // Click the link and return.
+      $link->click();
+      return;
     }
-    $row_found = FALSE;
-    foreach ($rows as $row) {
-      if (strpos($row->getText(), $rowText) !== FALSE) {
-        $row_found = TRUE;
-        // Found text in this row, now find link in a cell.
-        $cells = $row->findAll('css', 'td');
-        if (!$cells) {
-          throw new \Exception(sprintf('No cells found in table row on the page %s', $this->getSession()->getCurrentUrl()));
-        }
-        foreach ($cells as $cell) {
-          if ($element = $cell->findLink($link)) {
-            $element->click();
-            return;
-          }
-        }
-      }
-    }
-    if ($row_found) {
-      throw new \Exception(sprintf('Found a row containing "%s", but no "%s" link on the page %s', $rowText, $link, $this->getSession()->getCurrentUrl()));
-    }
-    else {
-      throw new \Exception(sprintf('Failed to find a row containing "%s" on the page %s', $rowText, $this->getSession()->getCurrentUrl()));
-    }
+    throw new \Exception(sprintf('Found a row containing "%s", but no "%s" link on the page %s', $rowText, $link, $this->getSession()->getCurrentUrl()));
   }
 
   /**
