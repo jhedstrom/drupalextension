@@ -956,7 +956,10 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    * @Then I should see (the text ):text in the ":rowText" row
    */
   public function assertTextInTableRow($text, $rowText) {
-    $this->getTableRow($this->getSession()->getPage(), $rowText);
+    $row = $this->getTableRow($this->getSession()->getPage(), $rowText);
+    if (strpos($row->getText(), $text) === FALSE) {
+      throw new \Exception(sprintf('Found a row containing "%s", but it did not contain the text "%s".', $rowText, $text));
+    }
   }
 
   /**
