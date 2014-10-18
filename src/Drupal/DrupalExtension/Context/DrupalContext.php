@@ -904,22 +904,18 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    * @Given I am logged in as a user with the :permissions permission(s)
    */
   public function assertLoggedInWithPermissions($permissions) {
-    $permissions = explode(',', $permissions);
-
-    $rid = $this->getDriver()->roleCreate($permissions);
-    if (!$rid) {
-      throw new \Exception(sprintf('No role with permissions (%s) was created!', implode(', ', $permissions)));
-    }
-
     // Create user.
     $user = (object) array(
       'name' => $this->getRandom()->name(8),
       'pass' => $this->getRandom()->name(16),
-      'roles' => array($rid),
     );
     $user->mail = "{$user->name}@example.com";
-
     $this->userCreate($user);
+
+    // Create and assign a temporary role with given permissions.
+    $permissions = explode(',', $permissions);
+    $rid = $this->getDriver()->roleCreate($permissions);
+    $this->getDriver()->userAddRole($user, $rid);
     $this->roles[] = $rid;
 
     // Login.
