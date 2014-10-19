@@ -968,7 +968,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    */
   public function assertClickInTableRow($link, $rowText) {
     $page = $this->getSession()->getPage();
-    if ($link = $this->getTableRow($page, $link)->findLink($link)) {
+    if ($link = $this->getTableRow($page, $rowText)->findLink($link)) {
       // Click the link and return.
       $link->click();
       return;
