@@ -15,3 +15,11 @@ Feature: DrupalContext
     And I click "Manage fields" in the "Article" row
     Then I should be on "admin/structure/types/manage/article/fields"
     And I should see text matching "Add new field"
+
+  Scenario: Create users with roles
+    Given users:
+    | name     | mail            | roles         |
+    | Joe User | joe@example.com | Administrator  |
+    And I am logged in as a user with the "Administrator" role
+    When I visit "admin/people"
+    Then I should see the text "Administrator" in the "Joe User" row

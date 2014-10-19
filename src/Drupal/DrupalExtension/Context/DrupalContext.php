@@ -18,6 +18,7 @@ use Drupal\DrupalExtension\Hook\Scope\BeforeUserCreateScope;
 use Drupal\DrupalExtension\Hook\Scope\BeforeTermCreateScope;
 
 use Behat\Behat\Context\TranslatableContext;
+use Behat\Mink\Element\Element;
 
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
@@ -185,7 +186,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    * @param string $region
    *   The machine name of the region to return.
    *
-   * @return \Behat\Mink\Element\NodeElement|NULL
+   * @return \Behat\Mink\Element\NodeElement
    */
   public function getRegion($region) {
     $session = $this->getSession();
@@ -903,26 +904,58 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    * @Given I am logged in as a user with the :permissions permission(s)
    */
   public function assertLoggedInWithPermissions($permissions) {
-    $permissions = explode(',', $permissions);
-
-    $rid = $this->getDriver()->roleCreate($permissions);
-    if (!$rid) {
-      throw new \Exception(sprintf('No role with permissions (%s) was created!', implode(', ', $permissions)));
-    }
-
     // Create user.
     $user = (object) array(
       'name' => $this->getRandom()->name(8),
       'pass' => $this->getRandom()->name(16),
-      'roles' => array($rid),
     );
     $user->mail = "{$user->name}@example.com";
-
     $this->userCreate($user);
+
+    // Create and assign a temporary role with given permissions.
+    $permissions = explode(',', $permissions);
+    $rid = $this->getDriver()->roleCreate($permissions);
+    $this->getDriver()->userAddRole($user, $rid);
     $this->roles[] = $rid;
 
     // Login.
     $this->login();
+  }
+
+  /**
+   * Retrieve a table row containing specified text from a given element.
+   *
+   * @param \Behat\Mink\Element\Element
+   * @param string
+   *   The text to search for in the table row.
+   *
+   * @return \Behat\Mink\Element\NodeElement
+   *
+   * @throws \Exception
+   */
+  public function getTableRow(Element $element, $search) {
+    $rows = $element->findAll('css', 'tr');
+    if (!$rows) {
+      throw new \Exception(sprintf('No rows found on the page %s', $this->getSession()->getCurrentUrl()));
+    }
+    foreach ($rows as $row) {
+      if (strpos($row->getText(), $search) !== FALSE) {
+        return $element;
+      }
+    }
+    throw new \Exception(sprintf('Failed to find a row containing "%s" on the page %s', $search, $this->getSession()->getCurrentUrl()));
+  }
+
+  /**
+   * Find text in a table row containing given text.
+   *
+   * @Then I should see (the text ):text in the ":rowText" row
+   */
+  public function assertTextInTableRow($text, $rowText) {
+    $row = $this->getTableRow($this->getSession()->getPage(), $rowText);
+    if (strpos($row->getText(), $text) === FALSE) {
+      throw new \Exception(sprintf('Found a row containing "%s", but it did not contain the text "%s".', $rowText, $text));
+    }
   }
 
   /**
@@ -931,36 +964,16 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    * `admin/structure/types`.
    *
    * @Given I click :link in the :rowText row
+   * @Then I (should )see the :link in the :rowText row
    */
   public function assertClickInTableRow($link, $rowText) {
     $page = $this->getSession()->getPage();
-    $rows = $page->findAll('css', 'tr');
-    if (!$rows) {
-      throw new \Exception(sprintf('No rows found on the page %s', $this->getSession()->getCurrentUrl()));
+    if ($link = $this->getTableRow($page, $link)->findLink($link)) {
+      // Click the link and return.
+      $link->click();
+      return;
     }
-    $row_found = FALSE;
-    foreach ($rows as $row) {
-      if (strpos($row->getText(), $rowText) !== FALSE) {
-        $row_found = TRUE;
-        // Found text in this row, now find link in a cell.
-        $cells = $row->findAll('css', 'td');
-        if (!$cells) {
-          throw new \Exception(sprintf('No cells found in table row on the page %s', $this->getSession()->getCurrentUrl()));
-        }
-        foreach ($cells as $cell) {
-          if ($element = $cell->findLink($link)) {
-            $element->click();
-            return;
-          }
-        }
-      }
-    }
-    if ($row_found) {
-      throw new \Exception(sprintf('Found a row containing "%s", but no "%s" link on the page %s', $rowText, $link, $this->getSession()->getCurrentUrl()));
-    }
-    else {
-      throw new \Exception(sprintf('Failed to find a row containing "%s" on the page %s', $rowText, $this->getSession()->getCurrentUrl()));
-    }
+    throw new \Exception(sprintf('Found a row containing "%s", but no "%s" link on the page %s', $rowText, $link, $this->getSession()->getCurrentUrl()));
   }
 
   /**
@@ -1104,31 +1117,25 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   public function createUsers(TableNode $usersTable) {
     foreach ($usersTable->getHash() as $userHash) {
 
-      // If we have roles convert it to array and convert role names to rids.
+      // Split out roles to process after user is created.
+      $roles = array();
       if (isset($userHash['roles'])) {
-        $userHash['roles'] = explode(',', $userHash['roles']);
-        $userHash['roles'] = array_map('trim', $userHash['roles']);
-
-        // Role names to rid.
-        foreach ($userHash['roles'] as &$input_role)  {
-          $role = user_role_load_by_name($input_role);
-          if ($role) {
-            $input_role = $role->rid;
-          }
-          else {
-            throw new \Exception(sprintf('No such role: %s', $input_role));
-          }
-        }
+        $roles = explode(',', $userHash['roles']);
+        $roles = array_map('trim', $roles);
+        unset($userHash['roles']);
       }
 
       $user = (object) $userHash;
-
       // Set a password.
       if (!isset($user->pass)) {
         $user->pass = $this->getRandom()->name();
       }
-
       $this->userCreate($user);
+
+      // Assign roles.
+      foreach ($roles as $role) {
+        $this->getDriver()->userAddRole($user, $role);
+      }
     }
   }
 
