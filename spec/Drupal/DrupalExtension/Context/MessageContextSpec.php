@@ -11,4 +11,9 @@ class MessageContextSpec extends ObjectBehavior
     {
         $this->shouldHaveType('Drupal\DrupalExtension\Context\RawDrupalContext');
     }
+
+    function it_is_a_translatable_context()
+    {
+        $this->shouldHaveType('Behat\Behat\Context\TranslatableContext');
+    }
 }

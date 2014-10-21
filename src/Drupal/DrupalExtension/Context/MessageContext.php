@@ -2,12 +2,20 @@
 
 namespace Drupal\DrupalExtension\Context;
 
+use Behat\Behat\Context\TranslatableContext;
 use Behat\Gherkin\Node\TableNode;
 
 /**
  * Provides step-definitions for interacting with Drupal messages.
  */
-class MessageContext extends RawDrupalContext {
+class MessageContext extends RawDrupalContext implements TranslatableContext {
+
+  /**
+   * {@inheritDoc}
+   */
+  public static function getTranslationResources() {
+    return glob(__DIR__ . '/../../../../i18n/*.xliff');
+  }
 
   /**
    * Checks if the current page contains the given error message

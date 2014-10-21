@@ -2,12 +2,13 @@
 
 namespace Drupal\DrupalExtension\Context;
 
+use Behat\Behat\Context\TranslatableContext;
 use Behat\Behat\Tester\Exception\PendingException;
 
 /**
  * Provides step definitions for interacting directly with Drush commands.
  */
-class DrushContext extends RawDrupalContext {
+class DrushContext extends RawDrupalContext implements TranslatableContext {
 
   /**
    * Keep track of drush output.
@@ -15,6 +16,13 @@ class DrushContext extends RawDrupalContext {
    * @var string|boolean
    */
   private $drushOutput;
+
+  /**
+   * {@inheritDoc}
+   */
+  public static function getTranslationResources() {
+    return glob(__DIR__ . '/../../../../i18n/*.xliff');
+  }
 
   /**
    * Return the most recent drush command output.

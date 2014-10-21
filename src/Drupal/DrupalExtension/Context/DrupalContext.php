@@ -10,7 +10,7 @@ use Behat\Gherkin\Node\TableNode;
 /**
  * Provides pre-built step definitions for interacting with Drupal.
  */
-class DrupalContext extends RawDrupalContext implements DrupalAwareInterface, TranslatableContext {
+class DrupalContext extends RawDrupalContext implements TranslatableContext {
 
   /**
    * Returns list of definition translation resources paths.

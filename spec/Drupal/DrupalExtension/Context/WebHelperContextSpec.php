@@ -11,4 +11,9 @@ class WebHelperContextSpec extends ObjectBehavior
     {
         $this->shouldHaveType('Behat\MinkExtension\Context\MinkContext');
     }
+
+    function it_is_a_translatable_context()
+    {
+        $this->shouldHaveType('Behat\Behat\Context\TranslatableContext');
+    }
 }

@@ -18,4 +18,9 @@ class DrushContextSpec extends ObjectBehavior
     {
         $this->shouldThrow('\Behat\Behat\Tester\Exception\PendingException')->duringReadDrushOutput();
     }
+
+    function it_is_a_translatable_context()
+    {
+        $this->shouldHaveType('Behat\Behat\Context\TranslatableContext');
+    }
 }

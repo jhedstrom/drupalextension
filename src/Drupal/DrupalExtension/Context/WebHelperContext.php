@@ -2,6 +2,8 @@
 
 namespace Drupal\DrupalExtension\Context;
 
+use Behat\Behat\Context\TranslatableContext;
+
 use Behat\Mink\Exception\UnsupportedDriverActionException;
 
 use Behat\MinkExtension\Context\MinkContext;
@@ -9,7 +11,7 @@ use Behat\MinkExtension\Context\MinkContext;
 /**
  * Extensions to the Mink Extension.
  */
-class WebHelperContext extends MinkContext {
+class WebHelperContext extends MinkContext implements TranslatableContext {
 
   /**
    * Return a region from the current page.
