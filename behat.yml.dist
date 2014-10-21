@@ -4,6 +4,7 @@ default:
       contexts:
         - FeatureContext
         - Drupal\DrupalExtension\Context\DrupalContext
+        - Drupal\DrupalExtension\Context\MessageContext
         - Drupal\DrupalExtension\Context\WebHelperContext
       filters:
         tags: "~@api&&~@drushTest"

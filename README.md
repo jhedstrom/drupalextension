@@ -58,6 +58,7 @@ The Drupal Extension 3.0 supports Drupal 7 and 8, and utilized Behat 3. For Drup
     - Drupal\DrupalExtension\ContextDrupalContext
     - Drupal\DrupalExtension\WebHelperContext
   ```
+  Additional contexts include `MessageContext` for interacting with Drupal messages (error, status, warning), and `DrushContext` for directly calling Drush commands from scenarios.
 
 1. To see a list of available step definitions
 
