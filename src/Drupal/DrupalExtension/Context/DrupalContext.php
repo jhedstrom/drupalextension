@@ -83,14 +83,14 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
   }
 
   /**
-   * Creates and authenticates a user with the given role via Drush.
+   * Creates and authenticates a user with the given role(s).
    *
-   * @Given I am logged in as a user with the :role role
+   * @Given I am logged in as a user with the :role role(s)
    */
   public function assertAuthenticatedByRole($role) {
     // Check if a user with this role is already logged in.
     if ($this->loggedIn() && $this->user && isset($this->user->role) && $this->user->role == $role) {
-      return TRUE;
+      return;
     }
 
     // Create user (and project)
@@ -103,17 +103,17 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
 
     $this->userCreate($user);
 
-    if ($role == 'authenticated user') {
-      // Nothing to do.
-    }
-    else {
-      $this->getDriver()->userAddRole($user, $role);
+    $roles = explode(',', $role);
+    $roles = array_map('trim', $roles);
+    foreach ($roles as $role) {
+      if ($role != 'authenticated user') {
+        // Only add roles other than 'authenticated user'.
+        $this->getDriver()->userAddRole($user, $role);
+      }
     }
 
     // Login.
     $this->login();
-
-    return TRUE;
   }
 
   /**
