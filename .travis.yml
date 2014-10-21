@@ -33,10 +33,10 @@ before_script:
 
 script:
   - vendor/bin/phpspec run -f pretty --no-interaction
-  - vendor/bin/behat -fprogress
-  - vendor/bin/behat -fprogress --profile=drupal7
-  - vendor/bin/behat -fprogress --profile=drush
-  - vendor/bin/behat -fprogress --profile=drupal8
+  - vendor/bin/behat -fprogress --strict
+  - vendor/bin/behat -fprogress --profile=drupal7 --strict
+  - vendor/bin/behat -fprogress --profile=drush --strict
+  - vendor/bin/behat -fprogress --profile=drupal8 --strict
 
 after_failure:
   - cat ~/debug7.txt
