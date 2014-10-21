@@ -31,6 +31,43 @@ class RawDrupalContext extends MinkContext implements DrupalAwareInterface {
   protected $dispatcher;
 
   /**
+   * Keep track of nodes so they can be cleaned up.
+   *
+   * @var array
+   */
+  protected $nodes = array();
+
+  /**
+   * Current authenticated user.
+   *
+   * A value of FALSE denotes an anonymous user.
+   *
+   * @var mixed
+   */
+  protected $user = FALSE;
+
+  /**
+   * Keep track of all users that are created so they can easily be removed.
+   *
+   * @var array
+   */
+  protected $users = array();
+
+  /**
+   * Keep track of all terms that are created so they can easily be removed.
+   *
+   * @var array
+   */
+  protected $terms = array();
+
+  /**
+   * Keep track of any roles that are created so they can easily be removed.
+   *
+   * @var array
+   */
+  protected $roles = array();
+
+  /**
    * {@inheritDoc}
    */
   public function setDrupal(DrupalDriverManager $drupal) {
@@ -120,6 +157,121 @@ class RawDrupalContext extends MinkContext implements DrupalAwareInterface {
     }
 
     return $regionObj;
+  }
+
+  /**
+   * Remove any created nodes.
+   *
+   * @AfterScenario
+   */
+  public function cleanNodes() {
+    // Remove any nodes that were created.
+    foreach ($this->nodes as $node) {
+      $this->getDriver()->nodeDelete($node);
+    }
+  }
+
+  /**
+   * Remove any created users.
+   *
+   * @AfterScenario
+   */
+  public function cleanUsers() {
+    // Remove any users that were created.
+    if (!empty($this->users)) {
+      foreach ($this->users as $user) {
+        $this->getDriver()->userDelete($user);
+      }
+      $this->getDriver()->processBatch();
+    }
+  }
+
+  /**
+   * Remove any created terms.
+   *
+   * @AfterScenario
+   */
+  public function cleanTerms() {
+    // Remove any terms that were created.
+    foreach ($this->terms as $term) {
+      $this->getDriver()->termDelete($term);
+    }
+  }
+
+  /**
+   * Remove any created roles.
+   *
+   * @AfterScenario
+   */
+  public function cleanRoles () {
+    // Remove any roles that were created.
+    foreach ($this->roles as $rid) {
+      $this->getDriver()->roleDelete($rid);
+    }
+  }
+
+  /**
+   * Dispatch scope hooks.
+   *
+   * @param string $scope
+   *   The entity scope to dispatch.
+   * @param stdClass $entity
+   *   The entity.
+   */
+  protected function dispatchHooks($scopeType, \stdClass $entity) {
+    $fullScopeClass = 'Drupal\\DrupalExtension\\Hook\\Scope\\' . $scopeType;
+    $scope = new $fullScopeClass($this->getDrupal()->getEnvironment(), $this, $entity);
+    $callResults = $this->dispatcher->dispatchScopeHooks($scope);
+
+    // The dispatcher suppresses exceptions, throw them here if there are any.
+    foreach ($callResults as $result) {
+      if ($result->hasException()) {
+        $exception = $result->getException();
+        throw $exception;
+      }
+    }
+  }
+
+  /**
+   * Helper function to create a node.
+   *
+   * @return object
+   *   The created node.
+   */
+  public function nodeCreate($node) {
+    $this->dispatchHooks('BeforeNodeCreateScope', $node);
+    $saved = $this->getDriver()->createNode($node);
+    $this->dispatchHooks('AfterNodeCreateScope', $saved);
+    $this->nodes[] = $saved;
+    return $saved;
+  }
+
+  /**
+   * Helper function to create a user.
+   *
+   * @return object
+   *   The created user.
+   */
+  public function userCreate($user) {
+    $this->dispatchHooks('BeforeUserCreateScope', $user);
+    $this->getDriver()->userCreate($user);
+    $this->dispatchHooks('AfterUserCreateScope', $user);
+    $this->users[$user->name] = $this->user = $user;
+    return $user;
+  }
+
+  /**
+   * Helper function to create a term.
+   *
+   * @return object
+   *   The created term.
+   */
+  public function termCreate($term) {
+    $this->dispatchHooks('BeforeTermCreateScope', $term);
+    $saved = $this->getDriver()->createTerm($term);
+    $this->dispatchHooks('AfterTermCreateScope', $saved);
+    $this->terms[] = $saved;
+    return $saved;
   }
 
 }

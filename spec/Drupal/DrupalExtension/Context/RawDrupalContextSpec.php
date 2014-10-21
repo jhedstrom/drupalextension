@@ -51,4 +51,5 @@ class RawDrupalContextSpec extends ObjectBehavior
         $this->setDrupal($drupal);
         $this->getDriver();
     }
+
 }
