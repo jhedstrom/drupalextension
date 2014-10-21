@@ -39,6 +39,10 @@ The Drupal Extension 3.0 supports Drupal 7 and 8, and utilized Behat 3. For Drup
 
   ```
   default:
+    suites:
+      default:
+        contexts:
+          - Drupal\DrupalExtension\ContextDrupalContext
     extensions:
       Behat\MinkExtension:
         goutte: ~
@@ -46,6 +50,13 @@ The Drupal Extension 3.0 supports Drupal 7 and 8, and utilized Behat 3. For Drup
         base_url: http://git6site.devdrupal.org/
       Drupal\DrupalExtension:
         blackbox: ~
+  ```
+
+1. To add in support for additional web-based step definitions add the `WebHelperContext`:
+  ``` yaml
+  contexts:
+    - Drupal\DrupalExtension\ContextDrupalContext
+    - Drupal\DrupalExtension\WebHelperContext
   ```
 
 1. To see a list of available step definitions
