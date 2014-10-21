@@ -1,10 +1,10 @@
 default:
   suites:
     default:
-      contexts: 
+      contexts:
         - FeatureContext
         - Drupal\DrupalExtension\Context\DrupalContext
-        - Behat\MinkExtension\Context\MinkContext
+        - Drupal\DrupalExtension\Context\WebHelperContext
       filters:
         tags: "~@api&&~@drushTest"
   extensions:
@@ -31,10 +31,10 @@ default:
 drupal7:
   suites:
     default:
-      contexts: 
+      contexts:
         - FeatureContext
         - Drupal\DrupalExtension\Context\DrupalContext
-        - Behat\MinkExtension\Context\MinkContext
+        - Drupal\DrupalExtension\Context\WebHelperContext
       filters:
         tags: "@d7"
   extensions:
@@ -54,7 +54,7 @@ drupal7:
 drush:
   suites:
     default:
-      contexts: 
+      contexts:
         - FeatureContext
         - Drupal\DrupalExtension\Context\DrupalContext
         - Drupal\DrupalExtension\Context\DrushContext
@@ -76,10 +76,10 @@ drush:
 drupal8:
   suites:
     default:
-      contexts: 
+      contexts:
         - FeatureContext
         - Drupal\DrupalExtension\Context\DrupalContext
-        - Behat\MinkExtension\Context\MinkContext
+        - Drupal\DrupalExtension\Context\WebHelperContext
       filters:
         tags: "@d8&&~@d8wip"
   extensions:

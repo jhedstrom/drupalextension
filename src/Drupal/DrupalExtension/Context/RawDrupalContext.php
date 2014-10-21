@@ -150,27 +150,6 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
   }
 
   /**
-   * Return a region from the current page.
-   *
-   * @throws \Exception
-   *   If region cannot be found.
-   *
-   * @param string $region
-   *   The machine name of the region to return.
-   *
-   * @return \Behat\Mink\Element\NodeElement
-   */
-  public function getRegion($region) {
-    $session = $this->getSession();
-    $regionObj = $session->getPage()->find('region', $region);
-    if (!$regionObj) {
-      throw new \Exception(sprintf('No region "%s" found on the page %s.', $region, $session->getCurrentUrl()));
-    }
-
-    return $regionObj;
-  }
-
-  /**
    * Remove any created nodes.
    *
    * @AfterScenario
@@ -283,17 +262,6 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
     $this->dispatchHooks('AfterTermCreateScope', $saved);
     $this->terms[] = $saved;
     return $saved;
-  }
-
-  /**
-   * Returns fixed step argument (with \\" replaced back to ").
-   *
-   * @param string $argument
-   *
-   * @return string
-   */
-  protected function fixStepArgument($argument) {
-    return str_replace('\\"', '"', $argument);
   }
 
 }

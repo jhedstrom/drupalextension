@@ -4,6 +4,9 @@ namespace Drupal\DrupalExtension\Context;
 
 use Behat\Behat\Tester\Exception\PendingException;
 
+/**
+ * Provides step definitions for interacting directly with Drush commands.
+ */
 class DrushContext extends RawDrupalContext {
 
   /**
@@ -67,6 +70,17 @@ class DrushContext extends RawDrupalContext {
    */
   public function printLastDrushOutput() {
     echo $this->readDrushOutput();
+  }
+
+  /**
+   * Returns fixed step argument (with \\" replaced back to ").
+   *
+   * @param string $argument
+   *
+   * @return string
+   */
+  protected function fixStepArgument($argument) {
+    return str_replace('\\"', '"', $argument);
   }
 
 }
