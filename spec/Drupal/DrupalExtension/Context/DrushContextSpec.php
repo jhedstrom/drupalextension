@@ -14,9 +14,9 @@ class DrushContextSpec extends ObjectBehavior
         $this->shouldHaveType('Drupal\DrupalExtension\Context\RawDrupalContext');
     }
 
-    function it_defaults_to_no_drush_output()
+    function it_will_catch_scenarios_without_any_output()
     {
-        $this->shouldThrow('\Behat\Behat\Tester\Exception\PendingException')->duringReadDrushOutput();
+        $this->shouldThrow('\RuntimeException')->duringReadDrushOutput();
     }
 
     function it_is_a_translatable_context()

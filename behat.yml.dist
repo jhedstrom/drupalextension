@@ -59,6 +59,7 @@ drush:
         - FeatureContext
         - Drupal\DrupalExtension\Context\DrupalContext
         - Drupal\DrupalExtension\Context\DrushContext
+        - Drupal\DrupalExtension\Context\MinkContext
       filters:
         tags: "@drushTest"
   extensions:

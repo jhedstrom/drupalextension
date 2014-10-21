@@ -3,7 +3,6 @@
 namespace Drupal\DrupalExtension\Context;
 
 use Behat\Behat\Context\TranslatableContext;
-use Behat\Behat\Tester\Exception\PendingException;
 
 /**
  * Provides step definitions for interacting directly with Drush commands.
@@ -31,7 +30,7 @@ class DrushContext extends RawDrupalContext implements TranslatableContext {
    */
   public function readDrushOutput() {
     if (!isset($this->drushOutput)) {
-      throw new PendingException('This scenario has no drush command.');
+      throw new \RuntimeException('No drush output was found.');
     }
     return $this->drushOutput;
   }

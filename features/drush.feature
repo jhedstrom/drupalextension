@@ -16,6 +16,3 @@ Feature: Drush-specific steps
     Given I run drush "en" "toolbar -y"
       And I run drush "en" "toolbar -y"
     Then drush output should contain "toolbar is already enabled."
-
-  Scenario: try text matching with no drush command return an error.
-    Then drush output should contain "something"
