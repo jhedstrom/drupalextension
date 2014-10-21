@@ -39,31 +39,29 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    */
   public function assertAuthenticatedByRole($role) {
     // Check if a user with this role is already logged in.
-    if ($this->loggedIn() && $this->user && isset($this->user->role) && $this->user->role == $role) {
-      return;
-    }
+    if (!$this->loggedInWithRole($role)) {
+      // Create user (and project)
+      $user = (object) array(
+        'name' => $this->getRandom()->name(8),
+        'pass' => $this->getRandom()->name(16),
+        'role' => $role,
+      );
+      $user->mail = "{$user->name}@example.com";
 
-    // Create user (and project)
-    $user = (object) array(
-      'name' => $this->getRandom()->name(8),
-      'pass' => $this->getRandom()->name(16),
-      'role' => $role,
-    );
-    $user->mail = "{$user->name}@example.com";
+      $this->userCreate($user);
 
-    $this->userCreate($user);
-
-    $roles = explode(',', $role);
-    $roles = array_map('trim', $roles);
-    foreach ($roles as $role) {
-      if ($role != 'authenticated user') {
-        // Only add roles other than 'authenticated user'.
-        $this->getDriver()->userAddRole($user, $role);
+      $roles = explode(',', $role);
+      $roles = array_map('trim', $roles);
+      foreach ($roles as $role) {
+        if ($role != 'authenticated user') {
+          // Only add roles other than 'authenticated user'.
+          $this->getDriver()->userAddRole($user, $role);
+        }
       }
-    }
 
-    // Login.
-    $this->login();
+      // Login.
+      $this->login();
+    }
   }
 
   /**

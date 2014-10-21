@@ -317,4 +317,16 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
     return $element->findLink($this->getDrupalText('log_out'));
   }
 
+  /**
+   * User with a given role is already logged in.
+   *
+   * @param string $role
+   *   A single role, or multiple comma-separated roles in a single string.
+   *
+   * @return boolean
+   *   Returns TRUE if the current logged in user has this role (or roles).
+   */
+  public function loggedInWithRole($role) {
+    return $this->loggedIn() && $this->user && isset($this->user->role) && $this->user->role == $role;
+  }
 }
