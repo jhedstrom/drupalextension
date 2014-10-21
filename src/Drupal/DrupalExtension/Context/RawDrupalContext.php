@@ -2,7 +2,7 @@
 
 namespace Drupal\DrupalExtension\Context;
 
-use Behat\MinkExtension\Context\MinkContext;
+use Behat\MinkExtension\Context\RawMinkContext;
 use Behat\Testwork\Hook\HookDispatcher;
 
 use Drupal\DrupalDriverManager;
@@ -18,7 +18,7 @@ use Drupal\DrupalExtension\Hook\Scope\BeforeTermCreateScope;
 /**
  * Provides the raw functionality for interacting with Drupal.
  */
-class RawDrupalContext extends MinkContext implements DrupalAwareInterface {
+class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
 
   /**
    * Drupal driver manager.
@@ -283,6 +283,17 @@ class RawDrupalContext extends MinkContext implements DrupalAwareInterface {
     $this->dispatchHooks('AfterTermCreateScope', $saved);
     $this->terms[] = $saved;
     return $saved;
+  }
+
+  /**
+   * Returns fixed step argument (with \\" replaced back to ").
+   *
+   * @param string $argument
+   *
+   * @return string
+   */
+  protected function fixStepArgument($argument) {
+    return str_replace('\\"', '"', $argument);
   }
 
 }

@@ -7,9 +7,9 @@ use Prophecy\Argument;
 
 class DrupalContextSpec extends ObjectBehavior
 {
-    function it_is_initializable()
+    function it_is_drupal_aware()
     {
-        $this->shouldHaveType('Drupal\DrupalExtension\Context\DrupalContext');
+        $this->shouldHaveType('Drupal\DrupalExtension\Context\RawDrupalContext');
     }
 
     function it_is_a_translatable_context()

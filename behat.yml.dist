@@ -1,7 +1,10 @@
 default:
   suites:
     default:
-      contexts: [Drupal\DrupalExtension\Context\DrupalContext, FeatureContext]
+      contexts: 
+        - FeatureContext
+        - Drupal\DrupalExtension\Context\DrupalContext
+        - Behat\MinkExtension\Context\MinkContext
       filters:
         tags: "~@api&&~@drushTest"
   extensions:
@@ -28,7 +31,10 @@ default:
 drupal7:
   suites:
     default:
-      contexts: [Drupal\DrupalExtension\Context\DrupalContext, FeatureContext]
+      contexts: 
+        - FeatureContext
+        - Drupal\DrupalExtension\Context\DrupalContext
+        - Behat\MinkExtension\Context\MinkContext
       filters:
         tags: "@d7"
   extensions:
@@ -48,7 +54,10 @@ drupal7:
 drush:
   suites:
     default:
-      contexts: [Drupal\DrupalExtension\Context\DrupalContext, FeatureContext]
+      contexts: 
+        - FeatureContext
+        - Drupal\DrupalExtension\Context\DrupalContext
+        - Drupal\DrupalExtension\Context\DrushContext
       filters:
         tags: "@drushTest"
   extensions:
@@ -67,7 +76,10 @@ drush:
 drupal8:
   suites:
     default:
-      contexts: [Drupal\DrupalExtension\Context\DrupalContext, FeatureContext]
+      contexts: 
+        - FeatureContext
+        - Drupal\DrupalExtension\Context\DrupalContext
+        - Behat\MinkExtension\Context\MinkContext
       filters:
         tags: "@d8&&~@d8wip"
   extensions:
