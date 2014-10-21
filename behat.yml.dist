@@ -5,7 +5,7 @@ default:
         - FeatureContext
         - Drupal\DrupalExtension\Context\DrupalContext
         - Drupal\DrupalExtension\Context\MessageContext
-        - Drupal\DrupalExtension\Context\WebHelperContext
+        - Drupal\DrupalExtension\Context\MinkContext
       filters:
         tags: "~@api&&~@drushTest"
   extensions:
@@ -35,7 +35,7 @@ drupal7:
       contexts:
         - FeatureContext
         - Drupal\DrupalExtension\Context\DrupalContext
-        - Drupal\DrupalExtension\Context\WebHelperContext
+        - Drupal\DrupalExtension\Context\MinkContext
       filters:
         tags: "@d7"
   extensions:
@@ -80,7 +80,7 @@ drupal8:
       contexts:
         - FeatureContext
         - Drupal\DrupalExtension\Context\DrupalContext
-        - Drupal\DrupalExtension\Context\WebHelperContext
+        - Drupal\DrupalExtension\Context\MinkContext
       filters:
         tags: "@d8&&~@d8wip"
   extensions:

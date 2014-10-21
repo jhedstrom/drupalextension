@@ -5,7 +5,7 @@ namespace spec\Drupal\DrupalExtension\Context;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
-class WebHelperContextSpec extends ObjectBehavior
+class MinkContextSpec extends ObjectBehavior
 {
     function it_extends_the_mink_context()
     {

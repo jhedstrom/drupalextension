@@ -6,12 +6,12 @@ use Behat\Behat\Context\TranslatableContext;
 
 use Behat\Mink\Exception\UnsupportedDriverActionException;
 
-use Behat\MinkExtension\Context\MinkContext;
+use Behat\MinkExtension\Context\MinkContext as MinkExtension;
 
 /**
  * Extensions to the Mink Extension.
  */
-class WebHelperContext extends MinkContext implements TranslatableContext {
+class MinkContext extends MinkExtension implements TranslatableContext {
 
   /**
    * Return a region from the current page.
