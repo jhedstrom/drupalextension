@@ -7,6 +7,17 @@ use Behat\Testwork\Hook\HookDispatcher;
 
 use Drupal\DrupalDriverManager;
 
+use Drupal\DrupalExtension\Hook\Scope\AfterNodeCreateScope;
+use Drupal\DrupalExtension\Hook\Scope\AfterTermCreateScope;
+use Drupal\DrupalExtension\Hook\Scope\AfterUserCreateScope;
+use Drupal\DrupalExtension\Hook\Scope\BeforeNodeCreateScope;
+use Drupal\DrupalExtension\Hook\Scope\BeforeUserCreateScope;
+use Drupal\DrupalExtension\Hook\Scope\BeforeTermCreateScope;
+
+
+/**
+ * Provides the raw functionality for interacting with Drupal.
+ */
 class RawDrupalContext extends MinkContext implements DrupalAwareInterface {
 
   /**

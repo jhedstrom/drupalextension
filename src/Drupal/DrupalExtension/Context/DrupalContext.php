@@ -5,19 +5,10 @@ namespace Drupal\DrupalExtension\Context;
 use Behat\Behat\Tester\Exception\PendingException;
 use Behat\Mink\Exception\UnsupportedDriverActionException;
 
-use Drupal\DrupalExtension\Hook\Scope\AfterNodeCreateScope;
-use Drupal\DrupalExtension\Hook\Scope\AfterTermCreateScope;
-use Drupal\DrupalExtension\Hook\Scope\AfterUserCreateScope;
-use Drupal\DrupalExtension\Hook\Scope\BeforeNodeCreateScope;
-use Drupal\DrupalExtension\Hook\Scope\BeforeUserCreateScope;
-use Drupal\DrupalExtension\Hook\Scope\BeforeTermCreateScope;
-
 use Behat\Behat\Context\TranslatableContext;
 use Behat\Mink\Element\Element;
 
 use Behat\Gherkin\Node\TableNode;
-
-use Behat\Mink\Driver\Selenium2Driver as Selenium2Driver;
 
 /**
  * Features context.
