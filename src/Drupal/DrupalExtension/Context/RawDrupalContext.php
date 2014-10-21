@@ -193,7 +193,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    *
    * @AfterScenario
    */
-  public function cleanRoles () {
+  public function cleanRoles() {
     // Remove any roles that were created.
     foreach ($this->roles as $rid) {
       $this->getDriver()->roleDelete($rid);
@@ -223,7 +223,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
   }
 
   /**
-   * Helper function to create a node.
+   * Create a node.
    *
    * @return object
    *   The created node.
@@ -237,7 +237,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
   }
 
   /**
-   * Helper function to create a user.
+   * Create a user.
    *
    * @return object
    *   The created user.
@@ -251,7 +251,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
   }
 
   /**
-   * Helper function to create a term.
+   * Create a term.
    *
    * @return object
    *   The created term.
@@ -262,6 +262,59 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
     $this->dispatchHooks('AfterTermCreateScope', $saved);
     $this->terms[] = $saved;
     return $saved;
+  }
+
+  /**
+   * Log-in the current user.
+   */
+  public function login() {
+    // Check if logged in.
+    if ($this->loggedIn()) {
+      $this->logout();
+    }
+
+    if (!$this->user) {
+      throw new \Exception('Tried to login without a user.');
+    }
+
+    $this->getSession()->visit($this->locatePath('/user'));
+    $element = $this->getSession()->getPage();
+    $element->fillField($this->getDrupalText('username_field'), $this->user->name);
+    $element->fillField($this->getDrupalText('password_field'), $this->user->pass);
+    $submit = $element->findButton($this->getDrupalText('log_in'));
+    if (empty($submit)) {
+      throw new \Exception(sprintf("No submit button at %s", $this->getSession()->getCurrentUrl()));
+    }
+
+    // Log in.
+    $submit->click();
+
+    if (!$this->loggedIn()) {
+      throw new \Exception(sprintf("Failed to log in as user '%s' with role '%s'", $this->user->name, $this->user->role));
+    }
+  }
+
+  /**
+   * Logs the current user out.
+   */
+  public function logout() {
+    $this->getSession()->visit($this->locatePath('/user/logout'));
+  }
+
+  /**
+   * Determine if the a user is already logged in.
+   *
+   * @return boolean
+   *   Returns TRUE if a user is logged in for this session.
+   */
+  public function loggedIn() {
+    $session = $this->getSession();
+    $session->visit($this->locatePath('/'));
+
+    // If a logout link is found, we are logged in. While not perfect, this is
+    // how Drupal SimpleTests currently work as well.
+    $element = $session->getPage();
+    return $element->findLink($this->getDrupalText('log_out'));
   }
 
 }

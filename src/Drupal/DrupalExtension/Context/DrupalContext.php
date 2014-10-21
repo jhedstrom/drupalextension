@@ -22,56 +22,6 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
   }
 
   /**
-   * Helper function to login the current user.
-   */
-  public function login() {
-    // Check if logged in.
-    if ($this->loggedIn()) {
-      $this->logout();
-    }
-
-    if (!$this->user) {
-      throw new \Exception('Tried to login without a user.');
-    }
-
-    $this->getSession()->visit($this->locatePath('/user'));
-    $element = $this->getSession()->getPage();
-    $element->fillField($this->getDrupalText('username_field'), $this->user->name);
-    $element->fillField($this->getDrupalText('password_field'), $this->user->pass);
-    $submit = $element->findButton($this->getDrupalText('log_in'));
-    if (empty($submit)) {
-      throw new \Exception(sprintf("No submit button at %s", $this->getSession()->getCurrentUrl()));
-    }
-
-    // Log in.
-    $submit->click();
-
-    if (!$this->loggedIn()) {
-      throw new \Exception(sprintf("Failed to log in as user '%s' with role '%s'", $this->user->name, $this->user->role));
-    }
-  }
-
-  /**
-   * Helper function to logout.
-   */
-  public function logout() {
-    $this->getSession()->visit($this->locatePath('/user/logout'));
-  }
-
-  /**
-   * Determine if the a user is already logged in.
-   */
-  public function loggedIn() {
-    $session = $this->getSession();
-    $session->visit($this->locatePath('/'));
-
-    // If a logout link is found, we are logged in. While not perfect, this is
-    // how Drupal SimpleTests currently work as well.
-    $element = $session->getPage();
-    return $element->findLink($this->getDrupalText('log_out'));
-  }
-
-  /**
    * @Given I am an anonymous user
    * @Given I am not logged in
    */
