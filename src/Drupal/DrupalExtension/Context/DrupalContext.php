@@ -11,9 +11,7 @@ use Behat\Mink\Element\Element;
 use Behat\Gherkin\Node\TableNode;
 
 /**
- * Features context.
- *
- * @todo is there a way to inject a MinkContext instead?
+ * Provides pre-built step definitions for interacting with Drupal.
  */
 class DrupalContext extends RawDrupalContext implements DrupalAwareInterface, TranslatableContext {
 
