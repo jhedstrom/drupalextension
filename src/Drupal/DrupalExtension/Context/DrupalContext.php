@@ -329,7 +329,7 @@ class DrupalContext extends RawDrupalContext implements DrupalAwareInterface, Tr
     $this->getSession()->visit($this->locatePath('/node/' . $saved->nid . '/edit'));
 
     // Test status.
-    $this->assertHttpResponse('200');
+    $this->assertSession()->statusCodeEquals('200');
   }
 
 
