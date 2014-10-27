@@ -10,7 +10,7 @@ Drupal Extension 1.0 supports Behat 2.4, and Drupal 6 and 7 (with Drupal 8 suppo
 
 ## Use it for testing your Drupal site.
 
-[Full documentation](https://behat-drupal-extension.readthedocs.org)
+[Full documentation](https://behat-drupal-extension.readthedocs.org/en/1.0/)
 
 1. You'll need something resembling this `composer.json` file
 
@@ -176,7 +176,7 @@ Drupal Extension 1.0 supports Behat 2.4, and Drupal 6 and 7 (with Drupal 8 suppo
 
 ## Additional resources
 
- * [Behat Drupal Extension documentation](https://behat-drupal-extension.readthedocs.org)
+ * [Behat Drupal Extension documentation](https://behat-drupal-extension.readthedocs.org/en/1.0/)
  * [Behat documentation](http://docs.behat.org)
  * [Mink documentation](http://mink.behat.org)
 
