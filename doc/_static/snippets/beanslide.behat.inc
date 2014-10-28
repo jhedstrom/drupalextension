@@ -12,3 +12,4 @@ class BeanslideSubContext extends BehatContext implements
   public static function getAlias() {
     return 'beanslide';
   }
+}
