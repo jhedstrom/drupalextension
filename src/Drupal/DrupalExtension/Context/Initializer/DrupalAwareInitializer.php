@@ -163,6 +163,7 @@ class DrupalAwareInitializer implements InitializerInterface, EventSubscriberInt
     $iterator = $finder
       ->files()
       ->name($pattern)
+      ->exclude('doc')
       ->in($path);
 
     foreach ($iterator as $found) {
