@@ -32,7 +32,7 @@ Install the Drupal Extension
 
 #. Make a directory in /opt (or wherever you choose) for the Drupal Extension::
 
-    cd opt/ 
+    cd /opt/ 
     sudo mkdir drupalextension
     cd drupalextension/
 
