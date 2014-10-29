@@ -9,7 +9,7 @@ instructions by lines 9 and 10, highlighted below.
 .. literalinclude:: _static/snippets/behat-bb.yml
    :language: yaml
    :linenos:
-   :emphasize-lines: 9-10
+   :emphasize-lines: 13-14
 
 Region steps 
 ------------
@@ -35,7 +35,7 @@ A stock Drupal 7 installation has a footer area identified by the CSS Id
 .. literalinclude:: _static/snippets/behat-bb.yml
    :language: yaml
    :linenos:
-   :emphasize-lines: 11-12 
+   :emphasize-lines: 15-16
 
 You can use a step like the following without writing any custom PHP::
 

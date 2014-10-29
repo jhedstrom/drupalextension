@@ -35,9 +35,9 @@ Enable the Drush driver in the behat.yml
 .. literalinclude:: _static/snippets/behat-drush.yml
    :language: yaml
    :linenos:
-   :emphasize-lines: 11-12
+   :emphasize-lines: 15-17
 
-.. note:: Line 11 isn't strictly necessary for the Drush driver, which is the
+.. note:: Line 15 isn't strictly necessary for the Drush driver, which is the
           default for the API.
 
 Calling the Drush driver
