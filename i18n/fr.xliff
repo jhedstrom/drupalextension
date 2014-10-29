@@ -1,4 +1,4 @@
-<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+<?xml version="1.0"?><xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
   <file source-language="en" datatype="plaintext" original="global" target-language="fr">
     <body>
       <trans-unit id="i-am-an-anonymous-user">
@@ -21,7 +21,7 @@
         <source><![CDATA[I am logged in as a user with the :permissions permission(s)]]></source>
         <target><![CDATA[I am logged in as a user with the :permissions permission(s)]]></target>
       </trans-unit>
-      <trans-unit id="i-should-see-the-text-text-in-the-"rowtext"-row">
+      <trans-unit id="i-should-see-the-text-text-in-the-rowtext-row">
         <source><![CDATA[I should see (the text ):text in the ":rowText" row]]></source>
         <target><![CDATA[I should see (the text ):text in the ":rowText" row]]></target>
       </trans-unit>
@@ -213,7 +213,7 @@
         <source><![CDATA[I should see the heading :heading in the :region( region)]]></source>
         <target><![CDATA[I should see the heading :heading in the :region( region)]]></target>
       </trans-unit>
-      <trans-unit id="i-should-see-the-heading-heading-in-the-region-region">
+      <trans-unit id="i-should-see-the-heading-heading-in-the-region-region-1">
         <source><![CDATA[I should see the :heading heading in the :region( region)]]></source>
         <target><![CDATA[I should see the :heading heading in the :region( region)]]></target>
       </trans-unit>
