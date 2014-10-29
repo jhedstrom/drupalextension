@@ -32,8 +32,8 @@ Install the Drupal Extension
 
 #. Make a directory in /opt (or wherever you choose) for the Drupal Extension::
 
-    cd opt/ 
-    mkdir drupalextension 
+    cd /opt/ 
+    sudo mkdir drupalextension
     cd drupalextension/
 
 2. Create a file called `composer.json` and include the following:
@@ -44,7 +44,7 @@ Install the Drupal Extension
 
 3. Run the install command::
 
-    composer install
+    sudo composer install
 
   It will be a bit before you start seeing any output. It will also suggest
   that you install additional tools, but they're not normally needed so you can
@@ -58,7 +58,7 @@ Install the Drupal Extension
 
 5. Make the binary available system-wide::
 
-    ln -s behat /usr/local/bin/behat
+    ln -s /opt/drupalextension/bin/behat /usr/local/bin/behat
 
 Set up tests 
 ------------ 
