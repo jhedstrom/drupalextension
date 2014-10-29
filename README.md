@@ -1,4 +1,4 @@
-# Drupal Extension
+# Behat Drupal Extension
 
 The Drupal Extension is an integration layer between [Behat](http://behat.org), [Mink Extension](https://github.com/Behat/MinkExtension), and Drupal. It provides step definitions for common testing scenarios specific to Drupal sites.
 
@@ -8,7 +8,11 @@ The Drupal Extension 3.0 supports Drupal 7 and 8, and utilized Behat 3. For Drup
 
 [![Latest Stable Version](https://poser.pugx.org/drupal/drupal-extension/v/stable.svg)](https://packagist.org/packages/drupal/drupal-extension) [![Total Downloads](https://poser.pugx.org/drupal/drupal-extension/downloads.svg)](https://packagist.org/packages/drupal/drupal-extension) [![Latest Unstable Version](https://poser.pugx.org/drupal/drupal-extension/v/unstable.svg)](https://packagist.org/packages/drupal/drupal-extension) [![License](https://poser.pugx.org/drupal/drupal-extension/license.svg)](https://packagist.org/packages/drupal/drupal-extension)
 
+
+
 ## Use it for testing your Drupal site.
+
+[Full documentation](https://behat-drupal-extension.readthedocs.org)
 
 1. You'll need something resembling this `composer.json` file
 
@@ -39,6 +43,10 @@ The Drupal Extension 3.0 supports Drupal 7 and 8, and utilized Behat 3. For Drup
 
   ```
   default:
+    suites:
+      default:
+        contexts:
+          - Drupal\DrupalExtension\Context\DrupalContext
     extensions:
       Behat\MinkExtension:
         goutte: ~
@@ -47,6 +55,14 @@ The Drupal Extension 3.0 supports Drupal 7 and 8, and utilized Behat 3. For Drup
       Drupal\DrupalExtension:
         blackbox: ~
   ```
+
+1. To add in support for additional web-based step definitions add the extended `Drupal\DrupalExtension\Context\MinkContext`:
+  ``` yaml
+  contexts:
+    - Drupal\DrupalExtension\Contexti\DrupalContext
+    - Drupal\DrupalExtension\Context\MinkContext
+  ```
+  Additional contexts include `MessageContext` for interacting with Drupal messages (error, status, warning), and `DrushContext` for directly calling Drush commands from scenarios.
 
 1. To see a list of available step definitions
 
@@ -172,9 +188,9 @@ The Drupal Extension 3.0 supports Drupal 7 and 8, and utilized Behat 3. For Drup
 
 ## Additional resources
 
+ * [Behat Drupal Extension documentation](https://behat-drupal-extension.readthedocs.org)
  * [Behat documentation](http://docs.behat.org)
  * [Mink documentation](http://mink.behat.org)
- * [Drupal Extension documentation](http://behat-drupal-extension.readthedocs.org/en/latest/)
 
 ## Examples and code snippets
 

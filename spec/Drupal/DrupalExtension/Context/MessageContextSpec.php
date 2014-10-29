@@ -5,7 +5,7 @@ namespace spec\Drupal\DrupalExtension\Context;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
-class DrupalContextSpec extends ObjectBehavior
+class MessageContextSpec extends ObjectBehavior
 {
     function it_is_drupal_aware()
     {
@@ -16,5 +16,4 @@ class DrupalContextSpec extends ObjectBehavior
     {
         $this->shouldHaveType('Behat\Behat\Context\TranslatableContext');
     }
-
 }

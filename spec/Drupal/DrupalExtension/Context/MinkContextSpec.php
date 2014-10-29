@@ -5,16 +5,15 @@ namespace spec\Drupal\DrupalExtension\Context;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
-class DrupalContextSpec extends ObjectBehavior
+class MinkContextSpec extends ObjectBehavior
 {
-    function it_is_drupal_aware()
+    function it_extends_the_mink_context()
     {
-        $this->shouldHaveType('Drupal\DrupalExtension\Context\RawDrupalContext');
+        $this->shouldHaveType('Behat\MinkExtension\Context\MinkContext');
     }
 
     function it_is_a_translatable_context()
     {
         $this->shouldHaveType('Behat\Behat\Context\TranslatableContext');
     }
-
 }

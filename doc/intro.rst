@@ -23,5 +23,3 @@ The Drupal Extension to Behat and Mink assists in the performance of these commo
 *  Define theme regions and test data appears within them
 *  Clear the cache, log out, and other useful steps
 *  Detect and discover steps provided by contributed modules and themes
-
-.. todo:: Embed '_static/drupalize-purchase-1024.swf'
