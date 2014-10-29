@@ -4,7 +4,7 @@ The Drupal Extension is an integration layer between [Behat](http://behat.org), 
 
 [![Build Status](https://travis-ci.org/jhedstrom/drupalextension.png?branch=master)](https://travis-ci.org/jhedstrom/drupalextension)
 
-The Drupal Extension 3.0 supports Drupal 7 and 8, and utilized Behat 3. For Drupal 6 support (or Behat 2), use the 1.0 version.
+The Drupal Extension 3.0 supports Drupal 7 and 8, and utilizes Behat 3. For Drupal 6 support (or Behat 2), use the 1.0 version.
 
 [![Latest Stable Version](https://poser.pugx.org/drupal/drupal-extension/v/stable.svg)](https://packagist.org/packages/drupal/drupal-extension) [![Total Downloads](https://poser.pugx.org/drupal/drupal-extension/downloads.svg)](https://packagist.org/packages/drupal/drupal-extension) [![Latest Unstable Version](https://poser.pugx.org/drupal/drupal-extension/v/unstable.svg)](https://packagist.org/packages/drupal/drupal-extension) [![License](https://poser.pugx.org/drupal/drupal-extension/license.svg)](https://packagist.org/packages/drupal/drupal-extension) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/jhedstrom/drupalextension/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/jhedstrom/drupalextension/?branch=master)
 
