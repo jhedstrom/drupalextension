@@ -49,7 +49,7 @@ infrastructure. It also make documentation consistent and reliable.
   .. literalinclude:: _static/snippets/FeatureContext.php.inc
      :language: php 
      :linenos: 
-     :emphasize-lines: 20-21
+     :emphasize-lines: 13
 
   This will make your FeatureContext.php aware of both the Drupal Extension and
   the Mink Extension, so you'll be able to take advantage of their drivers and
@@ -57,7 +57,7 @@ infrastructure. It also make documentation consistent and reliable.
 
 8. To ensure everything is set up appropriately, type::
 
-    bin/behat -dl
+    bin/behat -di
   
    You'll see a list of steps like the following, but longer, if you've
    installed everything successfully:
@@ -66,16 +66,16 @@ infrastructure. It also make documentation consistent and reliable.
   .. code-block:: gherkin 
      :linenos:
 
-      Given /^(?:that I|I) am at "(?P[^"]*)"$/
-          - Visit a given path, and additionally check for HTTP response code
-            200.
-          # Drupal\DrupalExtension\Context\DrupalContext::iAmAt()
-      
-       When /^I visit "(?P[^"]*)"$/
-          # Drupal\DrupalExtension\Context\DrupalContext::iVisit()
-      
-       When /^I click "(?P<link>[^"]*)"$/
-          # Drupal\DrupalExtension\Context\DrupalContext::iClick()
-      
-      Given /^for "(?P<field>[^"]*)" I enter "(?P<value>[^"]*)"$/
-          # Drupal\DrupalExtension\Context\DrupalContext::forIenter()
+      default | Given I am at :path
+              | Visit a given path, and additionally check for HTTP response code 200.
+              | at `Drupal\DrupalExtension\Context\MinkContext::assertAtPath()`
+
+      default | When I visit :path
+              | Visit a given path, and additionally check for HTTP response code 200.
+              | at `Drupal\DrupalExtension\Context\MinkContext::assertAtPath()`
+
+      default | When I click :link
+              | at `Drupal\DrupalExtension\Context\MinkContext::assertClick()`
+
+      default | Given for :field I enter :value
+              | at `Drupal\DrupalExtension\Context\MinkContext::assertEnterField()`
