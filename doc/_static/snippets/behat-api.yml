@@ -1,12 +1,16 @@
 default:
-  paths:
-    features: 'features'
+  suites:
+    default:
+      contexts:
+        - FeatureContext
+        - Drupal\DrupalExtension\Context\DrupalContext
+        - Drupal\DrupalExtension\Context\MinkContext
   extensions:
-    Behat\MinkExtension\Extension:
+    Behat\MinkExtension:
       goutte: ~
       selenium2: ~
       base_url: http://seven.l
-    Drupal\DrupalExtension\Extension:
+    Drupal\DrupalExtension:
       blackbox: ~
       api_driver: 'drupal' 
       drush:

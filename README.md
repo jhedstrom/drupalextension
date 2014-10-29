@@ -81,7 +81,7 @@ The Drupal Extension 3.0 supports Drupal 7 and 8, and utilizes Behat 3. For Drup
 1. Features that require API access in order to setup the proper testing conditions can be tagged with `@api`. This will bootstrap the driver specified by the `api_driver` parameter (which defaults to the drush driver). When using the drush driver, this must be initialized via the `behat.yml` file.
 
   ```
-    Drupal\DrupalExtension\Extension:
+    Drupal\DrupalExtension:
       blackbox: ~
       # Set the drush alias to "@self" by default, when executing tests from within the drupal installation.
       drush:
@@ -91,7 +91,7 @@ The Drupal Extension 3.0 supports Drupal 7 and 8, and utilizes Behat 3. For Drup
   Alternatively, the root path to the Drupal installation may be specified.
 
   ```
-    Drupal\DrupalExtension\Extension:
+    Drupal\DrupalExtension:
       blackbox: ~
 	  drush:
 	    root: /my/path/to/drupal
@@ -99,7 +99,7 @@ The Drupal Extension 3.0 supports Drupal 7 and 8, and utilizes Behat 3. For Drup
   If you want to use native API calls instead of drush API you should configure your behat.yml as follows:
 
   ```
-  Drupal\DrupalExtension\Extension:
+  Drupal\DrupalExtension:
     api_driver: "drupal"
     drupal:
       drupal_root: "/absolute/path/to/drupal"
@@ -108,7 +108,7 @@ The Drupal Extension 3.0 supports Drupal 7 and 8, and utilizes Behat 3. For Drup
 1. Targeting content in specific regions can be accomplished once those regions have been defined.
 
   ```
-    Drupal\DrupalExtension\Extension:
+    Drupal\DrupalExtension:
       region_map:
 	    My region: "#css-selector"
 	    Content: "#main .region-content"
@@ -118,7 +118,7 @@ The Drupal Extension 3.0 supports Drupal 7 and 8, and utilizes Behat 3. For Drup
 1. The drupal extension makes use of three selectors by default for messages:
 
   ```
-    Drupal\DrupalExtension\Extension:
+    Drupal\DrupalExtension:
       selectors:
         message_selector: '.messages'
         error_message_selector: '.messages.messages-error'
@@ -128,7 +128,7 @@ The Drupal Extension 3.0 supports Drupal 7 and 8, and utilizes Behat 3. For Drup
 1. Text strings, such as *Log out* or the *Username* field can be altered via `behat.yml` if they vary from the default values.
 
    ```
-   Drupal\DrupalExtension\Extension:
+   Drupal\DrupalExtension:
      text:
 	   log_out: "Sign out"
 	   log_in: "Sign in"
@@ -141,7 +141,7 @@ The Drupal Extension 3.0 supports Drupal 7 and 8, and utilizes Behat 3. For Drup
   Additional subcontexts can be loaded by either placing them in the bootstrap directory (typically `features/bootstrap`) or by adding them to `behat.yml`.
 
   ```
-    Drupal\DrupalExtension\Extension:
+    Drupal\DrupalExtension:
       subcontexts:
 	    paths:
 	      - "/path/to/additional/subcontexts"
@@ -151,7 +151,7 @@ The Drupal Extension 3.0 supports Drupal 7 and 8, and utilizes Behat 3. For Drup
   To disable automatic loading of subcontexts:
 
   ```
-    Drupal\DrupalExtension\Extension:
+    Drupal\DrupalExtension:
       subcontexts:
 	    autoload: 0
   ```
