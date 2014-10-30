@@ -21,9 +21,7 @@ The Drupal Extension 3.0 supports Drupal 7 and 8, and utilizes Behat 3. For Drup
       "require": {
         "drupal/drupal-extension": "~3.0"
       },
-      "config": {
-        "bin-dir": "bin/"
-      }
+      "minimum-stability": "dev"
     }
   ```
 
@@ -67,13 +65,13 @@ The Drupal Extension 3.0 supports Drupal 7 and 8, and utilizes Behat 3. For Drup
 1. To see a list of available step definitions
 
   ```
-  bin/behat -dl
+  vendor/bin/behat -dl
   ```
 
   If the step definitions aren't listed, try running this command:
 
   ```
-  bin/behat --init
+  vendor/bin/behat --init
   ```
 
 1. Start adding your feature files to the `features` directory of your repository.
