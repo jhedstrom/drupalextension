@@ -13,7 +13,9 @@ use Behat\Testwork\Environment\Reader\EnvironmentReader;
 use Drupal\DrupalDriverManager;
 use Drupal\Driver\SubDriverFinderInterface;
 
-use Symfony\Component\Finder\Finder;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use RegexIterator;
 
 /**
  * Read in additional contexts provided by core and contrib.
@@ -171,12 +173,12 @@ final class Reader implements EnvironmentReader {
    * @param string $path
    *   Absolute path to the directory to search for sub-contexts.
    * @param string $pattern
-   *   File pattern to match. Defaults to `*.behat.inc`.
+   *   File pattern to match. Defaults to `/^.+\.behat\.inc/i`.
    *
    * @return array
    *   An array of paths.
    */
-  private function findAvailableSubContexts($path, $pattern = '*.behat.inc') {
+  private function findAvailableSubContexts($path, $pattern = '/^.+\.behat\.inc/i') {
 
     if (isset(static::$subContexts[$pattern][$path])) {
       return static::$subContexts[$pattern][$path];
@@ -184,14 +186,13 @@ final class Reader implements EnvironmentReader {
 
     static::$subContexts[$pattern][$path] = array();
 
-    $finder = new Finder();
-    $iterator = $finder
-      ->files()
-      ->name($pattern)
-      ->exclude('doc')
-      ->in($path);
-
-    foreach ($iterator as $found) {
+    $fileIterator = new RegexIterator(
+      new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator($path)
+      ), $pattern,
+      RegexIterator::MATCH
+    );
+    foreach ($fileIterator as $found) {
       static::$subContexts[$pattern][$path][$found->getRealPath()] = $found->getFileName();
     }
 
