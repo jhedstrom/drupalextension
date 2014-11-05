@@ -4,7 +4,7 @@ The Drupal Extension is an integration layer between [Behat](http://behat.org), 
 
 [![Build Status](https://travis-ci.org/jhedstrom/drupalextension.png?branch=master)](https://travis-ci.org/jhedstrom/drupalextension)
 
-The Drupal Extension 3.0 supports Drupal 7 and 8, and utilizes Behat 3. For Drupal 6 support (or Behat 2), use the 1.0 version.
+The Drupal Extension 3.0 supports Drupal 7 and 8, and utilizes Behat 3. For Drupal 6 support (or Behat 2), use the [1.0 version](https://github.com/jhedstrom/drupalextension/tree/1.0).
 
 [![Latest Stable Version](https://poser.pugx.org/drupal/drupal-extension/v/stable.svg)](https://packagist.org/packages/drupal/drupal-extension) [![Total Downloads](https://poser.pugx.org/drupal/drupal-extension/downloads.svg)](https://packagist.org/packages/drupal/drupal-extension) [![Latest Unstable Version](https://poser.pugx.org/drupal/drupal-extension/v/unstable.svg)](https://packagist.org/packages/drupal/drupal-extension) [![License](https://poser.pugx.org/drupal/drupal-extension/license.svg)](https://packagist.org/packages/drupal/drupal-extension) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/jhedstrom/drupalextension/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/jhedstrom/drupalextension/?branch=master)
 
@@ -16,7 +16,7 @@ The Drupal Extension 3.0 supports Drupal 7 and 8, and utilizes Behat 3. For Drup
 
 1. You'll need something resembling this `composer.json` file
 
-  ```
+  ``` json
     {
       "require": {
         "drupal/drupal-extension": "~3.0"
@@ -29,19 +29,19 @@ The Drupal Extension 3.0 supports Drupal 7 and 8, and utilizes Behat 3. For Drup
 
 1. Then run
 
-  ```
+  ``` bash
   php composer.phar install
   ```
 
   To download the required dependencies. If composer isn't installed
 
-  ```
+  ``` bash
   curl -s https://getcomposer.org/installer | php
   ```
 
 1. At a minimum, your `behat.yml` file will look like this
 
-  ```
+  ``` yaml
   default:
     suites:
       default:
@@ -66,13 +66,13 @@ The Drupal Extension 3.0 supports Drupal 7 and 8, and utilizes Behat 3. For Drup
 
 1. To see a list of available step definitions
 
-  ```
+  ``` bash
   bin/behat -dl
   ```
 
   If the step definitions aren't listed, try running this command:
 
-  ```
+  ``` bash
   bin/behat --init
   ```
 
@@ -80,7 +80,7 @@ The Drupal Extension 3.0 supports Drupal 7 and 8, and utilizes Behat 3. For Drup
 
 1. Features that require API access in order to setup the proper testing conditions can be tagged with `@api`. This will bootstrap the driver specified by the `api_driver` parameter (which defaults to the drush driver). When using the drush driver, this must be initialized via the `behat.yml` file.
 
-  ```
+  ``` yaml
     Drupal\DrupalExtension:
       blackbox: ~
       # Set the drush alias to "@self" by default, when executing tests from within the drupal installation.
@@ -90,7 +90,7 @@ The Drupal Extension 3.0 supports Drupal 7 and 8, and utilizes Behat 3. For Drup
 
   Alternatively, the root path to the Drupal installation may be specified.
 
-  ```
+  ``` yaml
     Drupal\DrupalExtension:
       blackbox: ~
 	  drush:
@@ -98,7 +98,7 @@ The Drupal Extension 3.0 supports Drupal 7 and 8, and utilizes Behat 3. For Drup
   ```
   If you want to use native API calls instead of drush API you should configure your behat.yml as follows:
 
-  ```
+  ``` yaml
   Drupal\DrupalExtension:
     api_driver: "drupal"
     drupal:
@@ -107,7 +107,7 @@ The Drupal Extension 3.0 supports Drupal 7 and 8, and utilizes Behat 3. For Drup
 
 1. Targeting content in specific regions can be accomplished once those regions have been defined.
 
-  ```
+  ``` yaml
     Drupal\DrupalExtension:
       region_map:
 	    My region: "#css-selector"
@@ -117,7 +117,7 @@ The Drupal Extension 3.0 supports Drupal 7 and 8, and utilizes Behat 3. For Drup
 
 1. The drupal extension makes use of three selectors by default for messages:
 
-  ```
+  ``` yaml
     Drupal\DrupalExtension:
       selectors:
         message_selector: '.messages'
@@ -127,7 +127,7 @@ The Drupal Extension 3.0 supports Drupal 7 and 8, and utilizes Behat 3. For Drup
 
 1. Text strings, such as *Log out* or the *Username* field can be altered via `behat.yml` if they vary from the default values.
 
-   ```
+   ``` yaml
    Drupal\DrupalExtension:
      text:
 	   log_out: "Sign out"
@@ -140,17 +140,17 @@ The Drupal Extension 3.0 supports Drupal 7 and 8, and utilizes Behat 3. For Drup
 
   Additional subcontexts can be loaded by either placing them in the bootstrap directory (typically `features/bootstrap`) or by adding them to `behat.yml`.
 
-  ```
+  ``` yaml
     Drupal\DrupalExtension:
       subcontexts:
 	    paths:
 	      - "/path/to/additional/subcontexts"
-		  - "/another/path"
+		    - "/another/path"
   ```
 
   To disable automatic loading of subcontexts:
 
-  ```
+  ``` yaml
     Drupal\DrupalExtension:
       subcontexts:
 	    autoload: 0
@@ -158,7 +158,7 @@ The Drupal Extension 3.0 supports Drupal 7 and 8, and utilizes Behat 3. For Drup
 
 1. The file: `features/bootstrap/FeatureContext.php` is for testing the Drupal Extension itself, and should not be used as a starting point for a feature context. A feature context that extends the Drupal Extension would look like this:
 
-  ```
+  ``` php
   use Drupal\DrupalExtension\Context\DrupalContext;
   
   class FeatureContext extends DrupalContext {
@@ -168,7 +168,7 @@ The Drupal Extension 3.0 supports Drupal 7 and 8, and utilizes Behat 3. For Drup
 
 1. Methods in your `FeatureContext` class can be tagged to fire before certain events:
 
-  ```php
+  ``` php
  use Drupal\DrupalExtension\Hook\Scope\EntityScope;
   
   ...
