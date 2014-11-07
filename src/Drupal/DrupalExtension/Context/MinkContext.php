@@ -269,7 +269,7 @@ class MinkContext extends MinkExtension implements TranslatableContext {
     $element = $this->getSession()->getPage();
     $buttonObj = $element->findButton($button);
     if (empty($buttonObj)) {
-      throw new \Exception(sprintf("The button '%s' was not found in the region '%s' on the page %s", $button, $region, $this->getSession()->getCurrentUrl()));
+      throw new \Exception(sprintf("The button '%s' was not found on the page %s", $button, $region, $this->getSession()->getCurrentUrl()));
     }
   }
 
