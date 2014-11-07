@@ -45,16 +45,16 @@ infrastructure. It also make documentation consistent and reliable.
 
     bin/behat --init
 
-7. Edit features/bootstrap/FeatureContext.php so that it matches the following:
+7. This will generate a FeatureContext.php file that looks like:
 
   .. literalinclude:: _static/snippets/FeatureContext.php.inc
      :language: php 
      :linenos: 
      :emphasize-lines: 13
 
-  This will make your FeatureContext.php aware of both the Drupal Extension and
-  the Mink Extension, so you'll be able to take advantage of their drivers and
-  step definitions and add your own custom step definitions as well.
+  This FeatureContext.php will be aware of both the Drupal Extension
+  and the Mink Extension, so you'll be able to take advantage of their
+  drivers add your own custom step definitions as well.
 
 8. To ensure everything is set up appropriately, type::
 
