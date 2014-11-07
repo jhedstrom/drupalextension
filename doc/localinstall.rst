@@ -7,8 +7,9 @@ infrastructure. It also make documentation consistent and reliable.
 
 1. Create a folder for your BDD tests::
 
-    mkdir projectfolder cd projectfolder
-    
+    mkdir projectfolder
+    cd projectfolder
+  
   All the commands that follow are written to install from the root of your
   project folder.
 

@@ -18,7 +18,7 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
    * @param array $parameters
    *   Context parameters (set them in behat.yml)
    */
-  public function __construct(array $parameters) {
+  public function __construct(array $parameters = []) {
     // Initialize your context here
   }
 
