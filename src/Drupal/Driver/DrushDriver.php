@@ -180,7 +180,7 @@ class DrushDriver extends BaseDriver {
         $string .= ' --' . $name;
       }
       else {
-        $string .= '--' . $name . '=' . $value;
+        $string .= ' --' . $name . '=' . $value;
       }
     }
     return $string;
