@@ -56,6 +56,19 @@ class Extension implements ExtensionInterface {
 
       $config['drush']['root'] = isset($config['drush']['root']) ? $config['drush']['root'] : FALSE;
       $container->setParameter('drupal.driver.drush.root', $config['drush']['root']);
+
+      // Set global arguments.
+      $this->setDrushOptions($container, $config);
+    }
+  }
+
+  /**
+   * Set global drush arguments.
+   */
+  private function setDrushOptions(ContainerBuilder $container, array $config) {
+    if (isset($config['drush']['global_options'])) {
+      $definition = $container->getDefinition('drupal.driver.drush');
+      $definition->addMethodCall('setArguments', array($config['drush']['global_options']));
     }
   }
 
@@ -140,6 +153,7 @@ class Extension implements ExtensionInterface {
             scalarNode('alias')->end()->
             scalarNode('binary')->defaultValue('drush')->end()->
             scalarNode('root')->end()->
+            scalarNode('global_options')->end()->
           end()->
         end()->
         // Subcontext paths.
