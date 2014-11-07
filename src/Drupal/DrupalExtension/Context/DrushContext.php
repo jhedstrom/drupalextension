@@ -14,7 +14,7 @@ class DrushContext extends RawDrupalContext implements TranslatableContext {
    *
    * @var string|boolean
    */
-  private $drushOutput;
+  protected $drushOutput;
 
   /**
    * {@inheritDoc}
