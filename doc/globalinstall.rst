@@ -48,7 +48,7 @@ Install the Drupal Extension
 
   It will be a bit before you start seeing any output. It will also suggest
   that you install additional tools, but they're not normally needed so you can
-  savely ignore that message.
+  safely ignore that message.
 
 4. Test that your install worked by typing the following::
 
