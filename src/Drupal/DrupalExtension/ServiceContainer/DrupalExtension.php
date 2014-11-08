@@ -11,6 +11,7 @@ use Drupal\DrupalExtension\Compiler\EventSubscriberPass;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Loader\FileLoader;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
@@ -76,6 +77,7 @@ class DrupalExtension implements ExtensionInterface {
     $this->processDriverPass($container);
     $this->processEventSubscriberPass($container);
     $this->processEnvironmentReaderPass($container);
+    $this->processClassGenerator($container);
   }
 
   /**
@@ -249,7 +251,7 @@ class DrupalExtension implements ExtensionInterface {
   /**
    * Process the Driver Pass.
    */
-  private function processDriverPass(ContainerBuilder $container){
+  private function processDriverPass(ContainerBuilder $container) {
     $driverPass = new DriverPass();
     $driverPass->process($container);
   }
@@ -257,7 +259,7 @@ class DrupalExtension implements ExtensionInterface {
   /**
    * Process the Event Subscriber Pass.
    */
-  private function processEventSubscriberPass(ContainerBuilder $container){
+  private function processEventSubscriberPass(ContainerBuilder $container) {
     $eventSubscriberPass = new EventSubscriberPass();
     $eventSubscriberPass->process($container);
   }
@@ -265,7 +267,7 @@ class DrupalExtension implements ExtensionInterface {
   /**
    * Process the Environment Reader pass.
    */
-  private function processEnvironmentReaderPass(ContainerBuilder $container){
+  private function processEnvironmentReaderPass(ContainerBuilder $container) {
     // Register Behat context readers.
     $references = $this->processor->findAndSortTaggedServices($container, ContextExtension::READER_TAG);
     $definition = $container->getDefinition('drupal.context.environment.reader');
@@ -275,4 +277,11 @@ class DrupalExtension implements ExtensionInterface {
     }
   }
 
+  /**
+   * Switch to custom class generator.
+   */
+  private function processClassGenerator(ContainerBuilder $container) {
+    $definition = new Definition('Drupal\DrupalExtension\Context\ContextClass\ClassGenerator');
+    $container->setDefinition(ContextExtension::CLASS_GENERATOR_TAG . '.simple', $definition);
+  }
 }
