@@ -323,7 +323,7 @@ class MinkContext extends MinkExtension implements TranslatableContext {
   }
 
   /**
-   * @Then I( should) see the :tag element in the :region region
+   * @Then I( should) see the :tag element in the :region( region)
    */
   public function assertRegionElement($tag, $region) {
     $regionObj = $this->getRegion($region);
@@ -335,7 +335,7 @@ class MinkContext extends MinkExtension implements TranslatableContext {
   }
 
   /**
-   * @Then I( should) not see the :tag element in the :region region
+   * @Then I( should) not see the :tag element in the :region( region)
    */
   public function assertNotRegionElement($tag, $region) {
     $regionObj = $this->getRegion($region);
@@ -346,7 +346,7 @@ class MinkContext extends MinkExtension implements TranslatableContext {
   }
 
   /**
-   * @Then I( should) not see :text in the :tag element in the :region region
+   * @Then I( should) not see :text in the :tag element in the :region( region)
    */
   public function assertNotRegionElementText($text, $tag, $region) {
     $regionObj = $this->getRegion($region);
@@ -440,7 +440,7 @@ class MinkContext extends MinkExtension implements TranslatableContext {
   }
 
 /**
-   * @Then I( should) see the :tag element with the :attribute attribute set to :value in the :region region
+   * @Then I( should) see the :tag element with the :attribute attribute set to :value in the :region( region)
    */
   public function assertRegionElementAttribute($tag, $attribute, $value, $region) {
     $regionObj = $this->getRegion($region);
@@ -467,7 +467,7 @@ class MinkContext extends MinkExtension implements TranslatableContext {
   }
 
   /**
-   * @Then I( should) see :text in the :tag element with the :attribute attribute set to :value in the :region region
+   * @Then I( should) see :text in the :tag element with the :attribute attribute set to :value in the :region( region)
    */
   public function assertRegionElementTextAttribute($text, $tag, $attribute, $value, $region) {
     $regionObj = $this->getRegion($region);
@@ -499,7 +499,7 @@ class MinkContext extends MinkExtension implements TranslatableContext {
   }
 
   /**
-   * @Then I( should) see :text in the :tag element with the :property CSS property set to :value in the :region region
+   * @Then I( should) see :text in the :tag element with the :property CSS property set to :value in the :region( region)
    */
   public function assertRegionElementTextCss($text, $tag, $property, $value, $region) {
     $regionObj = $this->getRegion($region);
