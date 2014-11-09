@@ -54,11 +54,11 @@ Feature: Test DrupalContext
 
   Scenario: Find an element with an attribute in a region
     Given I am on the homepage
-    Then I should see the "div" element with the "role" attribute set to "search" in the "right header"
+    Then I should see the "h1" element with the "id" attribute set to "site-name" in the "left header" region
 
   Scenario: Find text in an element with an attribute in a region
     Given I am on the homepage
-    Then I should see "Search Drupal.org" in the "div" element with the "role" attribute set to "search" in the "right header"
+    Then I should see "Drupal" in the "h1" element with the "id" attribute set to "site-name" in the "left header" region
 
   Scenario: Error messages
    Given I am on "/user"

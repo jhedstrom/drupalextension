@@ -439,7 +439,7 @@ class MinkContext extends MinkExtension implements TranslatableContext {
     }
   }
 
-/**
+  /**
    * @Then I( should) see the :tag element with the :attribute attribute set to :value in the :region( region)
    */
   public function assertRegionElementAttribute($tag, $attribute, $value, $region) {
