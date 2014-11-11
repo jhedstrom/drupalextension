@@ -32,6 +32,34 @@ Feature: Test DrupalContext
     Given I am on the homepage
     Then I should not see the link "This link should never exist in a default Drupal install" in the "right header"
 
+  Scenario: Find a button
+    Given I am on the homepage
+    Then I should see the "Search" button
+
+  Scenario: Find a button in a region
+    Given I am on the homepage
+    Then I should see the "Search" button in the "right header"
+
+  Scenario: Find an element in a region
+    Given I am on the homepage
+    Then I should see the "h1" element in the "left header"
+
+  Scenario: Element not in region
+    Given I am on the homepage
+    Then I should not see the "h1" element in the "footer"
+
+  Scenario: Text not in element in region
+    Given I am on the homepage
+    Then I should not see "DotNetNuke" in the "h1" element in the "left header"
+
+  Scenario: Find an element with an attribute in a region
+    Given I am on the homepage
+    Then I should see the "h1" element with the "id" attribute set to "site-name" in the "left header" region
+
+  Scenario: Find text in an element with an attribute in a region
+    Given I am on the homepage
+    Then I should see "Drupal" in the "h1" element with the "id" attribute set to "site-name" in the "left header" region
+
   Scenario: Error messages
    Given I am on "/user"
    When I press "Log in"
