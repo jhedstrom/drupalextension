@@ -2,13 +2,34 @@
 
 namespace Drupal\DrupalExtension\Context;
 
-use Behat\Behat\Context\TranslatableContext;
 use Behat\MinkExtension\Context\RawMinkContext;
 
 /**
  * Extensions to the Mink Extension.
  */
-class MarkupContext extends RawMinkContext implements TranslatableContext {
+class MarkupContext extends RawMinkContext {
+
+  /**
+   * Return a region from the current page.
+   *
+   * @throws \Exception
+   *   If region cannot be found.
+   *
+   * @param string $region
+   *   The machine name of the region to return.
+   *
+   * @return \Behat\Mink\Element\NodeElement
+   */
+  public function getRegion($region) {
+    $session = $this->getSession();
+    $regionObj = $session->getPage()->find('region', $region);
+    if (!$regionObj) {
+      throw new \Exception(sprintf('No region "%s" found on the page %s.', $region, $session->getCurrentUrl()));
+    }
+
+    return $regionObj;
+  }
+
   /**
    * @Then I should see the link :link
    */
@@ -183,23 +204,6 @@ class MarkupContext extends RawMinkContext implements TranslatableContext {
         }
       }
     }
-  }
-
-  /**
-   * @When I follow/click :link in the :region( region)
-   *
-   * @throws \Exception
-   *   If region or link within it cannot be found.
-   */
-  public function assertRegionLinkFollow($link, $region) {
-    $regionObj = $this->getRegion($region);
-
-    // Find the link within the region
-    $linkObj = $regionObj->findLink($link);
-    if (empty($linkObj)) {
-      throw new \Exception(sprintf('The link "%s" was not found in the region "%s" on the page %s', $link, $region, $this->getSession()->getCurrentUrl()));
-    }
-    $linkObj->click();
   }
 
   /**
