@@ -19,4 +19,5 @@ Contents:
    blackbox
    drush
    drupalapi
+   contexts
    subcontexts

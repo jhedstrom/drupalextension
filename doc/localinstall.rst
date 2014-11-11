@@ -50,7 +50,8 @@ infrastructure. It also make documentation consistent and reliable.
   .. literalinclude:: _static/snippets/FeatureContext.php.inc
      :language: php 
      :linenos: 
- 
+     :emphasize-lines: 13
+
   This FeatureContext.php will be aware of both the Drupal Extension
   and the Mink Extension, so you'll be able to take advantage of their
   drivers add your own custom step definitions as well.
