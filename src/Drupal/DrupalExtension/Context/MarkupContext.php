@@ -2,6 +2,7 @@
 
 namespace Drupal\DrupalExtension\Context;
 
+use Behat\Mink\Exception\UnsupportedDriverActionException;
 use Behat\MinkExtension\Context\RawMinkContext;
 
 /**
