@@ -19,7 +19,7 @@ infrastructure. It also make documentation consistent and reliable.
 
 3. Create a composer.json file to tell Composer what to install.  To do that,
    paste the following code into your editor and save as composer.json. The 
-   Drupal Extension requires Behat, Mink, and the Mink Extension. The will all 
+   Drupal Extension requires Behat, Mink, and the Mink Extension. They will all 
    be set up because they're dependencies of the Drupal Extension, so you don't 
    have to specify them directly in the composer.json file:
 
@@ -45,16 +45,15 @@ infrastructure. It also make documentation consistent and reliable.
 
     bin/behat --init
 
-7. Edit features/bootstrap/FeatureContext.php so that it matches the following:
+7. This will generate a FeatureContext.php file that looks like:
 
   .. literalinclude:: _static/snippets/FeatureContext.php.inc
      :language: php 
      :linenos: 
-     :emphasize-lines: 13
-
-  This will make your FeatureContext.php aware of both the Drupal Extension and
-  the Mink Extension, so you'll be able to take advantage of their drivers and
-  step definitions and add your own custom step definitions as well.
+ 
+  This FeatureContext.php will be aware of both the Drupal Extension
+  and the Mink Extension, so you'll be able to take advantage of their
+  drivers add your own custom step definitions as well.
 
 8. To ensure everything is set up appropriately, type::
 
