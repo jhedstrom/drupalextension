@@ -6,6 +6,7 @@ default:
         - Drupal\DrupalExtension\Context\DrupalContext
         - Drupal\DrupalExtension\Context\MessageContext
         - Drupal\DrupalExtension\Context\MinkContext
+        - Drupal\DrupalExtension\Context\MarkupContext
       filters:
         tags: "~@api&&~@drushTest"
   extensions:
@@ -36,6 +37,7 @@ drupal7:
         - FeatureContext
         - Drupal\DrupalExtension\Context\DrupalContext
         - Drupal\DrupalExtension\Context\MinkContext
+        - Drupal\DrupalExtension\Context\MarkupContext
       filters:
         tags: "@d7"
   extensions:
@@ -60,6 +62,7 @@ drush:
         - Drupal\DrupalExtension\Context\DrupalContext
         - Drupal\DrupalExtension\Context\DrushContext
         - Drupal\DrupalExtension\Context\MinkContext
+        - Drupal\DrupalExtension\Context\MarkupContext
       filters:
         tags: "@drushTest"
   extensions:
@@ -82,6 +85,7 @@ drupal8:
         - FeatureContext
         - Drupal\DrupalExtension\Context\DrupalContext
         - Drupal\DrupalExtension\Context\MinkContext
+        - Drupal\DrupalExtension\Context\MarkupContext
       filters:
         tags: "@d8&&~@d8wip"
   extensions:
