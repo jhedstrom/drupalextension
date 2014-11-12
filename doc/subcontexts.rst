@@ -20,7 +20,7 @@ behat.yml
    :emphasize-lines: 18-20
 
 The Drupal Extension will search recursively within the directory or
-directories specified to discover and load any file ending in behat.inc This
+directories specified to discover and load any file ending in `.behat.inc`. This
 system, although created with Drupal contrib projects in mind, searches where
 it's pointed, so you can also use it for your own subcontexts, a strategy you
 might employ to re-use step definitions particular to your shop or company's
@@ -56,7 +56,7 @@ Your subcontext must include, at a minimum, lines 7 and 8 below.
 
 // sites/all/modules/beanslide/beanslide.behat.inc
 
-.. literalinclude:: _static/snippets/beanslide.behat.inc
+.. literalinclude:: _static/snippets/beanslide.behat-2.inc
    :language: php
    :linenos:
    :emphasize-lines: 7,8,10-12
