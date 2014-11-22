@@ -2,7 +2,7 @@ System-wide installation
 ========================
 
 A system-wide installation allows you to maintain a single copy of the testing
-toolset and use it for multiple test environments. Configuuration is slightly
+toolset and use it for multiple test environments. Configuration is slightly
 more complex than the stand-alone installation but many people prefer the
 flexibility and ease-of-maintenance this setup provides.
 
