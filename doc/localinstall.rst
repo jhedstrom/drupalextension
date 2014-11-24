@@ -3,7 +3,7 @@ Stand-alone installation
 
 A stand-alone installation is recommended when you want your tests and testing
 environment to be portable, from local development to CI server, to client
-infrastructure. It also make documentation consistent and reliable.
+infrastructure. It also makes documentation consistent and reliable.
 
 1. Create a folder for your BDD tests::
 
