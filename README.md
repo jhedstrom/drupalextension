@@ -59,7 +59,7 @@ The Drupal Extension 3.0 supports Drupal 7 and 8, and utilizes Behat 3. For Drup
 1. To add in support for additional web-based step definitions add the extended `Drupal\DrupalExtension\Context\MinkContext`:
   ``` yaml
   contexts:
-    - Drupal\DrupalExtension\Contexti\DrupalContext
+    - Drupal\DrupalExtension\Context\DrupalContext
     - Drupal\DrupalExtension\Context\MinkContext
   ```
   Additional contexts include `MessageContext` for interacting with Drupal messages (error, status, warning), and `DrushContext` for directly calling Drush commands from scenarios.
