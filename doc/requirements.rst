@@ -9,7 +9,7 @@ Meet the system requirements
     php --version
 
    It must be higher than 5.3.5! Note: This means you cannot use the same
-   version of PHP for testing that you might use to run a Drual 5 site.
+   version of PHP for testing that you might use to run a Drupal 5 site.
 
   PHP will also need to have the following libraries installed:
 
@@ -38,5 +38,5 @@ Meet the system requirements
   placed any where you like on your system and run with the following command::
 
     java -jar selenium-server-standalone-2.33.0.jar & 
-    // replace with the name of the version you downloaded 
+    // replace with the name of the version you downloaded
 

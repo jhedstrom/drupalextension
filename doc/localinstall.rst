@@ -19,7 +19,7 @@ infrastructure. It also makes documentation consistent and reliable.
 
 3. Create a composer.json file to tell Composer what to install.  To do that,
    paste the following code into your editor and save as composer.json. The 
-   Drupal Extension requires Behat, Mink, and the Mink Extension. The will all 
+   Drupal Extension requires Behat, Mink, and the Mink Extension. They will all 
    be set up because they're dependencies of the Drupal Extension, so you don't 
    have to specify them directly in the composer.json file:
 
