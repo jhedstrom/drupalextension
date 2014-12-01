@@ -26,14 +26,12 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
    * @Then I should see the error message( containing) :message
    */
   public function assertErrorVisible($message) {
-    $errorSelector = $this->getDrupalSelector('error_message_selector');
-    $errorSelectorObj = $this->getSession()->getPage()->find("css", $errorSelector);
-    if(empty($errorSelectorObj)) {
-      throw new \Exception(sprintf("The page '%s' does not contain any error messages", $this->getSession()->getCurrentUrl()));
-    }
-    if (strpos(trim($errorSelectorObj->getText()), $message) === FALSE) {
-      throw new \Exception(sprintf("The page '%s' does not contain the error message '%s'", $this->getSession()->getCurrentUrl(), $message));
-    }
+    $this->_assert(
+      $message,
+      'error_message_selector',
+      "The page '%s' does not contain any error messages",
+      "The page '%s' does not contain the error message '%s'"
+    );
   }
 
   /**
@@ -60,13 +58,11 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
    * @Given I should not see the error message( containing) :message
    */
   public function assertNotErrorVisible($message) {
-    $errorSelector = $this->getDrupalSelector('error_message_selector');
-    $errorSelectorObj = $this->getSession()->getPage()->find("css", $errorSelector);
-    if(!empty($errorSelectorObj)) {
-      if (strpos(trim($errorSelectorObj->getText()), $message) !== FALSE) {
-        throw new \Exception(sprintf("The page '%s' contains the error message '%s'", $this->getSession()->getCurrentUrl(), $message));
-      }
-    }
+    $this->_assertNot(
+      $message,
+      'error_message_selector',
+      "The page '%s' contains the error message '%s'"
+    );
   }
 
   /**
@@ -93,14 +89,12 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
    * @Then I should see the success message( containing) :message
    */
   public function assertSuccessMessage($message) {
-    $successSelector = $this->getDrupalSelector('success_message_selector');
-    $successSelectorObj = $this->getSession()->getPage()->find("css", $successSelector);
-    if(empty($successSelectorObj)) {
-      throw new \Exception(sprintf("The page '%s' does not contain any success messages", $this->getSession()->getCurrentUrl()));
-    }
-    if (strpos(trim($successSelectorObj->getText()), $message) === FALSE) {
-      throw new \Exception(sprintf("The page '%s' does not contain the success message '%s'", $this->getSession()->getCurrentUrl(), $message));
-    }
+    $this->_assert(
+      $message,
+      'success_message_selector',
+      "The page '%s' does not contain any success messages",
+      "The page '%s' does not contain the success message '%s'"
+    );
   }
 
   /**
@@ -127,13 +121,11 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
    * @Given I should not see the success message( containing) :message
    */
   public function assertNotSuccessMessage($message) {
-    $successSelector = $this->getDrupalSelector('success_message_selector');
-    $successSelectorObj = $this->getSession()->getPage()->find("css", $successSelector);
-    if(!empty($successSelectorObj)) {
-      if (strpos(trim($successSelectorObj->getText()), $message) !== FALSE) {
-        throw new \Exception(sprintf("The page '%s' contains the success message '%s'", $this->getSession()->getCurrentUrl(), $message));
-      }
-    }
+    $this->_assertNot(
+      $message,
+      'success_message_selector',
+      "The page '%s' contains the success message '%s'"
+    );
   }
 
   /**
@@ -160,14 +152,12 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
    * @Then I should see the warning message( containing) :message
    */
   public function assertWarningMessage($message) {
-    $warningSelector = $this->getDrupalSelector('warning_message_selector');
-    $warningSelectorObj = $this->getSession()->getPage()->find("css", $warningSelector);
-    if(empty($warningSelectorObj)) {
-      throw new \Exception(sprintf("The page '%s' does not contain any warning messages", $this->getSession()->getCurrentUrl()));
-    }
-    if (strpos(trim($warningSelectorObj->getText()), $message) === FALSE) {
-      throw new \Exception(sprintf("The page '%s' does not contain the warning message '%s'", $this->getSession()->getCurrentUrl(), $message));
-    }
+    $this->_assert(
+      $message,
+      'warning_message_selector',
+      "The page '%s' does not contain any warning messages",
+      "The page '%s' does not contain the warning message '%s'"
+    );
   }
 
   /**
@@ -194,13 +184,11 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
    * @Given I should not see the warning message( containing) :message
    */
   public function assertNotWarningMessage($message) {
-    $warningSelector = $this->getDrupalSelector('warning_message_selector');
-    $warningSelectorObj = $this->getSession()->getPage()->find("css", $warningSelector);
-    if(!empty($warningSelectorObj)) {
-      if (strpos(trim($warningSelectorObj->getText()), $message) !== FALSE) {
-        throw new \Exception(sprintf("The page '%s' contains the warning message '%s'", $this->getSession()->getCurrentUrl(), $message));
-      }
-    }
+    $this->_assertNot(
+      $message,
+      'warning_message_selector',
+      "The page '%s' contains the warning message '%s'"
+    );
   }
 
   /**
@@ -227,14 +215,12 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
    * @Then I should see the message( containing) :message
    */
   public function assertMessage($message) {
-    $msgSelector = $this->getDrupalSelector('message_selector');
-    $msgSelectorObj = $this->getSession()->getPage()->find("css", $msgSelector);
-    if(empty($msgSelectorObj)) {
-      throw new \Exception(sprintf("The page '%s' does not contain any messages", $this->getSession()->getCurrentUrl()));
-    }
-    if (strpos(trim($msgSelectorObj->getText()), $message) === FALSE) {
-      throw new \Exception(sprintf("The page '%s' does not contain the message '%s'", $this->getSession()->getCurrentUrl(), $message));
-    }
+    $this->_assert(
+      $message,
+      'message_selector',
+      "The page '%s' does not contain any messages",
+      "The page '%s' does not contain the message '%s'"
+    );
   }
 
   /**
@@ -246,13 +232,11 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
    * @Then I should not see the message( containing) :message
    */
   public function assertNotMessage($message) {
-    $msgSelector = $this->getDrupalSelector('message_selector');
-    $msgSelectorObj = $this->getSession()->getPage()->find("css", $msgSelector);
-    if(!empty($msgSelectorObj)) {
-      if (strpos(trim($msgSelectorObj->getText()), $message) !== FALSE) {
-        throw new \Exception(sprintf("The page '%s' contains the message '%s'", $this->getSession()->getCurrentUrl(), $message));
-      }
-    }
+    $this->_assertNot(
+      $message,
+      'message_selector',
+      "The page '%s' contains the message '%s'"
+    );
   }
 
   /**
@@ -267,6 +251,61 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
       throw new \Exception(sprintf('No such selector configured: %s', $name));
     }
     return $text[$name];
+  }
+
+  /**
+   * Internal callback to check for a specific message in a given context.
+   *
+   * @param $message
+   *   string The message to be checked
+   * @param $selectorId
+   *   string CSS selector name
+   * @param $exceptionMsgNone
+   *   string The message being thrown when no message is contained, string
+   *   should contain one '%s' as a placeholder for the current URL
+   * @param $exceptionMsgMissing
+   *   string The message being thrown when the message is not contained, string
+   *   should contain two '%s' as placeholders for the current URL and the message.
+   * @throws \Exception
+   */
+  private function _assert($message, $selectorId, $exceptionMsgNone, $exceptionMsgMissing) {
+    $selector = $this->getDrupalSelector($selectorId);
+    $selectorObjects = $this->getSession()->getPage()->findAll("css", $selector);
+    if (empty($selectorObjects)) {
+      throw new \Exception(sprintf($exceptionMsgNone, $this->getSession()->getCurrentUrl()));
+    }
+    foreach ($selectorObjects as $selectorObject) {
+      $text = $selectorObject->getText();
+      if (strpos(trim($selectorObject->getText()), $message) !== FALSE) {
+        return;
+      }
+    }
+    throw new \Exception(sprintf($exceptionMsgMissing, $this->getSession()->getCurrentUrl(), $message));
+  }
+
+  /**
+   * Internal callback to check if the current page does not contain the given message
+   *
+   * @param $message
+   *   string The message to be checked
+   * @param $selectorId
+   *   string CSS selector name
+   * @param $exceptionMsg
+   *   string The message being thrown when the message is contained, string
+   *   should contain two '%s' as placeholders for the current URL and the message.
+   * @throws \Exception
+   */
+  private function _assertNot($message, $selectorId, $exceptionMsg) {
+    $selector = $this->getDrupalSelector($selectorId);
+    $selectorObjects = $this->getSession()->getPage()->findAll("css", $selector);
+    if (!empty($selectorObjects)) {
+      foreach ($selectorObjects as $selectorObject) {
+        $text = $selectorObject->getText();
+        if (strpos(trim($selectorObject->getText()), $message) !== FALSE) {
+          throw new \Exception(sprintf($exceptionMsg, $this->getSession()->getCurrentUrl(), $message));
+        }
+      }
+    }
   }
 
 }
