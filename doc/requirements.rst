@@ -37,6 +37,6 @@ Meet the system requirements
   Server (formerly the Selenium RC Server).   This is a single file which can be
   placed any where you like on your system and run with the following command::
 
-    java -jar selenium-server-standalone-2.33.0.jar & 
+    java -jar selenium-server-standalone-2.44.0.jar & 
     // replace with the name of the version you downloaded
 
