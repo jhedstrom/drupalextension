@@ -102,17 +102,7 @@ Set up tests
   .. code-block:: gherkin 
      :linenos:
 
-      Given /^(?:that I|I) am at "(?P[^"]*)"$/
-          - Visit a given path, and additionally check for HTTP response code
-            200.
-          # Drupal\DrupalExtension\Context\DrupalContext::iAmAt()
-
-       When /^I visit "(?P[^"]*)"$/
-          # Drupal\DrupalExtension\Context\DrupalContext::iVisit()
-
-       When /^I click "(?P<link>[^"]*)"$/
-          # Drupal\DrupalExtension\Context\DrupalContext::iClick()
-
-      Given /^for "(?P<field>[^"]*)" I enter "(?P<value>[^"]*)"$/
-          # Drupal\DrupalExtension\Context\DrupalContext::forIenter()
-
+      default | Given I am an anonymous user                                    
+      default | Given I am not logged in                                        
+      default | Given I am logged in as a user with the :role role(s)           
+      default | Given I am logged in as :name     
