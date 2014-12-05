@@ -30,7 +30,7 @@ Example:
 --------
 
 A stock Drupal 7 installation has a footer area identified by the CSS Id
-"footer". By editing the behat.yml file and adding lines 11 and 12 below:
+"footer". By editing the behat.yml file and adding lines 15 and 16 below:
 
 .. literalinclude:: _static/snippets/behat-bb.yml
    :language: yaml
