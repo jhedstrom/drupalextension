@@ -2,7 +2,7 @@ Drupal Extension Drivers
 ========================
 
 The Drupal Extension provides drivers for interacting with your site which are
-compatible with Drupal 6, 7, and 8. Each driver has its own limitiations.
+compatible with Drupal 6, 7, and 8. Each driver has its own limitations.
 
 +-----------------------+----------+-------+------------+
 | Feature               | Blackbox | Drush | Drupal API |

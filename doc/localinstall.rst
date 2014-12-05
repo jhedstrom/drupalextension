@@ -40,7 +40,7 @@ infrastructure. It also makes documentation consistent and reliable.
      :language: yaml 
      :linenos:
 
-6. Initialze behat. This creates the features folder with some basic things to
+6. Initialize behat. This creates the features folder with some basic things to
    get you started, including your own FeatureContext.php file:: 
 
     bin/behat --init

@@ -28,7 +28,7 @@ development patterns.
 
 Disable autoloading
 -------------------
-Autoloading can be disabled in the behat.yml file temorarily with the
+Autoloading can be disabled in the behat.yml file temporarily with the
 following:
 
 .. literalinclude:: _static/snippets/behat-auto.yml
@@ -48,7 +48,7 @@ With regard to the Drupal Extension:
   functions, preface the filename with the project's machine name to prevent
   namespace collisions.
 
-* Writing step definitions for the subcontext is only slighly different than
+* Writing step definitions for the subcontext is only slightly different than
   writing them for the main context. 
 
 Your subcontext must include, at a minimum, lines 7 and 8 below. 

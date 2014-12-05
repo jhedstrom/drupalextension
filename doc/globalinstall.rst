@@ -2,7 +2,7 @@ System-wide installation
 ========================
 
 A system-wide installation allows you to maintain a single copy of the testing
-toolset and use it for multiple test environments. Configuration is slightly
+tool set and use it for multiple test environments. Configuration is slightly
 more complex than the stand-alone installation but many people prefer the
 flexibility and ease-of-maintenance this setup provides.
 
@@ -72,7 +72,7 @@ Set up tests
 
   Single site: `sites/default/behat-tests`
   
-  Multisite or named single site: `/sites/my.domain.com/behat-tests`
+  Multi-site or named single site: `/sites/my.domain.com/behat-tests`
 
 2. Wherever you make your test folder, inside it create the behat.yml file:
 

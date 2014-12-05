@@ -25,7 +25,7 @@ Meet the system requirements
    Selenium.
 
 
-#. Directions are written to use commandline cURL. You can make sure it's
+#. Directions are written to use command-line cURL. You can make sure it's
    installed with::
 
     curl --version
