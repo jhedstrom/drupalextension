@@ -54,7 +54,7 @@ Install the Drupal Extension
 
     bin/behat --help
 
-   If you were successful, you'll see the help output.
+  If you were successful, you'll see the help output.
 
 5. Make the binary available system-wide::
 
