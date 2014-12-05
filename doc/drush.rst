@@ -58,7 +58,7 @@ Example:
 .. literalinclude:: _static/snippets/apitag.output
    :language: gherkin
    :linenos:
-   :emphasize-lines: 8-10 
+   :emphasize-lines: 10-12 
    :lines: 1-24
 
 The Drush driver give you access to all the blackbox steps, plus those used in
