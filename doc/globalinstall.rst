@@ -80,7 +80,7 @@ Set up tests
      :language: yaml 
      :linenos:
 
-3. Edit features/bootstrap/FeatureContext.php so that it matches the following:
+3. This will generate a FeatureContext.php file that looks like:
 
   .. literalinclude:: _static/snippets/FeatureContext.php.inc
      :language: php 
