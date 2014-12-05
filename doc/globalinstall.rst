@@ -85,7 +85,7 @@ Set up tests
   .. literalinclude:: _static/snippets/FeatureContext.php.inc
      :language: php 
      :linenos: 
-     :emphasize-lines: 20-21
+     :emphasize-lines: 12 
 
   This will make your FeatureContext.php aware of both the Drupal Extension and
   the Mink Extension, so you'll be able to take advantage of their drivers and
