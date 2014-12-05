@@ -9,6 +9,7 @@ instructions by lines 13 and 14, highlighted below.
 .. literalinclude:: _static/snippets/behat-bb.yml
    :language: yaml
    :linenos:
+   :lines: 1-14
    :emphasize-lines: 13-14
 
 Region steps 
@@ -43,6 +44,10 @@ You can use a step like the following without writing any custom PHP::
 
 
 Using the blackbox driver, you can use all of the steps in the examples below.
+
+.. Note::
+    These examples won't work unless you define the appropriate regions in
+     your behat.yml file.
 
 .. literalinclude:: _static/snippets/blackbox.feature
    :language: gherkin
