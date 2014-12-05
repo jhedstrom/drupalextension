@@ -4,7 +4,7 @@ Blackbox Driver
 The blackbox driver assumes no privileged access to the site. You can run the
 tests on a local or remote server, and all the actions will take place through
 the site's user interface. This driver was enabled as part of the installation
-instructions by lines 9 and 10, highlighted below. 
+instructions by lines 13 and 14, highlighted below. 
 
 .. literalinclude:: _static/snippets/behat-bb.yml
    :language: yaml
