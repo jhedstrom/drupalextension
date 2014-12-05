@@ -67,4 +67,3 @@ each of the following examples:
 .. literalinclude:: _static/snippets/drush.feature
    :language: gherkin
    :linenos:
-   :lines: 1-24
