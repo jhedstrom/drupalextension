@@ -58,7 +58,7 @@ infrastructure. It also makes documentation consistent and reliable.
 
 8. To ensure everything is set up appropriately, type::
 
-    bin/behat -di
+    bin/behat -dl
   
    You'll see a list of steps like the following, but longer, if you've
    installed everything successfully:
@@ -67,16 +67,8 @@ infrastructure. It also makes documentation consistent and reliable.
   .. code-block:: gherkin 
      :linenos:
 
-      default | Given I am at :path
-              | Visit a given path, and additionally check for HTTP response code 200.
-              | at `Drupal\DrupalExtension\Context\MinkContext::assertAtPath()`
+      default | Given I am an anonymous user
+      default | Given I am not logged in
+      default | Given I am logged in as a user with the :role role(s)
+      default | Given I am logged in as :name
 
-      default | When I visit :path
-              | Visit a given path, and additionally check for HTTP response code 200.
-              | at `Drupal\DrupalExtension\Context\MinkContext::assertAtPath()`
-
-      default | When I click :link
-              | at `Drupal\DrupalExtension\Context\MinkContext::assertClick()`
-
-      default | Given for :field I enter :value
-              | at `Drupal\DrupalExtension\Context\MinkContext::assertEnterField()`
