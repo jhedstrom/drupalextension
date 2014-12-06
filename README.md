@@ -78,17 +78,6 @@ The Drupal Extension 3.0 supports Drupal 7 and 8, and utilizes Behat 3. For Drup
 
 1. Start adding your feature files to the `features` directory of your repository.
 
-
-1. The drupal extension makes use of three selectors by default for messages:
-
-  ``` yaml
-    Drupal\DrupalExtension:
-      selectors:
-        message_selector: '.messages'
-        error_message_selector: '.messages.messages-error'
-        success_message_selector: '.messages.messages-status'
-  ```
-
 1. Text strings, such as *Log out* or the *Username* field can be altered via `behat.yml` if they vary from the default values.
 
    ``` yaml
