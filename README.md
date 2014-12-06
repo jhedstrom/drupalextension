@@ -166,26 +166,6 @@ The Drupal Extension 3.0 supports Drupal 7 and 8, and utilizes Behat 3. For Drup
   }
   ```
 
-1. Methods in your `FeatureContext` class can be tagged to fire before certain events:
-
-  ``` php
- use Drupal\DrupalExtension\Hook\Scope\EntityScope;
-  
-  ...
-  
-  /**
-   * Call this function before nodes are created.
-   *
-   * @beforeNodeCreate
-   */
-   public function alterNodeObject(EntityScope $scope) {
-     $node = $scope->getEntity();
-     // Alter node object as needed.
-   }
-   ```
-
-   Other available tags include `@beforeTermCreate` and `@beforeUserCreate`
-
 ## Additional resources
 
  * [Behat Drupal Extension documentation](https://behat-drupal-extension.readthedocs.org)

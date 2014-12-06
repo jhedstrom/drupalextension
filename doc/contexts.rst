@@ -1,14 +1,14 @@
 Contexts
 ========
 
-Before Behat 3, each test suite was limited to a single context class. As of 
+Before Behat 3, each test suite was limited to a single context class. As of
 Behat 3, it is possible to flexibly structure your code by using multiple
 contexts in a single test suite.
 
 Available Contexts
 ------------------
 
-In accordance with this new capability, The Drupal Extension includes the 
+In accordance with this new capability, The Drupal Extension includes the
 following contexts:
 
 *RawDrupalContext*
@@ -20,15 +20,15 @@ following contexts:
   Provides step-definitions for creating users, terms, and nodes.
 
 *MinkContext*
-  Builds on top of the Mink Extension and adds steps specific to regions and 
+  Builds on top of the Mink Extension and adds steps specific to regions and
   forms.
 
 *MarkupContext*
-  Contains step definitions that deal with low-level markup (such as tags, 
+  Contains step definitions that deal with low-level markup (such as tags,
   classes, and attributes).
 
 *MessageContext*
-  Step-definitions that are specific to Drupal messages that get displayed 
+  Step-definitions that are specific to Drupal messages that get displayed
   (notice, warning, and error).
 
 *DrushContext*
@@ -39,23 +39,23 @@ Custom Contexts
 
 You can structure your own code with additional contexts. See Behat's `testing features <http://docs.behat.org/en/latest/guides/4.contexts.html>`_ documentation for a detailed discussion of how contexts work.
 
-.. Important:: 
+.. Important::
 
-   Every context you want to use in a suite must declare it in the behat.yml 
-   file. 
+   Every context you want to use in a suite must declare it in the behat.yml
+   file.
 
 Example
 #######
 
 In this example, you would have access to:
 
- * pre-written step definitions for users, terms, and nodes 
+ * pre-written step definitions for users, terms, and nodes
    (from the ``DrupalContext``)
- * steps you've implemented in the  main 
+ * steps you've implemented in the  main
    ``features/bootstrap/FeatureContext.php`` file
- * steps you've implemented in the ``ProjectFeature`` class
+ * steps you've implemented in the ``CustomContext`` class
 
-You would not have access to the steps from the ``MarkupContext``, 
+You would not have access to the steps from the ``MarkupContext``,
 ``MessageContext``, or ``DrushContext``, however.
 
 .. code-block:: yaml
@@ -67,4 +67,35 @@ You would not have access to the steps from the ``MarkupContext``,
           contexts:
             - Drupal\DrupalExtension\Context\DrupalContext
             - FeatureContext
-            - ProjectContext
+            - CustomContext
+
+Drupal Extension Hooks
+----------------------
+
+In addition to the `hooks provided by Behat
+<http://behat.readthedocs.org/en/v2.5/guides/3.hooks.html>`_, the Drupal
+Extension provides three additional ways to tag the methods in your
+``CustomContext`` class in order to have them fire befor certain events.
+
+  1. ``@beforeNodeCreate``
+  2. ``@beforeTermCreate``
+  3. ``@beforeUserCreate``
+
+Example
+#######
+
+.. code-block:: php
+   :linenos:
+
+     use Drupal\DrupalExtension\Hook\Scope\EntityScope;
+      ...
+      /**
+       * Call this function before nodes are created.
+       *
+       * @beforeNodeCreate
+       */
+       public function alterNodeObject(EntityScope $scope) {
+         $node = $scope->getEntity();
+         // Alter node object as needed.
+       }
+
