@@ -56,26 +56,6 @@ The Drupal Extension 3.0 supports Drupal 7 and 8, and utilizes Behat 3. For Drup
         blackbox: ~
   ```
 
-1. To add in support for additional web-based step definitions add the extended `Drupal\DrupalExtension\Context\MinkContext`:
-  ``` yaml
-  contexts:
-    - Drupal\DrupalExtension\Context\DrupalContext
-    - Drupal\DrupalExtension\Context\MinkContext
-  ```
-  Additional contexts include `MessageContext` for interacting with Drupal messages (error, status, warning), and `DrushContext` for directly calling Drush commands from scenarios.
-
-1. To see a list of available step definitions
-
-  ``` bash
-  bin/behat -dl
-  ```
-
-  If the step definitions aren't listed, try running this command:
-
-  ``` bash
-  bin/behat --init
-  ```
-
 1. Start adding your feature files to the `features` directory of your repository.
 
 1. The Drupal Extension is capable of discovering additional step-definitions provided by subcontexts. Module authors can provide these in files following the naming convention of `foo.behat.inc`. Once that module is enabled, the Drupal Extension will load these.
@@ -96,16 +76,6 @@ The Drupal Extension 3.0 supports Drupal 7 and 8, and utilizes Behat 3. For Drup
     Drupal\DrupalExtension:
       subcontexts:
 	    autoload: 0
-  ```
-
-1. The file: `features/bootstrap/FeatureContext.php` is for testing the Drupal Extension itself, and should not be used as a starting point for a feature context. A feature context that extends the Drupal Extension would look like this:
-
-  ``` php
-  use Drupal\DrupalExtension\Context\DrupalContext;
-  
-  class FeatureContext extends DrupalContext {
-    ...
-  }
   ```
 
 ## Additional resources
