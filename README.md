@@ -78,32 +78,6 @@ The Drupal Extension 3.0 supports Drupal 7 and 8, and utilizes Behat 3. For Drup
 
 1. Start adding your feature files to the `features` directory of your repository.
 
-1. Features that require API access in order to setup the proper testing conditions can be tagged with `@api`. This will bootstrap the driver specified by the `api_driver` parameter (which defaults to the drush driver). When using the drush driver, this must be initialized via the `behat.yml` file.
-
-  ``` yaml
-    Drupal\DrupalExtension:
-      blackbox: ~
-      # Set the drush alias to "@self" by default, when executing tests from within the drupal installation.
-      drush:
-        alias: self
-  ```
-
-  Alternatively, the root path to the Drupal installation may be specified.
-
-  ``` yaml
-    Drupal\DrupalExtension:
-      blackbox: ~
-	  drush:
-	    root: /my/path/to/drupal
-  ```
-  If you want to use native API calls instead of drush API you should configure your behat.yml as follows:
-
-  ``` yaml
-  Drupal\DrupalExtension:
-    api_driver: "drupal"
-    drupal:
-      drupal_root: "/absolute/path/to/drupal"
-  ```
 
 1. The drupal extension makes use of three selectors by default for messages:
 
