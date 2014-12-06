@@ -73,6 +73,7 @@ scenario with @api
 If you try to run a test without that tag, it will fail.
 
 Example:
+++++++++
 
 .. literalinclude:: _static/snippets/apitag.output
    :language: gherkin
@@ -80,7 +81,7 @@ Example:
    :emphasize-lines: 10-12
    :lines: 1-24
 
-The Drush driver give you access to all the blackbox steps, plus those used in
+The Drush driver gives you access to all the blackbox steps, plus those used in
 each of the following examples:
 
 .. literalinclude:: _static/snippets/drush.feature
