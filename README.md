@@ -27,10 +27,12 @@ the [Full documentation](https://behat-drupal-extension.readthedocs.org)
 
 1. Install using [Composer](https://getcomposer.org/):
 
+    ``` bash
     mkdir projectdir
     cd projectdir
     curl -sS https://getcomposer.org/installer | php
     php composer.phar require drupal/drupal.extension='~3.0'
+    ```
 
 1.  In the projectdir, create a file called `behat.yml`. Below is the
     minimal configuration. Many more options are covered in the 
@@ -52,11 +54,15 @@ the [Full documentation](https://behat-drupal-extension.readthedocs.org)
 
 1. In the projectdir, run
 
+    ``` bash
     bin/behat --init
+    ```
 
 1. Find pre-defined steps to work with using:
 
+    ```bash
     bin/behat -di
+    ```
 
 1. Define your own steps in `projectdir\features\FeatureContext.php`
 
