@@ -79,3 +79,17 @@ Message-related steps include:
    :linenos:
    :lines: 63-81
 
+Override text strings
+---------------------
+
+The Drupal Extension relies on default text for certain steps. If you have
+customized the label visible to users, you can change that text as follows:
+
+.. code-block:: yaml
+
+     Drupal\DrupalExtension:
+       text:
+         log_out: "Sign out"
+         log_in: "Sign in"
+         password_field: "Enter your password"
+         username_field: "Nickname"
