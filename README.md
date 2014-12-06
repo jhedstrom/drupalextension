@@ -105,16 +105,6 @@ The Drupal Extension 3.0 supports Drupal 7 and 8, and utilizes Behat 3. For Drup
       drupal_root: "/absolute/path/to/drupal"
   ```
 
-1. Targeting content in specific regions can be accomplished once those regions have been defined.
-
-  ``` yaml
-    Drupal\DrupalExtension:
-      region_map:
-	    My region: "#css-selector"
-	    Content: "#main .region-content"
-	    Right sidebar: "#sidebar-second"
-  ```
-
 1. The drupal extension makes use of three selectors by default for messages:
 
   ``` yaml
