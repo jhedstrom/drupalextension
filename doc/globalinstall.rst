@@ -2,7 +2,7 @@ System-wide installation
 ========================
 
 A system-wide installation allows you to maintain a single copy of the testing
-toolset and use it for multiple test environments. Configuration is slightly
+tool set and use it for multiple test environments. Configuration is slightly
 more complex than the stand-alone installation but many people prefer the
 flexibility and ease-of-maintenance this setup provides.
 
@@ -54,7 +54,7 @@ Install the Drupal Extension
 
     bin/behat --help
 
-   If you were successful, you'll see the help output.
+  If you were successful, you'll see the help output.
 
 5. Make the binary available system-wide::
 
@@ -72,7 +72,7 @@ Set up tests
 
   Single site: `sites/default/behat-tests`
   
-  Multisite or named single site: `/sites/my.domain.com/behat-tests`
+  Multi-site or named single site: `/sites/my.domain.com/behat-tests`
 
 2. Wherever you make your test folder, inside it create the behat.yml file:
 
@@ -80,12 +80,12 @@ Set up tests
      :language: yaml 
      :linenos:
 
-3. Edit features/bootstrap/FeatureContext.php so that it matches the following:
+3. This will generate a FeatureContext.php file that looks like:
 
   .. literalinclude:: _static/snippets/FeatureContext.php.inc
      :language: php 
      :linenos: 
-     :emphasize-lines: 20-21
+     :emphasize-lines: 12 
 
   This will make your FeatureContext.php aware of both the Drupal Extension and
   the Mink Extension, so you'll be able to take advantage of their drivers and
@@ -102,17 +102,7 @@ Set up tests
   .. code-block:: gherkin 
      :linenos:
 
-      Given /^(?:that I|I) am at "(?P[^"]*)"$/
-          - Visit a given path, and additionally check for HTTP response code
-            200.
-          # Drupal\DrupalExtension\Context\DrupalContext::iAmAt()
-
-       When /^I visit "(?P[^"]*)"$/
-          # Drupal\DrupalExtension\Context\DrupalContext::iVisit()
-
-       When /^I click "(?P<link>[^"]*)"$/
-          # Drupal\DrupalExtension\Context\DrupalContext::iClick()
-
-      Given /^for "(?P<field>[^"]*)" I enter "(?P<value>[^"]*)"$/
-          # Drupal\DrupalExtension\Context\DrupalContext::forIenter()
-
+      default | Given I am an anonymous user                                    
+      default | Given I am not logged in                                        
+      default | Given I am logged in as a user with the :role role(s)           
+      default | Given I am logged in as :name     

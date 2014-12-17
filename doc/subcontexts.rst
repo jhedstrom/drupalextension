@@ -28,7 +28,7 @@ development patterns.
 
 Disable autoloading
 -------------------
-Autoloading can be disabled in the behat.yml file temorarily with the
+Autoloading can be disabled in the behat.yml file temporarily with the
 following:
 
 .. literalinclude:: _static/snippets/behat-auto.yml
@@ -38,35 +38,13 @@ following:
 
 For Contributors
 ----------------
-Read a detailed discussion of `using sucontexts
-<http://docs.behat.org/guides/4.context.html#using-subcontexts>`_ on the Behat
-site.
+Behat `sucontexts
+<http://docs.behat.org/guides/4.context.html#using-subcontexts>`_ are no longer
+supported in version 3. The Drupal Extension, however, continues to support
+saving module-specific contexts in a file ending with `.behat.inc` 
 
-With regard to the Drupal Extension:
+Just like functions, preface the filename with the project's machine name to prevent namespace collisions.
 
-* Save custom step definitions in a file ending with `.behat.inc` Just like
-  functions, preface the filename with the project's machine name to prevent
-  namespace collisions.
-
-* Writing step definitions for the subcontext is only slighly different than
-  writing them for the main context. 
-
-Your subcontext must include, at a minimum, lines 7 and 8 below. 
-
-
-// sites/all/modules/beanslide/beanslide.behat.inc
-
-.. literalinclude:: _static/snippets/beanslide.behat-2.inc
-   :language: php
-   :linenos:
-   :emphasize-lines: 7,8,10-12
-
-You'll also need to call the main context in order to access the session:
-
-// sites/all/modules/beanslide/beanslide.behat.inc
-
-.. literalinclude:: _static/snippets/beanslide.behat-1.inc
-   :language: php
-   :linenos:
-   :emphasize-lines: 5
-   
+  .. literalinclude:: _static/snippets/subcontext.inc
+     :language: php
+     :linenos:

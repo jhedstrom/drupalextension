@@ -200,9 +200,8 @@ class DrupalExtension implements ExtensionInterface {
    * Load the blackbox driver.
    */
   private function loadBlackBox(FileLoader $loader, array $config) {
-    if (isset($config['blackbox'])) {
-      $loader->load('drivers/blackbox.yml');
-    }
+    // Always include the blackbox driver.
+    $loader->load('drivers/blackbox.yml');
   }
 
   /**
