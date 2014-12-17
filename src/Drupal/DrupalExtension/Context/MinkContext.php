@@ -208,6 +208,8 @@ class MinkContext extends MinkExtension implements TranslatableContext {
   }
 
   /**
+   * Links are not loaded on the page.
+   *
    * @Then I should not see the link :link
    */
   public function assertNotLinkVisible($link) {
@@ -228,6 +230,32 @@ class MinkContext extends MinkExtension implements TranslatableContext {
     if ($result) {
       throw new \Exception(sprintf("The link '%s' was present on the page %s and was not supposed to be", $link, $this->getSession()->getCurrentUrl()));
     }
+  }
+
+  /**
+   * Links are loaded but not visually visible (e.g they have display: hidden applied).
+   *
+   * @Then I should not visibly see the link :link
+   */
+  public function assertNotLinkVisuallyVisible($link) {
+    $element = $this->getSession()->getPage();
+    $result = $element->findLink($link);
+
+    try {
+      if ($result && $result->isVisible()) {
+        throw new \Exception(sprintf("The link '%s' was visually visible on the page %s and was not supposed to be", $link, $this->getSession()->getCurrentUrl()));
+      }
+    }
+    catch (UnsupportedDriverActionException $e) {
+      // We catch the UnsupportedDriverActionException exception in case
+      // this step is not being performed by a driver that supports javascript.
+      // All other exceptions are valid.
+    }
+
+    if (!$result) {
+      throw new \Exception(sprintf("The link '%s' was not loaded on the page %s at all", $link, $this->getSession()->getCurrentUrl()));
+    }
+
   }
 
   /**
