@@ -15,8 +15,11 @@ Install Drush
 See the `Drush project page <https://drupal.org/project/drush>`_ for
 installation directions.
 
-Create a Drush alias
---------------------
+Point Drush at your Drupal site
+-------------------------------
+
+Drupal Alias (For local or remote sites)
+++++++++++++++++++++++++++++++++++++++++
 
 You'll need ssh-key access to a remote server to use Drush. If Drush and Drush
 aliases are new to you, see the `Drush site <http://drush.ws/help>`_ for
@@ -27,10 +30,26 @@ The alias for our example looks like:
 .. literalinclude:: _static/snippets/aliases.drushrc.php
    :language: php
    :linenos:
-   
 
-Enable the Drush driver in the behat.yml
-----------------------------------------
+Path to Drupal (local sites only)
++++++++++++++++++++++++++++++++++
+
+If you'll only be running drush commands to access a site on the same machine,
+you can specify the path to your Drupal root:
+
+.. code-block:: yaml
+   :linenos:
+
+    Drupal\DrupalExtension:
+      blackbox: ~
+    drush:
+      root: /my/path/to/drupal
+
+
+Enable the Drush driver
+-----------------------
+
+In the behat.yml file:
 
 .. literalinclude:: _static/snippets/behat-drush.yml
    :language: yaml
@@ -49,22 +68,22 @@ scenario with @api
 .. literalinclude:: _static/snippets/apitag.feature
    :language: gherkin
    :linenos:
-   :emphasize-lines: 11 
+   :emphasize-lines: 11
 
-If you try to run a test without that tag, it will fail. 
+If you try to run a test without that tag, it will fail.
 
 Example:
+++++++++
 
 .. literalinclude:: _static/snippets/apitag.output
    :language: gherkin
    :linenos:
-   :emphasize-lines: 8-10 
+   :emphasize-lines: 10-12
    :lines: 1-24
 
-The Drush driver give you access to all the blackbox steps, plus those used in
+The Drush driver gives you access to all the blackbox steps, plus those used in
 each of the following examples:
 
 .. literalinclude:: _static/snippets/drush.feature
    :language: gherkin
    :linenos:
-   :lines: 1-24

@@ -193,7 +193,7 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index.rst', 'theDrupalExtensiontoBehatandMink.tex', u'the Drupal Extension to Behat and Mink Documentation',
+  ('index', 'theDrupalExtensiontoBehatandMink.tex', u'the Drupal Extension to Behat and Mink Documentation',
    u'Melissa Anderson', 'manual'),
 ]
 

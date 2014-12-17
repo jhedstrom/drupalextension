@@ -1,45 +1,42 @@
 # Behat Drupal Extension
 
-The Drupal Extension is an integration layer between [Behat](http://behat.org), [Mink Extension](https://github.com/Behat/MinkExtension), and Drupal. It provides step definitions for common testing scenarios specific to Drupal sites.
+The Drupal Extension is an integration layer between [Behat](http://behat.org),
+[Mink Extension](https://github.com/Behat/MinkExtension), and Drupal. It
+provides step definitions for common testing scenarios specific to Drupal
+sites.
 
 [![Build Status](https://travis-ci.org/jhedstrom/drupalextension.png?branch=3.0)](https://travis-ci.org/jhedstrom/drupalextension)
 
-The Drupal Extension 3.0 supports Drupal 7 and 8, and utilizes Behat 3. For Drupal 6 support (or Behat 2), use the [1.0 version](https://github.com/jhedstrom/drupalextension/tree/1.0).
+The Drupal Extension 3.0 supports Drupal 7 and 8, and utilizes Behat 3. For
+Drupal 6 support (or Behat 2), use the [1.0 version](https://github.com/jhedstrom/drupalextension/tree/1.0).
 
-[![Latest Stable Version](https://poser.pugx.org/drupal/drupal-extension/v/stable.svg)](https://packagist.org/packages/drupal/drupal-extension) [![Total Downloads](https://poser.pugx.org/drupal/drupal-extension/downloads.svg)](https://packagist.org/packages/drupal/drupal-extension) [![Latest Unstable Version](https://poser.pugx.org/drupal/drupal-extension/v/unstable.svg)](https://packagist.org/packages/drupal/drupal-extension) [![License](https://poser.pugx.org/drupal/drupal-extension/license.svg)](https://packagist.org/packages/drupal/drupal-extension) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/jhedstrom/drupalextension/badges/quality-score.png?b=3.0)](https://scrutinizer-ci.com/g/jhedstrom/drupalextension/?branch=3.0)
+[![Latest Stable Version](https://poser.pugx.org/drupal/drupal-extension/v/stable.svg)](https://packagist.org/packages/drupal/drupal-extension)
+[![Total Downloads](https://poser.pugx.org/drupal/drupal-extension/downloads.svg)](https://packagist.org/packages/drupal/drupal-extension)
+[![Latest Unstable Version](https://poser.pugx.org/drupal/drupal-extension/v/unstable.svg)](https://packagist.org/packages/drupal/drupal-extension)
+[![License](https://poser.pugx.org/drupal/drupal-extension/license.svg)](https://packagist.org/packages/drupal/drupal-extension)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/jhedstrom/drupalextension/badges/quality-score.png?b=3.0)](https://scrutinizer-ci.com/g/jhedstrom/drupalextension/?branch=3.0)
 
 
 
 ## Use it for testing your Drupal site.
 
-[Full documentation](https://behat-drupal-extension.readthedocs.org)
+If you're new to the Drupal Extension, we recommend starting with 
+the [Full documentation](https://behat-drupal-extension.readthedocs.org)
 
-1. You'll need something resembling this `composer.json` file
+### Quick start
 
-  ``` json
-    {
-      "require": {
-        "drupal/drupal-extension": "~3.0"
-      },
-      "config": {
-        "bin-dir": "bin/"
-      }
-    }
-  ```
+1. Install using [Composer](https://getcomposer.org/):
 
-1. Then run
+    ``` bash
+    mkdir projectdir
+    cd projectdir
+    curl -sS https://getcomposer.org/installer | php
+    php composer.phar require drupal/drupal.extension='~3.0'
+    ```
 
-  ``` bash
-  php composer.phar install
-  ```
-
-  To download the required dependencies. If composer isn't installed
-
-  ``` bash
-  curl -s https://getcomposer.org/installer | php
-  ```
-
-1. At a minimum, your `behat.yml` file will look like this
+1.  In the projectdir, create a file called `behat.yml`. Below is the
+    minimal configuration. Many more options are covered in the 
+    [Full documentation](https://behat-drupal-extension.readthedocs.org)  
 
   ``` yaml
   default:
@@ -50,147 +47,34 @@ The Drupal Extension 3.0 supports Drupal 7 and 8, and utilizes Behat 3. For Drup
     extensions:
       Behat\MinkExtension:
         goutte: ~
-        selenium2: ~
-        base_url: http://git6site.devdrupal.org/
+        base_url: http://example.org/  # Replace with your site's URL
       Drupal\DrupalExtension:
         blackbox: ~
   ```
 
-1. To add in support for additional web-based step definitions add the extended `Drupal\DrupalExtension\Context\MinkContext`:
-  ``` yaml
-  contexts:
-    - Drupal\DrupalExtension\Context\DrupalContext
-    - Drupal\DrupalExtension\Context\MinkContext
-  ```
-  Additional contexts include `MessageContext` for interacting with Drupal messages (error, status, warning), and `DrushContext` for directly calling Drush commands from scenarios.
+1. In the projectdir, run
 
-1. To see a list of available step definitions
+    ``` bash
+    bin/behat --init
+    ```
 
-  ``` bash
-  bin/behat -dl
-  ```
+1. Find pre-defined steps to work with using:
 
-  If the step definitions aren't listed, try running this command:
+    ```bash
+    bin/behat -di
+    ```
 
-  ``` bash
-  bin/behat --init
-  ```
+1. Define your own steps in `projectdir\features\FeatureContext.php`
 
-1. Start adding your feature files to the `features` directory of your repository.
-
-1. Features that require API access in order to setup the proper testing conditions can be tagged with `@api`. This will bootstrap the driver specified by the `api_driver` parameter (which defaults to the drush driver). When using the drush driver, this must be initialized via the `behat.yml` file.
-
-  ``` yaml
-    Drupal\DrupalExtension:
-      blackbox: ~
-      # Set the drush alias to "@self" by default, when executing tests from within the drupal installation.
-      drush:
-        alias: self
-  ```
-
-  Alternatively, the root path to the Drupal installation may be specified.
-
-  ``` yaml
-    Drupal\DrupalExtension:
-      blackbox: ~
-	  drush:
-	    root: /my/path/to/drupal
-  ```
-  If you want to use native API calls instead of drush API you should configure your behat.yml as follows:
-
-  ``` yaml
-  Drupal\DrupalExtension:
-    api_driver: "drupal"
-    drupal:
-      drupal_root: "/absolute/path/to/drupal"
-  ```
-
-1. Targeting content in specific regions can be accomplished once those regions have been defined.
-
-  ``` yaml
-    Drupal\DrupalExtension:
-      region_map:
-	    My region: "#css-selector"
-	    Content: "#main .region-content"
-	    Right sidebar: "#sidebar-second"
-  ```
-
-1. The drupal extension makes use of three selectors by default for messages:
-
-  ``` yaml
-    Drupal\DrupalExtension:
-      selectors:
-        message_selector: '.messages'
-        error_message_selector: '.messages.messages-error'
-        success_message_selector: '.messages.messages-status'
-  ```
-
-1. Text strings, such as *Log out* or the *Username* field can be altered via `behat.yml` if they vary from the default values.
-
-   ``` yaml
-   Drupal\DrupalExtension:
-     text:
-	   log_out: "Sign out"
-	   log_in: "Sign in"
-	   password_field: "Enter your password"
-	   username_field: "Nickname"
-   ```
-
-1. The Drupal Extension is capable of discovering additional step-definitions provided by subcontexts. Module authors can provide these in files following the naming convention of `foo.behat.inc`. Once that module is enabled, the Drupal Extension will load these.
-
-  Additional subcontexts can be loaded by either placing them in the bootstrap directory (typically `features/bootstrap`) or by adding them to `behat.yml`.
-
-  ``` yaml
-    Drupal\DrupalExtension:
-      subcontexts:
-	    paths:
-	      - "/path/to/additional/subcontexts"
-		    - "/another/path"
-  ```
-
-  To disable automatic loading of subcontexts:
-
-  ``` yaml
-    Drupal\DrupalExtension:
-      subcontexts:
-	    autoload: 0
-  ```
-
-1. The file: `features/bootstrap/FeatureContext.php` is for testing the Drupal Extension itself, and should not be used as a starting point for a feature context. A feature context that extends the Drupal Extension would look like this:
-
-  ``` php
-  use Drupal\DrupalExtension\Context\DrupalContext;
-  
-  class FeatureContext extends DrupalContext {
-    ...
-  }
-  ```
-
-1. Methods in your `FeatureContext` class can be tagged to fire before certain events:
-
-  ``` php
- use Drupal\DrupalExtension\Hook\Scope\EntityScope;
-  
-  ...
-  
-  /**
-   * Call this function before nodes are created.
-   *
-   * @beforeNodeCreate
-   */
-   public function alterNodeObject(EntityScope $scope) {
-     $node = $scope->getEntity();
-     // Alter node object as needed.
-   }
-   ```
-
-   Other available tags include `@beforeTermCreate` and `@beforeUserCreate`
+1. Start adding your [feature files](http://docs.behat.org/en/latest/guides/1.gherkin.html) 
+   to the `features` directory of your repository.
 
 ## Additional resources
 
  * [Behat Drupal Extension documentation](https://behat-drupal-extension.readthedocs.org)
  * [Behat documentation](http://docs.behat.org)
  * [Mink documentation](http://mink.behat.org)
+ * [Drupal Behat group](http://groups.drupal.org/behat)
 
 ## Examples and code snippets
 
