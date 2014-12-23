@@ -851,10 +851,8 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
     $roles = array_map('trim', $roles);
 
     foreach ($roles as $role) {
-      if ($role == 'authenticated user') {
-        // Nothing to do.
-      }
-      else {
+      if (!in_array(strtolower($role), ['authenticated', 'authenticated user'])) {
+        // Only add roles other than 'authenticated user'.
         $this->getDriver()->userAddRole($user, $role);
       }
     }
