@@ -31,7 +31,7 @@ the [Full documentation](https://behat-drupal-extension.readthedocs.org)
     mkdir projectdir
     cd projectdir
     curl -sS https://getcomposer.org/installer | php
-    php composer.phar require drupal/drupal.extension='~3.0'
+    php composer.phar require drupal/drupal-extension='~3.0'
     ```
 
 1.  In the projectdir, create a file called `behat.yml`. Below is the
