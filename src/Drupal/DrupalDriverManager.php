@@ -1,26 +1,31 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\DrupalDriverManager.
+ */
+
 namespace Drupal;
 
 use Behat\Testwork\Environment\Environment;
-
 use Drupal\Driver\DriverInterface;
 
 /**
  * Drupal driver manager.
  */
 class DrupalDriverManager {
+
   /**
-   * Default driver.
+   * The name of the default driver.
    *
    * @var string
    */
   private $defaultDriverName;
 
   /**
-   * All initiated drivers.
+   * All registered drivers.
    *
-   * @var array
+   * @var \Drupal\Driver\DriverInterface[]
    */
   private $drivers = array();
 
@@ -33,6 +38,9 @@ class DrupalDriverManager {
 
   /**
    * Initialize the driver manager.
+   *
+   * @param \Drupal\Driver\DriverInterface[] $drivers
+   *   An array of drivers to register.
    */
   public function __construct(array $drivers = array()) {
     foreach ($drivers as $name => $driver) {
@@ -45,7 +53,7 @@ class DrupalDriverManager {
    *
    * @param string $name
    *   Driver name.
-   * @param DrupalDriver $driver
+   * @param \Drupal\Driver\DriverInterface $driver
    *   An instance of a DriverInterface.
    */
   public function registerDriver($name, DriverInterface $driver) {
@@ -56,7 +64,15 @@ class DrupalDriverManager {
   /**
    * Return a registered driver by name, or the default driver.
    *
+   * @param string $name
+   *   The name of the driver to return. If omitted the default driver is
+   *   returned.
+   *
+   * @return \Drupal\Driver\DriverInterface
+   *   The requested driver.
+   *
    * @throws \InvalidArgumentException
+   *   Thrown when the requested driver is not registered.
    */
   public function getDriver($name = NULL) {
     $name = strtolower($name) ?: $this->defaultDriverName;
@@ -83,9 +99,10 @@ class DrupalDriverManager {
    * Set the default driver name.
    *
    * @param string $name
-   *   Default session name to set.
+   *   Default driver name to set.
    *
    * @throws \InvalidArgumentException
+   *   Thrown when the driver is not registered.
    */
   public function setDefaultDriverName($name) {
     $name = strtolower($name);
@@ -98,7 +115,10 @@ class DrupalDriverManager {
   }
 
   /**
-   * Returns all instantiated drivers.
+   * Returns all registered drivers.
+   *
+   * @return \Drupal\Driver\DriverInterface[]
+   *   An array of drivers.
    */
   public function getDrivers() {
     return $this->drivers;
@@ -106,6 +126,9 @@ class DrupalDriverManager {
 
   /**
    * Sets the Behat Environment.
+   *
+   * @param \Behat\Testwork\Environment\Environment $environment
+   *   The Behat Environment to set.
    */
   public function setEnvironment(Environment $environment) {
     $this->environment = $environment;
@@ -113,8 +136,12 @@ class DrupalDriverManager {
 
   /**
    * Returns the Behat Environment.
+   *
+   * @return \Behat\Testwork\Environment\Environment
+   *   The Behat Environment.
    */
   public function getEnvironment() {
     return $this->environment;
   }
+
 }
