@@ -926,7 +926,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
     }
     foreach ($rows as $row) {
       if (strpos($row->getText(), $search) !== FALSE) {
-        return $element;
+        return $row;
       }
     }
     throw new \Exception(sprintf('Failed to find a row containing "%s" on the page %s', $search, $this->getSession()->getCurrentUrl()));
