@@ -389,8 +389,11 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    *   The table listing languages by their ISO code.
    */
   public function createLanguages(TableNode $langcodesTable) {
-    foreach ($langcodesTable->getHash() as $langcode) {
-      $this->languageCreate((object) $langcode);
+    foreach ($langcodesTable->getHash() as $row) {
+      $language = (object) array(
+        'langcode' => $row['languages'],
+      );
+      $this->languageCreate($language);
     }
   }
 
