@@ -66,9 +66,9 @@ Feature: Test DrupalContext
    Then I should see the error message "Password field is required"
    And I should not see the error message "Sorry, unrecognized username or password"
    And I should see the following error messages:
-   | error messages             |
-   | Username field is required |
-   | Password field is required |
+   | error messages                       |
+   | Username or email field is required. |
+   | Password field is required           |
    And I should not see the following error messages:
    | error messages                                                                |
    | Sorry, unrecognized username or password                                      |
