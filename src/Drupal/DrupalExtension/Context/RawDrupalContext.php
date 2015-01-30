@@ -309,10 +309,26 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    */
   public function loggedIn() {
     $session = $this->getSession();
+    $page = $session->getPage();
+
+    // Look for the logged-in class on the body tag. This should work with
+    // almost any theme.
+    $body = $page->find('css', 'body');
+    if ($body->hasClass('logged-in')) {
+      return true;
+    }
+
+    // Some themes do not add that class to the body, so lets check if the
+    // login form is displayed on /user/login.
+    $session->visit($this->locatePath('/user/login'));
+    if (!$page->has('css', 'form#user-login')) {
+      return true;
+    }
+
     $session->visit($this->locatePath('/'));
 
-    // If a logout link is found, we are logged in. While not perfect, this is
-    // how Drupal SimpleTests currently work as well.
+    // As a last resort, if a logout link is found, we are logged in. While not
+    // perfect, this is how Drupal SimpleTests currently work as well.
     $element = $session->getPage();
     return $element->findLink($this->getDrupalText('log_out'));
   }
