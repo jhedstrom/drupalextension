@@ -315,14 +315,14 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
     // almost any theme.
     $body = $page->find('css', 'body');
     if ($body->hasClass('logged-in')) {
-      return true;
+      return TRUE;
     }
 
     // Some themes do not add that class to the body, so lets check if the
     // login form is displayed on /user/login.
     $session->visit($this->locatePath('/user/login'));
     if (!$page->has('css', 'form#user-login')) {
-      return true;
+      return TRUE;
     }
 
     $session->visit($this->locatePath('/'));
