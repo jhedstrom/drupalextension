@@ -92,68 +92,6 @@ class MarkupContext extends RawMinkContext {
   }
 
   /**
-   * @Then I should see the link :link in the :region( region)
-   *
-   * @throws \Exception
-   *   If region or link within it cannot be found.
-   */
-  public function assertLinkRegion($link, $region) {
-    $regionObj = $this->getRegion($region);
-
-    $result = $regionObj->findLink($link);
-    if (empty($result)) {
-      throw new \Exception(sprintf('No link to "%s" in the "%s" region on the page %s', $link, $region, $this->getSession()->getCurrentUrl()));
-    }
-  }
-
-  /**
-   * @Then I should not see the link :link in the :region( region)
-   *
-   * @throws \Exception
-   *   If region or link within it cannot be found.
-   */
-  public function assertNotLinkRegion($link, $region) {
-    $regionObj = $this->getRegion($region);
-
-    $result = $regionObj->findLink($link);
-    if (!empty($result)) {
-      throw new \Exception(sprintf('Link to "%s" in the "%s" region on the page %s', $link, $region, $this->getSession()->getCurrentUrl()));
-    }
-  }
-
-  /**
-   * @Then I should see( the text) :text in the :region( region)
-   *
-   * @throws \Exception
-   *   If region or text within it cannot be found.
-   */
-  public function assertRegionText($text, $region) {
-    $regionObj = $this->getRegion($region);
-
-    // Find the text within the region
-    $regionText = $regionObj->getText();
-    if (strpos($regionText, $text) === FALSE) {
-      throw new \Exception(sprintf("The text '%s' was not found in the region '%s' on the page %s", $text, $region, $this->getSession()->getCurrentUrl()));
-    }
-  }
-
-  /**
-   * @Then I should not see( the text) :text in the :region( region)
-   *
-   * @throws \Exception
-   *   If region or text within it cannot be found.
-   */
-  public function assertNotRegionText($text, $region) {
-    $regionObj = $this->getRegion($region);
-
-    // Find the text within the region.
-    $regionText = $regionObj->getText();
-    if (strpos($regionText, $text) !== FALSE) {
-      throw new \Exception(sprintf('The text "%s" was found in the region "%s" on the page %s', $text, $region, $this->getSession()->getCurrentUrl()));
-    }
-  }
-
-  /**
    * @Then I( should) see the :tag element with the :attribute attribute set to :value in the :region( region)
    */
   public function assertRegionElementAttribute($tag, $attribute, $value, $region) {
