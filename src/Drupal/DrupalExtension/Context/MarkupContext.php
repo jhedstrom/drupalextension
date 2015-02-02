@@ -19,6 +19,8 @@ class MarkupContext extends RawMinkContext {
    *   The machine name of the region to return.
    *
    * @return \Behat\Mink\Element\NodeElement
+   *
+   * @todo this should be a trait when PHP 5.3 support is dropped.
    */
   public function getRegion($region) {
     $session = $this->getSession();
@@ -51,32 +53,6 @@ class MarkupContext extends RawMinkContext {
     if (empty($buttonObj)) {
       throw new \Exception(sprintf("The button '%s' was not found in the region '%s' on the page %s", $button, $region, $this->getSession()->getCurrentUrl()));
     }
-  }
-
-  /**
-   * Find a heading in a specific region.
-   *
-   * @Then I should see the heading :heading in the :region( region)
-   * @Then I should see the :heading heading in the :region( region)
-   *
-   * @throws \Exception
-   *   If region or header within it cannot be found.
-   */
-  public function assertRegionHeading($heading, $region) {
-    $regionObj = $this->getRegion($region);
-
-    foreach (array('h1', 'h2', 'h3', 'h4', 'h5', 'h6') as $tag) {
-      $elements = $regionObj->findAll('css', $tag);
-      if (!empty($elements)) {
-        foreach ($elements as $element) {
-          if (trim($element->getText()) === $heading) {
-            return;
-          }
-        }
-      }
-    }
-
-    throw new \Exception(sprintf('The heading "%s" was not found in the "%s" region on the page %s', $heading, $region, $this->getSession()->getCurrentUrl()));
   }
 
   /**
@@ -114,68 +90,6 @@ class MarkupContext extends RawMinkContext {
           throw new \Exception(sprintf('The text "%s" was found in the "%s" element in the "%s" region on the page %s', $text, $tag, $region, $this->getSession()->getCurrentUrl()));
         }
       }
-    }
-  }
-
-  /**
-   * @Then I should see the link :link in the :region( region)
-   *
-   * @throws \Exception
-   *   If region or link within it cannot be found.
-   */
-  public function assertLinkRegion($link, $region) {
-    $regionObj = $this->getRegion($region);
-
-    $result = $regionObj->findLink($link);
-    if (empty($result)) {
-      throw new \Exception(sprintf('No link to "%s" in the "%s" region on the page %s', $link, $region, $this->getSession()->getCurrentUrl()));
-    }
-  }
-
-  /**
-   * @Then I should not see the link :link in the :region( region)
-   *
-   * @throws \Exception
-   *   If region or link within it cannot be found.
-   */
-  public function assertNotLinkRegion($link, $region) {
-    $regionObj = $this->getRegion($region);
-
-    $result = $regionObj->findLink($link);
-    if (!empty($result)) {
-      throw new \Exception(sprintf('Link to "%s" in the "%s" region on the page %s', $link, $region, $this->getSession()->getCurrentUrl()));
-    }
-  }
-
-  /**
-   * @Then I should see( the text) :text in the :region( region)
-   *
-   * @throws \Exception
-   *   If region or text within it cannot be found.
-   */
-  public function assertRegionText($text, $region) {
-    $regionObj = $this->getRegion($region);
-
-    // Find the text within the region
-    $regionText = $regionObj->getText();
-    if (strpos($regionText, $text) === FALSE) {
-      throw new \Exception(sprintf("The text '%s' was not found in the region '%s' on the page %s", $text, $region, $this->getSession()->getCurrentUrl()));
-    }
-  }
-
-  /**
-   * @Then I should not see( the text) :text in the :region( region)
-   *
-   * @throws \Exception
-   *   If region or text within it cannot be found.
-   */
-  public function assertNotRegionText($text, $region) {
-    $regionObj = $this->getRegion($region);
-
-    // Find the text within the region.
-    $regionText = $regionObj->getText();
-    if (strpos($regionText, $text) !== FALSE) {
-      throw new \Exception(sprintf('The text "%s" was found in the region "%s" on the page %s', $text, $region, $this->getSession()->getCurrentUrl()));
     }
   }
 
