@@ -322,12 +322,18 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    * @param \stdClass $language
    *   An object with the following properties:
    *   - langcode: the langcode of the language to create.
+   *
+   * @return object|FALSE
+   *   The created language, or FALSE if the language was already created.
    */
   public function languageCreate(\stdClass $language) {
     $this->dispatchHooks('BeforeLanguageCreateScope', $language);
-    $this->getDriver()->languageCreate($language);
-    $this->dispatchHooks('AfterLanguageCreateScope', $language);
-    $this->languages[$language->langcode] = $language;
+    $language = $this->getDriver()->languageCreate($language);
+    if ($language) {
+      $this->dispatchHooks('AfterLanguageCreateScope', $language);
+      $this->languages[$language->langcode] = $language;
+    }
+    return $language;
   }
 
   /**
