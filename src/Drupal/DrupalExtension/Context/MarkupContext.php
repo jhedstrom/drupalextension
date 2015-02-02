@@ -19,6 +19,8 @@ class MarkupContext extends RawMinkContext {
    *   The machine name of the region to return.
    *
    * @return \Behat\Mink\Element\NodeElement
+   *
+   * @todo this should be a trait when PHP 5.3 support is dropped.
    */
   public function getRegion($region) {
     $session = $this->getSession();
