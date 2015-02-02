@@ -54,32 +54,6 @@ class MarkupContext extends RawMinkContext {
   }
 
   /**
-   * Find a heading in a specific region.
-   *
-   * @Then I should see the heading :heading in the :region( region)
-   * @Then I should see the :heading heading in the :region( region)
-   *
-   * @throws \Exception
-   *   If region or header within it cannot be found.
-   */
-  public function assertRegionHeading($heading, $region) {
-    $regionObj = $this->getRegion($region);
-
-    foreach (array('h1', 'h2', 'h3', 'h4', 'h5', 'h6') as $tag) {
-      $elements = $regionObj->findAll('css', $tag);
-      if (!empty($elements)) {
-        foreach ($elements as $element) {
-          if (trim($element->getText()) === $heading) {
-            return;
-          }
-        }
-      }
-    }
-
-    throw new \Exception(sprintf('The heading "%s" was not found in the "%s" region on the page %s', $heading, $region, $this->getSession()->getCurrentUrl()));
-  }
-
-  /**
    * @Then I( should) see the :tag element in the :region( region)
    */
   public function assertRegionElement($tag, $region) {
