@@ -136,6 +136,21 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
   }
 
   /**
+   * Returns a specific css selector.
+   *
+   * @param $name
+   *   string CSS selector name
+   */
+  public function getDrupalSelector($name) {
+    $text = $this->getDrupalParameter('selectors');
+    if (!isset($text[$name])) {
+      var_dump($text);
+      throw new \Exception(sprintf('No such selector configured: %s', $name));
+    }
+    return $text[$name];
+  }
+
+  /**
    * Get active Drupal Driver.
    */
   public function getDriver($name = NULL) {
@@ -311,17 +326,17 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
     $session = $this->getSession();
     $page = $session->getPage();
 
-    // Look for the logged-in class on the body tag.
-    // This should work with almost any theme.
-    $body = $page->find('css', 'body');
-    if ($body->hasClass('logged-in')) {
+    // Look for a css selector to determine if a user is logged in.
+    // Default is the logged-in class on the body tag.
+    // Which should work with almost any theme.
+    if ($page->has('css', $this->getDrupalSelector('logged_in_selector'))) {
       return TRUE;
     }
 
     // Some themes do not add that class to the body, so lets check if the
     // login form is displayed on /user/login.
     $session->visit($this->locatePath('/user/login'));
-    if (!$page->has('css', 'form#user-login')) {
+    if (!$page->has('css', $this->getDrupalSelector('login_form_selector'))) {
       return TRUE;
     }
 
