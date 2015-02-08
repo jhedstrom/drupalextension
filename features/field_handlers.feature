@@ -58,6 +58,7 @@ Feature: FieldHandlers
       | title      |
       | Page one   |
       | Page two   |
+      | Page three |
     And users:
       | name     | mail         | field_tags       | field_post_reference |
       | John Doe | john@doe.com | Tag one, Tag two | Page one, Page two   |
@@ -68,3 +69,6 @@ Feature: FieldHandlers
     Then I should see the link "Tag one"
     And I should see the link "Tag two"
     But I should not see the link "Tag three"
+    And I should see "Page one"
+    And I should see "Page two"
+    But I should not see "Page three"
