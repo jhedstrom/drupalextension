@@ -250,8 +250,8 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
     foreach ($entity as $field_name => $value) {
       if ($this->getDriver()->isField($field_name)) {
         $values = explode(', ', $value);
-        if (strstr(' - ', $value) !== FALSE) {
-          foreach ($values as $key => $value) {
+        foreach ($values as $key => $value) {
+          if (strstr($value, ' - ') !== FALSE) {
             $values[$key] = explode(' - ', $value);
           }
         }
