@@ -24,8 +24,8 @@ Feature: FieldHandlers
     And I should see the link "Tag two"
     And I should see the link "Tag three"
 
-  @runthis
-  Scenario: Test field handlers
+
+  Scenario: Test node field handlers
     Given "page" content:
       | title      |
       | Page one   |
@@ -48,3 +48,23 @@ Feature: FieldHandlers
     And I should see "One"
     And I should see "Two"
 
+  @runthis
+  Scenario: Test user field handlers
+    Given "tags" terms:
+      | name      |
+      | Tag one   |
+      | Tag two   |
+    And "page" content:
+      | title      |
+      | Page one   |
+      | Page two   |
+    And users:
+      | name     | mail         | field_tags       | field_post_reference |
+      | John Doe | john@doe.com | Tag one, Tag two | Page one, Page two   |
+    And I am logged in as a user with the "administrator" role
+    When I visit "admin/people"
+    Then I should see the link "John Doe"
+    And I click "John Doe"
+    Then I should see the link "Tag one"
+    And I should see the link "Tag two"
+    But I should not see the link "Tag three"
