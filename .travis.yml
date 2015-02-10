@@ -22,6 +22,8 @@ before_script:
   - cp -r features/modules/behat_test drupal7/sites/all/modules
   - cd drupal7
   - drush --yes en behat_test
+  - drush --yes fr behat_test
+  - drush cc all
   - drush --debug runserver :8887 > ~/debug7.txt 2>&1 &
   - cd -
   # Setup a stock Drupal 8 install to test api abilities.
