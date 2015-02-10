@@ -37,7 +37,8 @@ before_script:
   - cd -
   # Setup a stock Drupal 8 install to test api abilities.
   - mysql -e 'create database drupal8'
-  - (cd drupal8 && git pull && cd -) || git clone --branch 8.0.x http://git.drupal.org/project/drupal.git drupal8
+  # - (cd drupal8 && git pull && cd -) || git clone --branch 8.0.x http://git.drupal.org/project/drupal.git drupal8
+  - drush --quiet dl drupal-8 --drupal-project-rename=drupal8
   - drush --yes --root=$PWD/drupal8 site-install --db-url=mysql://travis:@127.0.0.1/drupal8
   - cp -r fixtures/drupal8/modules/behat_test drupal8/modules
   - cd drupal8
