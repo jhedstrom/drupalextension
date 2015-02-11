@@ -15,6 +15,7 @@ Contents:
    requirements
    localinstall
    globalinstall
+   environment
    drivers
    blackbox
    drush
