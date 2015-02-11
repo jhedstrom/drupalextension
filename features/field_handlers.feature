@@ -24,6 +24,7 @@ Feature: FieldHandlers
     And I should see the link "Tag two"
     And I should see the link "Tag three"
 
+  @runthis
   Scenario: Test node field handlers
     Given "page" content:
       | title      |
@@ -40,8 +41,8 @@ Feature: FieldHandlers
       | field_post_select    | One, Two                                                 |
     Then I should see "Page one"
     And I should see "Page two"
-    And I should see "Sunday, February 8, 2015 - 17:45"
-    And I should see "Tuesday, February 10, 2015 - 17:45 to Tuesday, March 10, 2015 - 17:45"
+    And I should see "Sunday, February 8, 2015"
+    And I should see "to Tuesday, March 10, 2015"
     And I should see the link "Link 1"
     And I should see the link "Link 2"
     And I should see "One"
