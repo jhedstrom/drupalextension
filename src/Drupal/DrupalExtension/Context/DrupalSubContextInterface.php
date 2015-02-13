@@ -23,9 +23,9 @@ interface DrupalSubContextInterface extends Context {
   /**
    * Instantiates the subcontext.
    *
-   * @param \Drupal\DrupalDriverManager $context
+   * @param \Drupal\DrupalDriverManager $drupal
    *   The Drupal Driver manager.
    */
-  public function __construct(DrupalDriverManager $context);
+  public function __construct(DrupalDriverManager $drupal);
 
 }
