@@ -1,6 +1,6 @@
   Scenario: Create a node
     Given I am logged in as a user with the "administrator" role
-    When I am viewing an "article" node with the title "My article"
+    When I am viewing an "article" content with the title "My article"
     Then I should see the heading "My article"
 
   Scenario: Run cron
@@ -34,7 +34,7 @@
     Then I should see the text "PLACEHOLDER BODY"
 
   Scenario: Create and view a node with fields
-    Given I am viewing an "Article" node:
+    Given I am viewing an "Article" content:
     | title | My article with fields! |
     | body  | A placeholder           |
     Then I should see the heading "My article with fields!"
