@@ -10,11 +10,11 @@
     Then I should see the link "Cron run completed"
 
   Scenario: Create many nodes
-    Given "page" nodes:
+    Given "page" content:
     | title    |
     | Page one |
     | Page two |
-    And "article" nodes:
+    And "article" content:
     | title          |
     | First article  |
     | Second article |
@@ -26,7 +26,7 @@
     And I should see "Second article"
 
   Scenario: Create nodes with fields
-    Given "article" nodes:
+    Given "article" content:
     | title                     | promote | body             |
     | First article with fields |       1 | PLACEHOLDER BODY |
     When I am on the homepage
@@ -74,7 +74,7 @@
     Given users:
     | name     | mail            | status |
     | Joe User | joe@example.com | 1      |
-    And "article" nodes:
+    And "article" content:
     | title          | author   | body             | promote |
     | Article by Joe | Joe User | PLACEHOLDER BODY | 1       |
     When I am logged in as a user with the "administrator" role
@@ -89,6 +89,6 @@
     | Tag two   |
     | Tag three |
     | Tag four  |
-    And "article" nodes:
+    And "article" content:
     | title | body | promote | field_tags |
 
