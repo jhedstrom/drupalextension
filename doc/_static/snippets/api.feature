@@ -1,6 +1,6 @@
   Scenario: Create a node
     Given I am logged in as a user with the "administrator" role
-    When I am viewing an "article" node with the title "My article"
+    When I am viewing an "article" content with the title "My article"
     Then I should see the heading "My article"
 
   Scenario: Run cron
@@ -10,11 +10,11 @@
     Then I should see the link "Cron run completed"
 
   Scenario: Create many nodes
-    Given "page" nodes:
+    Given "page" content:
     | title    |
     | Page one |
     | Page two |
-    And "article" nodes:
+    And "article" content:
     | title          |
     | First article  |
     | Second article |
@@ -26,7 +26,7 @@
     And I should see "Second article"
 
   Scenario: Create nodes with fields
-    Given "article" nodes:
+    Given "article" content:
     | title                     | promote | body             |
     | First article with fields |       1 | PLACEHOLDER BODY |
     When I am on the homepage
@@ -34,7 +34,7 @@
     Then I should see the text "PLACEHOLDER BODY"
 
   Scenario: Create and view a node with fields
-    Given I am viewing an "Article" node:
+    Given I am viewing an "Article" content:
     | title | My article with fields! |
     | body  | A placeholder           |
     Then I should see the heading "My article with fields!"
@@ -74,7 +74,7 @@
     Given users:
     | name     | mail            | status |
     | Joe User | joe@example.com | 1      |
-    And "article" nodes:
+    And "article" content:
     | title          | author   | body             | promote |
     | Article by Joe | Joe User | PLACEHOLDER BODY | 1       |
     When I am logged in as a user with the "administrator" role
@@ -89,6 +89,6 @@
     | Tag two   |
     | Tag three |
     | Tag four  |
-    And "article" nodes:
+    And "article" content:
     | title | body | promote | field_tags |
 
