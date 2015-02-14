@@ -19,7 +19,7 @@ before_script:
   - mysql -e 'create database drupal7'
   - drush --quiet dl drupal-7 --drupal-project-rename=drupal7
   - drush --yes --root=$PWD/drupal7 site-install --db-url=mysql://travis:@127.0.0.1/drupal7
-  - cp -r features/modules/behat_test drupal7/sites/all/modules
+  - cp -r fixtures/drupal7/modules/behat_test drupal7/sites/all/modules
   - cd drupal7
   - drush --yes en behat_test
   - drush --yes fr behat_test
