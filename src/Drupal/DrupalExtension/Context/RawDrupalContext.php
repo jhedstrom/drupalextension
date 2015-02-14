@@ -231,7 +231,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    */
   public function nodeCreate($node) {
     $this->dispatchHooks('BeforeNodeCreateScope', $node);
-    $this->parseEntityFields($node);
+    $this->parseEntityFields('node', $node);
     $saved = $this->getDriver()->createNode($node);
     $this->dispatchHooks('AfterNodeCreateScope', $saved);
     $this->nodes[] = $saved;
@@ -242,13 +242,14 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    * Parse multi-value fields. Possible formats:
    *    A, B, C
    *    A - B, C - D, E - F
-   * @param $entity
    *
+   * @param $entity_type
+   * @param $entity
    */
-  public function parseEntityFields($entity) {
+  public function parseEntityFields($entity_type, $entity) {
     $values = array();
     foreach ($entity as $field_name => $value) {
-      if ($this->getDriver()->isField($field_name)) {
+      if ($this->getDriver()->isField($entity_type, $field_name)) {
         $values = explode(', ', $value);
         foreach ($values as $key => $value) {
           if (strstr($value, ' - ') !== FALSE) {
@@ -268,7 +269,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    */
   public function userCreate($user) {
     $this->dispatchHooks('BeforeUserCreateScope', $user);
-    $this->parseEntityFields($user);
+    $this->parseEntityFields('user', $user);
     $this->getDriver()->userCreate($user);
     $this->dispatchHooks('AfterUserCreateScope', $user);
     $this->users[$user->name] = $this->user = $user;
@@ -283,7 +284,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    */
   public function termCreate($term) {
     $this->dispatchHooks('BeforeTermCreateScope', $term);
-    $this->parseEntityFields($term);
+    $this->parseEntityFields('taxonomy_term', $term);
     $saved = $this->getDriver()->createTerm($term);
     $this->dispatchHooks('AfterTermCreateScope', $saved);
     $this->terms[] = $saved;
