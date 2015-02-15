@@ -1,0 +1,24 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - taxonomy
+    - user
+id: user.field_user_tags
+field_name: field_user_tags
+entity_type: user
+type: taxonomy_term_reference
+settings:
+  allowed_values:
+    -
+      vocabulary: tags
+      parent: 0
+  target_type: taxonomy_term
+  options_list_callback: null
+  target_bundle: null
+module: taxonomy
+locked: false
+cardinality: -1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false

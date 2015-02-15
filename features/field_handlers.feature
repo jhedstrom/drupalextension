@@ -6,7 +6,7 @@ Feature: FieldHandlers
 
   # @d7 scenarios assume a "standard" install of Drupal 7 and require
   # the feature "fixtures/drupal7/modules/behat_test" to enabled on the site.
-  @d7
+  @d7 @runthis
   Scenario: Test various node field handlers in Drupal 7
     Given "page" content:
       | title      |
@@ -97,6 +97,30 @@ Feature: FieldHandlers
     And I should see "One"
     And I should see "Two"
 
+  @d8
+  Scenario: Test various user field handlers in Drupal 8
+    Given "tags" terms:
+      | name      |
+      | Tag one   |
+      | Tag two   |
+    And "page" content:
+      | title      |
+      | Page one   |
+      | Page two   |
+      | Page three |
+    And users:
+      | name     | mail         | field_user_tags       | field_user_reference |
+      | John Doe | john@doe.com | Tag one, Tag two      | Page one, Page two   |
+    And I am logged in as a user with the "administrator" role
+    When I visit "admin/people"
+    Then I should see the link "John Doe"
+    And I click "John Doe"
+    Then I should see "Tag one"
+    And I should see "Tag two"
+    But I should not see "Tag three"
+    And I should see "Page one"
+    And I should see "Page two"
+    But I should not see "Page three"
 
 
 
