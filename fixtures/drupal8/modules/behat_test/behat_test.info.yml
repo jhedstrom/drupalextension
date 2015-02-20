@@ -1,0 +1,7 @@
+name: Behat test
+type: module
+description: 'Test feature exposing basic configuration for Behat Drupal extension test.'
+package: Test
+version: '8.x-1.x-dev'
+core: '8.x'
+project: 'behat_test'
