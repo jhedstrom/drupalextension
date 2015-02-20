@@ -153,11 +153,11 @@ final class Reader implements EnvironmentReader {
         }
       }
 
-      // Find all subcontexts.
+      // Find all subcontexts, excluding abstract base classes.
       $classes = get_declared_classes();
       foreach ($classes as $class) {
         $reflect = new \ReflectionClass($class);
-        if ($reflect->implementsInterface('Drupal\DrupalExtension\Context\DrupalSubContextInterface')) {
+        if (!$reflect->isAbstract() && $reflect->implementsInterface('Drupal\DrupalExtension\Context\DrupalSubContextInterface')) {
           $class_names[] = $class;
         }
       }
