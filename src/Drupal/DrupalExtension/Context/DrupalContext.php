@@ -65,6 +65,47 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
   }
 
   /**
+   * Creates and authenticates a user with the given role(s) and given fields.
+   * | field_user_name     | John  |
+   * | field_user_surname  | Smith |
+   * | ...                 | ...   |
+   *
+   * @Given I am logged in as a user with the :role role(s) and I have the following fields:
+   */
+  public function assertAuthenticatedByRoleWithGivenFields($role, TableNode $fields) {
+    // Check if a user with this role is already logged in.
+    if (!$this->loggedInWithRole($role)) {
+      // Create user (and project)
+      $user = (object) array(
+        'name' => $this->getRandom()->name(8),
+        'pass' => $this->getRandom()->name(16),
+        'role' => $role,
+      );
+      $user->mail = "{$user->name}@example.com";
+
+      // Assign fields to user before creation.
+      foreach ($fields->getRowsHash() as $field => $value) {
+        $user->{$field} = $value;
+      }
+
+      $this->userCreate($user);
+
+      $roles = explode(',', $role);
+      $roles = array_map('trim', $roles);
+      foreach ($roles as $role) {
+        if (!in_array(strtolower($role), array('authenticated', 'authenticated user'))) {
+          // Only add roles other than 'authenticated user'.
+          $this->getDriver()->userAddRole($user, $role);
+        }
+      }
+
+      // Login.
+      $this->login();
+    }
+  }
+
+
+  /**
    * @Given I am logged in as :name
    */
   public function assertLoggedInByName($name) {
