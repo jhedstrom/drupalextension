@@ -20,6 +20,6 @@ Feature: DrupalContext
     Given users:
     | name     | mail            | roles         |
     | Joe User | joe@example.com | Administrator  |
-    And I am logged in as a user with the "Administrator" role
+    And I am logged in as a user with the "administrator" role
     When I visit "admin/people"
     Then I should see the text "Administrator" in the "Joe User" row
