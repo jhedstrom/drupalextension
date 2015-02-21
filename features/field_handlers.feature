@@ -114,16 +114,13 @@ Feature: FieldHandlers
     And I am logged in as a user with the "administrator" role
     When I visit "admin/people"
     Then I should see the link "John Doe"
-
-# API actually works, but user view mode settings are not applied,
-# even though exported correctly
-#    And I click "John Doe"
-#    Then I should see "Tag one"
-#    And I should see "Tag two"
-#    But I should not see "Tag three"
-#    And I should see "Page one"
-#    And I should see "Page two"
-#    But I should not see "Page three"
+    And I click "John Doe"
+    Then I should see "Tag one"
+    And I should see "Tag two"
+    But I should not see "Tag three"
+    And I should see "Page one"
+    And I should see "Page two"
+    But I should not see "Page three"
 
 
 
