@@ -54,9 +54,9 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    *
    * A value of FALSE denotes an anonymous user.
    *
-   * @var mixed
+   * @var stdClass|bool
    */
-  protected $user = FALSE;
+  public $user = FALSE;
 
   /**
    * Keep track of all users that are created so they can easily be removed.
@@ -356,4 +356,5 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
   public function loggedInWithRole($role) {
     return $this->loggedIn() && $this->user && isset($this->user->role) && $this->user->role == $role;
   }
+
 }
