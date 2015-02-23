@@ -155,7 +155,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    */
   public function getTableRow(Element $element, $search) {
     $rows = $element->findAll('css', 'tr');
-    if (!$rows) {
+    if (empty($rows)) {
       throw new \Exception(sprintf('No rows found on the page %s', $this->getSession()->getCurrentUrl()));
     }
     foreach ($rows as $row) {
