@@ -1,0 +1,19 @@
+<?php
+
+/**
+ * Implements hook_install()
+ */
+function behat_test_install() {
+  $storage = \Drupal::service('behat_test.config.storage.install');
+
+  // Override Standard profile's user settings with our own.
+  $config_names = array(
+    'core.entity_form_display.user.user.default',
+    'core.entity_view_display.user.user.default',
+  );
+
+  foreach ($config_names as $config_name) {
+    $data = $storage->read($config_name);
+    \Drupal::configFactory()->getEditable($config_name)->setData($data)->save();
+  }
+}

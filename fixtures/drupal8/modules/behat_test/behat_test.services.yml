@@ -1,0 +1,5 @@
+services:
+  behat_test.config.storage.install:
+    class: Drupal\behat_test\Config\BehatTestExtensionInstallStorage
+    arguments: ['@config.storage', 'config/install']
+
