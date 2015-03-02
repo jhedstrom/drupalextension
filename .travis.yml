@@ -32,8 +32,6 @@ before_script:
   - drush --yes --root=$PWD/drupal8 site-install --db-url=mysql://travis:@127.0.0.1/drupal8
   - cp -r fixtures/drupal8/modules/behat_test drupal8/modules
   - cd drupal8
-  # Temporary fix until https://www.drupal.org/node/2442411 lands.
-  composer update react/promise
   - drush --yes en behat_test
   - drush cr
   - drush runserver :8888 > ~/debug8.txt 2>&1 &
