@@ -68,6 +68,26 @@ class Drupal8 implements CoreInterface {
   /**
    * {@inheritDoc}
    */
+  public function getExtensionPathList() {
+    $paths = array();
+
+    // Get enabled modules.
+    foreach (\Drupal::moduleHandler()->getModuleList() as $module) {
+      $paths[] = $this->drupalRoot . DIRECTORY_SEPARATOR . $module->getPath();
+    }
+
+    // Themes.
+    // @todo
+
+    // Active profile
+    // @todo
+
+    return $paths;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   public function clearCache() {
     // Need to change into the Drupal root directory or the registry explodes.
     $current_path = getcwd();

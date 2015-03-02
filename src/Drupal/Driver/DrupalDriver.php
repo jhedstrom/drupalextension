@@ -120,22 +120,7 @@ class DrupalDriver implements DriverInterface, DrupalSubContextFinderInterface {
       $this->bootstrap();
     }
 
-    $paths = array();
-
-    // Get enabled modules.
-    $modules = \module_list();
-    $paths = array();
-    foreach ($modules as $module) {
-      $paths[] = $this->drupalRoot . DIRECTORY_SEPARATOR . \drupal_get_path('module', $module);
-    }
-
-    // Themes.
-    // @todo
-
-    // Active profile
-    // @todo
-
-    return $paths;
+    return $this->getCore()->getExtensionPathList();
   }
 
   /**

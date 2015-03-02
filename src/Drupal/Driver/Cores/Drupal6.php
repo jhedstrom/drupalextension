@@ -62,6 +62,27 @@ class Drupal6 implements CoreInterface {
   }
 
   /**
+   * {@inheritDoc}
+   */
+  public function getExtensionPathList() {
+    $paths = array();
+
+    // Get enabled modules.
+    $modules = \module_list();
+    foreach ($modules as $module) {
+      $paths[] = $this->drupalRoot . DIRECTORY_SEPARATOR . \drupal_get_path('module', $module);
+    }
+
+    // Themes.
+    // @todo
+
+    // Active profile
+    // @todo
+
+    return $paths;
+  }
+
+  /**
    * Implements CoreInterface::clearCache().
    */
   public function clearCache() {
