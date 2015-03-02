@@ -64,6 +64,27 @@ class Drupal7 implements CoreInterface {
   /**
    * {@inheritDoc}
    */
+  public function getExtensionPathList() {
+    $paths = array();
+
+    // Get enabled modules.
+    $modules = \module_list();
+    foreach ($modules as $module) {
+      $paths[] = $this->drupalRoot . DIRECTORY_SEPARATOR . \drupal_get_path('module', $module);
+    }
+
+    // Themes.
+    // @todo
+
+    // Active profile
+    // @todo
+
+    return $paths;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   public function clearCache() {
     // Need to change into the Drupal root directory or the registry explodes.
     $current_path = getcwd();

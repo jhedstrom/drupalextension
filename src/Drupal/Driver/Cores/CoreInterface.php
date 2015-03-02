@@ -27,6 +27,14 @@ interface CoreInterface {
   public function bootstrap();
 
   /**
+   * Returns a list of extensions paths.
+   *
+   * @return string[]
+   *   List of paths to modules/themes/...
+   */
+  public function getExtensionPathList();
+
+  /**
    * Clear caches.
    */
   public function clearCache();
