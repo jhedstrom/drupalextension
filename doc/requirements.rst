@@ -16,6 +16,10 @@ Meet the system requirements
   * `curl <http://curl.haxx.se/libcurl/php/install.html>`_ 
   * `mbstring <http://php.net/manual/en/mbstring.installation.php>`_ 
   * `xml <http://www.php.net/manual/en/dom.setup.php#102046>`_ 
+  
+  Check your current modules by running::
+  
+    php -m
 
 2. Check for Java::
 

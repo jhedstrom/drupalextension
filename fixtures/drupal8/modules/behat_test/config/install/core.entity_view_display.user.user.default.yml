@@ -1,0 +1,43 @@
+langcode: und
+status: true
+dependencies:
+  config:
+    - field.field.user.user.field_user_reference
+    - field.field.user.user.field_user_tags
+    - field.field.user.user.user_picture
+  module:
+    - image
+    - taxonomy
+    - user
+id: user.user.default
+targetEntityType: user
+bundle: user
+mode: default
+content:
+  user_picture:
+    type: image
+    weight: 0
+    settings:
+      image_style: thumbnail
+      image_link: content
+    third_party_settings: {  }
+    label: hidden
+  member_for:
+    weight: 1
+    settings: {  }
+    third_party_settings: {  }
+  field_user_tags:
+    type: taxonomy_term_reference_link
+    weight: 2
+    settings: {  }
+    third_party_settings: {  }
+    label: above
+  field_user_reference:
+    type: entity_reference_entity_view
+    weight: 3
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings: {  }
+    label: above
+hidden: {  }

@@ -1,16 +1,23 @@
 <?php
+
+/**
+ * Contains \FooFoo.
+ */
+
 use Behat\Behat\Tester\Exception\PendingException;
+use Drupal\DrupalExtension\Context\DrupalSubContextBase;
 use Drupal\DrupalExtension\Context\DrupalSubContextInterface;
-use Drupal\DrupalDriverManager;
-  class FooFoo implements DrupalSubContextInterface {
-    private $drupal;
-    public function __construct(DrupalDriverManager $drupal) {
-      $this->drupal = $drupal;
-    }
-    /**
-      * @Then /^I should have a subcontext definition$/
-     */
-    public function assertSubContextDefinition() {
-      throw new PendingException();
-    }
+
+/**
+ * Example subcontext.
+ */
+class FooFoo extends DrupalSubContextBase implements DrupalSubContextInterface {
+
+  /**
+   * @Then /^I should have a subcontext definition$/
+   */
+  public function assertSubContextDefinition() {
+    throw new PendingException();
   }
+
+}

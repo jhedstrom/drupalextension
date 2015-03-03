@@ -10,6 +10,7 @@ use Drupal\DrupalDriverManager;
 use Drupal\DrupalExtension\Hook\Scope\AfterNodeCreateScope;
 use Drupal\DrupalExtension\Hook\Scope\AfterTermCreateScope;
 use Drupal\DrupalExtension\Hook\Scope\AfterUserCreateScope;
+use Drupal\DrupalExtension\Hook\Scope\BaseEntityScope;
 use Drupal\DrupalExtension\Hook\Scope\BeforeNodeCreateScope;
 use Drupal\DrupalExtension\Hook\Scope\BeforeUserCreateScope;
 use Drupal\DrupalExtension\Hook\Scope\BeforeTermCreateScope;
@@ -53,9 +54,9 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    *
    * A value of FALSE denotes an anonymous user.
    *
-   * @var mixed
+   * @var stdClass|bool
    */
-  protected $user = FALSE;
+  public $user = FALSE;
 
   /**
    * Keep track of all users that are created so they can easily be removed.
@@ -230,10 +231,33 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    */
   public function nodeCreate($node) {
     $this->dispatchHooks('BeforeNodeCreateScope', $node);
+    $this->parseEntityFields('node', $node);
     $saved = $this->getDriver()->createNode($node);
     $this->dispatchHooks('AfterNodeCreateScope', $saved);
     $this->nodes[] = $saved;
     return $saved;
+  }
+
+  /**
+   * Parse multi-value fields. Possible formats:
+   *    A, B, C
+   *    A - B, C - D, E - F
+   *
+   * @param $entity_type
+   * @param $entity
+   */
+  public function parseEntityFields($entity_type, $entity) {
+    foreach ($entity as $field_name => $value) {
+      if ($this->getDriver()->isField($entity_type, $field_name)) {
+        $values = explode(', ', $value);
+        foreach ($values as $key => $value) {
+          if (strstr($value, ' - ') !== FALSE) {
+            $values[$key] = explode(' - ', $value);
+          }
+        }
+        $entity->$field_name = $values;
+      }
+    }
   }
 
   /**
@@ -244,6 +268,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    */
   public function userCreate($user) {
     $this->dispatchHooks('BeforeUserCreateScope', $user);
+    $this->parseEntityFields('user', $user);
     $this->getDriver()->userCreate($user);
     $this->dispatchHooks('AfterUserCreateScope', $user);
     $this->users[$user->name] = $this->user = $user;
@@ -258,6 +283,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    */
   public function termCreate($term) {
     $this->dispatchHooks('BeforeTermCreateScope', $term);
+    $this->parseEntityFields('taxonomy_term', $term);
     $saved = $this->getDriver()->createTerm($term);
     $this->dispatchHooks('AfterTermCreateScope', $saved);
     $this->terms[] = $saved;
@@ -345,4 +371,5 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
   public function loggedInWithRole($role) {
     return $this->loggedIn() && $this->user && isset($this->user->role) && $this->user->role == $role;
   }
+
 }
