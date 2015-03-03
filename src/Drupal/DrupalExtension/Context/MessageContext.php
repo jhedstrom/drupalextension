@@ -275,7 +275,6 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
       throw new \Exception(sprintf($exceptionMsgNone, $this->getSession()->getCurrentUrl()));
     }
     foreach ($selectorObjects as $selectorObject) {
-      $text = $selectorObject->getText();
       if (strpos(trim($selectorObject->getText()), $message) !== FALSE) {
         return;
       }
@@ -300,7 +299,6 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
     $selectorObjects = $this->getSession()->getPage()->findAll("css", $selector);
     if (!empty($selectorObjects)) {
       foreach ($selectorObjects as $selectorObject) {
-        $text = $selectorObject->getText();
         if (strpos(trim($selectorObject->getText()), $message) !== FALSE) {
           throw new \Exception(sprintf($exceptionMsg, $this->getSession()->getCurrentUrl(), $message));
         }
