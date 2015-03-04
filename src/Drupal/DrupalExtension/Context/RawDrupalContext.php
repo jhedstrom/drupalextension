@@ -329,8 +329,12 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
     // Look for a css selector to determine if a user is logged in.
     // Default is the logged-in class on the body tag.
     // Which should work with almost any theme.
-    if ($page->has('css', $this->getDrupalSelector('logged_in_selector'))) {
-      return TRUE;
+    try {
+      if ($page->has('css', $this->getDrupalSelector('logged_in_selector'))) {
+        return TRUE;
+      }
+    } catch (\Behat\Mink\Exception\DriverException $e) {
+      // This test may fail if the driver did not load any site yet.
     }
 
     // Some themes do not add that class to the body, so lets check if the
@@ -344,8 +348,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
 
     // As a last resort, if a logout link is found, we are logged in. While not
     // perfect, this is how Drupal SimpleTests currently work as well.
-    $element = $session->getPage();
-    return $element->findLink($this->getDrupalText('log_out'));
+    return $page->findLink($this->getDrupalText('log_out'));
   }
 
   /**
