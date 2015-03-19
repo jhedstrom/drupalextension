@@ -44,11 +44,12 @@ Feature: Environment check
     | user bar | foo@bar.com  | b            |
 
   @api
-  Scenario: createTerms
+  Scenario: create node with terms.
     Given tags terms:
-    | name |
-    | test1 |
-    | test2 |
-    When I am viewing a tags term with the name "test1"
-    Then I should see "test1"
-
+      | name |
+      | test-tag |
+    And article content:
+      | title    | status | taxonomy |
+      | My title | 1      | test-tag |
+    When I am on the homepage
+    Then I should see "test-tag"
