@@ -17,7 +17,7 @@
     "behat/mink-selenium2-driver": "~1.1",
     "behat/behat": "~3.0,>=3.0.5",
     "behat/mink-extension": "~2.0",
-    "drupal/drupal-driver": "dev-master"
+    "drupal/drupal-driver": "dev-drupal-6"
   },
   "require-dev": {
     "phpspec/phpspec": "~2.0",
@@ -34,5 +34,11 @@
     "branch-alias": {
       "dev-master": "3.0.x-dev"
     }
-  }
+  },
+  "repositories": [
+    {
+      "type": "git",
+      "url": "git@github.com:dawehner/DrupalDriver.git"
+    }
+  ]
 }
