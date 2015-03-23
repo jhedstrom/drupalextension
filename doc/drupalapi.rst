@@ -21,11 +21,9 @@ to drupal and add the path to the local Drupal installation as shown below:
    tagged @api.
 
 Using this driver, you gain the ability to use all the steps in the 
-examples below:
+examples below (and more).
 
 .. literalinclude::  _static/snippets/api.feature
    :language: gherkin
    :linenos:
-   :lines: 31-123
-    
-
+   :emphasize-lines: 1
