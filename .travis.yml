@@ -43,7 +43,7 @@ before_script:
   - cd drupal8
   - mkdir config-export
   - drush cex --yes --destination=config-export
-  - cp modules/behat_test/override_config/* config-export
+  - cp -a modules/behat_test/override_config/* config-export
   - drush cim --yes config-export
   - drush --yes en behat_test
   - drush cr
