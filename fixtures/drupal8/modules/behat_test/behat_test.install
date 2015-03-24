@@ -8,8 +8,12 @@ function behat_test_install() {
 
   // Override Standard profile's user settings with our own.
   $config_names = array(
+    'core.entity_form_mode.user.register',
     'core.entity_form_display.user.user.default',
     'core.entity_view_display.user.user.default',
+    'core.entity_view_display.user.user.compact',
+    'core.entity_view_mode.user.compact',
+    'core.entity_view_mode.user.full',
   );
 
   foreach ($config_names as $config_name) {
