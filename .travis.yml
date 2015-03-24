@@ -35,7 +35,7 @@ before_script:
   - mkdir config-export
   - drush cex --yes --destination=config-export
   - cp -a modules/behat_test/override_config/* config-export
-  - drush cim --yes source=config-export
+  - drush cim --yes --source=config-export
   - drush --yes en behat_test
   - drush cr
   - drush runserver :8888 > ~/debug8.txt 2>&1 &
