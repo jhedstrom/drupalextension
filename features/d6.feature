@@ -38,10 +38,14 @@ Feature: Environment check
 
   @api
   Scenario: createUsers
-    Given users:
-    | name     | mail         | roles        |
-    | user foo | foo@bar.com  | a, b         |
-    | user bar | foo@bar.com  | b            |
+    Given I am logged in as a user with the "administer users" permission
+    And users:
+    | name     | mail         |
+    | user foo | foo@bar.com  |
+    | user bar | baz@bar.com  |
+    When I am at "admin/user/users"
+    Then I should see "user foo"
+      And I should see "user bar"
 
   @api
   Scenario: create node with terms.
