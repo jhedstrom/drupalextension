@@ -43,7 +43,7 @@ Feature: Environment check
     | name     | mail         |
     | user foo | foo@bar.com  |
     | user bar | baz@bar.com  |
-    When I am at "admin/user/users"
+    When I visit "admin/user/user"
     Then I should see "user foo"
       And I should see "user bar"
 
