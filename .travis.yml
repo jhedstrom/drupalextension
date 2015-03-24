@@ -19,9 +19,9 @@ before_script:
   - mysql -e 'create database drupal6'
   - drush --quiet dl drupal-6 --drupal-project-rename=drupal6
   - drush --yes --root=$PWD/drupal6 site-install --db-url=mysql://travis:@127.0.0.1/drupal6
-#  - cp -r fixtures/drupal6/modules/behat_test drupal6/sites/all/modules
+  - cp -r fixtures/drupal6/modules/behat_test drupal6/sites/all/modules
   - cd drupal6
-#  - drush --yes en behat_test
+  - drush --yes en behat_test
 #  - drush --yes fr behat_test
   - drush cc all
   - drush --debug runserver :8886 > ~/debug6.txt 2>&1 &
