@@ -1,0 +1,11 @@
+<?php
+
+/**
+ * Implements hook_install().
+ */
+function behat_test_install() {
+  $edit = array();
+  $edit['name'] = 'tags';
+  $edit['help'] = '';
+  taxonomy_save_vocabulary($edit);
+}
