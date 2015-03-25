@@ -15,6 +15,17 @@ install:
 before_script:
   # Set sendmail so drush doesn't throw an error during site install.
   - echo "sendmail_path='true'" >> `php --ini | grep "Loaded Configuration" | awk '{print $4}'`
+  # Setup a stack Drupal 6 install to test api abilities.
+  - mysql -e 'create database drupal6'
+  - drush --quiet dl drupal-6 --drupal-project-rename=drupal6
+  - drush --yes --root=$PWD/drupal6 site-install --db-url=mysql://travis:@127.0.0.1/drupal6
+  - cp -r fixtures/drupal6/modules/behat_test drupal6/sites/all/modules
+  - cd drupal6
+  - drush --yes en behat_test
+#  - drush --yes fr behat_test
+  - drush cc all
+  - drush --debug runserver :8886 > ~/debug6.txt 2>&1 &
+  - cd -
   # Setup a stock Drupal 7 install to test api abilities.
   - mysql -e 'create database drupal7'
   - drush --quiet dl drupal-7 --drupal-project-rename=drupal7
@@ -41,10 +52,12 @@ before_script:
 script:
   - vendor/bin/phpspec run -f pretty --no-interaction
   - vendor/bin/behat -fprogress --strict
+  - vendor/bin/behat -fprogress --profile=drupal6 --strict
   - vendor/bin/behat -fprogress --profile=drupal7 --strict
   - vendor/bin/behat -fprogress --profile=drush --strict
   - vendor/bin/behat -fprogress --profile=drupal8 --strict
 
 after_failure:
+  - cat ~/debug6.txt
   - cat ~/debug7.txt
   - cat ~/debug8.txt
