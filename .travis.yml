@@ -10,6 +10,7 @@ install:
   - composer install
   - composer global require drush/drush:dev-master --prefer-source
 
+
 before_script:
   # Set sendmail so drush doesn't throw an error during site install.
   - echo "sendmail_path='true'" >> `php --ini | grep "Loaded Configuration" | awk '{print $4}'`
