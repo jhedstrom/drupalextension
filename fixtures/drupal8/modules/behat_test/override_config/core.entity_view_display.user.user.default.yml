@@ -27,9 +27,10 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_user_tags:
-    type: taxonomy_term_reference_link
+    type: entity_reference_label
     weight: 2
-    settings: {  }
+    settings:
+      link: true
     third_party_settings: {  }
     label: above
   field_user_reference:
