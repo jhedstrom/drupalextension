@@ -5,6 +5,7 @@ dependencies:
     - field.storage.user.field_user_tags
   module:
     - taxonomy
+    - entity_reference
 id: user.user.field_user_tags
 field_name: field_user_tags
 entity_type: user
@@ -17,4 +18,10 @@ default_value: {  }
 default_value_callback: ''
 settings:
   handler: default
-field_type: taxonomy_term_reference
+  handler_settings:
+    target_bundles:
+      tags: tags
+    sort:
+      field: _none
+    auto_create: true
+field_type: entity_reference
