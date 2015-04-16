@@ -178,6 +178,23 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
+   * Returns a specific Drupal config.
+   *
+   * @param string $name
+   *   Text value name, such as 'keep_content', which determines if we wish to
+   *   save the content that has been created by our tests.
+   * @throws \Exception
+   * @return
+   */
+  public function getDrupalConfig($name) {
+    $drupal = $this->getDrupalParameter('drupal');
+    if (!isset($drupal[$name])) {
+      throw new \Exception(sprintf('No such Drupal config: %s', $name));
+    }
+    return $drupal[$name];
+  }
+
+  /**
    * Get active Drupal Driver.
    */
   public function getDriver($name = NULL) {
@@ -231,32 +248,34 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    * @AfterScenario
    */
   public function afterScenario($event) {
-    // Remove any nodes that were created.
-    if (!empty($this->nodes)) {
-      foreach ($this->nodes as $node) {
-        $this->getDriver()->nodeDelete($node);
+    if (!$this->getDrupalConfig('keep_content')) {
+      // Remove any nodes that were created.
+      if (!empty($this->nodes)) {
+        foreach ($this->nodes as $node) {
+          $this->getDriver()->nodeDelete($node);
+        }
       }
-    }
 
-    // Remove any users that were created.
-    if (!empty($this->users)) {
-      foreach ($this->users as $user) {
-        $this->getDriver()->userDelete($user);
+      // Remove any users that were created.
+      if (!empty($this->users)) {
+        foreach ($this->users as $user) {
+          $this->getDriver()->userDelete($user);
+        }
+        $this->getDriver()->processBatch();
       }
-      $this->getDriver()->processBatch();
-    }
 
-    // Remove any terms that were created.
-    if (!empty($this->terms)) {
-      foreach ($this->terms as $term) {
-        $this->getDriver()->termDelete($term);
+      // Remove any terms that were created.
+      if (!empty($this->terms)) {
+        foreach ($this->terms as $term) {
+          $this->getDriver()->termDelete($term);
+        }
       }
-    }
 
-    // Remove any roles that were created.
-    if (!empty($this->roles)) {
-      foreach ($this->roles as $rid) {
-        $this->getDriver()->roleDelete($rid);
+      // Remove any roles that were created.
+      if (!empty($this->roles)) {
+        foreach ($this->roles as $rid) {
+          $this->getDriver()->roleDelete($rid);
+        }
       }
     }
   }
