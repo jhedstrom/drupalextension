@@ -146,6 +146,9 @@ class Extension implements ExtensionInterface {
         arrayNode('drupal')->
           children()->
             scalarNode('drupal_root')->end()->
+            booleanNode('keep_content')->
+              defaultValue(FALSE)->
+            end()->
           end()->
         end()->
         arrayNode('drush')->
