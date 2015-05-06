@@ -234,7 +234,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    * @Given I am viewing my :type (content )with the title :title
    */
   public function createMyNode($type, $title) {
-    if (!$this->user->uid) {
+    if (!isset($this->user->uid)) {
       throw new \Exception(sprintf('There is no current logged in user to create a node for.'));
     }
 
