@@ -42,6 +42,7 @@ before_script:
   - cp -r fixtures/drupal8/modules/behat_test drupal8/modules
   - cd drupal8
   - drush --yes en behat_test
+  - drush --yes pmu page_cache
   - drush cr
   - drush runserver :8888 > ~/debug8.txt 2>&1 &
   - cd -
