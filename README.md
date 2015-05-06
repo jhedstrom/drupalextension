@@ -22,6 +22,8 @@ The Drupal Extension 3 supports Drupal 6, 7 and 8, and utilizes Behat 3.
 If you're new to the Drupal Extension, we recommend starting with 
 the [Full documentation](https://behat-drupal-extension.readthedocs.org)
 
+[![Documentation Status](https://readthedocs.org/projects/behat-drupal-extension/badge/?version=master)](https://readthedocs.org/projects/behat-drupal-extension/?badge=master)
+
 ### Quick start
 
 1. Install using [Composer](https://getcomposer.org/):
