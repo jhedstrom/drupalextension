@@ -7,8 +7,7 @@ sites.
 
 [![Build Status](https://travis-ci.org/jhedstrom/drupalextension.png?branch=3.0)](https://travis-ci.org/jhedstrom/drupalextension)
 
-The Drupal Extension 3.0 supports Drupal 7 and 8, and utilizes Behat 3. For
-Drupal 6 support (or Behat 2), use the [1.0 version](https://github.com/jhedstrom/drupalextension/tree/1.0).
+The Drupal Extension 3 supports Drupal 6, 7 and 8, and utilizes Behat 3.
 
 [![Latest Stable Version](https://poser.pugx.org/drupal/drupal-extension/v/stable.svg)](https://packagist.org/packages/drupal/drupal-extension)
 [![Total Downloads](https://poser.pugx.org/drupal/drupal-extension/downloads.svg)](https://packagist.org/packages/drupal/drupal-extension)
