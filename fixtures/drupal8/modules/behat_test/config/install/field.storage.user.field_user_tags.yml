@@ -10,9 +10,7 @@ entity_type: user
 type: entity_reference
 settings:
   target_type: taxonomy_term
-  options_list_callback: null
-  target_bundle: null
-module: taxonomy
+module: entity_reference
 locked: false
 cardinality: -1
 translatable: true

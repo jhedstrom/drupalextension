@@ -9,6 +9,7 @@ namespace Drupal\behat_test\Config;
 
 use Drupal\Core\Config\ExtensionInstallStorage;
 use Drupal\Core\Config\StorageInterface;
+use Drupal\Core\Extension\ExtensionDiscovery;
 
 class BehatTestExtensionInstallStorage extends ExtensionInstallStorage {
 
@@ -21,13 +22,14 @@ class BehatTestExtensionInstallStorage extends ExtensionInstallStorage {
     $this->directory = 'override_config';
   }
 
-
   /**
    * {@inheritdoc}
    */
   protected function getAllFolders() {
     if (!isset($this->folders)) {
-      $this->folders = $this->getComponentNames('module', array('behat_test'));
+      $listing = new ExtensionDiscovery(\Drupal::root());
+      $modules = $listing->scan('module');
+      $this->folders = $this->getComponentNames(array('behat_test' => $modules['behat_test']));
     }
     return $this->folders;
   }
