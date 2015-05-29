@@ -9,6 +9,7 @@ namespace Drupal\behat_test\Config;
 
 use Drupal\Core\Config\ExtensionInstallStorage;
 use Drupal\Core\Config\StorageInterface;
+use Drupal\Core\Extension\ExtensionDiscovery;
 
 class BehatTestExtensionInstallStorage extends ExtensionInstallStorage {
 
