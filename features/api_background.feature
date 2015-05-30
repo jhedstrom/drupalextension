@@ -13,6 +13,11 @@ Feature: DrupalContext
       | User one |
       | User two |
 
+    Given "article" content:
+      | title    |
+      | Node one |
+      | Node two |
+
   Scenario Outline:
     Given I am not logged in
 
