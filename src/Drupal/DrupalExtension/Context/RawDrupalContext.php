@@ -160,6 +160,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
     foreach ($this->nodes as $node) {
       $this->getDriver()->nodeDelete($node);
     }
+    $this->nodes = array();
   }
 
   /**
@@ -174,6 +175,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
         $this->getDriver()->userDelete($user);
       }
       $this->getDriver()->processBatch();
+      $this->users = array();
     }
   }
 
@@ -187,6 +189,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
     foreach ($this->terms as $term) {
       $this->getDriver()->termDelete($term);
     }
+    $this->terms = array();
   }
 
   /**
@@ -199,6 +202,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
     foreach ($this->roles as $rid) {
       $this->getDriver()->roleDelete($rid);
     }
+    $this->roles = array();
   }
 
   /**
