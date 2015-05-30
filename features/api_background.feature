@@ -1,5 +1,5 @@
-@api
-Feature: DrupalContextBackground
+@d8 @api
+Feature: DrupalContext
   Test DrupalContext in combination with Backgrounds
 
   Background:
@@ -8,8 +8,10 @@ Feature: DrupalContextBackground
     | Tag one |
     | Tag two |
 
-  Scenario:
+  Scenario Outline:
     Given I am not logged in
 
-  Scenario:
-    Given I am not logged in
+    Examples:
+      | user |
+      | foo  |
+      | bar  |
