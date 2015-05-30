@@ -1,12 +1,17 @@
-@d8 @api
+@d6 @d7 @d8 @api
 Feature: DrupalContext
   Test DrupalContext in combination with Backgrounds
 
   Background:
     Given "tags" terms:
-    | name    |
-    | Tag one |
-    | Tag two |
+      | name    |
+      | Tag one |
+      | Tag two |
+
+    Given users:
+      | name     |
+      | User one |
+      | User two |
 
   Scenario Outline:
     Given I am not logged in
