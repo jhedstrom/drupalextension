@@ -343,7 +343,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
       $roles = array();
       if (isset($userHash['roles'])) {
         $roles = explode(',', $userHash['roles']);
-        $roles = array_map('trim', $roles);
+        $roles = array_filter(array_map('trim', $roles));
         unset($userHash['roles']);
       }
 
