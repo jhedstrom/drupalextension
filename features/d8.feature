@@ -18,8 +18,9 @@ Feature: DrupalContext
 
   Scenario: Create users with roles
     Given users:
-    | name     | mail            | roles         |
-    | Joe User | joe@example.com | Administrator  |
+    | name     | mail             | roles          |
+    | Joe User | joe@example.com  | Administrator  |
+    | Jane Doe | jane@example.com |                |
     And I am logged in as a user with the "administrator" role
     When I visit "admin/people"
     Then I should see the text "Administrator" in the "Joe User" row
