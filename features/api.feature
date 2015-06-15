@@ -67,6 +67,7 @@ Feature: DrupalContext
     Given "article" content:
     | title                     | promote | body             |
     | First article with fields |       1 | PLACEHOLDER BODY |
+    And I am logged in as a user with the "authenticated user" role
     When I am on the homepage
     And follow "First article with fields"
     Then I should see the text "PLACEHOLDER BODY"
