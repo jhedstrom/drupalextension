@@ -275,13 +275,27 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    *   An object containing the entity properties and fields as properties.
    */
   public function parseEntityFields($entity_type, \stdClass $entity) {
-    foreach ($entity as $field_name => $value) {
+    foreach ($entity as $field_name => $field_value) {
       if ($this->getDriver()->isField($entity_type, $field_name)) {
-        $values = explode(', ', $value);
-        foreach ($values as $key => $value) {
+        // Split up multiple values in multi-value fields.
+        $values = [];
+        foreach (explode(', ', $field_value) as $key => $value) {
+          $columns = $value;
+          // Split up field columns if the ' - ' separator is present.
           if (strstr($value, ' - ') !== FALSE) {
-            $values[$key] = explode(' - ', $value);
+            $columns = [];
+            foreach (explode(' - ', $value) as $column) {
+              // Check if it is a named column.
+              if (strpos($column, ': ', 1) !== FALSE) {
+                list($key, $column) = explode(': ', $column);
+                $columns[$key] = $column;
+              }
+              else {
+                $columns[] = $column;
+              }
+            }
           }
+          $values[] = $columns;
         }
         $entity->$field_name = $values;
       }
