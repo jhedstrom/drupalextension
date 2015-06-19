@@ -8,12 +8,13 @@ default:
         - Drupal\DrupalExtension\Context\MinkContext
         - Drupal\DrupalExtension\Context\MarkupContext
       filters:
-        tags: "~@api&&~@drushTest"
+        tags: "~@api&&~@drushTest&&@javascript"
   extensions:
     Behat\MinkExtension:
       goutte: ~
-      selenium2: ~
+      zombie: ~
       base_url: http://drupal.org
+      javascript_session: zombie
     Drupal\DrupalExtension:
       blackbox: ~
       region_map:

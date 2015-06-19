@@ -79,3 +79,9 @@ Feature: Test DrupalContext
    When I press "Create new account"
    Then I should see the message "Username field is required"
    But I should not see the message "Registration successful. You are now logged in"
+
+ @javascript
+ Scenario: Zombie driver is functional
+   Given I am on the homepage
+   When I click "Commits"
+   Then I should see the link "More commit messages…"

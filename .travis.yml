@@ -9,8 +9,11 @@ install:
   - composer self-update
   - composer install
   - composer global require drush/drush:dev-master --prefer-source
+  - npm install
 
 before_script:
+  # Set NODE_PATH for zombie driver.
+  - export NODE_PATH="`pwd`/node_modules"
   # Set sendmail so drush doesn't throw an error during site install.
   - echo "sendmail_path='true'" >> `php --ini | grep "Loaded Configuration" | awk '{print $4}'`
   # Setup a stack Drupal 6 install to test api abilities.
