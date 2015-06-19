@@ -29,6 +29,7 @@ features[field_instance][] = node-post-field_post_dates
 features[field_instance][] = node-post-field_post_links
 features[field_instance][] = node-post-field_post_reference
 features[field_instance][] = node-post-field_post_select
+features[field_instance][] = user-user-field_post_address
 features[field_instance][] = user-user-field_post_reference
 features[field_instance][] = user-user-field_tags
 features[node][] = post
