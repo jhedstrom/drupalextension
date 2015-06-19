@@ -6,7 +6,7 @@ Feature: FieldHandlers
 
   # @d7 scenarios assume a "standard" install of Drupal 7 and require
   # the feature "fixtures/drupal7/modules/behat_test" to enabled on the site.
-  @d7 @runthis
+  @d7
   Scenario: Test various node field handlers in Drupal 7
     Given "page" content:
       | title      |
