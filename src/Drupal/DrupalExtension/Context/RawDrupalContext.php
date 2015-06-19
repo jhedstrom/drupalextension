@@ -269,10 +269,12 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    *    A, B, C
    *    A - B, C - D, E - F
    *
-   * @param $entity_type
-   * @param $entity
+   * @param string $entity_type
+   *   The entity type.
+   * @param \stdClass $entity
+   *   An object containing the entity properties and fields as properties.
    */
-  public function parseEntityFields($entity_type, $entity) {
+  public function parseEntityFields($entity_type, \stdClass $entity) {
     foreach ($entity as $field_name => $value) {
       if ($this->getDriver()->isField($entity_type, $field_name)) {
         $values = explode(', ', $value);
