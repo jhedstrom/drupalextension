@@ -2,5 +2,5 @@
 *.phar
 composer.lock
 vendor
-/drupal
+/drupal*
 behat.yml

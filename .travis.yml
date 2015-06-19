@@ -9,6 +9,7 @@ install:
   - composer self-update
   - composer install
   - composer global require drush/drush:dev-master --prefer-source
+  - npm install -g zombie@^2.5
 
 before_script:
   # Set sendmail so drush doesn't throw an error during site install.
