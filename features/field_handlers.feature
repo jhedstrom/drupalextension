@@ -47,8 +47,8 @@ Feature: FieldHandlers
       | Page two   |
       | Page three |
     And users:
-      | name     | mail         | field_tags       | field_post_reference |
-      | John Doe | john@doe.com | Tag one, Tag two | Page one, Page two   |
+      | name     | mail         | field_tags       | field_post_reference | field_post_address                                                               |
+      | John Doe | john@doe.com | Tag one, Tag two | Page one, Page two   | country: BE - locality: Brussel - thoroughfare: Louisalaan 1 - postal_code: 1000 |
     And I am logged in as a user with the "administrator" role
     When I visit "admin/people"
     Then I should see the link "John Doe"
@@ -59,6 +59,10 @@ Feature: FieldHandlers
     And I should see "Page one"
     And I should see "Page two"
     But I should not see "Page three"
+    And I should see "Belgium"
+    And I should see "Brussel"
+    And I should see "1000"
+    And I should see "Louisalaan 1"
 
   @d7
   Scenario: Test taxonomy term reference field handler
