@@ -10,7 +10,6 @@ use Drupal\DrupalDriverManager;
 use Drupal\DrupalExtension\Hook\Scope\AfterNodeCreateScope;
 use Drupal\DrupalExtension\Hook\Scope\AfterTermCreateScope;
 use Drupal\DrupalExtension\Hook\Scope\AfterUserCreateScope;
-use Drupal\DrupalExtension\Hook\Scope\BaseEntityScope;
 use Drupal\DrupalExtension\Hook\Scope\BeforeNodeCreateScope;
 use Drupal\DrupalExtension\Hook\Scope\BeforeUserCreateScope;
 use Drupal\DrupalExtension\Hook\Scope\BeforeTermCreateScope;
@@ -54,9 +53,9 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    *
    * A value of FALSE denotes an anonymous user.
    *
-   * @var stdClass|bool
+   * @var mixed
    */
-  public $user = FALSE;
+  protected $user = FALSE;
 
   /**
    * Keep track of all users that are created so they can easily be removed.
@@ -132,6 +131,21 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
     $text = $this->getDrupalParameter('text');
     if (!isset($text[$name])) {
       throw new \Exception(sprintf('No such Drupal string: %s', $name));
+    }
+    return $text[$name];
+  }
+
+  /**
+   * Returns a specific css selector.
+   *
+   * @param $name
+   *   string CSS selector name
+   */
+  public function getDrupalSelector($name) {
+    $text = $this->getDrupalParameter('selectors');
+    if (!isset($text[$name])) {
+      var_dump($text);
+      throw new \Exception(sprintf('No such selector configured: %s', $name));
     }
     return $text[$name];
   }
@@ -235,33 +249,10 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    */
   public function nodeCreate($node) {
     $this->dispatchHooks('BeforeNodeCreateScope', $node);
-    $this->parseEntityFields('node', $node);
     $saved = $this->getDriver()->createNode($node);
     $this->dispatchHooks('AfterNodeCreateScope', $saved);
     $this->nodes[] = $saved;
     return $saved;
-  }
-
-  /**
-   * Parse multi-value fields. Possible formats:
-   *    A, B, C
-   *    A - B, C - D, E - F
-   *
-   * @param $entity_type
-   * @param $entity
-   */
-  public function parseEntityFields($entity_type, $entity) {
-    foreach ($entity as $field_name => $value) {
-      if ($this->getDriver()->isField($entity_type, $field_name)) {
-        $values = explode(', ', $value);
-        foreach ($values as $key => $value) {
-          if (strstr($value, ' - ') !== FALSE) {
-            $values[$key] = explode(' - ', $value);
-          }
-        }
-        $entity->$field_name = $values;
-      }
-    }
   }
 
   /**
@@ -272,7 +263,6 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    */
   public function userCreate($user) {
     $this->dispatchHooks('BeforeUserCreateScope', $user);
-    $this->parseEntityFields('user', $user);
     $this->getDriver()->userCreate($user);
     $this->dispatchHooks('AfterUserCreateScope', $user);
     $this->users[$user->name] = $this->user = $user;
@@ -287,7 +277,6 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    */
   public function termCreate($term) {
     $this->dispatchHooks('BeforeTermCreateScope', $term);
-    $this->parseEntityFields('taxonomy_term', $term);
     $saved = $this->getDriver()->createTerm($term);
     $this->dispatchHooks('AfterTermCreateScope', $saved);
     $this->terms[] = $saved;
@@ -339,12 +328,31 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    */
   public function loggedIn() {
     $session = $this->getSession();
+    $page = $session->getPage();
+
+    // Look for a css selector to determine if a user is logged in.
+    // Default is the logged-in class on the body tag.
+    // Which should work with almost any theme.
+    try {
+      if ($page->has('css', $this->getDrupalSelector('logged_in_selector'))) {
+        return TRUE;
+      }
+    } catch (\Behat\Mink\Exception\DriverException $e) {
+      // This test may fail if the driver did not load any site yet.
+    }
+
+    // Some themes do not add that class to the body, so lets check if the
+    // login form is displayed on /user/login.
+    $session->visit($this->locatePath('/user/login'));
+    if (!$page->has('css', $this->getDrupalSelector('login_form_selector'))) {
+      return TRUE;
+    }
+
     $session->visit($this->locatePath('/'));
 
-    // If a logout link is found, we are logged in. While not perfect, this is
-    // how Drupal SimpleTests currently work as well.
-    $element = $session->getPage();
-    return $element->findLink($this->getDrupalText('log_out'));
+    // As a last resort, if a logout link is found, we are logged in. While not
+    // perfect, this is how Drupal SimpleTests currently work as well.
+    return $page->findLink($this->getDrupalText('log_out'));
   }
 
   /**
@@ -359,5 +367,4 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
   public function loggedInWithRole($role) {
     return $this->loggedIn() && $this->user && isset($this->user->role) && $this->user->role == $role;
   }
-
 }
