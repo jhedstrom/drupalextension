@@ -36,6 +36,32 @@ Feature: FieldHandlers
     And I should see "Louisalaan 1"
 
   @d7
+  Scenario: Test alternative syntax for named field columns on node content
+    When I am viewing a "post" content:
+      | title                           | Post title                  |
+      | field_post_address:country      | FR                          |
+      | field_post_address:locality     | Paris                       |
+      | field_post_address:thoroughfare | 1 Avenue des Champs Elysées |
+      | field_post_address:postal_code  | 75008                       |
+    Then I should see "France"
+    And I should see "Paris"
+    And I should see "1 Avenue des Champs Elysées"
+    And I should see "75008"
+
+  @d7
+  Scenario: Test shorthand syntax for named field columns on node content
+    When I am viewing a "post" content:
+      | title                      | Post title      |
+      | field_post_address:country | GB              |
+      | :locality                  | London          |
+      | :thoroughfare              | 1 Oxford Street |
+      | :postal_code               | W1D 1AN         |
+    Then I should see "United Kingdom"
+    And I should see "London"
+    And I should see "1 Oxford Street"
+    And I should see "W1D 1AN"
+
+  @d7
   Scenario: Test various user field handlers in Drupal 7
     Given "tags" terms:
       | name      |
