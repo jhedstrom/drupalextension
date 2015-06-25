@@ -275,7 +275,32 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    *   An object containing the entity properties and fields as properties.
    */
   public function parseEntityFields($entity_type, \stdClass $entity) {
-    foreach ($entity as $field_name => $field_value) {
+    $multicolumn_field = '';
+    $multicolumn_fields = [];
+
+    foreach ($entity as $field => $field_value) {
+      // Reset the multicolumn field if the field name does not contain a column.
+      if (strpos($field, ':') === FALSE) {
+        $multicolumn_field = '';
+      }
+      // Start tracking a new multicolumn field if the field name contains a ':'
+      // which is preceded by at least 1 character.
+      elseif (strpos($field, ':', 1) !== FALSE) {
+        list($multicolumn_field, $multicolumn_column) = explode(':', $field);
+      }
+      // If a field name starts with a ':' but we are not yet tracking a
+      // multicolumn field we don't know to which field this belongs.
+      elseif (empty($multicolumn_field)) {
+        throw new \Exception('Field name missing for ' . $field);
+      }
+      // Update the column name if the field name starts with a ':' and we are
+      // already tracking a multicolumn field.
+      else {
+        $multicolumn_column = substr($field, 1);
+      }
+
+      $is_multicolumn = $multicolumn_field && $multicolumn_column;
+      $field_name = $multicolumn_field ?: $field;
       if ($this->getDriver()->isField($entity_type, $field_name)) {
         // Split up multiple values in multi-value fields.
         $values = [];
@@ -285,9 +310,9 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
           if (strstr($value, ' - ') !== FALSE) {
             $columns = [];
             foreach (explode(' - ', $value) as $column) {
-              // Check if it is a named column.
-              if (strpos($column, ': ', 1) !== FALSE) {
-                list($key, $column) = explode(': ', $column);
+              // Check if it is an inline named column.
+              if (!$is_multicolumn && strpos($column, ': ', 1) !== FALSE) {
+                list ($key, $column) = explode(': ', $column);
                 $columns[$key] = $column;
               }
               else {
@@ -295,10 +320,25 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
               }
             }
           }
-          $values[] = $columns;
+          // Use the column name if we are tracking a multicolumn field.
+          if ($is_multicolumn) {
+            $multicolumn_fields[$multicolumn_field][$key][$multicolumn_column] = $columns;
+            unset($entity->$field);
+          }
+          else {
+            $values[] = $columns;
+          }
         }
-        $entity->$field_name = $values;
+        // Replace regular fields inline in the entity after parsing.
+        if (!$is_multicolumn) {
+          $entity->$field_name = $values;
+        }
       }
+    }
+
+    // Add the multicolumn fields to the entity.
+    foreach ($multicolumn_fields as $field_name => $columns) {
+      $entity->$field_name = $columns;
     }
   }
 
