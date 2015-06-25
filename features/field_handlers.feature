@@ -62,6 +62,23 @@ Feature: FieldHandlers
     And I should see "W1D 1AN"
 
   @d7
+  Scenario: Test multivalue fields with named field columns on node content
+    When I am viewing a "post" content:
+      | title                      | Post title                             |
+      | field_post_address:country | IT, JP                                 |
+      | :locality                  | Milan, Tokyo                           |
+      | :thoroughfare              | 1 Corso Buenos Aires, Shibuya Crossing |
+      | :postal_code               | 20124, 150-0040                        |
+    Then I should see "Italy"
+    And I should see "Milan"
+    And I should see "1 Corso Buenos Aires"
+    And I should see "20124"
+    And I should see "Japan"
+    And I should see "Tokyo"
+    And I should see "Shibuya Crossing"
+    And I should see "150-0040"
+
+  @d7
   Scenario: Test various user field handlers in Drupal 7
     Given "tags" terms:
       | name      |
