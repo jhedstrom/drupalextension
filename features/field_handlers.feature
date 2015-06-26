@@ -108,6 +108,19 @@ Feature: FieldHandlers
     And I should see "Louisalaan 1"
 
   @d7
+  Scenario: Test using @Transform to provide human friendly aliases for named field columns
+    Given users:
+      | name     | mail             | street        | city     | postcode | country |
+      | Jane Doe | jane@example.com | Pioneer Place | Portland | OR 97204 | US      |
+    And I am logged in as a user with the "administrator" role
+    When I visit "admin/people"
+    And I click "Jane Doe"
+    Then I should see "United States"
+    And I should see "Portland"
+    And I should see "Pioneer Place"
+    And I should see "OR 97204"
+
+  @d7
   Scenario: Test taxonomy term reference field handler
     Given "tags" terms:
       | name      |
