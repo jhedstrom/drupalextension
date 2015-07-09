@@ -375,6 +375,29 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
   }
 
   /**
+   * Creates one or more languages.
+   *
+   * @Given the/these (following )languages are available:
+   *
+   * Provide language data in the following format:
+   *
+   * | langcode |
+   * | en       |
+   * | fr       |
+   *
+   * @param TableNode $langcodesTable
+   *   The table listing languages by their ISO code.
+   */
+  public function createLanguages(TableNode $langcodesTable) {
+    foreach ($langcodesTable->getHash() as $row) {
+      $language = (object) array(
+        'langcode' => $row['languages'],
+      );
+      $this->languageCreate($language);
+    }
+  }
+
+  /**
    * Pauses the scenario until the user presses a key. Useful when debugging a scenario.
    *
    * @Then (I )break
