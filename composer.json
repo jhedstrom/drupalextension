@@ -17,7 +17,7 @@
     "behat/mink-selenium2-driver": "~1.1",
     "behat/behat": "~3.0,>=3.0.5",
     "behat/mink-extension": "~2.0",
-    "drupal/drupal-driver": "dev-language"
+    "drupal/drupal-driver": "~1.0@dev"
   },
   "require-dev": {
     "phpspec/phpspec": "~2.0",
@@ -31,12 +31,6 @@
       "Drupal\\DrupalExtension": "src/"
     }
   },
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://github.com/pfrenssen/DrupalDriver"
-    }
-  ],
   "extra": {
     "branch-alias": {
       "dev-master": "3.0.x-dev"
