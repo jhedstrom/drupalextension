@@ -40,7 +40,7 @@ before_script:
   # Set NODE_PATH for zombie driver.
   - export NODE_PATH="`pwd`/node_modules"
   # Define the module path according to the Drupal version being tested.
-  - [[ ${DRUPAL_VERSION} -eq 8 ]] && export MODULE_PATH='drupal/modules' || export MODULE_PATH='drupal/sites/all/modules'
+  - test ${DRUPAL_VERSION} -eq 8 && export MODULE_PATH='drupal/modules' || export MODULE_PATH='drupal/sites/all/modules'
   # Set sendmail so drush doesn't throw an error during site install.
   - echo "sendmail_path='true'" >> `php --ini | grep "Loaded Configuration" | awk '{print $4}'`
   # Setup a stack Drupal 6 install to test api abilities.
@@ -51,11 +51,11 @@ before_script:
   - cd drupal
   - drush --yes en behat_test
   # Only revert features on Drupal 7 and 8.
-  - [[ ${DRUPAL_VERSION}} -eq 6 ]] || drush --yes fr behat_test
+  - test ${DRUPAL_VERSION} -eq 6 || drush --yes fr behat_test
   # Disable the page cache on Drupal 8.
-  - [[ ${DRUPAL_VERSION}} -eq 8 ]] && drush --yes pmu page_cache
+  - test ${DRUPAL_VERSION} -eq 8 && drush --yes pmu page_cache
   # Clear the cache on Drupal 6 and 7, rebuild on Drupal 8.
-  - [[ ${DRUPAL_VERSION}} -eq 8 ]] && drush cr || drush cc all
+  - test ${DRUPAL_VERSION} -eq 8 && drush cr || drush cc all
   - drush --debug runserver :8888 > ~/debug.txt 2>&1 &
   - cd -
   - sleep 4s
@@ -65,7 +65,7 @@ script:
   - vendor/bin/behat -fprogress --strict
   - vendor/bin/behat -fprogress --profile=drupal${DRUPAL_VERSION} --strict
   # Only test the Drush profile if Drupal 7 was installed.
-  - [[ ${DRUPAL_VERSION}} -eq 7 ]] && vendor/bin/behat -fprogress --profile=drush --strict
+  - test ${DRUPAL_VERSION} -eq 7 && vendor/bin/behat -fprogress --profile=drush --strict
 
 after_failure:
   - cat ~/debug.txt
