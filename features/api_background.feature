@@ -3,7 +3,6 @@ Feature: DrupalContext
   Test DrupalContext in combination with Backgrounds
 
   Background:
-    Given a deliberately introduced error
     Given "tags" terms:
       | name    |
       | Tag one |
