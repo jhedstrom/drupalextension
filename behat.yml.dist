@@ -43,12 +43,12 @@ drupal6:
         tags: "@d6"
   extensions:
     Behat\MinkExtension:
-      base_url: http://localhost:8886
+      base_url: http://localhost:8888
     Drupal\DrupalExtension:
       api_driver: "drupal"
       drupal:
         # Change this to the absolute path to Drupal install.
-        drupal_root: "drupal6"
+        drupal_root: "drupal"
       region_map:
         left sidebar: "#sidebar-first"
         content: "#content"
@@ -66,12 +66,12 @@ drupal7:
         tags: "@d7"
   extensions:
     Behat\MinkExtension:
-      base_url: http://localhost:8887
+      base_url: http://localhost:8888
     Drupal\DrupalExtension:
       api_driver: "drupal"
       drupal:
         # Change this to the absolute path to Drupal install.
-        drupal_root: "drupal7"
+        drupal_root: "drupal"
       region_map:
         left sidebar: "#sidebar-first"
         content: "#content"
@@ -91,12 +91,12 @@ drush:
         tags: "@drushTest"
   extensions:
     Behat\MinkExtension:
-      base_url: http://localhost:8887
+      base_url: http://localhost:8888
     Drupal\DrupalExtension:
       api_driver: "drush"
       drush_driver: "drush"
       drush:
-        root: "drupal7"
+        root: "drupal"
       region_map:
         left sidebar: "#sidebar-first"
         content: "#content"
@@ -119,7 +119,7 @@ drupal8:
       api_driver: "drupal"
       drupal:
         # Change this to the absolute path to Drupal install.
-        drupal_root: "drupal8"
+        drupal_root: "drupal"
       region_map:
         left sidebar: "#sidebar-first"
         content: "#content"
