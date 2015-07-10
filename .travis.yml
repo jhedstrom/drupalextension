@@ -55,9 +55,9 @@ before_script:
   # Only revert features on Drupal 7 and 8.
   - test ${DRUPAL_VERSION} -eq 6 || drush --yes fr behat_test
   # Disable the page cache on Drupal 8.
-  - test ${DRUPAL_VERSION} -eq 8 && drush --yes pmu page_cache || exit 0
+  - test ${DRUPAL_VERSION} -eq 8 && drush --yes pmu page_cache || true
   # Clear the cache on Drupal 6 and 7, rebuild on Drupal 8.
-  - test ${DRUPAL_VERSION} -eq 8 && drush cr || drush cc all || exit 0
+  - test ${DRUPAL_VERSION} -eq 8 && drush cr || drush cc all || true
   - drush --debug runserver :8888 > ~/debug.txt 2>&1 &
   - cd -
   - sleep 4s
@@ -67,7 +67,7 @@ script:
   - vendor/bin/behat -fprogress --strict
   - vendor/bin/behat -fprogress --profile=drupal${DRUPAL_VERSION} --strict
   # Only test the Drush profile if Drupal 7 was installed.
-  - test ${DRUPAL_VERSION} -eq 7 && vendor/bin/behat -fprogress --profile=drush --strict || exit 0
+  - test ${DRUPAL_VERSION} -eq 7 && vendor/bin/behat -fprogress --profile=drush --strict || true
 
 after_failure:
   - cat ~/debug.txt
