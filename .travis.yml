@@ -9,10 +9,12 @@ php:
   - hhvm
 
 env:
-  - PATH=$PATH:/home/travis/.composer/vendor/bin
-  - DRUPAL_VERSION=6
-  - DRUPAL_VERSION=7
-  - DRUPAL_VERSION=8
+  global:
+    - PATH=$PATH:/home/travis/.composer/vendor/bin
+  matrix:
+    - DRUPAL_VERSION=6
+    - DRUPAL_VERSION=7
+    - DRUPAL_VERSION=8
 
 matrix:
   exclude:
