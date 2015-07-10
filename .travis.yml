@@ -49,7 +49,7 @@ before_script:
   - mysql -e 'create database drupal'
   - drush --quiet dl drupal-${DRUPAL_VERSION} --dev --drupal-project-rename=drupal
   - drush --yes --root=$PWD/drupal site-install --db-url=mysql://travis:@127.0.0.1/drupal
-  - cp -r fixtures/drupal${DRUPAL_VERSION}/modules/behat_test drupal/${MODULE_PATH}
+  - cp -r fixtures/drupal${DRUPAL_VERSION}/modules/behat_test ${MODULE_PATH}
   - cd drupal
   - drush --yes en behat_test
   # Only revert features on Drupal 7 and 8.
