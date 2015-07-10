@@ -53,8 +53,8 @@ before_script:
   - cp -r fixtures/drupal${DRUPAL_VERSION}/modules/behat_test ${MODULE_PATH}
   - cd drupal
   - drush --yes en behat_test
-  # Only revert features on Drupal 7 and 8.
-  - test ${DRUPAL_VERSION} -eq 6 || drush --yes fr behat_test
+  # Only revert features on Drupal 7.
+  - test ${DRUPAL_VERSION} -eq 7 && drush --yes fr behat_test || true
   # Disable the page cache on Drupal 8.
   - test ${DRUPAL_VERSION} -eq 8 && drush --yes pmu page_cache || true
   # Clear the cache on Drupal 6 and 7, rebuild on Drupal 8.
