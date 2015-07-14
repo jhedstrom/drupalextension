@@ -29,6 +29,7 @@ What does the Drupal Extension add?
 The Drupal Extension to Behat and Mink assists in the performance of these
 common Drupal testing tasks:
 
-*  Set up test data with Drush or the Drupal API Define theme regions and test
-*  data appears within them Clear the cache, log out, and other useful steps
+*  Set up test data with Drush or the Drupal API 
+*  Define theme regions and test data appears within them 
+*  Clear the cache, log out, and other useful steps
 *  Detect and discover steps provided by contributed modules and themes
