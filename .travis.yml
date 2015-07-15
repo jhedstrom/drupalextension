@@ -29,6 +29,9 @@ matrix:
   allow_failures:
     - php: 7.0
 
+# Enable Travis containers.
+sudo: false
+
 install:
   - composer self-update
   - composer install
