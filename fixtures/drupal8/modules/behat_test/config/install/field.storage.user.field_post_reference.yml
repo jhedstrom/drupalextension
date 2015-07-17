@@ -12,7 +12,7 @@ settings:
   target_type: node
 module: entity_reference
 locked: false
-cardinality: 2
+cardinality: -1
 translatable: true
 indexes: {  }
 persist_with_no_fields: false

@@ -1,6 +1,8 @@
 langcode: en
 status: true
 dependencies:
+  config:
+    - field.storage.user.field_post_reference
   module:
     - entity_reference
 id: user.user.field_post_reference
@@ -14,7 +16,7 @@ translatable: false
 default_value: {  }
 default_value_callback: ''
 settings:
-  handler: 'default:node'
+  handler: default
   handler_settings:
     target_bundles:
       page: page

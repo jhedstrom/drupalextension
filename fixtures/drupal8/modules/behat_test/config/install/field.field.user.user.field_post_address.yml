@@ -1,5 +1,8 @@
 langcode: en
 status: true
+dependencies:
+  config:
+    - field.storage.user.field_post_address
 id: user.user.field_post_address
 field_name: field_post_address
 entity_type: user
