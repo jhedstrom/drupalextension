@@ -4,7 +4,7 @@ dependencies:
   config:
     - core.entity_view_mode.user.compact
     - field.field.user.user.field_user_reference
-    - field.field.user.user.field_user_tags
+    - field.field.user.user.field_tags
     - field.field.user.user.user_picture
   module:
     - image
@@ -25,4 +25,4 @@ content:
 hidden:
   member_for: true
   field_user_reference: true
-  field_user_tags: true
+  field_tags: true

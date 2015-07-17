@@ -3,7 +3,7 @@ status: true
 dependencies:
   config:
     - field.field.user.user.field_user_reference
-    - field.field.user.user.field_user_tags
+    - field.field.user.user.field_tags
     - field.field.user.user.user_picture
   module:
     - image
@@ -36,7 +36,7 @@ content:
     weight: 4
     settings: {  }
     third_party_settings: {  }
-  field_user_tags:
+  field_tags:
     type: options_buttons
     weight: 5
     settings: {  }

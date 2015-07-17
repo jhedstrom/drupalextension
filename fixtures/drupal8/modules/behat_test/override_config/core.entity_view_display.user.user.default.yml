@@ -3,7 +3,7 @@ status: true
 dependencies:
   config:
     - field.field.user.user.field_user_reference
-    - field.field.user.user.field_user_tags
+    - field.field.user.user.field_tags
     - field.field.user.user.user_picture
   module:
     - image
@@ -26,7 +26,7 @@ content:
     weight: 1
     settings: {  }
     third_party_settings: {  }
-  field_user_tags:
+  field_tags:
     type: entity_reference_label
     weight: 2
     settings:

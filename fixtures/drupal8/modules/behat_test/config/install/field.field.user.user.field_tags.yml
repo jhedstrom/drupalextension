@@ -2,12 +2,12 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.user.field_user_tags
+    - field.storage.user.field_tags
   module:
     - taxonomy
     - entity_reference
-id: user.user.field_user_tags
-field_name: field_user_tags
+id: user.user.field_tags
+field_name: field_tags
 entity_type: user
 bundle: user
 label: Tags
