@@ -4,6 +4,7 @@ dependencies:
   config:
     - core.entity_view_mode.node.teaser
     - field.field.node.post.body
+    - field.field.node.post.field_post_address
     - field.field.node.post.field_post_date
     - field.field.node.post.field_post_links
     - field.field.node.post.field_post_reference
@@ -27,6 +28,7 @@ content:
       trim_length: 600
     third_party_settings: {  }
 hidden:
+  field_post_address: true
   field_post_date: true
   field_post_reference: true
   field_post_dates: true
