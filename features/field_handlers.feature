@@ -6,7 +6,7 @@ Feature: FieldHandlers
 
   # @d7 scenarios assume a "standard" install of Drupal 7 and require
   # the feature "fixtures/drupal7/modules/behat_test" to enabled on the site.
-  @d7
+  @d7 @d8
   Scenario: Test various node field handlers in Drupal 7
     Given "page" content:
       | title      |
@@ -35,7 +35,7 @@ Feature: FieldHandlers
     And I should see "1000"
     And I should see "Louisalaan 1"
 
-  @d7
+  @d7 @d8
   Scenario: Test alternative syntax for named field columns on node content
     When I am viewing a "post" content:
       | title                           | Post title                  |
@@ -48,7 +48,7 @@ Feature: FieldHandlers
     And I should see "1 Avenue des Champs Elysées"
     And I should see "75008"
 
-  @d7
+  @d7 @d8
   Scenario: Test shorthand syntax for named field columns on node content
     When I am viewing a "post" content:
       | title                      | Post title      |
@@ -61,7 +61,7 @@ Feature: FieldHandlers
     And I should see "1 Oxford Street"
     And I should see "W1D 1AN"
 
-  @d7
+  @d7 @d8
   Scenario: Test multivalue fields with named field columns on node content
     When I am viewing a "post" content:
       | title                      | Post title                             |
@@ -78,7 +78,7 @@ Feature: FieldHandlers
     And I should see "Shibuya Crossing"
     And I should see "150-0040"
 
-  @d7
+  @d7 @d8
   Scenario: Test various user field handlers in Drupal 7
     Given "tags" terms:
       | name      |
@@ -107,7 +107,7 @@ Feature: FieldHandlers
     And I should see "1000"
     And I should see "Louisalaan 1"
 
-  @d7
+  @d7 @d8
   Scenario: Test using @Transform to provide human friendly aliases for named field columns
     Given users:
       | name     | mail             | street        | city     | postcode | country |
@@ -120,7 +120,7 @@ Feature: FieldHandlers
     And I should see "Pioneer Place"
     And I should see "OR 97204"
 
-  @d7
+  @d7 @d8
   Scenario: Test taxonomy term reference field handler
     Given "tags" terms:
       | name      |
