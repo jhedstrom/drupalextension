@@ -4,10 +4,10 @@ Feature: FieldHandlers
   As a developer
   I need to use the step definitions of this context
 
-  # @d7 scenarios assume a "standard" install of Drupal 7 and require
-  # the feature "fixtures/drupal7/modules/behat_test" to enabled on the site.
+  # @d7 and @d8 scenarios assume a "standard" install of Drupal and require the
+  # feature "fixtures/drupalN/modules/behat_test" to enabled on the site.
   @d7 @d8
-  Scenario: Test various node field handlers in Drupal 7
+  Scenario: Test various node field handlers in Drupal 7 and 8
     Given "page" content:
       | title      |
       | Page one   |
