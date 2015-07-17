@@ -228,6 +228,15 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
   }
 
   /**
+   * Clear static caches.
+   *
+   * @AfterScenario @api
+   */
+  public function clearStaticCaches() {
+    $this->getDriver()->clearStaticCaches();
+  }
+
+  /**
    * Dispatch scope hooks.
    *
    * @param string $scope
