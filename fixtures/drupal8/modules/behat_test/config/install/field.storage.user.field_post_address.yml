@@ -1,0 +1,16 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - user
+id: user.field_post_address
+field_name: field_post_address
+entity_type: user
+type: behat_test_address_field
+settings: {  }
+module: behat_test
+locked: false
+cardinality: 2
+translatable: true
+indexes: {  }
+persist_with_no_fields: false

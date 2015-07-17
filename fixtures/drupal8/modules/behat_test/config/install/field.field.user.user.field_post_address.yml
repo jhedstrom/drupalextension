@@ -1,0 +1,24 @@
+langcode: en
+status: true
+id: user.user.field_post_address
+field_name: field_post_address
+entity_type: user
+bundle: user
+label: Address
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    country: ''
+    locality: ''
+    thoroughfare: ''
+    postal_code: ''
+  -
+    country: ''
+    locality: ''
+    thoroughfare: ''
+    postal_code: ''
+default_value_callback: ''
+settings: {  }
+field_type: behat_test_address_field
