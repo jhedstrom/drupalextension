@@ -18,14 +18,12 @@ Feature: FieldHandlers
       | body                 | PLACEHOLDER BODY                                                                 |
       | field_post_reference | Page one, Page two                                                               |
       | field_post_date      | 2015-02-08 17:45:00                                                              |
-      | field_post_dates     | 2015-02-10 17:45:00 - 2015-03-10 17:45:00                                        |
       | field_post_links     | Link 1 - http://example.com, Link 2 - http://example.com                         |
       | field_post_select    | One, Two                                                                         |
       | field_post_address   | country: BE - locality: Brussel - thoroughfare: Louisalaan 1 - postal_code: 1000 |
     Then I should see "Page one"
     And I should see "Page two"
     And I should see "Sunday, February 8, 2015"
-    And I should see "to Tuesday, March 10, 2015"
     And I should see the link "Link 1"
     And I should see the link "Link 2"
     And I should see "One"
@@ -138,3 +136,11 @@ Feature: FieldHandlers
     And I should see the link "Tag two"
     And I should see the link "Tag three"
 
+  @d7
+  # There is no support for date ranges in D8 yet, so only test D7 for now.
+  Scenario: Test date ranges in Drupal 7
+    When I am viewing a "post" content:
+      | title                | Post title                                                                       |
+      | body                 | PLACEHOLDER BODY                                                                 |
+      | field_post_dates     | 2015-02-10 17:45:00 - 2015-03-10 17:45:00                                        |
+    Then I should see "to Tuesday, March 10, 2015"
