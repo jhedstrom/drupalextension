@@ -34,6 +34,8 @@ sudo: false
 
 install:
   - composer self-update
+  # Use the example composer.json file for Drupal 8.
+  - test ${DRUPAL_VERSION} -eq 8 && cp doc/_static/composer.json.d8 ./composer.json || true
   - composer install
   - composer global require drush/drush:dev-master --prefer-source
   - npm install
