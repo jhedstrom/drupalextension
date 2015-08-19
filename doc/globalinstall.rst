@@ -25,7 +25,7 @@ need get installed. `Full directions for global installation
 found on the `Composer website <http://getcomposer.org/>`_.::
 
   curl -sS https://getcomposer.org/installer | php
-  mv composer.phar /usr/local/bin/composer
+  sudo mv composer.phar /usr/local/bin/composer
 
 Install the Drupal Extension 
 ----------------------------
