@@ -58,7 +58,7 @@ Install the Drupal Extension
 
 5. Make the binary available system-wide::
 
-    ln -s /opt/drupalextension/bin/behat /usr/local/bin/behat
+    sudo ln -s /opt/drupalextension/bin/behat /usr/local/bin/behat
 
 Set up tests 
 ------------ 
