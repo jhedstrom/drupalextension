@@ -43,7 +43,7 @@ drupal6:
         tags: "@d6"
   extensions:
     Behat\MinkExtension:
-      base_url: http://localhost:8888
+      base_url: http://127.0.0.1:8888
     Drupal\DrupalExtension:
       api_driver: "drupal"
       drupal:
@@ -66,7 +66,7 @@ drupal7:
         tags: "@d7"
   extensions:
     Behat\MinkExtension:
-      base_url: http://localhost:8888
+      base_url: http://127.0.0.1:8888
     Drupal\DrupalExtension:
       api_driver: "drupal"
       drupal:
@@ -91,7 +91,7 @@ drush:
         tags: "@drushTest"
   extensions:
     Behat\MinkExtension:
-      base_url: http://localhost:8888
+      base_url: http://127.0.0.1:8888
     Drupal\DrupalExtension:
       api_driver: "drush"
       drush_driver: "drush"
@@ -114,7 +114,7 @@ drupal8:
         tags: "@d8&&~@d8wip"
   extensions:
     Behat\MinkExtension:
-      base_url: http://localhost:8888
+      base_url: http://127.0.0.1:8888
     Drupal\DrupalExtension:
       api_driver: "drupal"
       drupal:
