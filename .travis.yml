@@ -16,15 +16,11 @@ env:
 
 matrix:
   exclude:
-    - php: 5.3
-      env: DRUPAL_VERSION=8
     - php: 5.4
       env: DRUPAL_VERSION=8
     - php: 5.6
       env: DRUPAL_VERSION=6
     - php: 7.0
-      env: DRUPAL_VERSION=6
-    - php: hhvm
       env: DRUPAL_VERSION=6
   allow_failures:
     - php: 7.0
@@ -34,6 +30,8 @@ sudo: false
 
 install:
   - composer self-update
+  # Use the example composer.json file for Drupal 8.
+  - test ${DRUPAL_VERSION} -eq 8 && cp doc/_static/composer.json.d8 ./composer.json || true
   - composer install
   - composer global require drush/drush:dev-master --prefer-source
   - npm install
