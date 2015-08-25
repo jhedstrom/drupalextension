@@ -30,7 +30,7 @@ infrastructure. It also makes documentation consistent and reliable.
   For Drupal 8, you'll need to specify the correct version of Guzzle:
 
   .. literalinclude:: _static/snippets/composer.json.d8
-     : language: javascript
+     :language: javascript
      :linenos:
      :emphasize-lines: 4
 
