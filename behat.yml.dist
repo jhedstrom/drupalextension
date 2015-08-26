@@ -8,7 +8,7 @@ default:
         - Drupal\DrupalExtension\Context\MinkContext
         - Drupal\DrupalExtension\Context\MarkupContext
       filters:
-        tags: "~@api&&~@drushTest&&@javascript"
+        tags: "@blackbox"
   extensions:
     Behat\MinkExtension:
       goutte: ~

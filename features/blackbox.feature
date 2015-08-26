@@ -1,3 +1,4 @@
+@blackbox
 Feature: Test DrupalContext
   In order to prove the Drupal context using the blackbox driver is working properly
   As a developer
