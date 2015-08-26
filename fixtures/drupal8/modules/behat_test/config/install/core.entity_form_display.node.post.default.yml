@@ -3,6 +3,7 @@ status: true
 dependencies:
   config:
     - field.field.node.post.body
+    - field.field.node.post.field_post_address
     - field.field.node.post.field_post_date
     - field.field.node.post.field_post_links
     - field.field.node.post.field_post_reference
@@ -71,6 +72,11 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: entity_reference_autocomplete
+  field_post_address:
+    weight: 37
+    settings: {  }
+    third_party_settings: {  }
+    type: behat_test_address_field_default
   field_post_date:
     weight: 33
     settings: {  }
@@ -88,5 +94,4 @@ content:
       placeholder_title: ''
     third_party_settings: {  }
     type: link_default
-hidden:
-  field_post_dates: true
+hidden: {  }

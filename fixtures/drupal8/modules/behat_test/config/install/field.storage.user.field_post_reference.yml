@@ -4,8 +4,8 @@ dependencies:
   module:
     - entity_reference
     - user
-id: user.field_user_reference
-field_name: field_user_reference
+id: user.field_post_reference
+field_name: field_post_reference
 entity_type: user
 type: entity_reference
 settings:
