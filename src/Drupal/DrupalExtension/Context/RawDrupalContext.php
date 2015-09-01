@@ -285,7 +285,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    */
   public function parseEntityFields($entity_type, \stdClass $entity) {
     $multicolumn_field = '';
-    $multicolumn_fields = [];
+    $multicolumn_fields = array();
 
     foreach ($entity as $field => $field_value) {
       // Reset the multicolumn field if the field name does not contain a column.
@@ -312,12 +312,12 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
       $field_name = $multicolumn_field ?: $field;
       if ($this->getDriver()->isField($entity_type, $field_name)) {
         // Split up multiple values in multi-value fields.
-        $values = [];
+        $values = array();
         foreach (explode(', ', $field_value) as $key => $value) {
           $columns = $value;
           // Split up field columns if the ' - ' separator is present.
           if (strstr($value, ' - ') !== FALSE) {
-            $columns = [];
+            $columns = array();
             foreach (explode(' - ', $value) as $column) {
               // Check if it is an inline named column.
               if (!$is_multicolumn && strpos($column, ': ', 1) !== FALSE) {
