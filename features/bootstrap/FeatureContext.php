@@ -107,12 +107,12 @@ class FeatureContext implements Context {
    * @Transform table:name,mail,street,city,postcode,country
    */
   public function castUsersTable(TableNode $user_table) {
-    $aliases = [
+    $aliases = array(
       'country' => 'field_post_address:country',
       'city' => 'field_post_address:locality',
       'street' => 'field_post_address:thoroughfare',
       'postcode' => 'field_post_address:postal_code',
-    ];
+    );
 
     // The first row of the table contains the field names.
     $table = $user_table->getTable();
