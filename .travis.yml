@@ -1,6 +1,7 @@
 language: php
 
 php:
+  - 5.3
   - 5.4
   - 5.5
   - 5.6
@@ -16,6 +17,8 @@ env:
 
 matrix:
   exclude:
+    - php: 5.3
+      env: DRUPAL_VERSION=8
     - php: 5.4
       env: DRUPAL_VERSION=8
     - php: 5.6
@@ -24,6 +27,7 @@ matrix:
       env: DRUPAL_VERSION=6
   allow_failures:
     - php: 7.0
+    - php: 5.3
 
 # Enable Travis containers.
 sudo: false
@@ -33,7 +37,10 @@ install:
   # Use the example composer.json file for Drupal 8.
   - test ${DRUPAL_VERSION} -eq 8 && cp doc/_static/composer.json.d8 ./composer.json || true
   - composer install
-  - composer global require drush/drush:dev-master --prefer-source
+  # Drush version must vary depending on environment and version of core.
+  - test ${TRAVIS_PHP_VERSION} == "5.3" && composer global require drush/drush:~6.0 || composer global require drush/drush:dev-master
+  # PHP 5.3 requires the cgi extension for runserver.
+  - test ${TRAVIS_PHP_VERSION} == "5.3" && pecl install cgi || true
   - npm install
 
 before_script:
@@ -63,6 +70,7 @@ before_script:
   - sleep 4s
 
 script:
+  - find ./src -name "*.php" -print0 | xargs -0 -n1 -P8 php -l
   - vendor/bin/phpspec run -f pretty --no-interaction
   - vendor/bin/behat -fprogress --strict
   - vendor/bin/behat -fprogress --profile=drupal${DRUPAL_VERSION} --strict
