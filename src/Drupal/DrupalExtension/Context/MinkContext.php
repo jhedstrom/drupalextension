@@ -508,7 +508,7 @@ class MinkContext extends MinkExtension implements TranslatableContext {
    */
   public function assertSelectRadioById($label, $id = '') {
     $element = $this->getSession()->getPage();
-    $radiobutton = $id ? $element->findById($id) : $element->find('named', array('radio', $label));
+    $radiobutton = $id ? $element->findById($id) : $element->find('named', array('radio', $this->getSession()->getSelectorsHandler()->xpathLiteral($label)));
     if ($radiobutton === NULL) {
       throw new \Exception(sprintf('The radio button with "%s" was not found on the page %s', $id ? $id : $label, $this->getSession()->getCurrentUrl()));
     }
