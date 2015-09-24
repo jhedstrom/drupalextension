@@ -56,13 +56,13 @@ the [Full documentation](https://behat-drupal-extension.readthedocs.org)
 1. In the projectdir, run
 
     ``` bash
-    bin/behat --init
+    vendor/bin/behat --init
     ```
 
 1. Find pre-defined steps to work with using:
 
     ```bash
-    bin/behat -di
+    vendor/bin/behat -di
     ```
 
 1. Define your own steps in `projectdir\features\FeatureContext.php`
