@@ -376,7 +376,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
 
   /**
    * Parse multi-value fields. Possible formats:
-   *    A, B, C
+   *    A, B, "C, D"
    *    A - B, C - D, E - F
    *
    * @param string $entity_type
@@ -414,7 +414,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
       if ($this->getDriver()->isField($entity_type, $field_name)) {
         // Split up multiple values in multi-value fields.
         $values = array();
-        foreach (explode(', ', $field_value) as $key => $value) {
+        foreach (str_getcsv($field_value) as $key => $value) {
           $columns = $value;
           // Split up field columns if the ' - ' separator is present.
           if (strstr($value, ' - ') !== FALSE) {
