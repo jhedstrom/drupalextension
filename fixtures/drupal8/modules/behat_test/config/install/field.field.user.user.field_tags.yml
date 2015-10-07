@@ -5,7 +5,6 @@ dependencies:
     - field.storage.user.field_tags
   module:
     - taxonomy
-    - entity_reference
 id: user.user.field_tags
 field_name: field_tags
 entity_type: user
