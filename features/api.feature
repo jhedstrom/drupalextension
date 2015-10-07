@@ -20,7 +20,7 @@ Feature: DrupalContext
     Then I should be on "admin/structure/types/manage/article/fields"
     And I should see text matching "Add new field"
 
-  @drushTest @d8
+  @drushTest
   Scenario: Find a heading in a region
     Given I am not logged in
     When I am on the homepage

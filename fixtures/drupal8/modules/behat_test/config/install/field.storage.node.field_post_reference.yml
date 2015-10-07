@@ -2,7 +2,6 @@ langcode: en
 status: true
 dependencies:
   module:
-    - entity_reference
     - node
 id: node.field_post_reference
 field_name: field_post_reference

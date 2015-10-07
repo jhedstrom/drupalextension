@@ -4,8 +4,6 @@ dependencies:
   config:
     - field.storage.node.field_post_reference
     - node.type.post
-  module:
-    - entity_reference
 id: node.post.field_post_reference
 field_name: field_post_reference
 entity_type: node
