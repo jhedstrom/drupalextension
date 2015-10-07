@@ -3,8 +3,6 @@ status: true
 dependencies:
   config:
     - field.storage.user.field_post_reference
-  module:
-    - entity_reference
 id: user.user.field_post_reference
 field_name: field_post_reference
 entity_type: user
