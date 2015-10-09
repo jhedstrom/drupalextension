@@ -170,7 +170,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
   /**
    * Find text in a table row containing given text.
    *
-   * @Then I should see (the text ):text in the ":rowText" row
+   * @Then I should see (the text ):text in the :rowText row
    */
   public function assertTextInTableRow($text, $rowText) {
     $row = $this->getTableRow($this->getSession()->getPage(), $rowText);
