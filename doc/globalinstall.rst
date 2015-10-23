@@ -24,8 +24,8 @@ need get installed. `Full directions for global installation
 <http://getcomposer.org/doc/00-intro.md#globally>`_ and more information can be
 found on the `Composer website <http://getcomposer.org/>`_.::
 
-  curl -sS https://getcomposer.org/installer | 
-  php mv composer.phar /usr/local/bin/composer
+  curl -sS https://getcomposer.org/installer | php
+  sudo mv composer.phar /usr/local/bin/composer
 
 Install the Drupal Extension 
 ----------------------------
@@ -58,7 +58,7 @@ Install the Drupal Extension
 
 5. Make the binary available system-wide::
 
-    ln -s /opt/drupalextension/bin/behat /usr/local/bin/behat
+    sudo ln -s /opt/drupalextension/bin/behat /usr/local/bin/behat
 
 Set up tests 
 ------------ 
