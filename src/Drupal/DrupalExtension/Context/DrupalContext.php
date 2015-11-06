@@ -222,7 +222,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
     $node = (object) array(
       'title' => $title,
       'type' => $type,
-      'body' => $this->getRandom()->string(255),
+      'body' => $this->getRandom()->name(255),
     );
     $saved = $this->nodeCreate($node);
     // Set internal page on the new node.
@@ -242,7 +242,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
     $node = (object) array(
       'title' => $title,
       'type' => $type,
-      'body' => $this->getRandom()->string(255),
+      'body' => $this->getRandom()->name(255),
       'uid' => $this->user->uid,
     );
     $saved = $this->nodeCreate($node);
@@ -319,7 +319,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
     $term = (object) array(
       'name' => $name,
       'vocabulary_machine_name' => $vocabulary,
-      'description' => $this->getRandom()->string(255),
+      'description' => $this->getRandom()->name(255),
     );
     $saved = $this->termCreate($term);
 
