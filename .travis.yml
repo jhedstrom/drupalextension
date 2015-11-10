@@ -59,6 +59,7 @@ before_script:
   - cp -r fixtures/drupal${DRUPAL_VERSION}/modules/behat_test ${MODULE_PATH}
   - cd drupal
   - drush --yes en behat_test
+  - mkdir -p $PWD/drupal/drush; git clone https://github.com/drush-ops/behat-drush-endpoint.git $PWD/drupal/drush/behat-drush-endpoint
   # Only revert features on Drupal 7.
   - test \! ${DRUPAL_VERSION} -eq 7 || drush --yes fr behat_test
   # Disable the page cache on Drupal 8.
