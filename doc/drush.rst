@@ -15,6 +15,11 @@ Install Drush
 See the `Drush project page <https://drupal.org/project/drush>`_ for
 installation directions.
 
+Install the Behat Drush Endpoint
+--------------------------------
+
+The Behat Drush Endpoint is a Drush-based service that the Drush Driver uses in order to create content on the Drupal site being tested.  See the `Behat Drush Endpoint project page <https://github.com/drush-ops/behat-drush-endpoint>`_ for instructions on how to install it with your Drupal site.
+
 Point Drush at your Drupal site
 -------------------------------
 
@@ -87,3 +92,5 @@ each of the following examples:
 .. literalinclude:: _static/snippets/drush.feature
    :language: gherkin
    :linenos:
+
+If the Behat Drush Endpoint is installed on the Drupal site being tested, then you will also have access to all of the examples shown for the Drupal API driver.
