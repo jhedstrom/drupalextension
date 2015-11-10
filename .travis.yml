@@ -35,12 +35,12 @@ sudo: false
 install:
   - composer self-update
   # Use the example composer.json file for Drupal 8.
-  - test ${DRUPAL_VERSION} -eq 8 && cp doc/_static/composer.json.d8 ./composer.json || true
+  - test \! ${DRUPAL_VERSION} -eq 8 || cp doc/_static/composer.json.d8 ./composer.json
   - composer install
   # Drush version must vary depending on environment and version of core.
   - test ${TRAVIS_PHP_VERSION} == "5.3" && composer global require drush/drush:~6.0 || composer global require drush/drush:dev-master
   # PHP 5.3 requires the cgi extension for runserver.
-  - test ${TRAVIS_PHP_VERSION} == "5.3" && pecl install cgi || true
+  - test \! ${TRAVIS_PHP_VERSION} == "5.3" || pecl install cgi
   - npm install
 
 before_script:
@@ -60,9 +60,9 @@ before_script:
   - cd drupal
   - drush --yes en behat_test
   # Only revert features on Drupal 7.
-  - test ${DRUPAL_VERSION} -eq 7 && drush --yes fr behat_test || true
+  - test \! ${DRUPAL_VERSION} -eq 7 || drush --yes fr behat_test
   # Disable the page cache on Drupal 8.
-  - test ${DRUPAL_VERSION} -eq 8 && drush --yes pmu page_cache || true
+  - test \! ${DRUPAL_VERSION} -eq 8 || drush --yes pmu page_cache
   # Clear the cache on Drupal 6 and 7, rebuild on Drupal 8.
   - test ${DRUPAL_VERSION} -eq 8 && drush cr || drush cc all || true
   - drush --debug runserver :8888 > ~/debug.txt 2>&1 &
@@ -75,7 +75,7 @@ script:
   - vendor/bin/behat -fprogress --strict
   - vendor/bin/behat -fprogress --profile=drupal${DRUPAL_VERSION} --strict
   # Only test the Drush profile if Drupal 7 was installed.
-  - test ${DRUPAL_VERSION} -eq 7 && vendor/bin/behat -fprogress --profile=drush --strict || true
+  - test \! ${DRUPAL_VERSION} -eq 7 || vendor/bin/behat -fprogress --profile=drush --strict
 
 after_failure:
   - cat ~/debug.txt
