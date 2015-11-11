@@ -59,7 +59,8 @@ before_script:
   - cp -r fixtures/drupal${DRUPAL_VERSION}/modules/behat_test ${MODULE_PATH}
   - cd drupal
   - drush --yes en behat_test
-  - mkdir drush; git clone https://github.com/drush-ops/behat-drush-endpoint.git drush/behat-drush-endpoint
+  - test ${DRUPAL_VERSION} -eq 8 || mkdir drush; git clone https://github.com/drush-ops/behat-drush-endpoint.git drush/behat-drush-endpoint
+  - test ${DRUPAL_VERSION} -ne 8 || composer require drush-ops/behat-drush-endpoint
   - drush cc drush
   - drush help behat
   # Only revert features on Drupal 7.
