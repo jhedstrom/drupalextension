@@ -399,6 +399,108 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
   }
 
   /**
+   * Installs the given module.
+   *
+   * @Given the :module module is enabled/installed
+   *
+   * @param string $module
+   *   The name of the module to install.
+   */
+  public function installModule($module) {
+    $this->installModules(array($module));
+  }
+
+  /**
+   * Installs the given modules.
+   *
+   * @Given the following modules are enabled/installed:
+   *
+   * Provide the list of modules in the following format:
+   * | modules |
+   * | comment |
+   * | forum   |
+   *
+   * @param TableNode $modulesTable
+   *   The list of modules to install.
+   */
+  public function installModuleList(TableNode $modulesTable) {
+    $modules = array();
+    foreach ($modulesTable->getHash() as $row) {
+      $modules[] = $row['module'];
+    }
+    $this->installModules($modules);
+  }
+
+  /**
+   * Uninstalls the given module.
+   *
+   * @Given the :module module is disabled/uninstalled
+   *
+   * @param string $module
+   *   The name of the module to uninstall.
+   */
+  public function uninstallModule($module) {
+    $this->uninstallModules(array($module));
+  }
+
+  /**
+   * Uninstalls the given modules.
+   *
+   * @Given the following modules are disabled/uninstalled:
+   *
+   * Provide the list of modules in the following format:
+   * | modules |
+   * | comment |
+   * | forum   |
+   *
+   * @param TableNode $modulesTable
+   *   The list of modules to uninstall.
+   */
+  public function uninstallModuleList(TableNode $modulesTable) {
+    $modules = array();
+    foreach ($modulesTable->getHash() as $row) {
+      $modules[] = $row['module'];
+    }
+    $this->uninstallModules($modules);
+  }
+
+  /**
+   * Checks if the given module is active.
+   *
+   * @Then the :module module should be enabled/active
+   *
+   * @param string $module
+   *   The name of the module to check.
+   *
+   * @throws \Exception
+   *   Thrown when the module is not active.
+   */
+  public function assertModuleActive($module) {
+    $module_list = $this->getDriver()->getCore()->getModuleList();
+    if (!in_array($module, $module_list)) {
+      throw new \Exception(sprintf('The %s module is not active.', $module));
+    }
+  }
+
+  /**
+   * Checks if the given module is not active.
+   *
+   * @Then the :module module should not be enabled/active
+   *
+   * @param string $module
+   *   The name of the module to check.
+   *
+   * @throws \Exception
+   *   Thrown when the module is active.
+   */
+  public function assertModuleNotActive($module) {
+    $module_list = $this->getDriver()->getCore()->getModuleList();
+    if (in_array($module, $module_list)) {
+      throw new \Exception(sprintf('The %s module is active.', $module));
+    }
+  }
+
+  /**
    * Pauses the scenario until the user presses a key. Useful when debugging a scenario.
    *
    * @Then (I )break
