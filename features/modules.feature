@@ -20,3 +20,21 @@ Feature: Module support
     Given the "forum" module is enabled
     Then the "forum" module should be active
     Then the "comment" module should be active
+
+  Scenario: Enable and disable multiple modules at once
+    Given the following modules are enabled:
+    | module |
+    | color  |
+    | forum  |
+    | search |
+    Then the "color" module should be active
+    And the "forum" module should be active
+    And the "search" module should be active
+    When the following modules are disabled:
+    | module |
+    | color  |
+    | forum  |
+    | search |
+    Then the "color" module should not be active
+    And the "forum" module should not be active
+    And the "search" module should not be active
