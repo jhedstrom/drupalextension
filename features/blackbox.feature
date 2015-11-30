@@ -17,7 +17,7 @@ Feature: Test DrupalContext
 
   Scenario: Viewing content in a region
     Given I am on the homepage
-    Then I should see "Come for the software, stay for the community" in the "left header"
+    Then I should see "Build something amazing." in the "left header"
 
   Scenario: Test ability to find text that should not appear in a region
     Given I am on the homepage
@@ -25,7 +25,7 @@ Feature: Test DrupalContext
 
   Scenario: Submit a form in a region
     Given I am on the homepage
-    When I fill in "Search Drupal.org" with "Views" in the "right header" region
+    When I fill in "Search …" with "Views" in the "right header" region
     And I press "Search" in the "right header" region
     Then I should see the text "Search again" in the "right sidebar" region
 
@@ -74,12 +74,6 @@ Feature: Test DrupalContext
    | error messages                                                                |
    | Sorry, unrecognized username or password                                      |
    | Unable to send e-mail. Contact the site administrator if the problem persists |
-
- Scenario: Messages
-   Given I am on "/user/register"
-   When I press "Create new account"
-   Then I should see the message "Username field is required"
-   But I should not see the message "Registration successful. You are now logged in"
 
  @javascript
  Scenario: Zombie driver is functional
