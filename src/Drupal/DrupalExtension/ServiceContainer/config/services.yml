@@ -34,21 +34,21 @@ services:
     class: %drupal.drupal.class%
     arguments:
       - {}
-      - @drupal.random
+      - "@drupal.random"
   drupal.random:
     class: %drupal.random.class%
   drupal.context.initializer:
     class: %drupal.context.initializer.class%
     arguments:
-      - @drupal.drupal
+      - "@drupal.drupal"
       - %drupal.parameters%
-      - @hook.dispatcher
+      - "@hook.dispatcher"
     tags:
       - { name: context.initializer }
   drupal.context.environment.reader:
     class: %drupal.context.environment.reader.class%
     arguments:
-      - @drupal.drupal
+      - "@drupal.drupal"
       - %drupal.parameters%
     tags:
       - { name: environment.reader }
@@ -60,7 +60,7 @@ services:
   drupal.listener.driver:
     class: %drupal.listener.drivers.class%
     arguments:
-      - @drupal.drupal
+      - "@drupal.drupal"
       - %drupal.parameters%
     tags:
       - { name: event_dispatcher.subscriber, priority: 0 }
