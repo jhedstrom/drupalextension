@@ -365,6 +365,14 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
   /**
    * Creates one or more terms on an existing vocabulary.
    *
+   * Provide term data in the following format:
+   *
+   * | name  | parent | description | weight | taxonomy_field_image |
+   * | Snook | Fish   | Marine fish | 10     | snook-123.jpg        |
+   * | ...   | ...    | ...         | ...    | ...                  |
+   *
+   * Only the 'name' field is required.
+   *
    * @Given :vocabulary terms:
    */
   public function createTerms($vocabulary, TableNode $termsTable) {
