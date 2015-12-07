@@ -89,6 +89,13 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
   protected $languages = array();
 
   /**
+   * Keep track of any modules that are installed so they can be uninstalled.
+   *
+   * @var array
+   */
+  protected $modules = array();
+
+  /**
    * {@inheritDoc}
    */
   public function setDrupal(DrupalDriverManager $drupal) {
@@ -225,6 +232,18 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
       $this->getDriver()->languageDelete($language);
       unset($this->languages[$language->langcode]);
     }
+  }
+
+  /**
+   * Uninstall any installed modules.
+   *
+   * @AfterScenario
+   */
+  public function cleanModules() {
+    if (!empty($this->modules)) {
+      $this->uninstallModules($this->modules);
+    }
+    $this->modules = array();
   }
 
   /**
@@ -465,6 +484,27 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    */
   public function loggedInWithRole($role) {
     return $this->loggedIn() && $this->user && isset($this->user->role) && $this->user->role == $role;
+  }
+
+  /**
+   * Installs the given modules.
+   *
+   * @param array $modules
+   *   A list of machine names of modules to install.
+   */
+  public function installModules(array $modules) {
+    $this->getDriver()->installModules($modules);
+    $this->modules = array_merge($this->modules, $modules);
+  }
+
+  /**
+   * Uninstalls the given modules.
+   *
+   * @param array $modules
+   *   A list of machine names of modules to uninstall.
+   */
+  public function uninstallModules(array $modules) {
+    $this->getDriver()->uninstallModules($modules);
   }
 
 }
