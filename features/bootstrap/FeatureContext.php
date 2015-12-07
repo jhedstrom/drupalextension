@@ -130,6 +130,41 @@ class FeatureContext implements Context {
   }
 
   /**
+   * Transforms human readable field names into machine names.
+   *
+   * This is used in field_handlers.feature for testing if human readable names
+   * can be used instead of machine names in tests.
+   *
+   * @param TableNode $post_table
+   *   The original table.
+   *
+   * @return TableNode
+   *   The transformed table.
+   *
+   * @Transform rowtable:title,body,reference,date,links,select,address
+   */
+  public function transformPostContentTable(TableNode $post_table) {
+    $aliases = array(
+      'reference' => 'field_post_reference',
+      'date' => 'field_post_date',
+      'links' => 'field_post_links',
+      'select' => 'field_post_select',
+      'address' => 'field_post_address',
+    );
+
+    $table = $post_table->getTable();
+    array_walk($table, function (&$row) use ($aliases) {
+      // The first column of the row contains the field names. Replace the
+      // human readable field name with the machine name if it exists.
+      if (array_key_exists($row[0], $aliases)) {
+        $row[0] = $aliases[$row[0]];
+      }
+    });
+
+    return new TableNode($table);
+  }
+
+  /**
    * From here down is the Behat FeatureContext.
    *
    * @defgroup Behat FeatureContext
