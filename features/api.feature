@@ -28,11 +28,17 @@ Feature: DrupalContext
     Then I should be on "admin/structure/types/manage/article/fields"
     And I should see text matching "Add field"
 
-  @drushTest @d7 @d8
+  @drushTest @d7
   Scenario: Find a heading in a region
     Given I am not logged in
     When I am on the homepage
     Then I should see the heading "User login" in the "left sidebar" region
+
+  @drushTest @d8
+  Scenario: Find a heading in a region
+    Given I am not logged in
+    When I am on the homepage
+    Then I should see the heading "Search" in the "left sidebar" region
 
   @drushTest @d7 @d8
   Scenario: Clear cache
