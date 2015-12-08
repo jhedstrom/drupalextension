@@ -135,7 +135,7 @@ Feature: DrupalContext
     When I am viewing a "tags" term with the name "My tag"
     Then I should see the heading "My tag"
 
-  @d7 @d8
+  @d7
   Scenario: Create many terms
     Given "tags" terms:
     | name    |
@@ -146,7 +146,18 @@ Feature: DrupalContext
     Then I should see "Tag one"
     And I should see "Tag two"
 
-  @d7 @d8
+  @d8
+  Scenario: Create many terms
+    Given "tags" terms:
+    | name    |
+    | Tag one |
+    | Tag two |
+    And I am logged in as a user with the "administrator" role
+    When I go to "admin/structure/taxonomy/manage/tags/overview"
+    Then I should see "Tag one"
+    And I should see "Tag two"
+
+  @d7
   Scenario: Create terms using vocabulary title rather than machine name.
     Given "Tags" terms:
     | name    |
@@ -154,6 +165,17 @@ Feature: DrupalContext
     | Tag two |
     And I am logged in as a user with the "administrator" role
     When I go to "admin/structure/taxonomy/tags"
+    Then I should see "Tag one"
+    And I should see "Tag two"
+
+  @d8
+  Scenario: Create terms using vocabulary title rather than machine name.
+    Given "Tags" terms:
+    | name    |
+    | Tag one |
+    | Tag two |
+    And I am logged in as a user with the "administrator" role
+    When I go to "admin/structure/taxonomy/manage/tags/overview"
     Then I should see "Tag one"
     And I should see "Tag two"
 
