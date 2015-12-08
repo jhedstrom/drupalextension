@@ -231,7 +231,7 @@ Feature: DrupalContext
   @d7 @d8
   Scenario: Node edit access by administrator
     Given I am logged in as a user with the "administrator" role
-    Then I should be able to edit an "Article"
+    Then I should be able to edit an "article"
 
   @d7 @d8
   Scenario: User hooks are functioning
