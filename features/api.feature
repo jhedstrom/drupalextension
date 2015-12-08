@@ -10,7 +10,7 @@ Feature: DrupalContext
   Scenario: Create and log in as a user
     Given I am logged in as a user with the "authenticated user" role
     When I click "My account"
-    Then I should see the heading "History"
+    Then I should see the text "Member for"
 
   @drushTest @d7 @d8
   Scenario: Target links within table rows
