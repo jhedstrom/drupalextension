@@ -23,6 +23,7 @@ Feature: FieldHandlers
       | field_post_address   | country: BE - locality: Brussel - thoroughfare: Louisalaan 1 - postal_code: 1000 |
     Then I should see "Post title"
     And I should see "PLACEHOLDER BODY"
+    And I should see "Page one"
     And I should see "Page two"
     And I should see "Sunday, February 8, 2015"
     And I should see the link "Link 1"
