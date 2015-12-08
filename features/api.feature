@@ -88,7 +88,7 @@ Feature: DrupalContext
 
   @d7 @d8
   Scenario: Create and view a node with fields
-    Given I am viewing an "Article":
+    Given I am viewing an "article":
     | title | My article with fields! |
     | body  | A placeholder           |
     Then I should see the heading "My article with fields!"
