@@ -12,13 +12,21 @@ Feature: DrupalContext
     When I click "My account"
     Then I should see the text "Member for"
 
-  @drushTest @d7 @d8
+  @drushTest @d7
   Scenario: Target links within table rows
     Given I am logged in as a user with the "administrator" role
     When I am at "admin/structure/types"
     And I click "manage fields" in the "Article" row
     Then I should be on "admin/structure/types/manage/article/fields"
     And I should see text matching "Add new field"
+
+  @d8
+  Scenario: Target links within table rows
+    Given I am logged in as a user with the "administrator" role
+    When I am at "admin/structure/types"
+    And I click "Manage fields" in the "Article" row
+    Then I should be on "admin/structure/types/manage/article/fields"
+    And I should see text matching "Add field"
 
   @drushTest @d7 @d8
   Scenario: Find a heading in a region
