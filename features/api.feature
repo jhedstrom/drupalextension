@@ -34,7 +34,7 @@ Feature: DrupalContext
     When I am on the homepage
     Then I should see the heading "User login" in the "left sidebar" region
 
-  @drushTest @d8
+  @d8
   Scenario: Find a heading in a region
     Given I am not logged in
     When I am on the homepage
