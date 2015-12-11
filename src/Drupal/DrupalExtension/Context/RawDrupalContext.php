@@ -160,6 +160,34 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
   }
 
   /**
+   * Massage node values to match the expectations on different Drupal versions.
+   *
+   * @beforeNodeCreate
+   */
+  public function alterNodeParameters(BeforeNodeCreateScope $scope) {
+    $node = $scope->getEntity();
+
+    // Get the Drupal API version if available. This is not available when
+    // using e.g. the BlackBoxDriver or DrushDriver.
+    $api_version = NULL;
+    $driver = $scope->getContext()->getDrupal()->getDriver();
+    if ($driver instanceof \Drupal\Driver\DrupalDriver) {
+      $api_version = $scope->getContext()->getDrupal()->getDriver()->version;
+    }
+
+    // On Drupal 8 the timestamps should be in UNIX time.
+    switch ($api_version) {
+      case 8:
+        foreach (array('changed', 'created', 'revision_timestamp') as $field) {
+          if (!empty($node->$field) && !is_numeric($node->$field)) {
+            $node->$field = strtotime($node->$field);
+          }
+        }
+      break;
+    }
+  }
+
+  /**
    * Remove any created nodes.
    *
    * @AfterScenario

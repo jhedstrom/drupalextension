@@ -1,18 +1,18 @@
-@d7 @api
+@api
 Feature: DrupalContext
   In order to prove the Drupal context is working properly
   As a developer
   I need to use the step definitions of this context
 
-  # These scenarios assume a "standard" install of Drupal 7.
+  # These scenarios assume a "standard" install of Drupal 7 and 8.
 
-  @drushTest
+  @drushTest @d7 @d8
   Scenario: Create and log in as a user
     Given I am logged in as a user with the "authenticated user" role
     When I click "My account"
-    Then I should see the heading "History"
+    Then I should see the text "Member for"
 
-  @drushTest
+  @drushTest @d7
   Scenario: Target links within table rows
     Given I am logged in as a user with the "administrator" role
     When I am at "admin/structure/types"
@@ -20,32 +20,46 @@ Feature: DrupalContext
     Then I should be on "admin/structure/types/manage/article/fields"
     And I should see text matching "Add new field"
 
-  @drushTest
+  @d8
+  Scenario: Target links within table rows
+    Given I am logged in as a user with the "administrator" role
+    When I am at "admin/structure/types"
+    And I click "Manage fields" in the "Article" row
+    Then I should be on "admin/structure/types/manage/article/fields"
+    And I should see text matching "Add field"
+
+  @drushTest @d7
   Scenario: Find a heading in a region
     Given I am not logged in
     When I am on the homepage
     Then I should see the heading "User login" in the "left sidebar" region
 
-  @drushTest @d8 @d8wip
+  @d8
+  Scenario: Find a heading in a region
+    Given I am not logged in
+    When I am on the homepage
+    Then I should see the heading "Search" in the "left sidebar" region
+
+  @drushTest @d7 @d8
   Scenario: Clear cache
     Given the cache has been cleared
     When I am on the homepage
     Then I should get a "200" HTTP response
 
-  @d8
+  @d7 @d8
   Scenario: Create a node
     Given I am logged in as a user with the "administrator" role
     When I am viewing an "article" with the title "My article"
     Then I should see the heading "My article"
 
-  @drushTest @d8
+  @drushTest @d7 @d8
   Scenario: Run cron
     Given I am logged in as a user with the "administrator" role
     When I run cron
     And am on "admin/reports/dblog"
     Then I should see the link "Cron run completed"
 
-  @d8
+  @d7 @d8
   Scenario: Create many nodes
     Given "page" content:
     | title    |
@@ -62,7 +76,7 @@ Feature: DrupalContext
     And I should see "First article"
     And I should see "Second article"
 
-  @d8
+  @d7 @d8
   Scenario: Create nodes with fields
     Given "article" content:
     | title                     | promote | body             |
@@ -72,14 +86,15 @@ Feature: DrupalContext
     And follow "First article with fields"
     Then I should see the text "PLACEHOLDER BODY"
 
+  @d7 @d8
   Scenario: Create and view a node with fields
-    Given I am viewing an "Article":
+    Given I am viewing an "article":
     | title | My article with fields! |
     | body  | A placeholder           |
     Then I should see the heading "My article with fields!"
     And I should see the text "A placeholder"
 
-  @d8
+  @d7 @d8
   Scenario: Create users
     Given users:
     | name     | mail            | status |
@@ -88,6 +103,7 @@ Feature: DrupalContext
     When I visit "admin/people"
     Then I should see the link "Joe User"
 
+  @d7
   Scenario: Create users with roles
     Given users:
     | name     | mail            | roles         |
@@ -97,6 +113,15 @@ Feature: DrupalContext
     Then I should see the text "administrator" in the "Joe User" row
 
   @d8
+  Scenario: Create users with roles
+    Given users:
+    | name     | mail            | roles         |
+    | Joe User | joe@example.com | administrator |
+    And I am logged in as a user with the "administrator" role
+    When I visit "admin/people"
+    Then I should see the text "Administrator" in the "Joe User" row
+
+  @d7 @d8
   Scenario: Login as a user created during this scenario
     Given users:
     | name      | status |
@@ -104,11 +129,13 @@ Feature: DrupalContext
     When I am logged in as "Test user"
     Then I should see the link "Log out"
 
+  @d7 @d8
   Scenario: Create a term
     Given I am logged in as a user with the "administrator" role
     When I am viewing a "tags" term with the name "My tag"
     Then I should see the heading "My tag"
 
+  @d7
   Scenario: Create many terms
     Given "tags" terms:
     | name    |
@@ -119,6 +146,18 @@ Feature: DrupalContext
     Then I should see "Tag one"
     And I should see "Tag two"
 
+  @d8
+  Scenario: Create many terms
+    Given "tags" terms:
+    | name    |
+    | Tag one |
+    | Tag two |
+    And I am logged in as a user with the "administrator" role
+    When I go to "admin/structure/taxonomy/manage/tags/overview"
+    Then I should see "Tag one"
+    And I should see "Tag two"
+
+  @d7
   Scenario: Create terms using vocabulary title rather than machine name.
     Given "Tags" terms:
     | name    |
@@ -129,6 +168,20 @@ Feature: DrupalContext
     Then I should see "Tag one"
     And I should see "Tag two"
 
+  @d8
+  Scenario: Create terms using vocabulary title rather than machine name.
+    Given "Tags" terms:
+    | name    |
+    | Tag one |
+    | Tag two |
+    And I am logged in as a user with the "administrator" role
+    When I go to "admin/structure/taxonomy/manage/tags/overview"
+    Then I should see "Tag one"
+    And I should see "Tag two"
+
+  @d7 @d8wip
+  # TODO: This doesn't work on Drupal 8 yet. For nodes the 'author' field is
+  # called 'uid' and only accepts numerical IDs.
   Scenario: Create nodes with specific authorship
     Given users:
     | name     | mail            | status |
@@ -141,6 +194,7 @@ Feature: DrupalContext
     And I follow "Article by Joe"
     Then I should see the link "Joe User"
 
+  @d7 @d8
   Scenario: Create an article with multiple term references
     Given "tags" terms:
     | name      |
@@ -158,6 +212,7 @@ Feature: DrupalContext
     And I should see the link "Tag three"
     And I should see the link "Tag four"
 
+  @d7 @d8
   Scenario: Readable created dates
     Given "article" content:
     | title        | body             | created            | status | promote |
@@ -165,6 +220,7 @@ Feature: DrupalContext
     When I am on the homepage
     Then I should see the text "Sun, 07/27/2014 - 00:03"
 
+  @d7 @d8
   Scenario: Node hooks are functioning
     Given "article" content:
     | title        | body        | published on       | status | promote |
@@ -172,10 +228,12 @@ Feature: DrupalContext
     When I am on the homepage
     Then I should see the text "Sat, 04/27/2013 - 11:11"
 
+  @d7 @d8
   Scenario: Node edit access by administrator
     Given I am logged in as a user with the "administrator" role
-    Then I should be able to edit an "Article"
+    Then I should be able to edit an "article"
 
+  @d7 @d8
   Scenario: User hooks are functioning
     Given users:
     | First name | Last name | E-mail               |
@@ -184,6 +242,7 @@ Feature: DrupalContext
     When I visit "admin/people"
     Then I should see the link "Joe User"
 
+  @d7
   Scenario: Term hooks are functioning
     Given "tags" terms:
     | Label     |
@@ -195,6 +254,17 @@ Feature: DrupalContext
     And I should see "Tag two"
 
   @d8
+  Scenario: Term hooks are functioning
+    Given "tags" terms:
+    | Label     |
+    | Tag one   |
+    | Tag two   |
+    And I am logged in as a user with the "administrator" role
+    When I go to "admin/structure/taxonomy/manage/tags/overview"
+    Then I should see "Tag one"
+    And I should see "Tag two"
+
+  @d7 @d8
   Scenario: Log in as a user with specific permissions
     Given I am logged in as a user with the "Administer content types" permission
     When I go to "admin/structure/types"
