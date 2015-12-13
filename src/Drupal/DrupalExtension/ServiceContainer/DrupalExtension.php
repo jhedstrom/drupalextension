@@ -142,7 +142,7 @@ class DrupalExtension implements ExtensionInterface {
               defaultValue('form#user-login')->
             end()->
             scalarNode('logged_in_selector')->
-              defaultValue('body.logged-in')->
+              defaultValue('body.logged-in,body.user-logged-in')->
             end()->
           end()->
         end()->
