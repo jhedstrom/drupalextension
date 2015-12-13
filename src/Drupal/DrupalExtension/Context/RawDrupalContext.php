@@ -3,6 +3,7 @@
 namespace Drupal\DrupalExtension\Context;
 
 use Behat\MinkExtension\Context\RawMinkContext;
+use Behat\Mink\Exception\DriverException;
 use Behat\Testwork\Hook\HookDispatcher;
 
 use Drupal\DrupalDriverManager;
@@ -154,7 +155,6 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
   public function getDrupalSelector($name) {
     $text = $this->getDrupalParameter('selectors');
     if (!isset($text[$name])) {
-      var_dump($text);
       throw new \Exception(sprintf('No such selector configured: %s', $name));
     }
     return $text[$name];
@@ -503,7 +503,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
       if ($page->has('css', $this->getDrupalSelector('logged_in_selector'))) {
         return TRUE;
       }
-    } catch (\Behat\Mink\Exception\DriverException $e) {
+    } catch (DriverException $e) {
       // This test may fail if the driver did not load any site yet.
     }
 
