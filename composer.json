@@ -15,7 +15,7 @@
     "behat/mink": "~1.5",
     "behat/mink-goutte-driver": "~1.0",
     "behat/mink-selenium2-driver": "~1.1",
-    "behat/behat": "~3.0,>=3.0.5",
+    "behat/behat": "dev-master#2059cbe",
     "behat/mink-extension": "~2.0",
     "drupal/drupal-driver": "dev-master"
   },

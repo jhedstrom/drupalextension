@@ -35,6 +35,37 @@ Feature: FieldHandlers
     And I should see "1000"
     And I should see "Louisalaan 1"
 
+  # This is identical to the previous test, but uses human readable names for
+  # the field names. This is better from a BDD standpoint. Please have a look at
+  # FeatureContext::transformPostContentTable() to see how the mapping between
+  # the machine names and human readable names is defined.
+  @d7 @d8
+  Scenario: Test using human readable names for fields using @Transform
+    Given "page" content:
+      | title      |
+      | Page one   |
+      | Page two   |
+      | Page three |
+    When I am viewing a "post" content:
+      | title     | Post title                                                                       |
+      | body      | PLACEHOLDER BODY                                                                 |
+      | reference | Page one, Page two                                                               |
+      | date      | 2015-02-08 17:45:00                                                              |
+      | links     | Link 1 - http://example.com, Link 2 - http://example.com                         |
+      | select    | One, Two                                                                         |
+      | address   | country: BE - locality: Brussel - thoroughfare: Louisalaan 1 - postal_code: 1000 |
+    Then I should see "Page one"
+    And I should see "Page two"
+    And I should see "Sunday, February 8, 2015"
+    And I should see the link "Link 1"
+    And I should see the link "Link 2"
+    And I should see "One"
+    And I should see "Two"
+    And I should see "Belgium"
+    And I should see "Brussel"
+    And I should see "1000"
+    And I should see "Louisalaan 1"
+
   @d7 @d8
   Scenario: Test alternative syntax for named field columns on node content
     When I am viewing a "post" content:
