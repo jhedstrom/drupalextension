@@ -240,20 +240,6 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
   }
 
   /**
-   * Returns a specific css selector.
-   *
-   * @param $name
-   *   string CSS selector name
-   */
-  public function getDrupalSelector($name) {
-    $text = $this->getDrupalParameter('selectors');
-    if (!isset($text[$name])) {
-      throw new \Exception(sprintf('No such selector configured: %s', $name));
-    }
-    return $text[$name];
-  }
-
-  /**
    * Internal callback to check for a specific message in a given context.
    *
    * @param $message

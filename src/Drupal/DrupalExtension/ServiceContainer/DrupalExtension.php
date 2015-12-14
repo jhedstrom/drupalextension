@@ -132,11 +132,18 @@ class DrupalExtension implements ExtensionInterface {
           end()->
         end()->
         arrayNode('selectors')->
+          addDefaultsIfNotSet()->
           children()->
             scalarNode('message_selector')->end()->
             scalarNode('error_message_selector')->end()->
             scalarNode('success_message_selector')->end()->
             scalarNode('warning_message_selector')->end()->
+            scalarNode('login_form_selector')->
+              defaultValue('form#user-login')->
+            end()->
+            scalarNode('logged_in_selector')->
+              defaultValue('body.logged-in,body.user-logged-in')->
+            end()->
           end()->
         end()->
         // Drupal drivers.
