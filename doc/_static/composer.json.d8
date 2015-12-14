@@ -12,13 +12,14 @@
      }
   ],
   "require": {
+    "behat/behat": "~3.0,>=3.0.5",
     "behat/mink": "~1.5",
+    "behat/mink-extension": "~2.0",
     "behat/mink-goutte-driver": "~1.0",
     "behat/mink-selenium2-driver": "~1.1",
-    "behat/behat": "~3.0,>=3.0.5",
-    "behat/mink-extension": "~2.0",
     "drupal/drupal-driver": "~1.0@dev",
-    "guzzlehttp/guzzle" : "^6.0@dev"
+    "guzzlehttp/guzzle" : "^6.0@dev",
+    "symfony/dependency-injection": "2.7.*"
   },
   "require-dev": {
     "phpspec/phpspec": "~2.0",

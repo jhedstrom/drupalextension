@@ -297,7 +297,10 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    * @Then I should be able to edit a/an :type( content)
    */
   public function assertEditNodeOfType($type) {
-    $node = (object) array('type' => $type);
+    $node = (object) array(
+      'type' => $type,
+      'title' => "Test $type",
+    );
     $saved = $this->nodeCreate($node);
 
     // Set internal browser on the node edit page.
