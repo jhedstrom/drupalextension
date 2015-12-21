@@ -189,9 +189,9 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    */
   public function assertClickInTableRow($link, $rowText) {
     $page = $this->getSession()->getPage();
-    if ($link = $this->getTableRow($page, $rowText)->findLink($link)) {
+    if ($link_element = $this->getTableRow($page, $rowText)->findLink($link)) {
       // Click the link and return.
-      $link->click();
+      $link_element->click();
       return;
     }
     throw new \Exception(sprintf('Found a row containing "%s", but no "%s" link on the page %s', $rowText, $link, $this->getSession()->getCurrentUrl()));
