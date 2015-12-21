@@ -78,5 +78,5 @@ Feature: Test DrupalContext
  @javascript
  Scenario: Zombie driver is functional
    Given I am on the homepage
-   When I click "Commits"
-   Then I should see the link "More commit messages…"
+   When I click "Download & Extend"
+   Then I should see the link "Drupal Core"
