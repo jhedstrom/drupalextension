@@ -8,6 +8,7 @@ Feature: Drush-specific steps
     Given I run drush "st"
     Then drush output should contain "Drupal version"
     Then drush output should contain "Site URI"
+    Then drush output should match "/.*Site\sURI\s+:.*/"
     Then drush output should contain "Database driver"
     Then drush output should contain "Successful"
     Then drush output should not contain "NonExistantWord"
