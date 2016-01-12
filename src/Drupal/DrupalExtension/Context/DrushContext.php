@@ -64,6 +64,15 @@ class DrushContext extends RawDrupalContext implements TranslatableContext {
   }
 
   /**
+   * @Then drush output should match :regex
+   */
+  public function assertDrushOutputMatches($regex) {
+    if (!preg_match($regex, (string) $this->readDrushOutput())) {
+      throw new \Exception(sprintf("The pattern %s was not found anywhere in the drush output.\nOutput:\n\n%s", $regex, $this->drushOutput));
+    }
+  }
+
+  /**
    * @Then drush output should not contain :output
    */
   public function drushOutputShouldNotContain($output) {
