@@ -90,6 +90,13 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
   protected $languages = array();
 
   /**
+   * Keep track of any config that was changed so they can easily be reverted.
+   *
+   * @var array
+   */
+  protected $config = array();
+
+  /**
    * {@inheritDoc}
    */
   public function setDrupal(DrupalDriverManager $drupal) {
@@ -271,6 +278,21 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
   }
 
   /**
+   * Revert any changed config.
+   *
+   * @AfterScenario
+   */
+  public function cleanConfig() {
+    // Revert config that was changed.
+    foreach ($this->config as $name => $key_value) {
+      foreach ($key_value as $key => $value) {
+        $this->getDriver()->configSet($name, $key, $value);
+      }
+    }
+    $this->config = array();
+  }
+
+  /**
    * Clear static caches.
    *
    * @AfterScenario @api
@@ -442,6 +464,22 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
       $this->languages[$language->langcode] = $language;
     }
     return $language;
+  }
+
+  /**
+   * Sets a value in a configuration object.
+   *
+   * @param string $name
+   *   The name of the configuration object.
+   * @param string $key
+   *   Identifier to store value in configuration.
+   * @param mixed $value
+   *   Value to associate with identifier.
+   */
+  public function setConfig($name, $key, $value) {
+    $backup = $this->getDriver()->configGet($name, $key);
+    $this->getDriver()->configSet($name, $key, $value);
+    $this->config[$name][$key] = $backup;
   }
 
   /**
