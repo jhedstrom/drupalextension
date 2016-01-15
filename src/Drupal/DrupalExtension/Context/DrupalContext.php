@@ -444,6 +444,10 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
   public function setComplexConfig($name, $key, TableNode $config_table) {
     $value = array();
     foreach ($config_table->getHash() as $row) {
+      // Allow json values for extra complexity.
+      if (json_decode($row['value'])) {
+        $row['value'] = json_decode($row['value'], TRUE);
+      }
       $value[$row['key']] = $row['value'];
     }
     $this->setConfig($name, $key, $value);
