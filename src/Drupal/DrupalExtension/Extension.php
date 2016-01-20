@@ -138,6 +138,13 @@ class Extension implements ExtensionInterface {
             scalarNode('error_message_selector')->end()->
             scalarNode('success_message_selector')->end()->
             scalarNode('warning_message_selector')->end()->
+            scalarNode('login_form_selector')->end()->
+            scalarNode('logged_in_selector')->
+              defaultValue('body.logged-in')->
+            end()->
+            scalarNode('login_form_selector')->
+              defaultValue('form#user-login')->
+            end()->
           end()->
         end()->
         // Drupal drivers.

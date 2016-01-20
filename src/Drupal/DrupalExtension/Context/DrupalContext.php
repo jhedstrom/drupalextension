@@ -339,12 +339,27 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
    */
   public function loggedIn() {
     $session = $this->getSession();
+    $page = $session->getPage();
+    // Look for a css selector to determine if a user is logged in.
+    // Default is the logged-in class on the body tag.
+    // Which should work with almost any theme.
+    try {
+      if ($page->has('css', $this->getDrupalSelector('logged_in_selector'))) {
+        return TRUE;
+      }
+    } catch (\Behat\Mink\Exception\DriverException $e) {
+      // This test may fail if the driver did not load any site yet.
+    }
+    // Some themes do not add that class to the body, so lets check if the
+    // login form is displayed on /user/login.
+    $session->visit($this->locatePath('/user/login'));
+    if (!$page->has('css', $this->getDrupalSelector('login_form_selector'))) {
+      return TRUE;
+    }
     $session->visit($this->locatePath('/'));
-
-    // If a logout link is found, we are logged in. While not perfect, this is
-    // how Drupal SimpleTests currently work as well.
-    $element = $session->getPage();
-    return $element->findLink($this->getDrupalText('log_out'));
+    // As a last resort, if a logout link is found, we are logged in. While not
+    // perfect, this is how Drupal SimpleTests currently work as well.
+    return $page->findLink($this->getDrupalText('log_out'));
   }
 
   /**
