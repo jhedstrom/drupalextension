@@ -12,6 +12,7 @@ use Drupal\Drupal;
 use Drupal\DrupalExtension\Event\EntityEvent;
 use Drupal\DrupalExtension\Context\DrupalSubContextInterface;
 
+use Drupal\Exception\Exception;
 use Symfony\Component\Process\Process;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
@@ -347,7 +348,7 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
       if ($page->has('css', $this->getDrupalSelector('logged_in_selector'))) {
         return TRUE;
       }
-    } catch (\Behat\Mink\Exception\DriverException $e) {
+    } catch (Exception $e) {
       // This test may fail if the driver did not load any site yet.
     }
     // Some themes do not add that class to the body, so lets check if the
