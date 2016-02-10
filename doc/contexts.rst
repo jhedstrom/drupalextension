@@ -69,6 +69,17 @@ You would not have access to the steps from the ``MarkupContext``,
             - FeatureContext
             - CustomContext
 
+Context communication
+---------------------
+
+Since Behat 3 can have many concurrent contexts active, communication between those  contexts can be important.
+
+The following will gather any specified contexts before a given scenario is run:
+
+  .. literalinclude:: _static/snippets/context-communication.inc
+     :language: php
+     :linenos:
+
 Drupal Extension Hooks
 ----------------------
 
