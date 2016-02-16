@@ -16,6 +16,13 @@ use Behat\Gherkin\Node\TableNode;
 class ConfigContext extends RawDrupalContext implements TranslatableContext {
 
   /**
+   * {@inheritDoc}
+   */
+  public static function getTranslationResources() {
+    return glob(__DIR__ . '/../../../../i18n/*.xliff');
+  }
+
+  /**
    * Keep track of any config that was changed so they can easily be reverted.
    *
    * @var array
@@ -35,13 +42,6 @@ class ConfigContext extends RawDrupalContext implements TranslatableContext {
       }
     }
     $this->config = array();
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public static function getTranslationResources() {
-    return glob(__DIR__ . '/../../../../i18n/*.xliff');
   }
 
   /**
