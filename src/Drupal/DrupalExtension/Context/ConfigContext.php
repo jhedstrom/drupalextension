@@ -54,7 +54,7 @@ class ConfigContext extends RawDrupalContext implements TranslatableContext {
    * @param mixed $value
    *   Value to associate with identifier.
    *
-   * @Given I set the configuration item :name with identifier :key to :value
+   * @Given I set the configuration item :name with key :key to :value
    */
   public function setBasicConfig($name, $key, $value) {
     $this->setConfig($name, $key, $value);
@@ -70,7 +70,7 @@ class ConfigContext extends RawDrupalContext implements TranslatableContext {
    * @param TableNode $config_table
    *   The table listing configuration keys and values.
    *
-   * @Given I set the configuration item :name with identifier :key with values:
+   * @Given I set the configuration item :name with key :key with values:
    *
    * Provide configuration data in the following format:
    *  | key   | value  |
