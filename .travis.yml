@@ -50,12 +50,12 @@ before_script:
   # Define the module path according to the Drupal version being tested.
   - test ${DRUPAL_VERSION} -eq 8 && export MODULE_PATH='drupal/modules' || export MODULE_PATH='drupal/sites/all/modules'
   # Drupal 8 uses semantic versioning.
-  - test ${DRUPAL_VERSION} -eq 8 && export PROJECT_NAME='drupal-8.0.x' || export PROJECT_NAME="drupal-${DRUPAL_VERSION}.x"
+  - test ${DRUPAL_VERSION} -eq 8 && export PROJECT_NAME='drupal' || export PROJECT_NAME="drupal-${DRUPAL_VERSION}.x"
   # Set sendmail so drush doesn't throw an error during site install.
   - echo "sendmail_path='true'" >> `php --ini | grep "Loaded Configuration" | awk '{print $4}'`
   # Setup a stack Drupal 6 install to test api abilities.
   - mysql -e 'create database drupal'
-  - drush --quiet dl ${PROJECT_NAME} --dev --all --drupal-project-rename=drupal
+  - drush --quiet dl ${PROJECT_NAME} --all --drupal-project-rename=drupal
   - drush --yes --root=$PWD/drupal site-install --db-url=mysql://travis:@127.0.0.1/drupal
   - cp -r fixtures/drupal${DRUPAL_VERSION}/modules/behat_test ${MODULE_PATH}
   - cd drupal
