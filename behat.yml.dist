@@ -112,6 +112,7 @@ drupal8:
         - Drupal\DrupalExtension\Context\DrupalContext
         - Drupal\DrupalExtension\Context\MinkContext
         - Drupal\DrupalExtension\Context\MarkupContext
+        - Drupal\DrupalExtension\Context\MessageContext
       filters:
         tags: "@d8&&~@d8wip"
   extensions:
@@ -125,3 +126,5 @@ drupal8:
       region_map:
         left sidebar: "#sidebar-first"
         content: "#content"
+      selectors:
+        error_message_selector: '.messages--error'
