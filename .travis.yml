@@ -68,6 +68,8 @@ before_script:
   - test \! ${DRUPAL_VERSION} -eq 7 || drush --yes fr behat_test
   # Disable the page cache on Drupal 8.
   - test \! ${DRUPAL_VERSION} -eq 8 || drush --yes pmu page_cache
+  # Test with big_pipe enabled for Drupal 8.
+  - test \! ${DRUPAL_VERSION} -eq 8 || drush --yes en -y big_pipe
   # Clear the cache on Drupal 6 and 7, rebuild on Drupal 8.
   - test ${DRUPAL_VERSION} -eq 8 && drush cr || drush cc all || true
   - drush --debug runserver :8888 > ~/debug.txt 2>&1 &
