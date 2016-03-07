@@ -162,6 +162,8 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
 
   /**
    * Get active Drupal Driver.
+   *
+   * @return \Drupal\Driver\DrupalDriver
    */
   public function getDriver($name = NULL) {
     return $this->getDrupal()->getDriver($name);
