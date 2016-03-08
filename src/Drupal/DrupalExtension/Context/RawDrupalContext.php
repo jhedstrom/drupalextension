@@ -332,7 +332,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
     $multicolumn_field = '';
     $multicolumn_fields = array();
 
-    foreach ($entity as $field => $field_value) {
+    foreach (clone $entity as $field => $field_value) {
       // Reset the multicolumn field if the field name does not contain a column.
       if (strpos($field, ':') === FALSE) {
         $multicolumn_field = '';
