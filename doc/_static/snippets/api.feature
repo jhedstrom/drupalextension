@@ -91,5 +91,6 @@
     | Tag three |
     | Tag four  |
     And "article" content:
-    | title | body | promote | field_tags |
+    | title      | body                    | promote | field_tags           |
+    | My article | Article with many tags  | 1       | [Tag one, Tag three] |
 
