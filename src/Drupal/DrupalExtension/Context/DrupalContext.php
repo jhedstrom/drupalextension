@@ -180,6 +180,18 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
   }
 
   /**
+   * Asset text not in a table row containing given text.
+   *
+   * @Then I should not see (the text ):text in the :rowText row
+   */
+  public function assertTextNotInTableRow($text, $rowText) {
+    $row = $this->getTableRow($this->getSession()->getPage(), $rowText);
+    if (strpos($row->getText(), $text) !== FALSE) {
+      throw new \Exception(sprintf('Found a row containing "%s", but it contained the text "%s".', $rowText, $text));
+    }
+  }
+
+  /**
    * Attempts to find a link in a table row containing giving text. This is for
    * administrative pages such as the administer content types screen found at
    * `admin/structure/types`.
