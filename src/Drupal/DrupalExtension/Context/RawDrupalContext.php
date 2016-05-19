@@ -57,7 +57,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    *
    * A value of FALSE denotes an anonymous user.
    *
-   * @var stdClass|bool
+   * @var \stdClass|bool
    */
   public $user = FALSE;
 
@@ -286,7 +286,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    *
    * @param string $scope
    *   The entity scope to dispatch.
-   * @param stdClass $entity
+   * @param \stdClass $entity
    *   The entity.
    */
   protected function dispatchHooks($scopeType, \stdClass $entity) {
