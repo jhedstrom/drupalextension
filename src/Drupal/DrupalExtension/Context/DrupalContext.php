@@ -423,7 +423,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
         //handle other character sets.
         $charCode = ord($line);
         switch($charCode){
-          case 10: //CR
+          case 0: //CR
           case 121: //y
           case 89: //Y
             break 2;
@@ -433,11 +433,10 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
           case 81: //Q
             throw new \Exception("Exiting test intentionally.");
           default:
-            print "\nInvalid.  Please enter 'y', 'n', or the enter key.";
+            fwrite(STDOUT, sprintf("\nInvalid charCode %s.  Please enter 'y', 'q', or the enter key.\n", $charCode));
           break;
         }
       } while (true);
-      fwrite(STDOUT, "\033[u");
     }
 
 }
