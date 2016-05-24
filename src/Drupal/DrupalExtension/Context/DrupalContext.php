@@ -433,7 +433,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
           case 81: //Q
             throw new \Exception("Exiting test intentionally.");
           default:
-            fwrite(STDOUT, sprintf("\nInvalid charCode %s.  Please enter 'y', 'q', or the enter key.\n", $charCode));
+            fwrite(STDOUT, sprintf("\nInvalid entry '%s'.  Please enter 'y', 'q', or the enter key.\n", $line));
           break;
         }
       } while (true);
