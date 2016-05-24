@@ -437,6 +437,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
           break;
         }
       } while (true);
+      fwrite(STDOUT, "\033[u");
     }
 
 }
