@@ -24,6 +24,7 @@ Feature: DrupalContext
     And I am logged in as a user with the "administrator" role
     When I visit "admin/people"
     Then I should see the text "Administrator" in the "Joe User" row
+    And  I should not see the text "administrator" in the "Jane Doe" row
 
   Scenario: Find a heading in a region
     Given I am not logged in

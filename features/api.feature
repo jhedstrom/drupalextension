@@ -106,20 +106,24 @@ Feature: DrupalContext
   @d7
   Scenario: Create users with roles
     Given users:
-    | name     | mail            | roles         |
-    | Joe User | joe@example.com | administrator |
+    | name      | mail             | roles         |
+    | Joe User  | joe@example.com  | administrator |
+    | Jane User | jane@example.com |               |
     And I am logged in as a user with the "administrator" role
     When I visit "admin/people"
     Then I should see the text "administrator" in the "Joe User" row
+    And  I should not see the text "administrator" in the "Jane User" row
 
   @d8
   Scenario: Create users with roles
     Given users:
-    | name     | mail            | roles         |
-    | Joe User | joe@example.com | administrator |
+    | name      | mail             | roles         |
+    | Joe User  | joe@example.com  | administrator |
+    | Jane User | jane@example.com |               |
     And I am logged in as a user with the "administrator" role
     When I visit "admin/people"
     Then I should see the text "Administrator" in the "Joe User" row
+    And  I should not see the text "administrator" in the "Jane User" row
 
   @d7 @d8
   Scenario: Login as a user created during this scenario
