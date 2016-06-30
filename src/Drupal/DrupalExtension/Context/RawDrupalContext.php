@@ -231,6 +231,10 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
       }
       $this->getDriver()->processBatch();
       $this->users = array();
+      $this->user = FALSE;
+      if ($this->loggedIn()) {
+        $this->logout();
+      }
     }
   }
 
