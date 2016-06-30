@@ -84,7 +84,6 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
 
   /**
    * Keep track of any languages that are created so they can easily be removed.
-   * Keep track of any languages that are created so they can easily be removed.
    *
    * @var array
    */
