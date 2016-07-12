@@ -431,32 +431,6 @@ class FeatureContext implements Context {
         $this->workingDir = $newWorkingDir;
     }
 
-    /**
-     * @Given there is an item in the system queue:
-     */
-    public function thereIsAnItemInTheSystemQueue(TableNode $table)
-    {
-      // Gather the data.
-      $fields = $table->getRowsHash();
-
-      // Default data field separately since this is longish.
-      if (empty($fields['data'])) {
-        $fields['data'] = json_encode(['rpid' => 12345]);
-      }
-
-      // @see SystemQueue::createItem().
-      $query = db_insert('queue')
-        ->fields(array(
-          'name' => array_value($fields, 'name', user_password()),
-          'data' => serialize(json_decode($fields['data'])),
-          'created' => array_value($fields, 'created', REQUEST_TIME),
-          'expire' => array_value($fields, 'expire', 0),
-        ));
-      if (!$query->execute()) {
-        throw new Exception('Unable to create the queue item.');
-      }
-    }
-
     private static function clearDirectory($path)
     {
         $files = scandir($path);
