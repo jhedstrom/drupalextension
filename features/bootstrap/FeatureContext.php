@@ -67,6 +67,22 @@ class FeatureContext extends RawDrupalContext {
     }
   }
 
+    /**
+     * Hook into user creation to test `@beforeUserCreate`
+     *
+     * @beforeEntityCreate
+     */
+    public function alterEntityParameters(EntityScope $scope)
+    {
+        // @see `features/entity.feature`
+        // Concatenate 'First name' and 'Last name' to form user name.
+        $entity = $scope->getEntity();
+        if (isset($entity->{"First name"}) && isset($entity->{"Last name"})) {
+            $entity->name = $entity->{"First name"} . ' ' . $entity->{"Last name"};
+            unset($entity->{"First name"}, $entity->{"Last name"});
+        }
+    }
+
   /**
    * Test that a node is returned after node create.
    *
@@ -99,6 +115,17 @@ class FeatureContext extends RawDrupalContext {
       throw new \Exception('Failed to find a user in @afterUserCreate hook.');
     }
   }
+
+    /**
+     * Test that a user is returned after user create.
+     *
+     * @afterEntityCreate
+     */
+    public function afterEntityCreate(EntityScope $scope) {
+        if (!$entity = $scope->getEntity()) {
+            throw new \Exception('Failed to find an entity in @afterEntityCreate hook.');
+        }
+    }
 
   /**
    * Transforms long address field columns into shorter aliases.
