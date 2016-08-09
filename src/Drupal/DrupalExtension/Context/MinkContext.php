@@ -533,6 +533,25 @@ class MinkContext extends MinkExtension implements TranslatableContext {
   }
 
   /**
+   * @When I select the radio button :label with the name :name
+   *
+   * @TODO convert to mink extension.
+   */
+  public function assertSelectRadioByName($label, $name) {
+    $element = $this->getSession()->getPage();
+    $radiobutton = $name ? $element->find('css', "[name='$name']") : $element->find('named', array('radio', $this->getSession()->getSelectorsHandler()->xpathLiteral($label)));
+    if ($radiobutton === NULL) {
+      throw new \Exception(sprintf('The radio button with "%s" was not found on the page %s', $name ? $name : $label, $this->getSession()->getCurrentUrl()));
+    }
+    $value = $radiobutton->getAttribute('value');
+    $labelonpage = $radiobutton->getParent()->getText();
+//    if ($label != $labelonpage) {
+//      throw new \Exception(sprintf("Button with id '%s' has label '%s' instead of '%s' on the page %s", $name, $labelonpage, $label, $this->getSession()->getCurrentUrl()));
+//    }
+    $radiobutton->selectOption($value, FALSE);
+  }
+
+  /**
    * @} End of defgroup "mink extensions"
    */
 
