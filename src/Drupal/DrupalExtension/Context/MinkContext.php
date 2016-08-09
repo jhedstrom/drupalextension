@@ -525,7 +525,8 @@ class MinkContext extends MinkExtension implements TranslatableContext {
       throw new \Exception(sprintf('The radio button with "%s" was not found on the page %s', $id ? $id : $label, $this->getSession()->getCurrentUrl()));
     }
     $value = $radiobutton->getAttribute('value');
-    $labelonpage = $radiobutton->getParent()->getText();
+    $radio_id = $radiobutton->getAttribute('id');
+    $labelonpage = $element->find('css', "label[for='$radio_id']")->getText();
     if ($label != $labelonpage) {
       throw new \Exception(sprintf("Button with id '%s' has label '%s' instead of '%s' on the page %s", $id, $labelonpage, $label, $this->getSession()->getCurrentUrl()));
     }
