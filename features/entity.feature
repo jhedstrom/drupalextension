@@ -9,103 +9,141 @@ Feature: EntityContext
   Background:
     Given I am logged in as an administrator
 
-  Scenario: Test single bundleless entity in "Given a :entity_type entity"
-    Given a "user" entity:
-      | name             | mail                     |
-      | entity_testuser1 | testuser1@testdomain.com |
+  Scenario: Test multiple bundleless entities in "Given :entity_type entities"
+    Given "user" entities:
+      | name       | mail                      |
+      | johndoe    | johndoe@example.com    |
+      | fredbloggs | fredbloggs@example.com |
     When I am at "admin/people"
-    Then I should see "entity_testuser1"
-    When I click "entity_testuser1"
+    Then I should see "johndoe"
+    When I click "johndoe"
     And I click "Edit"
-    Then the "mail" field should contain "testuser1@testdomain.com"
+    Then the "mail" field should contain "johndoe@example.com"
+    When I am at "admin/people"
+    Then I should see "fredbloggs"
+    When I click "fredbloggs"
+    And I click "Edit"
+    Then the "mail" field should contain "fredbloggs@example.com"	
 
   Scenario: Test entities have been cleaned up after previous scenario
     When I am at "admin/people"
-    Then I should not see "entity_testuser1"
+    Then I should not see "johndoe"
+	And I should not see "fredbloggs"
 
-  Scenario: Test multiple bundleless entities in "Given :entity_type entities"
-    Given "user" entities:
-      | name             | mail                     |
-      | entity_testuser1 | testuser1@testdomain.com |
-      | entity_testuser2 | testuser2@testdomain.com |
+  Scenario: Test single bundleless entity in "Given a :entity_type entity"
+    Given a "user" entity:
+      | name    | mail                   |
+      | johndoe | johndoe@example.com |
     When I am at "admin/people"
-    Then I should see "entity_testuser1"
-    When I click "entity_testuser1"
+    Then I should see "johndoe"
+    When I click "johndoe"
     And I click "Edit"
-    Then the "mail" field should contain "testuser1@testdomain.com"
-    When I am at "admin/people"
-    Then I should see "entity_testuser2"
-    When I click "entity_testuser2"
-    And I click "Edit"
-    Then the "mail" field should contain "testuser2@testdomain.com"
-
+    Then the "mail" field should contain "johndoe@example.com"
+	
   Scenario: Test single bundled entity in "Given a :bundle :entity_type entity"
     Given a "page" "node" entity:
-      | title             | body             |
-      | entity_testnode1  | Page body text 1 |
-    When I am at "admin/content?status=All&type=page&title=&langcode=All"
-    Then I should see "entity_testnode1"
-    When I click "entity_testnode1"
-    Then I should see "Page body text" in the ".field--name-body" element
+      | title     | body             |
+      | Page one  | Some body text |
+    When I am at "admin/content?type=page"
+    Then I should see "Page one"
+    When I click "Page one"
+    Then I should see "Some body text" in the ".field--name-body" element
 
   Scenario: Test multiple bundled entities in "Given :bundle :entity_type entities"
     Given "page" "node" entities:
-      | title             | body             |
-      | entity_testnode1  | Page body text 1 |
-      | entity_testnode2  | Page body text 2 |
-    When I am at "admin/content?status=All&type=page&title=&langcode=All"
-    Then I should see "entity_testnode1"
-    When I click "entity_testnode1"
-    Then I should see "Page body text 1" in the ".field--name-body" element
-    When I am at "admin/content?status=All&type=page&title=&langcode=All"
-    Then I should see "entity_testnode2"
-    When I click "entity_testnode2"
-    Then I should see "Page body text 2" in the ".field--name-body" element
+      | title     | body                 |
+      | Page one  | Some body text       |
+      | Page two  | Some more body text  |
+    When I am at "admin/content?type=page"
+    Then I should see "Page one"
+    When I click "Page one"
+    Then I should see "Some body text" in the ".field--name-body" element
+    When I am at "admin/content?type=page"
+    Then I should see "Page two"
+    When I click "Page two"
+    Then I should see "Some more body text" in the ".field--name-body" element
 
-  Scenario: Test passing bundle as a field in "Given a :entity_type entity"
+  Scenario: Test passing bundle as a column in "Given a :entity_type entity"
     Given a "node" entity:
-      | type | title             | body             |
-      | page | entity_testnode1  | Page body text 1 |
-    When I am at "admin/content?status=All&type=page&title=&langcode=All"
-    Then I should see "entity_testnode1"
-    When I click "entity_testnode1"
-    Then I should see "Page body text" in the ".field--name-body" element
+      | type    | title       |
+      | page    | Page one    |
+	  | article | Article one | 
+    When I am at "admin/content?type=page"
+    Then I should see "Page one"
+    When I am at "admin/content?type=article"
+    Then I should see "Article one"
 
+  Scenario: Test passing bundle as a column called "step_bundle" in "Given a :entity_type entity"
+    Given a "node" entity:
+      | step_bundle    | title       |
+      | page           | Page one    |
+	  | article        | Article one | 
+    When I am at "admin/content?type=page"
+    Then I should see "Page one"
+    When I am at "admin/content?type=article"
+    Then I should see "Article one"
+	
+  Scenario: Test comment entities, as they have different bundle_key and use entity_type as a field."
+    Given "user" entities:
+      | name      |
+      | johndoe | 
+	  | fredbloggs | 
+	Given "user_comments" "comment" entities:
+	  | subject   |  entity_id | entity_type |
+	  | Great post      |  johndoe    | user        |
+	  | Just one thing  |  fredbloggs | user        |
+    When I am at "admin/content/comment"
+    Then I should see "Great post"
+    And I should see "Just one thing"
+
+  Scenario: Test comment entities with bundle as a column
+    Given "user" entities:
+      | name       |
+      | johndoe    | 
+	  | fredbloggs | 
+	Given "comment" entities:
+	  | comment_type  | subject         |  entity_id  | entity_type |
+	  | user_comments | Great post      |  johndoe    | user        |
+	  | user_comments | Just one thing  |  fredbloggs | user        |
+    When I am at "admin/content/comment"
+    Then I should see "Great post"
+    And I should see "Just one thing"	
+	
   Scenario: Test bundleless entity in "Given I am viewing a :entity_type entity with the :label_name :label"
-    Given I am viewing a "user" entity with the "name" "entity_testuser1"
-    Then I should see "entity_testuser1" in the ".page-title" element
+    Given I am viewing a "user" entity with the "name" "johndoe"
+    Then I should see "johndoe" in the ".page-title" element
 
   Scenario: Test bundled entity in "Given I am viewing a :bundle :entity_type entity with the :label_name :label"
-    Given I am viewing an "article" "node" entity with the "title" "entity_testnode1"
-    Then I should see "entity_testnode1" in the ".page-title" element
+    Given I am viewing an "article" "node" entity with the "title" "Article one"
+    Then I should see "Article one" in the ".page-title" element
 
   Scenario: Test bundleless entity in "Given I am viewing a :entity_type entity:"
     Given I am viewing a "user" entity:
-      | name | entity_testuser1        |
-      | mail | testuser1@testdomain.com |
-    Then I should see "entity_testuser1" in the ".page-title" element
+      | name | johndoe        |
+      | mail | johndoe@example.com |
+    Then I should see "johndoe" in the ".page-title" element
     When I click "Edit"
-    Then the "mail" field should contain "testuser1@testdomain.com"
+    Then the "mail" field should contain "johndoe@example.com"
 
   Scenario: Test bundled entity in "Given I am viewing a :bundle :entity_type entity:"
     Given I am viewing an "article" "node" entity:
-      | title | Article title     |
-      | body  | Article body text |
-    Then I should see "Article title" in the ".page-title" element
-    And I should see "Article body text" in the ".field--name-body" element
+      | title | Article one    |
+      | body  | Some body text |
+    Then I should see "Article one" in the ".page-title" element
+    And I should see "Some body text" in the ".field--name-body" element
 
-  Scenario: Test passing bundle as a field in "Given I am viewing a :entity_type entity:"
+  Scenario: Test passing bundle as a column in "Given I am viewing a :entity_type entity:"
     Given I am viewing a "node" entity:
       | type  | page           |
-      | title | Page title     |
-      | body  | Page body text |
-    Then I should see "Page title" in the ".page-title" element
-    And I should see "Page body text" in the ".field--name-body" element
+      | title | Page one       |
+      | body  | Some body text |
+    Then I should see "Page one" in the ".page-title" element
+    And I should see "Some body text" in the ".field--name-body" element
 
   Scenario: Entity hooks are functioning
     Given a "user" entity:
-      | First name | Last name |
-      | Joe        | User      |
+      | First name  | Last name |
+      | John        | Doe      |
     And I am logged in as a user with the "administrator" role
     When I visit "admin/people"
-    Then I should see the link "Joe User"
+    Then I should see the link "John Doe"

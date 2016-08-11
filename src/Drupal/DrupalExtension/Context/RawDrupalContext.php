@@ -589,14 +589,17 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
    *   The created entity.
    */
   public function entityCreate($entity_type, $entity) {
-    // We want hooks to know the entity type, and to be able to modify the entity fields,
+	if (empty($entity_type)) {
+	        throw new \Exception("Steps must specify an entity type in order to create an entity.");
+	}
+    // We want hooks & cleanup to know the entity type, and hooks to be able to modify the entity fields,
     // but we don't want to try to parse or save the entity_type as if it were a field
-    $entity->entity_type = $entity_type;
+    $entity->step_entity_type = $entity_type;
     $this->dispatchHooks('BeforeEntityCreateScope', $entity);
-    unset($entity->entity_type);
+    unset($entity->step_entity_type);
     $this->parseEntityFields($entity_type, $entity);
     $saved = $this->getDriver()->createEntity($entity_type, $entity);
-    $saved->entity_type = $entity_type;
+    $saved->step_entity_type = $entity_type;
     $this->dispatchHooks('AfterEntityCreateScope', $saved);
     $this->entities[] = $saved;
     return $saved;
@@ -610,7 +613,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
    */
   public function cleanEntities() {
     foreach ($this->entities as $entity) {
-      $this->getDriver()->entityDelete($entity->entity_type, $entity);
+      $this->getDriver()->entityDelete($entity->step_entity_type, $entity);
     }
     $this->entities = array();
   }

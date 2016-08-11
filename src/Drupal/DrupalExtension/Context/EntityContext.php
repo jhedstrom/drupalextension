@@ -30,7 +30,7 @@ class EntityContext extends RawDrupalContext implements TranslatableContext
   public function createEntity($entity_type, $bundle = NULL, $label_name, $label)
   {
     $entity = (object)array(
-        'type' => $bundle,
+        'step_bundle' => $bundle,
         $label_name => $label,
     );
     $saved = $this->entityCreate($entity_type, $entity);
@@ -54,7 +54,7 @@ class EntityContext extends RawDrupalContext implements TranslatableContext
    {
      foreach ($entitiesTable->getHash() as $entityHash) {
        $entity = (object)$entityHash;
-       if (!isset($entity->type)) $entity->type = $bundle;
+       if (!isset($entity->step_bundle)) $entity->step_bundle = $bundle;
        $this->entityCreate($entity_type, $entity);
      }
    }
@@ -76,7 +76,7 @@ class EntityContext extends RawDrupalContext implements TranslatableContext
     foreach ($fields->getRowsHash() as $field => $value) {
       $entity->{$field} = $value;
     }
-    if (!isset($entity->type)) $entity->type = $bundle;
+    if (!isset($entity->step_bundle)) $entity->step_bundle = $bundle;
 
     $saved = $this->entityCreate($entity_type, $entity);
 
