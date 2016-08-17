@@ -30,35 +30,19 @@ found on the `Composer website <http://getcomposer.org/>`_.::
 Install the Drupal Extension 
 ----------------------------
 
-#. Make a directory in /opt (or wherever you choose) for the Drupal Extension::
+1. Run global require command::
 
-    cd /opt/ 
-    sudo mkdir drupalextension
-    cd drupalextension/
-
-2. Create a file called `composer.json` and include the following:
-  
-  .. literalinclude:: _static/snippets/composer.json 
-     :language: javascript 
-     :linenos:
-
-3. Run the install command::
-
-    sudo composer install
+    $ composer global require drupal/drupal-extension='~3.0'
 
   It will be a bit before you start seeing any output. It will also suggest
   that you install additional tools, but they're not normally needed so you can
   safely ignore that message.
 
-4. Test that your install worked by typing the following::
+2. Test that your install worked by typing the following::
 
-    bin/behat --help
+    $ behat --help
 
   If you were successful, you'll see the help output.
-
-5. Make the binary available system-wide::
-
-    ln -s /opt/drupalextension/bin/behat /usr/local/bin/behat
 
 Set up tests 
 ------------ 
