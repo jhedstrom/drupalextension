@@ -51,7 +51,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    *
    * @var \Drupal\DrupalUserManagerInterface
    */
-  private $userManager;
+  protected $userManager;
 
   /**
    * Keep track of nodes so they can be cleaned up.
