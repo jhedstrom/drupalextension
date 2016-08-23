@@ -7,6 +7,9 @@ parameters:
   drupal.drupal.default_session: blackbox
   drupal.drupal.api_driver: drush
 
+  # Drupal user manager.
+  drupal.user_manager.class: Drupal\DrupalUserManager
+
   # Random generator.
   drupal.random.class: Drupal\Component\Utility\Random
 
@@ -35,6 +38,8 @@ services:
     arguments:
       - {}
       - "@drupal.random"
+  drupal.user_manager:
+    class: %drupal.user_manager.class%
   drupal.random:
     class: %drupal.random.class%
   drupal.context.initializer:
@@ -43,6 +48,7 @@ services:
       - "@drupal.drupal"
       - %drupal.parameters%
       - "@hook.dispatcher"
+      - "@drupal.user_manager"
     tags:
       - { name: context.initializer }
   drupal.context.environment.reader:

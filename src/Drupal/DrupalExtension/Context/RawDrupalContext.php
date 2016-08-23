@@ -7,6 +7,7 @@ use Behat\Mink\Exception\DriverException;
 use Behat\Testwork\Hook\HookDispatcher;
 
 use Drupal\DrupalDriverManager;
+use Drupal\DrupalUserManagerInterface;
 
 use Drupal\DrupalExtension\Hook\Scope\AfterLanguageEnableScope;
 use Drupal\DrupalExtension\Hook\Scope\AfterNodeCreateScope;
@@ -46,20 +47,18 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
   protected $dispatcher;
 
   /**
+   * Drupal user manager.
+   *
+   * @var \Drupal\DrupalUserManagerInterface
+   */
+  private $userManager;
+
+  /**
    * Keep track of nodes so they can be cleaned up.
    *
    * @var array
    */
   protected $nodes = array();
-
-  /**
-   * Current authenticated user.
-   *
-   * A value of FALSE denotes an anonymous user.
-   *
-   * @var \stdClass|bool
-   */
-  public $user = FALSE;
 
   /**
    * Keep track of all users that are created so they can easily be removed.
@@ -105,6 +104,42 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
 
   /**
    * {@inheritDoc}
+   */
+  public function setUserManager(DrupalUserManagerInterface $userManager) {
+    $this->userManager = $userManager;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getUserManager() {
+    return $this->userManager;
+  }
+
+  /**
+   * Magic setter.
+   */
+  public function __set($name, $value) {
+    if ($name === 'user') {
+      // Set the user on the user manager service, so it is shared between all
+      // contexts.
+      $this->getUserManager()->setUser($value);
+    }
+  }
+
+  /**
+   * Magic getter.
+   */
+  public function __get($name) {
+    if ($name === 'user') {
+      // Returns the current user from the user manager service. This is shared
+      // between all contexts.
+      return $this->getUserManager()->getUser();
+    }
+  }
+
+  /**
+   * {@inheritdoc}
    */
   public function setDispatcher(HookDispatcher $dispatcher) {
     $this->dispatcher = $dispatcher;
