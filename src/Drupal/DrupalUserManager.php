@@ -5,9 +5,14 @@ namespace Drupal;
 class DrupalUserManager implements DrupalUserManagerInterface {
 
   /**
-   * @var \stdClass|bool
+   * {@inheritdoc}
    */
   protected $user = FALSE;
+
+  /**
+   * {@inheritdoc}
+   */
+  protected $users = [];
 
   /**
    * {@inheritdoc}
@@ -21,6 +26,66 @@ class DrupalUserManager implements DrupalUserManagerInterface {
    */
   public function setCurrentUser($user) {
     $this->user = $user;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function addUser($user) {
+    $this->users[$user->name] = $user;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function removeUser($userName) {
+    unset($this->users[$userName]);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getUser($userName) {
+    if (!isset($this->users[$userName])) {
+      throw new \Exception(sprintf('No user with %s name is registered with the driver.', $userName));
+    }
+    return $this->users[$userName];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getUsers() {
+    return $this->users;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function clearUsers() {
+    $this->user = FALSE;
+    $this->users = [];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function hasUsers() {
+    return !empty($this->users);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function currentUserIsAnonymous() {
+    return empty($this->user);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function currentUserHasRole($role) {
+    return !$this->currentUserIsAnonymous() && !empty($this->user->role) && $this->user->role == $role;
   }
 
 }
