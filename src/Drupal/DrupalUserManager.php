@@ -2,15 +2,22 @@
 
 namespace Drupal;
 
+/**
+ * Default implementation of the Drupal user manager service.
+ */
 class DrupalUserManager implements DrupalUserManagerInterface {
 
   /**
-   * {@inheritdoc}
+   * The user object representing the currently logged in user.
+   *
+   * @var \stdClass|FALSE
    */
   protected $user = FALSE;
 
   /**
-   * {@inheritdoc}
+   * An array of user objects representing users created during the test.
+   *
+   * @var \stdClass[]
    */
   protected $users = [];
 
