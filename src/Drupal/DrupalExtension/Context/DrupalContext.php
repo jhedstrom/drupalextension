@@ -110,12 +110,10 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    * @Given I am logged in as :name
    */
   public function assertLoggedInByName($name) {
-    if (!isset($this->users[$name])) {
-      throw new \Exception(sprintf('No user with %s name is registered with the driver.', $name));
-    }
+    $manager = $this->getUserManager();
 
     // Change internal current user.
-    $this->user = $this->users[$name];
+    $manager->setCurrentUser($manager->getUser($name));
 
     // Login.
     $this->login();
@@ -247,7 +245,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    * @Given I am viewing my :type (content )with the title :title
    */
   public function createMyNode($type, $title) {
-    if (!isset($this->user->uid)) {
+    if ($this->getUserManager()->currentUserIsAnonymous()) {
       throw new \Exception(sprintf('There is no current logged in user to create a node for.'));
     }
 
@@ -255,7 +253,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
       'title' => $title,
       'type' => $type,
       'body' => $this->getRandom()->name(255),
-      'uid' => $this->user->uid,
+      'uid' => $this->getUserManager()->getCurrentUser()->uid,
     );
     $saved = $this->nodeCreate($node);
 
