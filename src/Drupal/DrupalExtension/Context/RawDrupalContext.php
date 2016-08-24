@@ -503,9 +503,12 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
   }
 
   /**
-   * Log-in the current user.
+   * Log-in the given user.
+   *
+   * @param \stdClass $user
+   *   The user to log in.
    */
-  public function login() {
+  public function login(\stdClass $user) {
     $manager = $this->getUserManager();
 
     // Check if logged in.
@@ -515,7 +518,6 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
 
     $this->getSession()->visit($this->locatePath('/user'));
     $element = $this->getSession()->getPage();
-    $user = $manager->getCurrentUser();
     $element->fillField($this->getDrupalText('username_field'), $user->name);
     $element->fillField($this->getDrupalText('password_field'), $user->pass);
     $submit = $element->findButton($this->getDrupalText('log_in'));
@@ -534,6 +536,8 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
         throw new \Exception(sprintf("Unable to determine if logged in because 'log_out' link cannot be found for user '%s'", $user->name));
       }
     }
+
+    $manager->setCurrentUser($user);
   }
 
   /**
@@ -541,6 +545,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    */
   public function logout() {
     $this->getSession()->visit($this->locatePath('/user/logout'));
+    $this->getUserManager()->setCurrentUser(FALSE);
   }
 
   /**
@@ -575,7 +580,14 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
 
     // As a last resort, if a logout link is found, we are logged in. While not
     // perfect, this is how Drupal SimpleTests currently work as well.
-    return $page->findLink($this->getDrupalText('log_out'));
+    if ($page->findLink($this->getDrupalText('log_out'))) {
+      return TRUE;
+    }
+
+    // The user appears to be anonymous. Clear the current user from the user
+    // manager so this reflects the actual situation.
+    $this->getUserManager()->setCurrentUser(FALSE);
+    return FALSE;
   }
 
   /**

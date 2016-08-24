@@ -61,7 +61,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
       }
 
       // Login.
-      $this->login();
+      $this->login($user);
     }
   }
 
@@ -101,7 +101,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
       }
 
       // Login.
-      $this->login();
+      $this->login($user);
     }
   }
 
@@ -116,7 +116,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
     $manager->setCurrentUser($manager->getUser($name));
 
     // Login.
-    $this->login();
+    $this->login($manager->getUser($name));
   }
 
   /**
@@ -138,7 +138,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
     $this->roles[] = $rid;
 
     // Login.
-    $this->login();
+    $this->login($user);
   }
 
   /**
