@@ -61,13 +61,6 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
   protected $nodes = array();
 
   /**
-   * Keep track of all users that are created so they can easily be removed.
-   *
-   * @var array
-   */
-  protected $users = array();
-
-  /**
    * Keep track of all terms that are created so they can easily be removed.
    *
    * @var array
@@ -120,10 +113,27 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    * Magic setter.
    */
   public function __set($name, $value) {
-    if ($name === 'user') {
-      // Set the user on the user manager service, so it is shared between all
-      // contexts.
-      $this->getUserManager()->setCurrentUser($value);
+    switch ($name) {
+      case 'user':
+        trigger_error('Interacting directly with the RawDrupalContext::$user property has been deprecated. Use RawDrupalContext::getUserManager->setCurrentUser() instead.', E_USER_DEPRECATED);
+        // Set the user on the user manager service, so it is shared between all
+        // contexts.
+        $this->getUserManager()->setCurrentUser($value);
+        break;
+
+      case 'users':
+        trigger_error('Interacting directly with the RawDrupalContext::$users property has been deprecated. Use RawDrupalContext::getUserManager->addUser() instead.', E_USER_DEPRECATED);
+        // Set the user on the user manager service, so it is shared between all
+        // contexts.
+        if (empty($value)) {
+          $this->getUserManager()->clearUsers();
+        }
+        else {
+          foreach ($value as $user) {
+            $this->getUserManager()->addUser($user);
+          }
+        }
+        break;
     }
   }
 
@@ -131,10 +141,18 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    * Magic getter.
    */
   public function __get($name) {
-    if ($name === 'user') {
-      // Returns the current user from the user manager service. This is shared
-      // between all contexts.
-      return $this->getUserManager()->getCurrentUser();
+    switch ($name) {
+      case 'user':
+        trigger_error('Interacting directly with the RawDrupalContext::$user property has been deprecated. Use RawDrupalContext::getUserManager->getCurrentUser() instead.', E_USER_DEPRECATED);
+        // Returns the current user from the user manager service. This is shared
+        // between all contexts.
+        return $this->getUserManager()->getCurrentUser();
+
+      case 'users':
+        trigger_error('Interacting directly with the RawDrupalContext::$users property has been deprecated. Use RawDrupalContext::getUserManager->getUsers() instead.', E_USER_DEPRECATED);
+        // Returns the current user from the user manager service. This is shared
+        // between all contexts.
+        return $this->getUserManager()->getUsers();
     }
   }
 
