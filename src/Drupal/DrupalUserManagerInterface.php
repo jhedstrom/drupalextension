@@ -10,9 +10,8 @@ interface DrupalUserManagerInterface {
   /**
    * Returns the currently logged in user.
    *
-   * A value of FALSE denotes an anonymous user.
-   *
    * @return \stdClass|bool
+   *   The user object, or FALSE if the user is anonymous.
    */
   public function getCurrentUser();
 
@@ -20,6 +19,7 @@ interface DrupalUserManagerInterface {
    * Sets the currently logged in user.
    *
    * @param \stdClass|bool $user
+   *   The user object, or FALSE if the user has been logged out.
    */
   public function setCurrentUser($user);
 
