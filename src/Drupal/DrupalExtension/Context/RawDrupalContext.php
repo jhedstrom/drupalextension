@@ -123,7 +123,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
     if ($name === 'user') {
       // Set the user on the user manager service, so it is shared between all
       // contexts.
-      $this->getUserManager()->setUser($value);
+      $this->getUserManager()->setCurrentUser($value);
     }
   }
 
@@ -134,7 +134,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
     if ($name === 'user') {
       // Returns the current user from the user manager service. This is shared
       // between all contexts.
-      return $this->getUserManager()->getUser();
+      return $this->getUserManager()->getCurrentUser();
     }
   }
 

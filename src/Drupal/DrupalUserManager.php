@@ -12,14 +12,14 @@ class DrupalUserManager implements DrupalUserManagerInterface {
   /**
    * {@inheritdoc}
    */
-  public function getUser() {
+  public function getCurrentUser() {
     return $this->user;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function setUser($user) {
+  public function setCurrentUser($user) {
     $this->user = $user;
   }
 
