@@ -25,8 +25,8 @@ Feature: Test DrupalContext
 
   Scenario: Submit a form in a region
     Given I am on the homepage
-    When I fill in "Search …" with "Views" in the "right header" region
-    And I press "Search" in the "right header" region
+    When I fill in "Search…" with "Views" in the "navigation" region
+    And I press "Search" in the "navigation" region
     Then I should see the text "Search again" in the "right sidebar" region
 
   Scenario: Check a link should not exist in a region
@@ -39,7 +39,7 @@ Feature: Test DrupalContext
 
   Scenario: Find a button in a region
     Given I am on the homepage
-    Then I should see the "Search" button in the "right header"
+    Then I should see the "Search" button in the "navigation"
 
   Scenario: Find an element in a region
     Given I am on the homepage
