@@ -7,11 +7,11 @@ Feature: Test DrupalContext
   Scenario: Test the ability to find a heading in a region
     Given I am on the homepage
     When I click "Download & Extend"
-    Then I should see the heading "Core" in the "content" region
+    Then I should see the heading "Download" in the "content" region
 
   Scenario: Clicking content in a region
-    Given I am at "download"
-    When I click "About Distributions" in the "content" region
+    Given I am at "community"
+    When I click "IRC" in the "content" region
     Then I should see "Page status" in the "right sidebar"
     And I should see the link "Drupal News" in the "footer" region
 
@@ -79,4 +79,4 @@ Feature: Test DrupalContext
  Scenario: Zombie driver is functional
    Given I am on the homepage
    When I click "Download & Extend"
-   Then I should see the link "Drupal Core"
+   Then I should see the link "Distributions"
