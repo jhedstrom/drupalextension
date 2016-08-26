@@ -21,6 +21,7 @@ default:
       region_map:
         content: "#content"
         footer: "#footer"
+        navigation: "#nav-header"
         left header: "#header-left"
         right header: "#header-right"
         right sidebar: "#aside-region"
