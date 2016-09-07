@@ -12,11 +12,11 @@
             </trans-unit>
             <trans-unit id="i-am-logged-in-as-a-user-with-the-role-roles">
                 <source>I am logged in as a user with the :role role(s)</source>
-                <target><![CDATA[/^(?:|(?:Que |)je )suis connecté (?:en tant qu’utilisateur |)avec le(?:s|) role(?:s|) "(?P<role>(?:[^"]|\\")*)"$/i]]></target>
+                <target><![CDATA[/^(?:|(?:Que |)je )suis connecté (?:en tant qu’utilisateur |)avec le(?:s|) role(?:s|) "(?P<role>(?:[^"]|\\")*)"$/i]]></target>
             </trans-unit>
             <trans-unit id="i-am-logged-in-as-name">
                 <source>I am logged in as :name</source>
-                <target><![CDATA[/^(?:(?:Que |)je |)suis connecté tant (?:que|qu') "(?P<name>(?:[^"]|\\")*)"$/i]]></target>
+                <target><![CDATA[/^(?:(?:Que |)je |)suis connecté tant (?:que|qu') "(?P<name>(?:[^"]|\\")*)"$/i]]></target>
             </trans-unit>
             <trans-unit id="i-am-logged-in-as-a-user-with-the-permissions-permissions">
                 <source>I am logged in as a user with the :permissions permission(s)</source>
@@ -28,7 +28,7 @@
             </trans-unit>
             <trans-unit id="i-click-link-in-the-rowtext-row">
                 <source>I click :link in the :rowText row</source>
-                <target><![CDATA[/^(?:(?:Que |)je |)clique sur (?:le lien |)"(?P<link>(?:[^"]|\\")*)" à la ligne "(?P<rowText>(?:[^"]|\\")*)"$/i]]></target>
+                <target><![CDATA[/^(?:(?:Que |)je |)clique sur (?:le lien |)"(?P<link>(?:[^"]|\\")*)" à la ligne "(?P<rowText>(?:[^"]|\\")*)"$/i]]></target>
             </trans-unit>
             <trans-unit id="i-should-see-the-link-in-the-rowtext-row">
                 <source>I (should )see the :link in the :rowText row</source>
@@ -44,15 +44,15 @@
             </trans-unit>
             <trans-unit id="i-am-viewing-a-an-type-content-with-the-title-title">
                 <source>I am viewing a/an :type (content )with the title :title</source>
-                <target><![CDATA[/^(?:J’|)ai consulté (?:un|une) (?:contenu de type |)"(?P<type>(?:[^"]|\\")*)" avec le titre "(?P<title>(?:[^"]|\\")*)"$/i]]></target>
+                <target><![CDATA[/^(?:J’|)ai consulté (?:un|une) (?:contenu de type |)"(?P<type>(?:[^"]|\\")*)" avec le titre "(?P<title>(?:[^"]|\\")*)"$/i]]></target>
             </trans-unit>
             <trans-unit id="a-an-type-content-with-the-title-title">
                 <source>a/an :type (content )with the title :title</source>
-                <target><![CDATA[/^(?:un|une) (?:contenu de type |)"(?P<type>(?:[^"]|\\")*)" avec le titre "(?P<title>(?:[^"]|\\")*)"$/i]]></target>
+                <target><![CDATA[/^(?:un|une) (?:contenu de type |)"(?P<type>(?:[^"]|\\")*)" avec le titre "(?P<title>(?:[^"]|\\")*)"$/i]]></target>
             </trans-unit>
             <trans-unit id="i-am-viewing-my-type-content-with-the-title-title">
                 <source>I am viewing my :type (content )with the title :title</source>
-                <target><![CDATA[/^(?:(?:Que |)j'|)affiche (?:un|une) (?:contenu de type |)"(?P<type>(?:[^"]|\\")*)" avec le titre "(?P<title>(?:[^"]|\\")*)"$/i]]></target>
+                <target><![CDATA[/^(?:(?:Que |)j'|)affiche (?:un|une) (?:contenu de type |)"(?P<type>(?:[^"]|\\")*)" avec le titre "(?P<title>(?:[^"]|\\")*)"$/i]]></target>
             </trans-unit>
             <trans-unit id="type-content">
                 <source>:type content:</source>
@@ -60,11 +60,11 @@
             </trans-unit>
             <trans-unit id="i-am-viewing-a-an-type-content">
                 <source>I am viewing a/an :type( content):</source>
-                <target><![CDATA[/^(?:(?:Que |)J’|)affiche (?:un|une) (?:type de contenu |)"(?P<type>(?:[^"]|\\")*)"<$/i]]></target>
+                <target><![CDATA[/^(?:(?:Que |)J’|)affiche (?:un|une) (?:type de contenu |)"(?P<type>(?:[^"]|\\")*)"<$/i]]></target>
             </trans-unit>
             <trans-unit id="i-should-be-able-to-edit-a-an-type-content">
                 <source>I should be able to edit a/an :type( content)</source>
-                <target><![CDATA[/^(?:je|)devrais être en mesure de modifier (?:un|une) (?:type de contenu |)"(?P<type>(?:[^"]|\\")*)"$/i]]></target>
+                <target><![CDATA[/^(?:je|)devrais être en mesure de modifier (?:un|une) (?:type de contenu |)"(?P<type>(?:[^"]|\\")*)"$/i]]></target>
             </trans-unit>
             <trans-unit id="i-am-viewing-a-an-vocabulary-term-with-the-name-name">
                 <source>I am viewing a/an :vocabulary term with the name :name</source>
@@ -88,11 +88,11 @@
             </trans-unit>
             <trans-unit id="i-run-drush-command">
                 <source>I run drush :command</source>
-                <target><![CDATA[/^(?:(?:Que |)je |)lance la commande drush (?P<command>.*)/]]></target>
+                <target><![CDATA[/^(?:(?:Que |)je |)lance la commande drush (?P<command>.*)/]]></target>
             </trans-unit>
             <trans-unit id="i-run-drush-command-arguments">
                 <source>I run drush :command :arguments</source>
-                <target><![CDATA[/^(?:(?:Que |)je |)lance la commande drush (?P<command>[^ ]+) (?P<arguments>.*)$/i]]></target>
+                <target><![CDATA[/^(?:(?:Que |)je |)lance la commande drush (?P<command>[^ ]+) (?P<arguments>.*)$/i]]></target>
             </trans-unit>
             <trans-unit id="drush-output-should-contain-output">
                 <source>drush output should contain :output</source>
@@ -112,7 +112,7 @@
             </trans-unit>
             <trans-unit id="i-should-see-the-following-error-messages">
                 <source>I should see the following error message(s):</source>
-                <target><![CDATA[/^(?:je devrais voir|Affiche) le(?:s|) message(?:s|) d’erreur suivants :$/i]]></target>
+                <target><![CDATA[/^(?:je devrais voir|Affiche) le(?:s|) message(?:s|) d’erreur suivants :$/i]]></target>
             </trans-unit>
             <trans-unit id="i-should-not-see-the-error-message-containing-message">
                 <source>I should not see the error message( containing) :message</source>
@@ -120,7 +120,7 @@
             </trans-unit>
             <trans-unit id="i-should-not-see-the-following-error-messages">
                 <source>I should not see the following error messages:</source>
-                <target><![CDATA[/^(?:je ne devrais pas voir|N'affiche pas) les messages d’erreur suivants :$/i]]></target>
+                <target><![CDATA[/^(?:je ne devrais pas voir|N'affiche pas) les messages d’erreur suivants :$/i]]></target>
             </trans-unit>
             <trans-unit id="i-should-see-the-success-message-containing-message">
                 <source>I should see the success message( containing) :message</source>
@@ -128,7 +128,7 @@
             </trans-unit>
             <trans-unit id="i-should-see-the-following-success-messages">
                 <source>I should see the following success messages:</source>
-                <target><![CDATA[/^(?:je devrais voir|Affiche) les messages de succès suivants :$/i]]></target>
+                <target><![CDATA[/^(?:je devrais voir|Affiche) les messages de succès suivants :$/i]]></target>
             </trans-unit>
             <trans-unit id="i-should-not-see-the-success-message-containing-message">
                 <source>I should not see the success message( containing) :message</source>
@@ -136,7 +136,7 @@
             </trans-unit>
             <trans-unit id="i-should-not-see-the-following-success-messages">
                 <source>I should not see the following success messages:</source>
-                <target><![CDATA[/^(?:je ne devrais pas voir|N'affiche pas) les messages de succès suivants :$/i]]></target>
+                <target><![CDATA[/^(?:je ne devrais pas voir|N'affiche pas) les messages de succès suivants :$/i]]></target>
             </trans-unit>
             <trans-unit id="i-should-see-the-warning-message-containing-message">
                 <source>I should see the warning message( containing) :message</source>
@@ -144,7 +144,7 @@
             </trans-unit>
             <trans-unit id="i-should-see-the-following-warning-messages">
                 <source>I should see the following warning messages:</source>
-                <target><![CDATA[/^(?:je devrais voir|Affiche) les messages d’avertissement suivants :$/i]]></target>
+                <target><![CDATA[/^(?:je devrais voir|Affiche) les messages d’avertissement suivants :$/i]]></target>
             </trans-unit>
             <trans-unit id="i-should-not-see-the-warning-message-containing-message">
                 <source>I should not see the warning message( containing) :message</source>
@@ -152,7 +152,7 @@
             </trans-unit>
             <trans-unit id="i-should-not-see-the-following-warning-messages">
                 <source>I should not see the following warning messages:</source>
-                <target><![CDATA[/^(?:je ne devrais pas voir|N'affiche pas) les messages d’avertissement suivants :$/i]]></target>
+                <target><![CDATA[/^(?:je ne devrais pas voir|N'affiche pas) les messages d’avertissement suivants :$/i]]></target>
             </trans-unit>
             <trans-unit id="i-should-see-the-message-containing-message">
                 <source>I should see the message( containing) :message</source>
@@ -172,7 +172,7 @@
             </trans-unit>
             <trans-unit id="i-click-link">
                 <source>I click :link</source>
-                <target><![CDATA[/^(?:(?:Que |)je |)clique sur (?:le lien |)"(?P<link>(?:[^"]|\\")*)"$/i]]></target>
+                <target><![CDATA[/^(?:(?:Que |)je |)clique sur (?:le lien |)"(?P<link>(?:[^"]|\\")*)"$/i]]></target>
             </trans-unit>
             <trans-unit id="for-field-i-enter-value">
                 <source>for :field I enter :value</source>
@@ -180,7 +180,7 @@
             </trans-unit>
             <trans-unit id="i-enter-value-for-field">
                 <source>I enter :value for :field</source>
-                <target><![CDATA[/^(?:(?:Que |)je |)saisis "(?P<value>(?:[^"]|\\")*)" dans (?:le champ |)"(?P<field>(?:[^"]|\\")*)"$/i]]></target>
+                <target><![CDATA[/^(?:(?:Que |)je |)saisis "(?P<value>(?:[^"]|\\")*)" dans (?:le champ |)"(?P<field>(?:[^"]|\\")*)"$/i]]></target>
             </trans-unit>
             <trans-unit id="i-wait-for-ajax-to-finish">
                 <source>I wait for AJAX to finish</source>
@@ -196,11 +196,11 @@
             </trans-unit>
             <trans-unit id="i-should-see-the-link-link">
                 <source>I should see the link :link</source>
-                <target><![CDATA[/^(?:je devrais voir|Affiche) le lien "(?P<link>(?:[^"]|\\")*)"$/i]]></target>
+                <target><![CDATA[/^(?:je devrais voir|Affiche) le lien "(?P<link>(?:[^"]|\\")*)"$/i]]></target>
             </trans-unit>
             <trans-unit id="i-should-not-see-the-link-link">
                 <source>I should not see the link :link</source>
-                <target><![CDATA[/^(?:je ne devrais pas voir|N'affiche pas) le lien "(?P<link>(?:[^"]|\\")*)"$/i]]></target>
+                <target><![CDATA[/^(?:je ne devrais pas voir|N'affiche pas) le lien "(?P<link>(?:[^"]|\\")*)"$/i]]></target>
             </trans-unit>
             <trans-unit id="i-should-see-the-heading-heading">
                 <source>I (should )see the heading :heading</source>
@@ -220,7 +220,7 @@
             </trans-unit>
             <trans-unit id="i-follow-click-link-in-the-region-region">
                 <source>I follow/click :link in the :region( region)</source>
-                <target><![CDATA[/^(?:j'ai suivi|(?:Que |)j'ai cliqué|Clique) sur (?:le lien |)(?P<link>[^ ]+) dans (?:la région |la |le |l')"(?P<region>(?:[^"]|\\")*)"$/i]]></target>
+                <target><![CDATA[/^(?:j'ai suivi|(?:Que |)j'ai cliqué|Clique) sur (?:le lien |)(?P<link>[^ ]+) dans (?:la région |la |le |l')"(?P<region>(?:[^"]|\\")*)"$/i]]></target>
             </trans-unit>
             <trans-unit id="i-should-see-the-link-link-in-the-region-region">
                 <source>I should see the link :link in the :region( region)</source>
@@ -228,7 +228,7 @@
             </trans-unit>
             <trans-unit id="i-should-not-see-the-link-link-in-the-region-region">
                 <source>I should not see the link :link in the :region( region)</source>
-                <target><![CDATA[/^(?:je ne devrais pas voir|N'affiche pas) le lien "(?P<link>(?:[^"]|\\")*)" dans (?:la région |la |le |l')"(?P<region>(?:[^"]|\\")*)"$/i]]></target>
+                <target><![CDATA[/^(?:je ne devrais pas voir|N'affiche pas) le lien "(?P<link>(?:[^"]|\\")*)" dans (?:la région |la |le |l')"(?P<region>(?:[^"]|\\")*)"$/i]]></target>
             </trans-unit>
             <trans-unit id="i-should-see-the-text-text-in-the-region-region">
                 <source>I should see( the text) :text in the :region( region)</source>
@@ -260,19 +260,19 @@
             </trans-unit>
             <trans-unit id="i-should-get-a-code-http-response">
                 <source>I should get a :code HTTP response</source>
-                <target><![CDATA[/^(?:je devrais avoir|A) le code (?:HTTP |)"(?P<text>(?:[^"]|\\")*)"$/i]]></target>
+                <target><![CDATA[/^(?:je devrais avoir|A) le code (?:HTTP |)"(?P<text>(?:[^"]|\\")*)"$/i]]></target>
             </trans-unit>
             <trans-unit id="i-should-not-get-a-code-http-response">
                 <source>I should not get a :code HTTP response</source>
-                <target><![CDATA[/^(?:je ne devrais pas avoir|N'a pas) le code (?:HTTP |)"(?P<text>(?:[^"]|\\")*)"$/i]]></target>
+                <target><![CDATA[/^(?:je ne devrais pas avoir|N'a pas) le code (?:HTTP |)"(?P<text>(?:[^"]|\\")*)"$/i]]></target>
             </trans-unit>
             <trans-unit id="i-check-the-box-checkbox">
                 <source>I check the box :checkbox</source>
-                <target><![CDATA[/^(?:(?:Que |)je |)coche la case "(?P<checkbox>(?:[^"]|\\")*)"$/i]]></target>
+                <target><![CDATA[/^(?:(?:Que |)je |)coche la case "(?P<checkbox>(?:[^"]|\\")*)"$/i]]></target>
             </trans-unit>
             <trans-unit id="i-uncheck-the-box-checkbox">
                 <source>I uncheck the box :checkbox</source>
-                <target><![CDATA[/^(?:(?:Que |)je |)décoche la case "(?P<checkbox>(?:[^"]|\\")*)"$/i]]></target>
+                <target><![CDATA[/^(?:(?:Que |)je |)décoche la case "(?P<checkbox>(?:[^"]|\\")*)"$/i]]></target>
             </trans-unit>
             <trans-unit id="i-select-the-radio-button-label-with-the-id-id">
                 <source>I select the radio button :label with the id :id</source>
