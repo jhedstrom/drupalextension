@@ -64,6 +64,7 @@ drupal7:
         - Drupal\DrupalExtension\Context\DrupalContext
         - Drupal\DrupalExtension\Context\MinkContext
         - Drupal\DrupalExtension\Context\MarkupContext
+        - Drupal\DrupalExtension\Context\BlockContext
       filters:
         tags: "@d7"
   extensions:

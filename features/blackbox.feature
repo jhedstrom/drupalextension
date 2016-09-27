@@ -13,7 +13,7 @@ Feature: Test DrupalContext
     Given I am at "community"
     When I click "IRC" in the "content" region
     Then I should see "Page status" in the "right sidebar"
-    And I should see the link "Drupal News" in the "footer" region
+		And I should see the link "Drupal News" in the "footer" region
 
   Scenario: Viewing content in a region
     Given I am on the homepage

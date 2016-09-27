@@ -603,4 +603,8 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
     return $this->loggedIn() && $this->getUserManager()->currentUserHasRole($role);
   }
 
+  public function placeBlock($delta, $module, $region, $theme) {
+    $this->getDriver()->placeBlock($delta, $module, $region, $theme);
+  }
+
 }
