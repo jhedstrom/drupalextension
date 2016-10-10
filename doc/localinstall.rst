@@ -15,7 +15,7 @@ infrastructure. It also makes documentation consistent and reliable.
 
 2. Install Composer, a php package manager::
 
-     curl -s https://getcomposer.org/installer | php
+     curl -sS https://getcomposer.org/installer | php
 
 3. Create a composer.json file to tell Composer what to install.  To do that,
    paste the following code into your editor and save as composer.json. The 
