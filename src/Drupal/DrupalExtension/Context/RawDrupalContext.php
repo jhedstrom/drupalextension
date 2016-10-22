@@ -474,12 +474,42 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    *   The created term.
    */
   public function termCreate($term) {
+    if (!empty($term->parent)) {
+      if (!$parent = $this->getExistingTerm($term->parent, $term->vocabulary_machine_name)) {
+        $parent = $this->termCreate((object) array(
+          'vocabulary_machine_name' => $term->vocabulary_machine_name,
+          'name' => $term->parent,
+        ));
+      }
+      $term->parent = $parent->tid;
+    }
+
     $this->dispatchHooks('BeforeTermCreateScope', $term);
     $this->parseEntityFields('taxonomy_term', $term);
     $saved = $this->getDriver()->createTerm($term);
     $this->dispatchHooks('AfterTermCreateScope', $saved);
     $this->terms[] = $saved;
     return $saved;
+  }
+
+  /**
+   * Returns a testing term.
+   *
+   * @param string $name
+   *   The term name to check.
+   * @param string $vid
+   *   The term vocabulary ID.
+   *
+   * @return \stdClass|null
+   *   The term object or NULL if no term has been created yet.
+   */
+  protected function getExistingTerm($name, $vid) {
+    foreach ($this->terms as $term) {
+      if ($term->name === $name && $term->vocabulary_machine_name === $vid) {
+        return $term;
+      }
+    }
+    return NULL;
   }
 
   /**
