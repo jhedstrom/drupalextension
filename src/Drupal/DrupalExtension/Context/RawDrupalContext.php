@@ -411,7 +411,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
 
       $is_multicolumn = $multicolumn_field && $multicolumn_column;
       $field_name = $multicolumn_field ?: $field;
-      if ($this->getDriver()->isField($entity_type, $field_name)) {
+      if ($this->getDriver()->isField($entity_type, $field_name) || ($entity_type == 'taxonomy_term' && $field == 'parent')) {
         // Split up multiple values in multi-value fields.
         $values = array();
         foreach (explode(', ', $field_value) as $key => $value) {
