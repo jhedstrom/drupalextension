@@ -129,3 +129,4 @@ drupal8:
         content: "#content"
       selectors:
         error_message_selector: '.messages--error'
+        success_message_selector: '.messages--status'
