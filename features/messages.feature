@@ -23,7 +23,6 @@ Feature: Ensure that messages are working properly on local installs
     And I am on "/admin/config/development/maintenance"
     When I check the box "maintenance_mode"
     And I press "Save configuration"
-    And print last response
     Then I should see the message "The configuration options have been saved."
 
   @javascript
