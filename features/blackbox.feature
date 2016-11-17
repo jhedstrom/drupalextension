@@ -7,11 +7,11 @@ Feature: Test DrupalContext
   Scenario: Test the ability to find a heading in a region
     Given I am on the homepage
     When I click "Download & Extend"
-    Then I should see the heading "Core" in the "content" region
+    Then I should see the heading "Download" in the "content" region
 
   Scenario: Clicking content in a region
-    Given I am at "download"
-    When I click "About Distributions" in the "content" region
+    Given I am at "community"
+    When I click "IRC" in the "content" region
     Then I should see "Page status" in the "right sidebar"
     And I should see the link "Drupal News" in the "footer" region
 
@@ -25,8 +25,8 @@ Feature: Test DrupalContext
 
   Scenario: Submit a form in a region
     Given I am on the homepage
-    When I fill in "Search …" with "Views" in the "right header" region
-    And I press "Search" in the "right header" region
+    When I fill in "Search…" with "Views" in the "navigation" region
+    And I press "Search" in the "navigation" region
     Then I should see the text "Search again" in the "right sidebar" region
 
   Scenario: Check a link should not exist in a region
@@ -39,7 +39,7 @@ Feature: Test DrupalContext
 
   Scenario: Find a button in a region
     Given I am on the homepage
-    Then I should see the "Search" button in the "right header"
+    Then I should see the "Search" button in the "navigation"
 
   Scenario: Find an element in a region
     Given I am on the homepage
@@ -79,4 +79,4 @@ Feature: Test DrupalContext
  Scenario: Zombie driver is functional
    Given I am on the homepage
    When I click "Download & Extend"
-   Then I should see the link "Drupal Core"
+   Then I should see the link "Distributions"

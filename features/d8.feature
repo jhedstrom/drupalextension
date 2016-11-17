@@ -30,3 +30,10 @@ Feature: DrupalContext
     Given I am not logged in
     When I am on the homepage
     Then I should see the heading "Search" in the "left sidebar" region
+
+  # This tests that a user that is created in one particular Context class (in
+  # this case FeatureContext::assertLoggedInByUsernameAndPassword()) can be
+  # accessed in another Context (DrupalContext::assertLoggedInByName()).
+  Scenario: Logging in as a user without an e-mail address.
+    Given I am logged in as a user with name "Carrot Ironfoundersson" and password "citywatch1234"
+    Then I am logged in as "Carrot Ironfoundersson"
