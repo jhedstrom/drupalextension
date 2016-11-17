@@ -1,8 +1,9 @@
 <?php
 
-use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
+use Drupal\DrupalExtension\Context\RawDrupalContext;
+use Drupal\DrupalExtension\Hook\Scope\BeforeNodeCreateScope;
 use Drupal\DrupalExtension\Hook\Scope\EntityScope;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
@@ -14,13 +15,14 @@ use Symfony\Component\Process\Process;
  * purposes of testing since we can't easily run that as a context due to naming
  * conflicts.
  */
-class FeatureContext implements Context {
+class FeatureContext extends RawDrupalContext {
   /**
    * Hook into node creation to test `@beforeNodeCreate`
    *
    * @beforeNodeCreate
    */
-  public function alterNodeParameters(EntityScope $scope) {
+  public function alterNodeParameters(BeforeNodeCreateScope $scope) {
+    parent::alterNodeParameters($scope);
     // @see `features/api.feature`
     // Change 'published on' to the expected 'created'.
     $node = $scope->getEntity();
@@ -162,6 +164,30 @@ class FeatureContext implements Context {
     });
 
     return new TableNode($table);
+  }
+
+  /**
+   * Creates and authenticates a user with the given username and password.
+   *
+   * In Drupal 8 it is possible to register a user without an e-mail address,
+   * using only a username and password.
+   *
+   * This step definition is intended to test if users that are registered in
+   * one context (in this case FeatureContext) can be accessed in other
+   * contexts.
+   *
+   * See the scenario 'Logging in as a user without an e-mail address' in
+   * d8.feature.
+   *
+   * @Given I am logged in as a user with name :name and password :password
+   */
+  public function assertAuthenticatedByUsernameAndPassword($name, $password) {
+    $user = (object) [
+      'name' => $name,
+      'pass' => $password,
+    ];
+    $this->userCreate($user);
+    $this->login($user);
   }
 
   /**

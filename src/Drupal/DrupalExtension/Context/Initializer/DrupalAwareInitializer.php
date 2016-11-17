@@ -9,14 +9,16 @@ use Behat\Testwork\Hook\HookDispatcher;
 use Drupal\DrupalDriverManager;
 use Drupal\DrupalExtension\Context\DrupalContext;
 use Drupal\DrupalExtension\Context\DrupalAwareInterface;
+use Drupal\DrupalUserManagerInterface;
 
 class DrupalAwareInitializer implements ContextInitializer {
-  private $drupal, $parameters, $dispatcher;
+  private $drupal, $parameters, $dispatcher, $userManager;
 
-  public function __construct(DrupalDriverManager $drupal, array $parameters, HookDispatcher $dispatcher) {
+  public function __construct(DrupalDriverManager $drupal, array $parameters, HookDispatcher $dispatcher, DrupalUserManagerInterface $userManager) {
     $this->drupal = $drupal;
     $this->parameters = $parameters;
     $this->dispatcher = $dispatcher;
+    $this->userManager = $userManager;
   }
 
   /**
@@ -37,6 +39,9 @@ class DrupalAwareInitializer implements ContextInitializer {
 
     // Add all parameters to the context.
     $context->setDrupalParameters($this->parameters);
+
+    // Set the Drupal user manager.
+    $context->setUserManager($this->userManager);
   }
 
 }
