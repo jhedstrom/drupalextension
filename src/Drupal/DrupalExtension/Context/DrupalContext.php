@@ -437,6 +437,18 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
   }
 
   /**
+   * Wait for the Batch API to finish.
+   *
+   * Wait until the id="updateprogress" element is gone,
+   * or timeout after 3 minutes (180,000 ms).
+   *
+   * @Given /^I wait for the batch job to finish$/
+   */
+  public function iWaitForTheBatchJobToFinish() {
+    $this->getSession()->wait(180000, 'jQuery("#updateprogress").length === 0');
+  }
+
+  /**
    * Presses button with specified id|name|title|alt|value.
    *
    * @When /^(?:|I )press the "(?P<button>[^"]*)" button$/
