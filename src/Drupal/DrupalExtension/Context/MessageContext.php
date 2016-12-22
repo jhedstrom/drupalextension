@@ -261,14 +261,14 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
     $selector = $this->getDrupalSelector($selectorId);
     $selectorObjects = $this->getSession()->getPage()->findAll("css", $selector);
     if (empty($selectorObjects)) {
-      throw new ExpectationException(sprintf($exceptionMsgNone, $this->getSession()->getCurrentUrl()), $this->getSession());
+      throw new ExpectationException(sprintf($exceptionMsgNone, $this->getSession()->getCurrentUrl()), $this->getSession()->getDriver());
     }
     foreach ($selectorObjects as $selectorObject) {
       if (strpos(trim($selectorObject->getText()), $message) !== FALSE) {
         return;
       }
     }
-    throw new ExpectationException(sprintf($exceptionMsgMissing, $this->getSession()->getCurrentUrl(), $message), $this->getSession());
+    throw new ExpectationException(sprintf($exceptionMsgMissing, $this->getSession()->getCurrentUrl(), $message), $this->getSession()->getDriver());
   }
 
   /**
@@ -291,7 +291,7 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
     if (!empty($selectorObjects)) {
       foreach ($selectorObjects as $selectorObject) {
         if (strpos(trim($selectorObject->getText()), $message) !== FALSE) {
-          throw new ExpectationException(sprintf($exceptionMsg, $this->getSession()->getCurrentUrl(), $message), $this->getSession());
+          throw new ExpectationException(sprintf($exceptionMsg, $this->getSession()->getCurrentUrl(), $message), $this->getSession()->getDriver());
         }
       }
     }
