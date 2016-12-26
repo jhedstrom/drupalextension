@@ -55,10 +55,13 @@ before_script:
   - test ${DRUPAL_VERSION} -eq 8 && export PROJECT_NAME='drupal-8.1.x' || export PROJECT_NAME="drupal-${DRUPAL_VERSION}.x"
   # Set sendmail so drush doesn't throw an error during site install.
   - echo "sendmail_path='true'" >> `php --ini | grep "Loaded Configuration" | awk '{print $4}'`
-  # Setup a stack Drupal 6 install to test api abilities.
+  # Download and install Drupal so we can test API abilities.
   - mysql -e 'create database drupal'
   - drush --quiet dl ${PROJECT_NAME} --all --drupal-project-rename=drupal
   - drush --yes --root=$PWD/drupal site-install --db-url=mysql://travis:@127.0.0.1/drupal
+  # Copy the static HTML that is used for blackbox testing in the web root.
+  - cp -r fixtures/blackbox $PWD/drupal
+  # Copy our test module to the correct location.
   - cp -r fixtures/drupal${DRUPAL_VERSION}/modules/behat_test ${MODULE_PATH}
   - cd drupal
   - drush --yes en behat_test
