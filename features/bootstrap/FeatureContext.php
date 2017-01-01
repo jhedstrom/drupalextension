@@ -231,7 +231,7 @@ class FeatureContext extends RawDrupalContext {
     public function prepareTestFolders()
     {
         $dir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'behat' . DIRECTORY_SEPARATOR .
-            md5(microtime() * rand(0, 10000));
+            md5((int) microtime(TRUE) * rand(0, 10000));
 
         mkdir($dir . '/features/bootstrap/i18n', 0777, true);
 
