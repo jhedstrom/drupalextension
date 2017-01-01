@@ -10,7 +10,7 @@ Feature: Test DrupalContext
     Then I should see the heading "Download" in the "content" region
 
   Scenario: Clicking content in a region
-    Given I am at "community"
+    Given I am at "community.html"
     When I click "IRC" in the "content" region
     Then I should see "Page status" in the "right sidebar"
     And I should see the link "Drupal News" in the "footer" region
@@ -62,7 +62,7 @@ Feature: Test DrupalContext
     Then I should see "Drupal" in the "h1" element with the "id" attribute set to "site-name" in the "left header" region
 
   Scenario: Error messages
-   Given I am on "/user"
+   Given I am on "user.html"
    When I press "Log in"
    Then I should see the error message "Password field is required"
    And I should not see the error message "Sorry, unrecognized username or password"
