@@ -68,7 +68,7 @@ class FeatureContext extends RawDrupalContext {
   }
 
     /**
-     * Hook into user creation to test `@beforeUserCreate`
+     * Hook into user creation to test `@beforeEntityCreate`
      *
      * @beforeEntityCreate
      */

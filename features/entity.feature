@@ -16,14 +16,12 @@ Feature: EntityContext
       | fredbloggs | fredbloggs@example.com |
     When I am at "admin/people"
     Then I should see "johndoe"
-    When I click "johndoe"
-    And I click "Edit"
+    When I click "Edit" in the "johndoe" row
     Then the "mail" field should contain "johndoe@example.com"
     When I am at "admin/people"
     Then I should see "fredbloggs"
-    When I click "fredbloggs"
-    And I click "Edit"
-    Then the "mail" field should contain "fredbloggs@example.com"	
+    When I click "Edit" in the "fredbloggs" row
+    Then the "mail" field should contain "fredbloggs@example.com"
 
   Scenario: Test entities have been cleaned up after previous scenario
     When I am at "admin/people"
@@ -36,8 +34,7 @@ Feature: EntityContext
       | johndoe | johndoe@example.com |
     When I am at "admin/people"
     Then I should see "johndoe"
-    When I click "johndoe"
-    And I click "Edit"
+    When I click "Edit" in the "johndoe" row
     Then the "mail" field should contain "johndoe@example.com"
 	
   Scenario: Test single bundled entity in "Given a :bundle :entity_type entity"
@@ -122,7 +119,9 @@ Feature: EntityContext
       | name | johndoe        |
       | mail | johndoe@example.com |
     Then I should see "johndoe" in the ".page-title" element
-    When I click "Edit"
+    When I am at "admin/people"
+    Then I should see "johndoe"
+    When I click "Edit" in the "johndoe" row
     Then the "mail" field should contain "johndoe@example.com"
 
   Scenario: Test bundled entity in "Given I am viewing a :bundle :entity_type entity:"
