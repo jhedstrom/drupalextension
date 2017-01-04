@@ -46,4 +46,18 @@ interface DrupalAwareInterface extends Context {
    * @return \Drupal\DrupalUserManagerInterface
    */
   public function getUserManager();
+
+  /**
+   * Sets the Drupal authentication manager instance.
+   *
+   * @param \Drupal\DrupalAuthenticationManagerInterface $authenticationManager
+   */
+  public function setAuthenticationManager(DrupalAuthenticationManagerInterface $authenticationManager);
+
+  /**
+   * Gets the Drupal authentication manager instance.
+   *
+   * @return \Drupal\DrupalAuthenticationManagerInterface
+   */
+  public function getAuthenticationManager();
 }

@@ -6,18 +6,20 @@ use Behat\Behat\Context\Initializer\ContextInitializer;
 use Behat\Behat\Context\Context;
 use Behat\Testwork\Hook\HookDispatcher;
 
+use Drupal\DrupalAuthenticationManagerInterface;
 use Drupal\DrupalDriverManager;
 use Drupal\DrupalExtension\Context\DrupalContext;
 use Drupal\DrupalExtension\Context\DrupalAwareInterface;
 use Drupal\DrupalUserManagerInterface;
 
 class DrupalAwareInitializer implements ContextInitializer {
-  private $drupal, $parameters, $dispatcher, $userManager;
+  private $drupal, $parameters, $dispatcher, $authenticationManager, $userManager;
 
-  public function __construct(DrupalDriverManager $drupal, array $parameters, HookDispatcher $dispatcher, DrupalUserManagerInterface $userManager) {
+  public function __construct(DrupalDriverManager $drupal, array $parameters, HookDispatcher $dispatcher, DrupalAuthenticationManagerInterface $authenticationManager, DrupalUserManagerInterface $userManager) {
     $this->drupal = $drupal;
     $this->parameters = $parameters;
     $this->dispatcher = $dispatcher;
+    $this->authenticationManager = $authenticationManager;
     $this->userManager = $userManager;
   }
 
@@ -39,6 +41,9 @@ class DrupalAwareInitializer implements ContextInitializer {
 
     // Add all parameters to the context.
     $context->setDrupalParameters($this->parameters);
+
+    // Set the Drupal authentication manager.
+    $context->setAuthenticationManager($this->authenticationManager);
 
     // Set the Drupal user manager.
     $context->setUserManager($this->userManager);

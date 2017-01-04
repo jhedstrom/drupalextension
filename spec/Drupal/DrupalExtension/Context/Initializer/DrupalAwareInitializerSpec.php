@@ -4,6 +4,7 @@ namespace spec\Drupal\DrupalExtension\Context\Initializer;
 
 use Behat\Behat\Context\Context;
 
+use Drupal\DrupalAuthenticationManagerInterface;
 use Drupal\DrupalDriverManager;
 use Drupal\DrupalExtension\Context\DrupalAwareInterface;
 
@@ -41,11 +42,12 @@ class DrupalAwareInitializerSpec extends ObjectBehavior
         $this->initializeContext($context);
     }
 
-    function it_injects_drupal_and_parameters_and_dispatcher_and_user_manager_in_drupal_aware_Contexts(DrupalAwareInterface $context, $drupal, DrupalUserManagerInterface $userManager)
+    function it_injects_drupal_and_parameters_and_dispatcher_and_user_manager_in_drupal_aware_Contexts(DrupalAwareInterface $context, $drupal, DrupalAuthenticationManagerInterface $authenticationManager, DrupalUserManagerInterface $userManager)
     {
         $context->setDispatcher($this->dispatcher)->shouldBeCAlled();
         $context->setDrupal($drupal)->shouldBeCAlled();
         $context->setDrupalParameters(array())->shouldBeCAlled();
+        $context->setAuthenticationManager($authenticationManager)->shouldBeCalled();
         $context->setUserManager($userManager)->shouldBeCalled();
         $this->initializeContext($context);
     }
