@@ -4,7 +4,6 @@ namespace spec\Drupal\DrupalExtension\Context\Initializer;
 
 use Behat\Behat\Context\Context;
 
-use Drupal\DrupalAuthenticationManagerInterface;
 use Drupal\DrupalDriverManager;
 use Drupal\DrupalExtension\Context\DrupalAwareInterface;
 
@@ -13,8 +12,8 @@ use Behat\Testwork\Environment\EnvironmentManager;
 use Behat\Testwork\Hook\HookDispatcher;
 use Behat\Testwork\Hook\HookRepository;
 
-use Drupal\DrupalUserManager;
-use Drupal\DrupalUserManagerInterface;
+use Drupal\DrupalExtension\Manager\DrupalAuthenticationManagerInterface;
+use Drupal\DrupalExtension\Manager\DrupalUserManagerInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 

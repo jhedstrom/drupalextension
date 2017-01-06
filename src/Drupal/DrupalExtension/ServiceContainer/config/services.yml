@@ -8,10 +8,10 @@ parameters:
   drupal.drupal.api_driver: drush
 
   # Drupal authentication manager.
-  drupal.authentication_manager.class: Drupal\DrupalAuthenticationManager
+  drupal.authentication_manager.class: Drupal\DrupalExtension\Manager\DrupalAuthenticationManager
 
   # Drupal user manager.
-  drupal.user_manager.class: Drupal\DrupalUserManager
+  drupal.user_manager.class: Drupal\DrupalExtension\Manager\DrupalUserManager
 
   # Random generator.
   drupal.random.class: Drupal\Component\Utility\Random

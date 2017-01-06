@@ -6,11 +6,10 @@ use Behat\Behat\Context\Initializer\ContextInitializer;
 use Behat\Behat\Context\Context;
 use Behat\Testwork\Hook\HookDispatcher;
 
-use Drupal\DrupalAuthenticationManagerInterface;
 use Drupal\DrupalDriverManager;
-use Drupal\DrupalExtension\Context\DrupalContext;
 use Drupal\DrupalExtension\Context\DrupalAwareInterface;
-use Drupal\DrupalUserManagerInterface;
+use Drupal\DrupalExtension\Manager\DrupalAuthenticationManagerInterface;
+use Drupal\DrupalExtension\Manager\DrupalUserManagerInterface;
 
 class DrupalAwareInitializer implements ContextInitializer {
   private $drupal, $parameters, $dispatcher, $authenticationManager, $userManager;

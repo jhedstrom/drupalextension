@@ -6,9 +6,9 @@ use Behat\MinkExtension\Context\RawMinkContext;
 use Behat\Mink\Exception\DriverException;
 use Behat\Testwork\Hook\HookDispatcher;
 
-use Drupal\DrupalAuthenticationManagerInterface;
 use Drupal\DrupalDriverManager;
-use Drupal\DrupalUserManagerInterface;
+use Drupal\DrupalExtension\Manager\DrupalAuthenticationManagerInterface;
+use Drupal\DrupalExtension\Manager\DrupalUserManagerInterface;
 
 use Drupal\DrupalExtension\Hook\Scope\AfterLanguageEnableScope;
 use Drupal\DrupalExtension\Hook\Scope\AfterNodeCreateScope;
@@ -50,14 +50,14 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
   /**
    * Drupal authentication manager.
    *
-   * @var \Drupal\DrupalAuthenticationManagerInterface
+   * @var \Drupal\DrupalExtension\Manager\DrupalAuthenticationManagerInterface
    */
   protected $authenticationManager;
 
   /**
    * Drupal user manager.
    *
-   * @var \Drupal\DrupalUserManagerInterface
+   * @var \Drupal\DrupalExtension\Manager\DrupalUserManagerInterface
    */
   protected $userManager;
 
