@@ -7,6 +7,7 @@ use Behat\Mink\Exception\DriverException;
 use Behat\Testwork\Hook\HookDispatcher;
 
 use Drupal\DrupalDriverManager;
+use Drupal\DrupalExtension\DrupalParametersTrait;
 use Drupal\DrupalExtension\Manager\DrupalAuthenticationManagerInterface;
 use Drupal\DrupalExtension\Manager\DrupalUserManagerInterface;
 
@@ -26,19 +27,14 @@ use Drupal\DrupalExtension\Hook\Scope\BeforeTermCreateScope;
  */
 class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
 
+  use DrupalParametersTrait;
+
   /**
    * Drupal driver manager.
    *
    * @var \Drupal\DrupalDriverManager
    */
   private $drupal;
-
-  /**
-   * Test parameters.
-   *
-   * @var array
-   */
-  private $drupalParameters;
 
   /**
    * Event dispatcher object.
@@ -183,56 +179,6 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    */
   public function setDispatcher(HookDispatcher $dispatcher) {
     $this->dispatcher = $dispatcher;
-  }
-
-  /**
-   * Set parameters provided for Drupal.
-   */
-  public function setDrupalParameters(array $parameters) {
-    $this->drupalParameters = $parameters;
-  }
-
-  /**
-   * Returns a specific Drupal parameter.
-   *
-   * @param string $name
-   *   Parameter name.
-   *
-   * @return mixed
-   */
-  public function getDrupalParameter($name) {
-    return isset($this->drupalParameters[$name]) ? $this->drupalParameters[$name] : NULL;
-  }
-
-  /**
-   * Returns a specific Drupal text value.
-   *
-   * @param string $name
-   *   Text value name, such as 'log_out', which corresponds to the default 'Log
-   *   out' link text.
-   * @throws \Exception
-   * @return
-   */
-  public function getDrupalText($name) {
-    $text = $this->getDrupalParameter('text');
-    if (!isset($text[$name])) {
-      throw new \Exception(sprintf('No such Drupal string: %s', $name));
-    }
-    return $text[$name];
-  }
-
-  /**
-   * Returns a specific css selector.
-   *
-   * @param $name
-   *   string CSS selector name
-   */
-  public function getDrupalSelector($name) {
-    $text = $this->getDrupalParameter('selectors');
-    if (!isset($text[$name])) {
-      throw new \Exception(sprintf('No such selector configured: %s', $name));
-    }
-    return $text[$name];
   }
 
   /**
