@@ -41,7 +41,7 @@ You can structure your own code with additional contexts. See Behat's `testing f
 
 .. Important::
 
-   Every context you want to use in a suite must declare it in the behat.yml
+   Every context you want to use in a suite must be declared in the behat.yml
    file.
 
 Example
