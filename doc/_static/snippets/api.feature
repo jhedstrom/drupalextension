@@ -69,7 +69,7 @@
     And I am logged in as a user with the "administrator" role
     When I go to "admin/structure/taxonomy/tags"
     Then I should see "Tag one"
-    And I should see "Tag two"
+    And I should see "Tag four" 
 
   Scenario: Create nodes with specific authorship
     Given users:
@@ -90,6 +90,8 @@
     | Tag two   |
     | Tag three |
     | Tag four  |
-    And "article" content:
-    | title | body | promote | field_tags |
-
+  And "article" content:
+    | title             | field_tags                   |
+    | My first article  | Tag one                      |
+    | My second article | Tag two, Tag three           |
+    | My third article  | Tag two, Tag three, Tag four |
