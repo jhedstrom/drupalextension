@@ -82,9 +82,14 @@ class MinkContext extends MinkExtension implements TranslatableContext {
   /**
    * For javascript enabled scenarios, always wait for AJAX before clicking.
    *
-   * @BeforeStep @javascript
+   * @BeforeStep
    */
   public function beforeJavascriptStep($event) {
+    /** @var \Behat\Behat\Hook\Scope\BeforeStepScope $event */
+    $tags = $event->getFeature()->getTags();
+    if (!in_array('javascript', $tags)) {
+      return;
+    }
     $text = $event->getStep()->getText();
     if (preg_match('/(follow|press|click|submit)/i', $text)) {
       $this->iWaitForAjaxToFinish();
@@ -94,9 +99,14 @@ class MinkContext extends MinkExtension implements TranslatableContext {
   /**
    * For javascript enabled scenarios, always wait for AJAX after clicking.
    *
-   * @AfterStep @javascript
+   * @AfterStep
    */
   public function afterJavascriptStep($event) {
+    /** @var \Behat\Behat\Hook\Scope\BeforeStepScope $event */
+    $tags = $event->getFeature()->getTags();
+    if (!in_array('javascript', $tags)) {
+      return;
+    }
     $text = $event->getStep()->getText();
     if (preg_match('/(follow|press|click|submit)/i', $text)) {
       $this->iWaitForAjaxToFinish();
