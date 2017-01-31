@@ -451,7 +451,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
 
     // Add the multicolumn fields to the entity.
     foreach ($multicolumn_fields as $field_name => $columns) {
-      if (!empty(array_filter($columns, function ($var) {return ($var === '');}))) {
+      if (!empty(array_filter($columns, function ($var) {return ($var !== '');}))) {
         $entity->$field_name = $columns;
       }
     }
