@@ -110,7 +110,7 @@ Feature: FieldHandlers
     And I should see "150-0040"
 
   @d7 @d8
-  Scenario: Test various user field handlers in Drupal 7
+  Scenario: Test various user field handlers in Drupal 7.
     Given "tags" terms:
       | name      |
       | Tag one   |
@@ -122,11 +122,13 @@ Feature: FieldHandlers
       | Page three |
     And users:
       | name     | mail         | field_tags       | field_post_reference | field_post_address                                                               |
+      | Jane Doe |              |                  |                      |                                                                                  |
       | John Doe | john@doe.com | Tag one, Tag two | Page one, Page two   | country: BE - locality: Brussel - thoroughfare: Louisalaan 1 - postal_code: 1000 |
     And I am logged in as a user with the "administrator" role
     When I visit "admin/people"
-    Then I should see the link "John Doe"
-    And I click "John Doe"
+    Then I should see the link "Jane Doe"
+    And I should see the link "John Doe"
+    When I click "John Doe"
     Then I should see the link "Tag one"
     And I should see the link "Tag two"
     But I should not see the link "Tag three"
@@ -163,11 +165,21 @@ Feature: FieldHandlers
       | title           | body             | promote | field_tags                  |
       | Article by Joe  | PLACEHOLDER BODY |       1 | Tag one, Tag two, Tag three |
       | Article by Mike | PLACEHOLDER BODY |       1 | Tag four                    |
+      | Article by Jane |                  |         |                             |
+    And I am logged in as a user with the "administrator" role
+    When I visit "admin/content"
+    Then I should see the link "Article by Joe"
+    And I should see the link "Article by Mike"
+    And I should see the link "Article by Jane"
     When I am on the homepage
     Then I should see the link "Article by Joe"
     And I should see the link "Tag one"
     And I should see the link "Tag two"
     And I should see the link "Tag three"
+    And I should see the link "Article by Mike"
+    And I should see the link "Tag four"
+    And I should see the link "Article by Joe"
+    And I should not see the link "Article by Jane"
 
   @d7
   # There is no support for date ranges in D8 yet, so only test D7 for now.
