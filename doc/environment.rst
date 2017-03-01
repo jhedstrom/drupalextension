@@ -34,7 +34,7 @@ Example JSON object:
 To export this into the ``BEHAT_PARAMS`` environment variable, squash the JSON
 object into a single line and surround with single quotes:
 
-.. code-block: bash
+.. code-block:: bash
 
     $ export BEHAT_PARAMS='{"extensions":{"Behat\\MinkExtension":{"base_url":"http://myproject.localhost"},"Drupal\\DrupalExtension":{"drupal":{"drupal_root":"/var/www/myproject"}}}}'
 
