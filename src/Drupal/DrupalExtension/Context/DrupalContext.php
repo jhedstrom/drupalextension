@@ -3,6 +3,7 @@
 namespace Drupal\DrupalExtension\Context;
 
 use Behat\Behat\Context\TranslatableContext;
+use Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Mink\Element\Element;
 
 use Behat\Gherkin\Node\TableNode;
@@ -10,7 +11,7 @@ use Behat\Gherkin\Node\TableNode;
 /**
  * Provides pre-built step definitions for interacting with Drupal.
  */
-class DrupalContext extends RawDrupalContext implements TranslatableContext {
+class DrupalContext extends RawDrupalContext implements TranslatableContext, SnippetAcceptingContext {
 
   /**
    * Returns list of definition translation resources paths.
