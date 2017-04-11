@@ -565,6 +565,12 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    */
   public function loggedIn() {
     $session = $this->getSession();
+    
+    // We have to make sure that the driver is started otherwise it may not work (eg Selenium2Driver)
+    if (!$session->getDriver()->isStarted()) {
+      $session->getDriver()->start();
+    }
+    
     $page = $session->getPage();
 
     // Look for a css selector to determine if a user is logged in.
