@@ -234,7 +234,6 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
     $node = (object) array(
       'title' => $title,
       'type' => $type,
-      'body' => $this->getRandom()->name(255),
     );
     $saved = $this->nodeCreate($node);
     // Set internal page on the new node.
