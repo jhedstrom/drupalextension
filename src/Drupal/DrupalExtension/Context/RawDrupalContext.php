@@ -584,8 +584,14 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    *   Returns TRUE if a user is logged in for this session.
    */
   public function loggedIn() {
-    $session = $this->getSession();
-    $page = $session->getPage();
+    // If there is no session or no page yet, this is a brand new test session
+    // and the user is not logged in.
+    if (!$session = $this->getSession()) {
+      return FALSE;
+    }
+    if (!$page = $session->getPage()) {
+      return FALSE;
+    }
 
     // Look for a css selector to determine if a user is logged in.
     // Default is the logged-in class on the body tag.
