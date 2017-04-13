@@ -1,8 +1,8 @@
 {
   "require": {
-    "drupal/drupal-extension": "~3.0",
+    "drupal/drupal-extension": "^3.2",
     "guzzlehttp/guzzle" : "^6.0@dev"
-},
+  },
   "config": {
     "bin-dir": "bin/"
   }
