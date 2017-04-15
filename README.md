@@ -67,7 +67,7 @@ the [Full documentation](https://behat-drupal-extension.readthedocs.org)
 
 1. Define your own steps in `projectdir\features\FeatureContext.php`
 
-1. Start adding your [feature files](http://docs.behat.org/en/latest/guides/1.gherkin.html) 
+1. Start adding your [feature files](http://behat.org/en/latest/user_guide/gherkin.html) 
    to the `features` directory of your repository.
 
 ## Additional resources
