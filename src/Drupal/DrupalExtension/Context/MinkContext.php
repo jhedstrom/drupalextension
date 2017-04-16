@@ -233,10 +233,6 @@ class MinkContext extends MinkExtension implements TranslatableContext {
       // this step is not being performed by a driver that supports javascript.
       // All other exceptions are valid.
     }
-
-    if ($result) {
-      throw new \Exception(sprintf("The link '%s' was present on the page %s and was not supposed to be", $link, $this->getSession()->getCurrentUrl()));
-    }
   }
 
   /**
