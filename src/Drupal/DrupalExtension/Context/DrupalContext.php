@@ -11,6 +11,7 @@ use Behat\Mink\Exception\UnsupportedDriverActionException;
 use Drupal\Drupal;
 use Drupal\DrupalExtension\Event\EntityEvent;
 use Drupal\DrupalExtension\Context\DrupalSubContextInterface;
+use Drupal\Core\Field\FieldItemList;
 
 use Symfony\Component\Process\Process;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -991,8 +992,15 @@ class DrupalContext extends MinkContext implements DrupalAwareInterface, Transla
     $this->dispatcher->dispatch('afterNodeCreate', new EntityEvent($this, $saved));
     $this->nodes[] = $saved;
 
-    // Set internal page on the new node.
-    $this->getSession()->visit($this->locatePath('/node/' . $saved->nid));
+    // Set internal page on the new node. The nid property is a scalar value in
+    // Drupal 6 and 7. In Drupal 8, this property is a FieldItemList object.
+    if ($saved->nid instanceof FieldItemList) {
+      $id = $saved->nid->value;
+    }
+    else {
+      $id = $saved->nid;
+    }
+    $this->getSession()->visit($this->locatePath('/node/' . $id));
   }
 
   /**
