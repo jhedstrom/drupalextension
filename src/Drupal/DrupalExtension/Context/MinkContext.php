@@ -116,10 +116,20 @@ class MinkContext extends MinkExtension implements TranslatableContext {
   /**
    * Wait for AJAX to finish.
    *
+   * @param int $seconds
+   *   Max time to wait for AJAX.
+   *
+   * @Given I wait for AJAX to finish at least :seconds seconds
    * @Given I wait for AJAX to finish
+   *
+   * @throws \Exception
+   *   Ajax call didn't finish on time.
    */
-  public function iWaitForAjaxToFinish() {
-    $this->getSession()->wait(5000, '(typeof(jQuery)=="undefined" || (0 === jQuery.active && 0 === jQuery(\':animated\').length))');
+  public function iWaitForAjaxToFinish($seconds = 5) {
+    $finished = $this->getSession()->wait($seconds * 1000, '(typeof(jQuery)=="undefined" || (0 === jQuery.active && 0 === jQuery(\':animated\').length))');
+    if (!$finished) {
+      throw new \Exception("Ajax call didn't finished within $seconds seconds.");
+    }
   }
 
   /**
