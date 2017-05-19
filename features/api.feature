@@ -208,6 +208,7 @@ Feature: DrupalContext
     | Tag four  |
     And "article" content:
     | title           | body             | promote | field_tags                    |
+    # Field values containing commas should be escaped with double quotes.
     | Article by Joe  | PLACEHOLDER BODY |       1 | Tag one, Tag two, "Tag,three" |
     | Article by Mike | PLACEHOLDER BODY |       1 | Tag four                      |
     When I am on the homepage

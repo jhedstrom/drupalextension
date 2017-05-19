@@ -375,14 +375,33 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
   }
 
   /**
-   * Parse multi-value fields. Possible formats:
-   *    A, B, "C, D"
-   *    A - B, C - D, E - F
+   * Parses the field values and turns them into the format expected by Drupal.
+   *
+   * Multiple values in a single field must be separated by commas. Wrap the
+   * field value in double quotes in case it should contain a comma.
+   *
+   * Compound field properties are identified using a ':' operator, either in
+   * the column heading or in the cell. If multiple properties are present in a
+   * single cell, they must be separated using ' - ', and values should not
+   * contain ':' or ' - '.
+   *
+   * Possible formats for the values:
+   *   A
+   *   A, B, "a value, containing a comma"
+   *   A - B
+   *   x: A - y: B
+   *   A - B, C - D, "E - F"
+   *   x: A - y: B,  x: C - y: D,  "x: E - y: F"
+   *
+   * See field_handlers.feature for examples of usage.
    *
    * @param string $entity_type
    *   The entity type.
    * @param \stdClass $entity
    *   An object containing the entity properties and fields as properties.
+   *
+   * @throws \Exception
+   *   Thrown when a field name is invalid.
    */
   public function parseEntityFields($entity_type, \stdClass $entity) {
     $multicolumn_field = '';
