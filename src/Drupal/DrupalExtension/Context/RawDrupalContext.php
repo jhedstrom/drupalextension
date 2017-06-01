@@ -406,7 +406,12 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
   public function parseEntityFields($entity_type, \stdClass $entity) {
     $multicolumn_field = '';
     $multicolumn_fields = array();
-
+    $entity_null_wrapper = NULL;
+    $entity_property_list = NULL;
+    if(function_exists('entity_metadata_wrapper')){
+      $entity_null_wrapper = entity_metadata_wrapper($entity_type, $entity);
+      $entity_property_list = array_keys($entity_null_wrapper->getPropertyInfo());
+    }
     foreach (clone $entity as $field => $field_value) {
       // Reset the multicolumn field if the field name does not contain a column.
       if (strpos($field, ':') === FALSE) {
@@ -430,6 +435,18 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
 
       $is_multicolumn = $multicolumn_field && $multicolumn_column;
       $field_name = $multicolumn_field ?: $field;
+      //double check if possible that the multicolumn field has been properly
+      //identified in the feature.  If the field can be found in the wrapped
+      //entity, and it is of type EntityListWrapper, then is_multicolumn should
+      //be true.  If it isn't, then there is a problem in the feature file.
+      //(missing colon)
+      if(!empty($entity_null_wrapper)){
+        if(in_array($field_name, $entity_property_list)){
+          if (get_class($entity_null_wrapper->{$field_name}) === 'EntityListWrapper' && !$is_multicolumn) {
+            throw new \Exception(sprintf("%s::%s: The field '%s' is a multivalue field, and requires a ':' after the field name.", get_class($this), __FUNCTION__, $field_name));
+          }
+        }
+      }
       if ($this->getDriver()->isField($entity_type, $field_name)) {
         // Split up multiple values in multi-value fields.
         $values = array();
