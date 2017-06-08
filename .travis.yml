@@ -1,7 +1,6 @@
 language: php
 
 php:
-  - 5.3
   - 5.4
   - 5.5
   - 5.6
@@ -17,8 +16,6 @@ env:
 
 matrix:
   exclude:
-    - php: 5.3
-      env: DRUPAL_VERSION=8
     - php: 5.4
       env: DRUPAL_VERSION=8
     - php: 5.6
@@ -38,12 +35,10 @@ install:
   # Use the example composer.json file for Drupal 8, and also install the behat drush endpoint.
   - test ${DRUPAL_VERSION} -ne 8 || (cp doc/_static/composer.json.d8 ./composer.json && composer require --prefer-source drush-ops/behat-drush-endpoint drupal/drupal-driver:dev-master)
   - composer install
-  # Drush version must vary depending on environment and version of core.
-  - test ${TRAVIS_PHP_VERSION} == "5.3" && composer global require drush/drush:~6.0 || composer global require drush/drush:~8.0
+  # Install drush.
+  - composer global require drush/drush:~8.0
   # Install the Behat Drush Endpoint for Drupal 7 tests.
   - test ${DRUPAL_VERSION} -ne 7 || (git clone https://github.com/drush-ops/behat-drush-endpoint.git drush/behat-drush-endpoint && (cd drush/behat-drush-endpoint && composer install))
-  # PHP 5.3 requires the cgi extension for runserver.
-  - test \! ${TRAVIS_PHP_VERSION} == "5.3" || pecl install cgi
   - npm install
 
 before_script:
