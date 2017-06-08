@@ -545,7 +545,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
       $this->logout();
     }
 
-    $this->getSession()->visit($this->locatePath('/user'));
+    $this->getSession()->visit($this->locatePath($this->getDrupalText('login_path')));
     $element = $this->getSession()->getPage();
     $element->fillField($this->getDrupalText('username_field'), $user->name);
     $element->fillField($this->getDrupalText('password_field'), $user->pass);

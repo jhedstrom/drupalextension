@@ -112,6 +112,7 @@ class DrupalExtension implements ExtensionInterface {
               'Text strings, such as Log out or the Username field can be altered via behat.yml if they vary from the default values.' . PHP_EOL
             . '  log_out: "Sign out"' . PHP_EOL
             . '  log_in: "Sign in"' . PHP_EOL
+            . '  login_path: "/user"' . PHP_EOL
             . '  password_field: "Enter your password"' . PHP_EOL
             . '  username_field: "Nickname"'
           )->
@@ -122,6 +123,9 @@ class DrupalExtension implements ExtensionInterface {
             end()->
             scalarNode('log_out')->
               defaultValue('Log out')->
+            end()->
+            scalarNode('login_path')->
+              defaultValue('/user')->
             end()->
             scalarNode('password_field')->
               defaultValue('Password')->
