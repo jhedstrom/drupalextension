@@ -17,14 +17,15 @@ behat.yml
 .. literalinclude:: _static/snippets/behat-sub.yml
    :language: yaml
    :linenos:
-   :emphasize-lines: 22-24
+   :emphasize-lines: 8-9,25-26
 
 The Drupal Extension will search recursively within the directory or
 directories specified to discover and load any file ending in `.behat.inc`. This
 system, although created with Drupal contrib projects in mind, searches where
 it's pointed, so you can also use it for your own subcontexts, a strategy you
 might employ to re-use step definitions particular to your shop or company's
-development patterns.
+development patterns. The `paths` key allows running tests located in features
+within the `features` directory of a contributed/custom module.
 
 Disable autoloading
 -------------------
