@@ -84,3 +84,32 @@ the [Full documentation](https://behat-drupal-extension.readthedocs.org)
  * [Drupal form element visibility](https://gist.github.com/pbuyle/7698675)
  * [Track down PHP notices](https://www.godel.com.au/blog/use-behat-track-down-php-notices-they-take-over-your-drupal-site-forever)
  * [Support for sites using basic HTTP authentication](https://gist.github.com/jhedstrom/5bc5192d6dacbf8cc459)
+
+## Release notes
+
+### Backwards incompatible changes
+
+Starting with 3.3.0 Behat Drupal Extension depends on Behat 3.2.0 which
+requires all callbacks to be defined as static methods.
+
+Before 3.3.0:
+
+```
+/**
+ * @afterUserCreate
+ */
+public function afterUserCreate(EntityScope $scope) {
+  // ...
+}
+```
+
+Starting with 3.3.0:
+
+```
+/**
+ * @afterUserCreate
+ */
+public static function afterUserCreate(EntityScope $scope) {
+  // ...
+}
+```

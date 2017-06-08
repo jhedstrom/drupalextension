@@ -90,13 +90,23 @@ final class Reader implements EnvironmentReader {
     $contextClasses = $this->findSubContextClasses();
 
     foreach ($contextClasses as $contextClass) {
-      $callees = array_merge(
-        $callees,
-        $this->readContextCallees($environment, $contextClass)
-      );
+      // When executing test scenarios with an examples table the registering of
+      // contexts is handled differently in newer version of Behat. Starting
+      // with Behat 3.2.0 the contexts are already registered, and the callees
+      // are returned by the default reader.
+      // Work around this and provide compatibility with Behat 3.1.0 as well as
+      // 3.2.0 and higher by checking if the class already exists before
+      // registering it and returning the callees.
+      // @see https://github.com/Behat/Behat/issues/758
+      if (!$environment->hasContextClass($contextClass)) {
+        $callees = array_merge(
+          $callees,
+          $this->readContextCallees($environment, $contextClass)
+        );
 
-      // Register context.
-      $environment->registerContextClass($contextClass, array($this->drupal));
+        // Register context.
+        $environment->registerContextClass($contextClass, array($this->drupal));
+      }
     }
 
     return $callees;
