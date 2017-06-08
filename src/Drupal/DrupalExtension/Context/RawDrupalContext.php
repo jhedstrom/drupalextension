@@ -181,7 +181,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    *
    * @beforeNodeCreate
    */
-  public function alterNodeParameters(BeforeNodeCreateScope $scope) {
+  public static function alterNodeParameters(BeforeNodeCreateScope $scope) {
     $node = $scope->getEntity();
 
     // Get the Drupal API version if available. This is not available when
