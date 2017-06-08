@@ -17,7 +17,7 @@ class MinkContext extends MinkExtension implements TranslatableContext {
    * @return array
    */
   public static function getTranslationResources() {
-    return glob(__DIR__ . '/../../../../i18n/*.xliff');
+    return glob(__DIR__ . '/../../../../../../behat/mink-extension/i18n/*.xliff');
   }
 
   /**
