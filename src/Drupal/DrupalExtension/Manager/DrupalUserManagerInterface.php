@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal;
+namespace Drupal\DrupalExtension\Manager;
 
 /**
  * Interface for classes that manage users created during tests.
