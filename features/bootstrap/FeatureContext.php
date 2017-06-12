@@ -22,7 +22,6 @@ class FeatureContext implements Context {
    * @beforeNodeCreate
    */
   public static function alterNodeParameters(BeforeNodeCreateScope $scope) {
-    call_user_func('parent::alterNodeParameters', $scope);
     // @see `features/api.feature`
     // Change 'published on' to the expected 'created'.
     $node = $scope->getEntity();
