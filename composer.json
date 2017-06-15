@@ -12,11 +12,11 @@
      }
   ],
   "require": {
+    "behat/behat": "~3.2",
     "behat/mink": "~1.5",
+    "behat/mink-extension": "~2.0",
     "behat/mink-goutte-driver": "~1.0",
     "behat/mink-selenium2-driver": "~1.1",
-    "behat/behat": "~3.2",
-    "behat/mink-extension": "~2.0",
     "drupal/drupal-driver": "dev-master",
     "symfony/dependency-injection": "~2.7|~3.0",
     "symfony/event-dispatcher": "~2.7|~3.0"
