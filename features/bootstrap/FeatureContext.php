@@ -3,6 +3,7 @@
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
+use Drupal\DrupalExtension\Hook\Scope\BeforeNodeCreateScope;
 use Drupal\DrupalExtension\Hook\Scope\EntityScope;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
@@ -21,7 +22,7 @@ class FeatureContext implements Context {
    * @beforeNodeCreate
    */
   public static function alterNodeParameters(BeforeNodeCreateScope $scope) {
-    call_user_func('parent::alterNodeParameters', $scope);
+    call_user_func('\Drupal\DrupalExtension\Context\RawDrupalContext::alterNodeParameters', $scope);
     // @see `features/api.feature`
     // Change 'published on' to the expected 'created'.
     $node = $scope->getEntity();
