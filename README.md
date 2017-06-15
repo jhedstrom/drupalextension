@@ -7,7 +7,7 @@ sites.
 
 [![Build Status](https://travis-ci.org/jhedstrom/drupalextension.png?branch=master)](https://travis-ci.org/jhedstrom/drupalextension)
 
-The Drupal Extension 3.3.x supports Drupal 6, 7 and 8, utilizes Behat 3.2+ and
+The Drupal Extension 4.x supports Drupal 6, 7 and 8, utilizes Behat 3.2+ and
 runs on PHP 5.5+. It is compatible with Symfony components 2.x as well as 3.x
 so it can be used on Drupal 8.4.x.
 
