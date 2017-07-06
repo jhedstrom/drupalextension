@@ -1,11 +1,10 @@
 language: php
 
 php:
-  - 5.3
-  - 5.4
   - 5.5
   - 5.6
   - 7.0
+  - 7.1
 
 env:
   global:
@@ -17,16 +16,16 @@ env:
 
 matrix:
   exclude:
-    - php: 5.3
-      env: DRUPAL_VERSION=8
-    - php: 5.4
-      env: DRUPAL_VERSION=8
     - php: 5.6
       env: DRUPAL_VERSION=6
     - php: 7.0
       env: DRUPAL_VERSION=6
+    - php: 7.1
+      env: DRUPAL_VERSION=6
   allow_failures:
     - php: 7.0
+      env: DRUPAL_VERSION=7
+    - php: 7.1
       env: DRUPAL_VERSION=7
     - php: 5.3
 
@@ -38,12 +37,10 @@ install:
   # Use the example composer.json file for Drupal 8, and also install the behat drush endpoint.
   - test ${DRUPAL_VERSION} -ne 8 || (cp doc/_static/composer.json.d8 ./composer.json && composer require --prefer-source drush-ops/behat-drush-endpoint drupal/drupal-driver:dev-master)
   - composer install
-  # Drush version must vary depending on environment and version of core.
-  - test ${TRAVIS_PHP_VERSION} == "5.3" && composer global require drush/drush:~6.0 || composer global require drush/drush:~8.0
+  # Install drush.
+  - composer global require drush/drush:~8.0
   # Install the Behat Drush Endpoint for Drupal 7 tests.
   - test ${DRUPAL_VERSION} -ne 7 || (git clone https://github.com/drush-ops/behat-drush-endpoint.git drush/behat-drush-endpoint && (cd drush/behat-drush-endpoint && composer install))
-  # PHP 5.3 requires the cgi extension for runserver.
-  - test \! ${TRAVIS_PHP_VERSION} == "5.3" || pecl install cgi
   - npm install
 
 before_script:
@@ -55,10 +52,13 @@ before_script:
   - test ${DRUPAL_VERSION} -eq 8 && export PROJECT_NAME='drupal-8.1.x' || export PROJECT_NAME="drupal-${DRUPAL_VERSION}.x"
   # Set sendmail so drush doesn't throw an error during site install.
   - echo "sendmail_path='true'" >> `php --ini | grep "Loaded Configuration" | awk '{print $4}'`
-  # Setup a stack Drupal 6 install to test api abilities.
+  # Download and install Drupal so we can test API abilities.
   - mysql -e 'create database drupal'
   - drush --quiet dl ${PROJECT_NAME} --all --drupal-project-rename=drupal
   - drush --yes --root=$PWD/drupal site-install --db-url=mysql://travis:@127.0.0.1/drupal
+  # Copy the static HTML that is used for blackbox testing in the web root.
+  - cp -r fixtures/blackbox $PWD/drupal
+  # Copy our test module to the correct location.
   - cp -r fixtures/drupal${DRUPAL_VERSION}/modules/behat_test ${MODULE_PATH}
   - cd drupal
   - drush --yes en behat_test

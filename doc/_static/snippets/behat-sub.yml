@@ -5,6 +5,8 @@ default:
         - FeatureContext
         - Drupal\DrupalExtension\Context\DrupalContext
         - Drupal\DrupalExtension\Context\MinkContext
+      paths:
+        - "./path_to_module/features"
   extensions:
     Behat\MinkExtension:
       goutte: ~

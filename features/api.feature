@@ -204,16 +204,17 @@ Feature: DrupalContext
     | name      |
     | Tag one   |
     | Tag two   |
-    | Tag three |
+    | Tag,three |
     | Tag four  |
     And "article" content:
-    | title           | body             | promote | field_tags                  |
-    | Article by Joe  | PLACEHOLDER BODY |       1 | Tag one, Tag two, Tag three |
-    | Article by Mike | PLACEHOLDER BODY |       1 | Tag four                    |
+    | title           | body             | promote | field_tags                    |
+    # Field values containing commas should be escaped with double quotes.
+    | Article by Joe  | PLACEHOLDER BODY |       1 | Tag one, Tag two, "Tag,three" |
+    | Article by Mike | PLACEHOLDER BODY |       1 | Tag four                      |
     When I am on the homepage
     Then I should see the link "Tag one"
     And I should see the link "Tag two"
-    And I should see the link "Tag three"
+    And I should see the link "Tag,three"
     And I should see the link "Tag four"
 
   @d7 @d8
