@@ -2,7 +2,7 @@
 
 namespace Drupal\DrupalExtension\Listener;
 
-use Behat\Behat\EventDispatcher\Event\OutlineTested;
+use Behat\Behat\EventDispatcher\Event\ExampleTested;
 use Behat\Behat\EventDispatcher\Event\ScenarioLikeTested;
 use Behat\Behat\EventDispatcher\Event\ScenarioTested;
 
@@ -42,7 +42,7 @@ class DriverListener implements EventSubscriberInterface {
   public static function getSubscribedEvents() {
     return array(
       ScenarioTested::BEFORE => array('prepareDefaultDrupalDriver', 11),
-      OutlineTested::BEFORE => array('prepareDefaultDrupalDriver', 11),
+      ExampleTested::BEFORE => array('prepareDefaultDrupalDriver', 11),
     );
   }
 
