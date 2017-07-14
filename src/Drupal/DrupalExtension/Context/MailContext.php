@@ -215,14 +215,10 @@ class MailContext extends RawDrupalContext {
    * @When Drupal sends a/an (e)mail:
    */
   public function DrupalSendsMail(TableNode $fields) {
-    $to = $this->getRandom()->name(10) . '@anonexample.com';
-    if ($this->getUserManager()->getCurrentUser() && $currentMail = $this->getUserManager()->getCurrentUser()->mail) {
-        $to = $currentMail;
-    }
     $mail = [
       'body' => $this->getRandom()->name(255),
       'subject' => $this->getRandom()->name(20),
-      'to' => $to,
+      'to' => $this->getRandom()->name(10) . '@anonexample.com';,
       'langcode' => '',
     ];
     foreach ($fields->getRowsHash() as $field => $value) {
