@@ -218,7 +218,7 @@ class MailContext extends RawDrupalContext {
     $mail = [
       'body' => $this->getRandom()->name(255),
       'subject' => $this->getRandom()->name(20),
-      'to' => $this->getRandom()->name(10) . '@anonexample.com';,
+      'to' => $this->getRandom()->name(10) . '@anonexample.com',
       'langcode' => '',
     ];
     foreach ($fields->getRowsHash() as $field => $value) {
