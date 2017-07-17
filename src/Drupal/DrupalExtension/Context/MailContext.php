@@ -136,6 +136,9 @@ class MailContext extends RawDrupalContext {
     }
 
     // For each row of expected mail, check the corresponding actual mail.
+    // Make the comparison insensitive to the order mails were sent.
+    $actualMail = $this->sortMail($actualMail);
+    $expectedMail = $this->sortMail($expectedMail);
     foreach ($expectedMail as $index => $expectedMailItem) {
       // For each column of the expected, check the field of the actual mail.
       foreach ($expectedMailItem as $fieldName => $fieldValue) {
@@ -146,6 +149,53 @@ class MailContext extends RawDrupalContext {
         }
       }
     }
+  }
+
+  /**
+   * Sort mail by to, subject and body.
+   *
+   * @param array $mail
+   *   An array of mail to sort.
+   *
+   * @return array
+   *   The same mail, but sorted.
+   */
+  protected function sortMail($mail) {
+    // Can't sort an empty array.
+    if (count($mail) === 0) {
+      return [];
+    }
+
+    // To, subject and body keys must be present.
+    // Empty strings are ignored when matching so adding them is harmless.
+    foreach ($mail as $key => $row) {
+      if (!array_key_exists('to',$row)) {
+        $mail[$key]['to'] = '';
+      }
+      if (!array_key_exists('subject',$row)) {
+        $mail[$key]['subject'] = '';
+      }
+      if (!array_key_exists('body',$row)) {
+        $mail[$key]['body'] = '';
+      }
+    }
+
+    // Obtain a list of columns.
+    foreach ($mail as $key => $row) {
+      if (array_key_exists('to',$row)) {
+        $to[$key] = $row['to'];
+      }
+      if (array_key_exists('subject',$row)) {
+        $subject[$key] = $row['subject'];
+      }
+      if (array_key_exists('body',$row)) {
+        $body[$key] = $row['body'];
+      }
+    }
+
+    // Add $mail as the last parameter, to sort by the common key.
+    array_multisort($to, SORT_ASC, $subject, SORT_ASC, $body, SORT_ASC, $mail);
+    return $mail;
   }
 
   /**
