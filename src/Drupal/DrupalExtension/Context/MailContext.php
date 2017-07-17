@@ -112,7 +112,8 @@ class MailContext extends RawDrupalContext {
     $matches = array_filter($matches, 'strlen');
     // For each criteria, check the specified mail field contains the value.
     foreach($matches as $field => $value) {
-      if (strpos($mail[$field], $value) === FALSE) {
+      // Case insensitive.
+      if (stripos($mail[$field], $value) === FALSE) {
         return FALSE;
       }
     }
@@ -132,7 +133,11 @@ class MailContext extends RawDrupalContext {
     $actualCount = count($actualMail);
     $expectedCount = count($expectedMail);
     if ($expectedCount !== $actualCount) {
-      throw new \Exception(sprintf('%s mail expected, but %s found.', $expectedCount, $actualCount));
+      $prettyActualMail = [];
+      foreach ($actualMail as $singleActualMail) {
+        $prettyActualMail[] = ['to' => $singleActualMail['to'],'subject' => $singleActualMail['subject'],];
+      }
+      throw new \Exception(sprintf("%s mail expected, but %s found:\n\n%s", $expectedCount, $actualCount, print_r($prettyActualMail, TRUE)));
     }
 
     // For each row of expected mail, check the corresponding actual mail.
@@ -145,7 +150,7 @@ class MailContext extends RawDrupalContext {
         $expectedField = [$fieldName => $fieldValue];
         $match = $this->matchesMail($actualMail[$index], $expectedField);
         if (!$match) {
-          throw new \Exception(sprintf('The #%s mail did not have %s in its %s field. ', $index, $fieldName, $fieldValue));
+          throw new \Exception(sprintf("The #%s mail did not have '%s' in its %s field. It had:\n%s", $index, $fieldValue, $fieldName, mb_strimwidth($actualMail[$index][$fieldName],0, 30, "...")));
         }
       }
     }
