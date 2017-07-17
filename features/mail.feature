@@ -49,3 +49,18 @@ Feature: MailContext
       | body    | A link to Google: http://www.Google.com |
     And I follow the link to "google" from the mail with the subject "test link"
     Then I should see "Search"
+    
+    
+  Scenario: We try to be order insensitive
+    When Drupal sends an email:
+      | to      | fred@example.com |
+      | subject | test             |
+      | body    | test body        |
+    And Drupal sends a mail:
+      | to      | jane@example.com |
+      | subject | test             |
+      | body    | test body 2      |
+    Then mails have been sent:
+      | to   | subject | body        |
+      | jane | test    | body 2      |
+      | fred |         | test body   |
