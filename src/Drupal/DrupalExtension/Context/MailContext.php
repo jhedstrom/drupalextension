@@ -150,7 +150,7 @@ class MailContext extends RawDrupalContext {
         $expectedField = [$fieldName => $fieldValue];
         $match = $this->matchesMail($actualMail[$index], $expectedField);
         if (!$match) {
-          throw new \Exception(sprintf("The #%s mail did not have '%s' in its %s field. It had:\n%s", $index, $fieldValue, $fieldName, mb_strimwidth($actualMail[$index][$fieldName],0, 30, "...")));
+          throw new \Exception(sprintf("The #%s mail did not have '%s' in its %s field. It had:\n'%s'", $index, $fieldValue, $fieldName, mb_strimwidth($actualMail[$index][$fieldName],0, 30, "...")));
         }
       }
     }
