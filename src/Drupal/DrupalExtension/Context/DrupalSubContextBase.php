@@ -7,7 +7,6 @@
 
 namespace Drupal\DrupalExtension\Context;
 
-use Behat\Behat\Context\Environment\InitializedContextEnvironment;
 use Drupal\DrupalDriverManager;
 
 /**
