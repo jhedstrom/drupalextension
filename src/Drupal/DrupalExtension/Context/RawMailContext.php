@@ -128,16 +128,9 @@ class RawMailContext extends RawDrupalContext {
    *   An array of expected mail.
    */
   protected function compareMail($actualMail, $expectedMail) {
-    // Make sure there is the same number of actual and expected
-    $actualCount = count($actualMail);
+    // Make sure there is the same number of actual and expected.
     $expectedCount = count($expectedMail);
-    if ($expectedCount !== $actualCount) {
-      $prettyActualMail = [];
-      foreach ($actualMail as $singleActualMail) {
-        $prettyActualMail[] = ['to' => $singleActualMail['to'],'subject' => $singleActualMail['subject'],];
-      }
-      throw new \Exception(sprintf("%s mail expected, but %s found:\n\n%s", $expectedCount, $actualCount, print_r($prettyActualMail, TRUE)));
-    }
+    $this->assertMailCount($actualMail, $expectedCount);
 
     // For each row of expected mail, check the corresponding actual mail.
     // Make the comparison insensitive to the order mails were sent.
@@ -155,6 +148,38 @@ class RawMailContext extends RawDrupalContext {
     }
   }
 
+  /**
+   * Assert there is the expected number of mails, or that there are some mails
+   * if the exact number expected is not specified.
+   *
+   * @param array $actualMail
+   *   An array of actual mail.
+   * @param int $expectedCount
+   *   Optional. The number of mails expected.
+   */
+  protected function assertMailCount($actualMail, $expectedCount = NULL) {
+    $actualCount = count($actualMail);
+    if (is_null($expectedCount)) {
+      // If number to expect is not specified, expect more than zero.
+     if ($actualCount === 0) {
+       throw new \Exception("Expected some mail, but none found.");
+     }
+    }
+    else {
+      if ($expectedCount != $actualCount) {
+        // Prepare a simple list of actual mail.
+        $prettyActualMail = [];
+        foreach ($actualMail as $singleActualMail) {
+          $prettyActualMail[] = [
+            'to' => $singleActualMail['to'],
+            'subject' => $singleActualMail['subject'],
+          ];
+        }
+        throw new \Exception(sprintf("Expected %s mail, but %s found:\n\n%s", $expectedCount, $actualCount, print_r($prettyActualMail, TRUE)));
+      }
+    }
+  }
+  
   /**
    * Sort mail by to, subject and body.
    *

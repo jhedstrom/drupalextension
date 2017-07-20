@@ -80,63 +80,61 @@ class MailContext extends RawMailContext {
   /**
    * Check all mail sent during the scenario.
    * 
-   * @Then (e)mail(s) has/have been sent:
-   * @Then (e)mail(s) has/have been sent to :to:
+   * @Then (a )(an )(e)mail(s) has/have been sent:
+   * @Then (a )(an )(e)mail(s) has/have been sent to :to:
+   * @Then (a )(an )(e)mail(s) has/have been sent with the subject :subject:
+   * @Then (a )(an )(e)mail(s) has/have been sent to :to with the subject :subject:
    */
-  public function mailHasBeenSent(TableNode $expectedMailTable, $to = NULL) {
+  public function mailHasBeenSent(TableNode $expectedMailTable, $to = '', $subject = '') {
     $expectedMail = $expectedMailTable->getHash();
-    $matches = [];
-    if (!is_null($to)) {
-      $matches = ['to' => $to];
-    }
-    $actualMail = $this->getMail($matches);
+    $actualMail = $this->getMail(['to' => $to, 'subject' => $subject], FALSE);
     $this->compareMail($actualMail, $expectedMail);
   }
 
   /**
    * Check mail sent since the last step that checked mail.
    * 
-   * @Then new (e)mail(s) is/are sent:
-   * @Then new (e)mail(s) is/are sent to :to:
+   * @Then (a )(an )new (e)mail(s) is/are sent:
+   * @Then (a )(an )new (e)mail(s) is/are sent to :to:
+   * @Then (a )(an )new (e)mail(s) is/are sent with the subject :subject:
+   * @Then (a )(an )new (e)mail(s) is/are sent to :to with the subject :subject:
    */
-  public function newMailIsSent(TableNode $expectedMailTable, $to = NULL) {
+  public function newMailIsSent(TableNode $expectedMailTable, $to = '', $subject = '') {
     $expectedMail = $expectedMailTable->getHash();
-    $matches = [];
-    if (!is_null($to)) {
-      $matches = ['to' => $to];
-    }
-    $actualMail = $this->getMail($matches, TRUE);
+    $actualMail = $this->getMail(['to' => $to, 'subject' => $subject], TRUE);
     $this->compareMail($actualMail, $expectedMail);
   }
 
   /**
    * Check all mail sent during the scenario.
    *
-   * @Then no (e)mail(s) has/have been sent
-   * @Then no (e)mail(s) has/have been sent to :to
+   * @Then :count (e)mail(s) has/have been sent
+   * @Then :count (e)mail(s) has/have been sent to :to
+   * @Then :count (e)mail(s) has/have been sent with the subject :subject
+   * @Then :count (e)mail(s) has/have been sent to :to with the subject :subject
    */
-  public function noMailHasBeenSent($to = NULL) {
-    $matches = [];
-    if (!is_null($to)) {
-      $matches = ['to' => $to];
-    }
-    $actualMail = $this->getMail($matches);
-    $this->compareMail($actualMail, []);
+  public function noMailHasBeenSent($count, $to = '', $subject = '') {
+    $actualMail = $this->getMail(['to' => $to, 'subject' => $subject], FALSE);
+    $count = $count === 'no' ? 0 : $count;
+    $count = $count === 'a' ? NULL : $count;
+    $count = $count === 'an' ? NULL : $count;
+    $this->assertMailCount($actualMail, $count);
   }
 
   /**
    * Check mail sent since the last step that checked mail.
    *
-   * @Then no new (e)mail(s) is/are sent
-   * @Then no new (e)mail(s) is/are sent to :to
+   * @Then :count new (e)mail(s) is/are sent
+   * @Then :count new (e)mail(s) is/are sent to :to
+   * @Then :count new (e)mail(s) is/are sent with the subject :subject
+   * @Then :count new (e)mail(s) is/are sent to :to with the subject :subject
    */
-  public function noNewMailIsSent($to = NULL) {
-    $matches = [];
-    if (!is_null($to)) {
-      $matches = ['to' => $to];
-    }
-    $actualMail = $this->getMail($matches, TRUE);
-    $this->compareMail($actualMail, []);
+  public function noNewMailIsSent($count, $to = '', $subject = '') {
+    $actualMail = $this->getMail(['to' => $to, 'subject' => $subject], TRUE);
+    $count = $count === 'no' ? 0 : $count;
+    $count = $count === 'a' ? 1 : $count;
+    $count = $count === 'an' ? 1 : $count;
+    $this->assertMailCount($actualMail, $count);
   }
   
   /**
@@ -149,6 +147,9 @@ class MailContext extends RawMailContext {
     // Get the mail
     $matches = ['to' => $to, 'subject' => $subject];
     $mail = $this->getMail($matches, FALSE, -1);
+    if (count($mail) == 0) {
+      throw new \Exception('No such mail found.');
+    }
     $body = $mail['body'];
 
     // Find web URLs in the mail
