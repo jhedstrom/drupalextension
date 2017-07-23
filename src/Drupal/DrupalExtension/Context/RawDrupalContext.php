@@ -660,7 +660,9 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
     $environment = $this->drupal->getEnvironment();
     // Throw an exception if the environment is not yet initialized. To make
     // sure state doesn't leak between test scenarios, the environment is
-    // reinitialized at the start of every scenario.
+    // reinitialized at the start of every scenario. If this code is executed
+    // before a test scenario starts (e.g. in a `@BeforeScenario` hook) then the
+    // contexts cannot yet be retrieved.
     if (!$environment instanceof InitializedContextEnvironment) {
       throw new \Exception('Cannot retrieve contexts when the environment is not yet initialized.');
     }
