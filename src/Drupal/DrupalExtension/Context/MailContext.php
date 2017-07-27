@@ -9,17 +9,20 @@ use Behat\Gherkin\Node\TableNode;
  */
 class MailContext extends RawMailContext {
 
-  /**
+    /**
    * By default, prevent mail from being actually sent out during tests.
    *
    * @BeforeScenario
    */
-  public function disableMail() {
-    $this->getMailManager()->disableMail();
-    // Always reset mail count, in case the default mail manager is being used
-    // which enables mail collecting automatically when mail is disabled, making
-    //the use of the @mail tag optional in this case.
-    $this->mailCount = [];
+  public function disableMail($event) {
+    $tags = array_merge($event->getFeature()->getTags(), $event->getScenario()->getTags());
+    if (!in_array('sendmail', $tags) && !!in_array('sendemail', $tags)) {
+      $this->getMailManager()->disableMail();
+      // Always reset mail count, in case the default mail manager is being used
+      // which enables mail collecting automatically when mail is disabled, making
+      //the use of the @mail tag optional in this case.
+      $this->mailCount = [];
+    }
   }
 
   /**
@@ -27,17 +30,11 @@ class MailContext extends RawMailContext {
    *
    * @AfterScenario
    */
-  public function enableMail() {
-    $this->getMailManager()->enableMail();
-  }
-
-  /**
-   * Allow opting in to actually sending mail out.
-   *
-   * @BeforeScenario @sendmail @sendemail
-   */
-  public function sendMail() {
-    $this->getMailManager()->enableMail();
+  public function enableMail($event) {
+    $tags = array_merge($event->getFeature()->getTags(), $event->getScenario()->getTags());
+    if (!in_array('sendmail', $tags) && !!in_array('sendemail', $tags)) {
+      $this->getMailManager()->enableMail();
+    }
   }
 
   /**
