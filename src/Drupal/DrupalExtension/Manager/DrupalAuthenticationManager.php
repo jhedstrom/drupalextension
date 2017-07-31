@@ -106,8 +106,9 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
         // Some themes do not add that class to the body, so lets check if the
         // login form is displayed on /user/login.
         $session->visit($this->locatePath('/user/login'));
-        if (!$page->has('css', $this->getDrupalSelector('login_form_selector'))) {
-            return TRUE;
+        if ($page->has('css', $this->getDrupalSelector('login_form_selector'))) {
+            $this->logout();
+            return FALSE;
         }
 
         $session->visit($this->locatePath('/'));
@@ -118,10 +119,9 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
             return TRUE;
         }
 
-        // The user appears to be anonymous. Clear the current user from the user
-        // manager so this reflects the actual situation.
-        $this->userManager->setCurrentUser(FALSE);
-
+        // The user appears to be anonymous. Calling logout() both ensures this is the 
+        // case and updates the userManager to reflect this.
+        $this->logout();
         return FALSE;
     }
 }
