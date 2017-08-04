@@ -116,12 +116,29 @@ class MinkContext extends MinkExtension implements TranslatableContext {
   /**
    * Wait for AJAX to finish.
    *
+   * @see \Drupal\FunctionalJavascriptTests\JSWebAssert::assertWaitOnAjaxRequest()
+   *
    * @Given I wait for AJAX to finish
    */
   public function iWaitForAjaxToFinish() {
-    $this->getSession()->wait(5000, '(typeof(jQuery)=="undefined" || (0 === jQuery.active && 0 === jQuery(\':animated\').length))');
+    $condition = <<<JS
+    (function() {
+      function isAjaxing(instance) {
+        return instance && instance.ajaxing === true;
+      }
+      return (
+        // Assert no AJAX request is running (via jQuery or Drupal) and no
+        // animation is running.
+        (typeof jQuery === 'undefined' || (jQuery.active === 0 && jQuery(':animated').length === 0)) &&
+        (typeof Drupal === 'undefined' || typeof Drupal.ajax === 'undefined' || !Drupal.ajax.instances.some(isAjaxing))
+      );
+    }());
+JS;
+    $result = $this->getSession()->wait(5000, $condition);
+    if (!$result) {
+      throw new \RuntimeException('Unable to complete AJAX request.');
+    }
   }
-
   /**
    * Presses button with specified id|name|title|alt|value.
    *
