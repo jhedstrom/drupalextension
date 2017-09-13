@@ -51,7 +51,7 @@ before_script:
   # Set NODE_PATH for zombie driver.
   - export NODE_PATH="`pwd`/node_modules"
   # Define the module path according to the Drupal version being tested.
-  - test ${DRUPAL_VERSION} -eq 8 && export MODULE_PATH='drupal/modules' || export MODULE_PATH='drupal/sites/all/modules'
+  - test ${DRUPAL_VERSION} -eq 8 && export MODULE_PATH="`pwd`/drupal/modules" || export MODULE_PATH="`pwd`/drupal/sites/all/modules"
   # Drupal 8 uses semantic versioning.
   - test ${DRUPAL_VERSION} -eq 8 && export PROJECT_NAME='drupal-8.1.x' || export PROJECT_NAME="drupal-${DRUPAL_VERSION}.x"
   # Set sendmail so drush doesn't throw an error during site install.
