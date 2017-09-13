@@ -134,7 +134,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
     $this->userCreate($user);
 
     // Create and assign a temporary role with given permissions.
-    $permissions = explode(',', $permissions);
+    $permissions = array_map('trim', explode(',', $permissions));
     $rid = $this->getDriver()->roleCreate($permissions);
     $this->getDriver()->userAddRole($user, $rid);
     $this->roles[] = $rid;
