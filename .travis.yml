@@ -8,6 +8,7 @@ php:
 env:
   global:
     - PATH=$PATH:/home/travis/.composer/vendor/bin
+    - TRAVIS_NODE_VERSION="4.0.0"
   matrix:
     - DRUPAL_VERSION=6
     - DRUPAL_VERSION=7
@@ -36,6 +37,9 @@ install:
   - composer global require drush/drush:~8.0
   # Install the Behat Drush Endpoint for Drupal 7 tests.
   - test ${DRUPAL_VERSION} -ne 7 || (git clone https://github.com/drush-ops/behat-drush-endpoint.git drush/behat-drush-endpoint && (cd drush/behat-drush-endpoint && composer install))
+  # Pin node version.
+  # @see http://austinpray.com/ops/2015/09/20/change-travis-node-version.html
+  - rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm && (cd ~/.nvm && git checkout `git describe --abbrev=0 --tags`) && source ~/.nvm/nvm.sh && nvm install $TRAVIS_NODE_VERSION
   - npm install
 
 before_script:
