@@ -35,8 +35,8 @@ sudo: false
 
 install:
   - composer self-update
-  # Use the example composer.json file for Drupal 8, and also install the behat drush endpoint.
-  - test ${DRUPAL_VERSION} -ne 8 || (cp doc/_static/composer.json.d8 ./composer.json && composer require --prefer-source drush-ops/behat-drush-endpoint drupal/drupal-driver:dev-master)
+  # For Drupal 8 install the behat drush endpoint.
+  - test ${DRUPAL_VERSION} -ne 8 || (composer require --prefer-source drush-ops/behat-drush-endpoint)
   - composer install
   # Install drush.
   - composer global require drush/drush:~8.0
@@ -53,7 +53,7 @@ before_script:
   # Define the module path according to the Drupal version being tested.
   - test ${DRUPAL_VERSION} -eq 8 && export MODULE_PATH="`pwd`/drupal/modules" || export MODULE_PATH="`pwd`/drupal/sites/all/modules"
   # Drupal 8 uses semantic versioning.
-  - test ${DRUPAL_VERSION} -eq 8 && export PROJECT_NAME='drupal-8.1.x' || export PROJECT_NAME="drupal-${DRUPAL_VERSION}.x"
+  - test ${DRUPAL_VERSION} -eq 8 && export PROJECT_NAME='drupal-8.4.x' || export PROJECT_NAME="drupal-${DRUPAL_VERSION}.x"
   # Set sendmail so drush doesn't throw an error during site install.
   - echo "sendmail_path='true'" >> `php --ini | grep "Loaded Configuration" | awk '{print $4}'`
   # Download and install Drupal so we can test API abilities.
