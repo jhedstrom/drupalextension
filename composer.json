@@ -19,7 +19,7 @@
     "behat/mink-extension": "~2.0",
     "behat/mink-goutte-driver": "~1.0",
     "behat/mink-selenium2-driver": "~1.1",
-    "drupal/drupal-driver": "dev-master",
+    "drupal/drupal-driver": "~1.3",
     "symfony/dependency-injection": "~2.7|~3.0",
     "symfony/event-dispatcher": "~2.7|~3.0"
   },
