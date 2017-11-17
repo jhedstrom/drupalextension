@@ -25,11 +25,8 @@ matrix:
     - php: 7.1
       env: DRUPAL_VERSION=6
   allow_failures:
-    - php: 7.0
-      env: DRUPAL_VERSION=7
     - php: 7.1
       env: DRUPAL_VERSION=7
-    - php: 5.3
 
 # Enable Travis containers.
 sudo: false
