@@ -11,6 +11,8 @@
        "email": "jhedstrom@gmail.com"
      }
   ],
+  "minimum-stability": "dev",
+  "prefer-stable": true,
   "require": {
     "behat/behat": "~3.2",
     "behat/mink": "~1.5",

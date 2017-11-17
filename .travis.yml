@@ -10,6 +10,7 @@ env:
   global:
     - PATH=$PATH:/home/travis/.composer/vendor/bin
     - TRAVIS_NODE_VERSION="4.0.0"
+    - DRUPAL_8_MINOR_VERSION=4
   matrix:
     - DRUPAL_VERSION=6
     - DRUPAL_VERSION=7
@@ -24,24 +25,23 @@ matrix:
     - php: 7.1
       env: DRUPAL_VERSION=6
   allow_failures:
-    - php: 7.0
-      env: DRUPAL_VERSION=7
     - php: 7.1
       env: DRUPAL_VERSION=7
-    - php: 5.3
 
 # Enable Travis containers.
 sudo: false
 
 install:
   - composer self-update
-  # Use the example composer.json file for Drupal 8, and also install the behat drush endpoint.
-  - test ${DRUPAL_VERSION} -ne 8 || (cp doc/_static/composer.json.d8 ./composer.json && composer require --prefer-source drush-ops/behat-drush-endpoint drupal/drupal-driver:dev-master)
+  # For Drupal 8 install the behat drush endpoint.
+  # Pins symfony/dependency-injection to match core.
+  # @see https://github.com/jhedstrom/drupalextension/issues/413
+  - test ${DRUPAL_VERSION} -ne 8 || composer require --prefer-source drush-ops/behat-drush-endpoint drush/drush symfony/dependency-injection:3.2.8
   - composer install
-  # Install drush.
-  - composer global require drush/drush:~8.0
+  # Install drush globally.
+  - (test ${DRUPAL_VERSION} -ne 8 && composer global require drush/drush:~8.0) || composer global require drush/drush
   # Install the Behat Drush Endpoint for Drupal 7 tests.
-  - test ${DRUPAL_VERSION} -ne 7 || (git clone https://github.com/drush-ops/behat-drush-endpoint.git drush/behat-drush-endpoint && (cd drush/behat-drush-endpoint && composer install))
+  - test ${DRUPAL_VERSION} -ne 7 || (git clone https://github.com/drush-ops/behat-drush-endpoint.git drush/behat-drush-endpoint && (cd drush/behat-drush-endpoint && composer install && cd -))
   # Pin node version.
   # @see http://austinpray.com/ops/2015/09/20/change-travis-node-version.html
   - rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm && (cd ~/.nvm && git checkout `git describe --abbrev=0 --tags`) && source ~/.nvm/nvm.sh && nvm install $TRAVIS_NODE_VERSION
@@ -51,14 +51,15 @@ before_script:
   # Set NODE_PATH for zombie driver.
   - export NODE_PATH="`pwd`/node_modules"
   # Define the module path according to the Drupal version being tested.
-  - test ${DRUPAL_VERSION} -eq 8 && export MODULE_PATH="`pwd`/drupal/modules" || export MODULE_PATH="`pwd`/drupal/sites/all/modules"
-  # Drupal 8 uses semantic versioning.
-  - test ${DRUPAL_VERSION} -eq 8 && export PROJECT_NAME='drupal-8.1.x' || export PROJECT_NAME="drupal-${DRUPAL_VERSION}.x"
+  - test ${DRUPAL_VERSION} -eq 8 && export PROJECT_NAME="drupal-8.${DRUPAL_8_MINOR_VERSION}.x" || export PROJECT_NAME="drupal-${DRUPAL_VERSION}.x"
+  - export
+  - test ${DRUPAL_VERSION} -ne 8 || export MODULE_PATH="drupal/modules"
+  - test ${DRUPAL_VERSION} -eq 8 || export MODULE_PATH="drupal/sites/all/modules" && mkdir -p ${MODULE_PATH}
   # Set sendmail so drush doesn't throw an error during site install.
   - echo "sendmail_path='true'" >> `php --ini | grep "Loaded Configuration" | awk '{print $4}'`
   # Download and install Drupal so we can test API abilities.
   - mysql -e 'create database drupal'
-  - drush --quiet dl ${PROJECT_NAME} --all --drupal-project-rename=drupal
+  - drush dl --quiet --yes ${PROJECT_NAME} --all --drupal-project-rename=drupal
   - drush --yes --root=$PWD/drupal site-install --db-url=mysql://travis:@127.0.0.1/drupal
   # Copy the static HTML that is used for blackbox testing in the web root.
   - cp -r fixtures/blackbox $PWD/drupal
