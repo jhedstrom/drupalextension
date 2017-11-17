@@ -82,7 +82,7 @@ before_script:
   - sleep 4s
 
 script:
-  - find ./src -name "*.php" -print0 | xargs -0 -n1 -P8 php -l
+  - vendor/bin/parallel-lint src spec features fixtures
   - vendor/bin/phpspec run -f pretty --no-interaction
   - vendor/bin/behat -fprogress --strict
   - vendor/bin/behat -fprogress --profile=drupal${DRUPAL_VERSION} --strict
