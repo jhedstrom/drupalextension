@@ -107,11 +107,10 @@ class MarkupContext extends RawMinkContext {
       foreach ($elements as $element) {
         $attr = $element->getAttribute($attribute);
         if (!empty($attr)) {
-          $found = TRUE;
-          if (strpos($attr, "$value") === FALSE) {
-            throw new \Exception(sprintf('The "%s" attribute does not equal "%s" on the element "%s" in the "%s" region on the page %s', $attribute, $value, $tag, $region, $this->getSession()->getCurrentUrl()));
+          if (strpos($attr, "$value") !== FALSE) {
+            $found = TRUE;
+            break;
           }
-          break;
         }
       }
       if (!$found) {
