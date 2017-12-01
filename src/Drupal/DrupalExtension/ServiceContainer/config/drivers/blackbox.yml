@@ -3,6 +3,6 @@ parameters:
 
 services:
   drupal.driver.blackbox:
-    class: %drupal.driver.blackbox.class%
+    class: "%drupal.driver.blackbox.class%"
     tags:
       - { name: drupal.driver, alias: blackbox }
