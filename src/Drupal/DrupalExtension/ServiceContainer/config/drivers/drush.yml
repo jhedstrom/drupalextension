@@ -6,13 +6,13 @@ parameters:
 
 services:
   drupal.driver.random:
-    class: %drupal.random.class%
+    class: "%drupal.random.class%"
   drupal.driver.drush:
-    class: %drupal.driver.drush.class%
+    class: "%drupal.driver.drush.class%"
     arguments:
-      - %drupal.driver.drush.alias%
-      - %drupal.driver.drush.root%
-      - %drupal.driver.drush.binary%
+      - "%drupal.driver.drush.alias%"
+      - "%drupal.driver.drush.root%"
+      - "%drupal.driver.drush.binary%"
       - "@drupal.driver.random"
     tags:
       - { name: drupal.driver, alias: drush }
