@@ -7,7 +7,9 @@ use Behat\Mink\Exception\DriverException;
 use Behat\Testwork\Hook\HookDispatcher;
 
 use Drupal\DrupalDriverManager;
-use Drupal\DrupalUserManagerInterface;
+use Drupal\DrupalExtension\DrupalParametersTrait;
+use Drupal\DrupalExtension\Manager\DrupalAuthenticationManagerInterface;
+use Drupal\DrupalExtension\Manager\DrupalUserManagerInterface;
 
 use Drupal\DrupalExtension\Hook\Scope\AfterLanguageEnableScope;
 use Drupal\DrupalExtension\Hook\Scope\AfterNodeCreateScope;
@@ -25,19 +27,14 @@ use Drupal\DrupalExtension\Hook\Scope\BeforeTermCreateScope;
  */
 class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
 
+  use DrupalParametersTrait;
+
   /**
    * Drupal driver manager.
    *
    * @var \Drupal\DrupalDriverManager
    */
   private $drupal;
-
-  /**
-   * Test parameters.
-   *
-   * @var array
-   */
-  private $drupalParameters;
 
   /**
    * Event dispatcher object.
@@ -47,9 +44,16 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
   protected $dispatcher;
 
   /**
+   * Drupal authentication manager.
+   *
+   * @var \Drupal\DrupalExtension\Manager\DrupalAuthenticationManagerInterface
+   */
+  protected $authenticationManager;
+
+  /**
    * Drupal user manager.
    *
-   * @var \Drupal\DrupalUserManagerInterface
+   * @var \Drupal\DrupalExtension\Manager\DrupalUserManagerInterface
    */
   protected $userManager;
 
@@ -110,6 +114,20 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public function setAuthenticationManager(DrupalAuthenticationManagerInterface $authenticationManager) {
+    $this->authenticationManager = $authenticationManager;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getAuthenticationManager() {
+    return $this->authenticationManager;
+  }
+
+  /**
    * Magic setter.
    */
   public function __set($name, $value) {
@@ -161,56 +179,6 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    */
   public function setDispatcher(HookDispatcher $dispatcher) {
     $this->dispatcher = $dispatcher;
-  }
-
-  /**
-   * Set parameters provided for Drupal.
-   */
-  public function setDrupalParameters(array $parameters) {
-    $this->drupalParameters = $parameters;
-  }
-
-  /**
-   * Returns a specific Drupal parameter.
-   *
-   * @param string $name
-   *   Parameter name.
-   *
-   * @return mixed
-   */
-  public function getDrupalParameter($name) {
-    return isset($this->drupalParameters[$name]) ? $this->drupalParameters[$name] : NULL;
-  }
-
-  /**
-   * Returns a specific Drupal text value.
-   *
-   * @param string $name
-   *   Text value name, such as 'log_out', which corresponds to the default 'Log
-   *   out' link text.
-   * @throws \Exception
-   * @return
-   */
-  public function getDrupalText($name) {
-    $text = $this->getDrupalParameter('text');
-    if (!isset($text[$name])) {
-      throw new \Exception(sprintf('No such Drupal string: %s', $name));
-    }
-    return $text[$name];
-  }
-
-  /**
-   * Returns a specific css selector.
-   *
-   * @param $name
-   *   string CSS selector name
-   */
-  public function getDrupalSelector($name) {
-    $text = $this->getDrupalParameter('selectors');
-    if (!isset($text[$name])) {
-      throw new \Exception(sprintf('No such selector configured: %s', $name));
-    }
-    return $text[$name];
   }
 
   /**
@@ -538,43 +506,14 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    *   The user to log in.
    */
   public function login(\stdClass $user) {
-    $manager = $this->getUserManager();
-
-    // Check if logged in.
-    if ($this->loggedIn()) {
-      $this->logout();
-    }
-
-    $this->getSession()->visit($this->locatePath('/user'));
-    $element = $this->getSession()->getPage();
-    $element->fillField($this->getDrupalText('username_field'), $user->name);
-    $element->fillField($this->getDrupalText('password_field'), $user->pass);
-    $submit = $element->findButton($this->getDrupalText('log_in'));
-    if (empty($submit)) {
-      throw new \Exception(sprintf("No submit button at %s", $this->getSession()->getCurrentUrl()));
-    }
-
-    // Log in.
-    $submit->click();
-
-    if (!$this->loggedIn()) {
-      if (isset($user->role)) {
-        throw new \Exception(sprintf("Unable to determine if logged in because 'log_out' link cannot be found for user '%s' with role '%s'", $user->name, $user->role));
-      }
-      else {
-        throw new \Exception(sprintf("Unable to determine if logged in because 'log_out' link cannot be found for user '%s'", $user->name));
-      }
-    }
-
-    $manager->setCurrentUser($user);
+    $this->getAuthenticationManager()->logIn($user);
   }
 
   /**
    * Logs the current user out.
    */
   public function logout() {
-    $this->getSession()->visit($this->locatePath('/user/logout'));
-    $this->getUserManager()->setCurrentUser(FALSE);
+    $this->getAuthenticationManager()->logOut();
   }
 
   /**
@@ -584,44 +523,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    *   Returns TRUE if a user is logged in for this session.
    */
   public function loggedIn() {
-    $session = $this->getSession();
-
-    // If the session has not been started yet, or no page has yet been loaded,
-    // then this is a brand new test session and the user is not logged in.
-    if (!$session->isStarted() || !$page = $session->getPage()) {
-      return FALSE;
-    }
-
-    // Look for a css selector to determine if a user is logged in.
-    // Default is the logged-in class on the body tag.
-    // Which should work with almost any theme.
-    try {
-      if ($page->has('css', $this->getDrupalSelector('logged_in_selector'))) {
-        return TRUE;
-      }
-    } catch (DriverException $e) {
-      // This test may fail if the driver did not load any site yet.
-    }
-
-    // Some themes do not add that class to the body, so lets check if the
-    // login form is displayed on /user/login.
-    $session->visit($this->locatePath('/user/login'));
-    if (!$page->has('css', $this->getDrupalSelector('login_form_selector'))) {
-      return TRUE;
-    }
-
-    $session->visit($this->locatePath('/'));
-
-    // As a last resort, if a logout link is found, we are logged in. While not
-    // perfect, this is how Drupal SimpleTests currently work as well.
-    if ($page->findLink($this->getDrupalText('log_out'))) {
-      return TRUE;
-    }
-
-    // The user appears to be anonymous. Clear the current user from the user
-    // manager so this reflects the actual situation.
-    $this->getUserManager()->setCurrentUser(FALSE);
-    return FALSE;
+    return $this->getAuthenticationManager()->loggedIn();
   }
 
   /**

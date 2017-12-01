@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal;
+namespace Drupal\DrupalExtension\Manager;
 
 /**
  * Default implementation of the Drupal user manager service.
