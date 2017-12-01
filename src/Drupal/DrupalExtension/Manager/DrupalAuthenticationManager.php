@@ -10,7 +10,7 @@ use Drupal\DrupalExtension\MinkAwareTrait;
 /**
  * Default implementation of the Drupal authentication manager service.
  */
-class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterface
+class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterface, FastLogoutInterface
 {
 
     use DrupalParametersTrait;
@@ -124,12 +124,9 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
     }
 
     /**
-     * Logs out by directly resetting the session.
-     *
-     * A fast logout method that resets the session and doesn't need to
-     * bootstrap Drupal. This should not be used if logout hooks need to fire.
+     * {@inheritdoc}
      */
-    protected function fastLogout()
+    public function fastLogout()
     {
         $this->getSession()->reset();
         $this->userManager->setCurrentUser(FALSE);

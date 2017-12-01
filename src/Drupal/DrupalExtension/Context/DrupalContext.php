@@ -27,9 +27,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    */
   public function assertAnonymousUser() {
     // Verify the user is logged out.
-    if ($this->loggedIn()) {
-      $this->logout();
-    }
+    $this->logout(TRUE);
   }
 
   /**
