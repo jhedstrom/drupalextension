@@ -44,10 +44,8 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
      */
     public function logIn(\stdClass $user)
     {
-        // Check if we are already logged in.
-        if ($this->loggedIn()) {
-            $this->logout();
-        }
+        // Ensure we aren't already logged in.
+        $this->fastLogout();
 
         $this->getSession()->visit($this->locatePath('/user'));
         $element = $this->getSession()->getPage();
@@ -107,7 +105,7 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
         // login form is displayed on /user/login.
         $session->visit($this->locatePath('/user/login'));
         if ($page->has('css', $this->getDrupalSelector('login_form_selector'))) {
-            $this->logout();
+            $this->fastLogout();
             return FALSE;
         }
 
@@ -119,9 +117,21 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
             return TRUE;
         }
 
-        // The user appears to be anonymous. Calling logout() both ensures this is the 
+        // The user appears to be anonymous. Calling logout() both ensures this is the
         // case and updates the userManager to reflect this.
-        $this->logout();
+        $this->fastLogout();
         return FALSE;
+    }
+
+    /**
+     * Logs out by directly resetting the session.
+     *
+     * A fast logout method that resets the session and doesn't need to
+     * bootstrap Drupal. This should not be used if logout hooks need to fire.
+     */
+    protected function fastLogout()
+    {
+        $this->getSession()->reset();
+        $this->userManager->setCurrentUser(FALSE);
     }
 }
