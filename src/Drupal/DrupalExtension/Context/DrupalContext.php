@@ -61,7 +61,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
       }
 
       // Login.
-      $this->login();
+      $this->login($user);
     }
   }
 
@@ -101,7 +101,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
       }
 
       // Login.
-      $this->login();
+      $this->login($user);
     }
   }
 
@@ -110,15 +110,13 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    * @Given I am logged in as :name
    */
   public function assertLoggedInByName($name) {
-    if (!isset($this->users[$name])) {
-      throw new \Exception(sprintf('No user with %s name is registered with the driver.', $name));
-    }
+    $manager = $this->getUserManager();
 
     // Change internal current user.
-    $this->user = $this->users[$name];
+    $manager->setCurrentUser($manager->getUser($name));
 
     // Login.
-    $this->login();
+    $this->login($manager->getUser($name));
   }
 
   /**
@@ -134,13 +132,13 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
     $this->userCreate($user);
 
     // Create and assign a temporary role with given permissions.
-    $permissions = explode(',', $permissions);
+    $permissions = array_map('trim', explode(',', $permissions));
     $rid = $this->getDriver()->roleCreate($permissions);
     $this->getDriver()->userAddRole($user, $rid);
     $this->roles[] = $rid;
 
     // Login.
-    $this->login();
+    $this->login($user);
   }
 
   /**
@@ -176,6 +174,18 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
     $row = $this->getTableRow($this->getSession()->getPage(), $rowText);
     if (strpos($row->getText(), $text) === FALSE) {
       throw new \Exception(sprintf('Found a row containing "%s", but it did not contain the text "%s".', $rowText, $text));
+    }
+  }
+
+  /**
+   * Asset text not in a table row containing given text.
+   *
+   * @Then I should not see (the text ):text in the :rowText row
+   */
+  public function assertTextNotInTableRow($text, $rowText) {
+    $row = $this->getTableRow($this->getSession()->getPage(), $rowText);
+    if (strpos($row->getText(), $text) !== FALSE) {
+      throw new \Exception(sprintf('Found a row containing "%s", but it contained the text "%s".', $rowText, $text));
     }
   }
 
@@ -222,7 +232,6 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
     $node = (object) array(
       'title' => $title,
       'type' => $type,
-      'body' => $this->getRandom()->name(255),
     );
     $saved = $this->nodeCreate($node);
     // Set internal page on the new node.
@@ -235,7 +244,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    * @Given I am viewing my :type (content )with the title :title
    */
   public function createMyNode($type, $title) {
-    if (!isset($this->user->uid)) {
+    if ($this->getUserManager()->currentUserIsAnonymous()) {
       throw new \Exception(sprintf('There is no current logged in user to create a node for.'));
     }
 
@@ -243,7 +252,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
       'title' => $title,
       'type' => $type,
       'body' => $this->getRandom()->name(255),
-      'uid' => $this->user->uid,
+      'uid' => $this->getUserManager()->getCurrentUser()->uid,
     );
     $saved = $this->nodeCreate($node);
 
@@ -416,10 +425,28 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    */
     public function iPutABreakpoint()
     {
-      fwrite(STDOUT, "\033[s \033[93m[Breakpoint] Press \033[1;93m[RETURN]\033[0;93m to continue...\033[0m");
-      while (fgets(STDIN, 1024) == '') {}
+      fwrite(STDOUT, "\033[s \033[93m[Breakpoint] Press \033[1;93m[RETURN]\033[0;93m to continue, or 'q' to quit...\033[0m");
+      do {
+        $line = trim(fgets(STDIN, 1024));
+        //Note: this assumes ASCII encoding.  Should probably be revamped to
+        //handle other character sets.
+        $charCode = ord($line);
+        switch($charCode){
+          case 0: //CR
+          case 121: //y
+          case 89: //Y
+            break 2;
+          // case 78: //N
+          // case 110: //n
+          case 113: //q
+          case 81: //Q
+            throw new \Exception("Exiting test intentionally.");
+          default:
+            fwrite(STDOUT, sprintf("\nInvalid entry '%s'.  Please enter 'y', 'q', or the enter key.\n", $line));
+          break;
+        }
+      } while (true);
       fwrite(STDOUT, "\033[u");
-      return;
     }
 
 }

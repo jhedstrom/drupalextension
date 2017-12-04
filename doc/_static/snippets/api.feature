@@ -91,5 +91,7 @@
     | Tag three |
     | Tag four  |
     And "article" content:
-    | title | body | promote | field_tags |
-
+    | title             | field_tags                   |
+    | My first article  | Tag one                      |
+    | My second article | Tag two, Tag three           |
+    | My third article  | Tag two, Tag three, Tag four |

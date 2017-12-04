@@ -14,13 +14,14 @@ default:
     Behat\MinkExtension:
       goutte: ~
       zombie: ~
-      base_url: http://drupal.org
+      base_url: http://127.0.0.1:8888/blackbox
       javascript_session: zombie
     Drupal\DrupalExtension:
       blackbox: ~
       region_map:
         content: "#content"
         footer: "#footer"
+        navigation: "#nav-header"
         left header: "#header-left"
         right header: "#header-right"
         right sidebar: "#aside-region"

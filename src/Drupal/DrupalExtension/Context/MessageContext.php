@@ -4,6 +4,7 @@ namespace Drupal\DrupalExtension\Context;
 
 use Behat\Behat\Context\TranslatableContext;
 use Behat\Gherkin\Node\TableNode;
+use Behat\Mink\Exception\ExpectationException;
 
 /**
  * Provides step-definitions for interacting with Drupal messages.
@@ -252,20 +253,22 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
    * @param $exceptionMsgMissing
    *   string The message being thrown when the message is not contained, string
    *   should contain two '%s' as placeholders for the current URL and the message.
-   * @throws \Exception
+   *
+   * @throws \Behat\Mink\Exception\ExpectationException
+   *   Thrown when the expected message is not present in the page.
    */
   private function _assert($message, $selectorId, $exceptionMsgNone, $exceptionMsgMissing) {
     $selector = $this->getDrupalSelector($selectorId);
     $selectorObjects = $this->getSession()->getPage()->findAll("css", $selector);
     if (empty($selectorObjects)) {
-      throw new \Exception(sprintf($exceptionMsgNone, $this->getSession()->getCurrentUrl()));
+      throw new ExpectationException(sprintf($exceptionMsgNone, $this->getSession()->getCurrentUrl()), $this->getSession()->getDriver());
     }
     foreach ($selectorObjects as $selectorObject) {
       if (strpos(trim($selectorObject->getText()), $message) !== FALSE) {
         return;
       }
     }
-    throw new \Exception(sprintf($exceptionMsgMissing, $this->getSession()->getCurrentUrl(), $message));
+    throw new ExpectationException(sprintf($exceptionMsgMissing, $this->getSession()->getCurrentUrl(), $message), $this->getSession()->getDriver());
   }
 
   /**
@@ -278,7 +281,9 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
    * @param $exceptionMsg
    *   string The message being thrown when the message is contained, string
    *   should contain two '%s' as placeholders for the current URL and the message.
-   * @throws \Exception
+   *
+   * @throws \Behat\Mink\Exception\ExpectationException
+   *   Thrown when the expected message is present in the page.
    */
   private function _assertNot($message, $selectorId, $exceptionMsg) {
     $selector = $this->getDrupalSelector($selectorId);
@@ -286,7 +291,7 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
     if (!empty($selectorObjects)) {
       foreach ($selectorObjects as $selectorObject) {
         if (strpos(trim($selectorObject->getText()), $message) !== FALSE) {
-          throw new \Exception(sprintf($exceptionMsg, $this->getSession()->getCurrentUrl(), $message));
+          throw new ExpectationException(sprintf($exceptionMsg, $this->getSession()->getCurrentUrl(), $message), $this->getSession()->getDriver());
         }
       }
     }

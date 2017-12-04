@@ -54,7 +54,7 @@ class DriverListenerSpec extends ObjectBehavior
     {
         $subscribedEvents = array(
             'tester.scenario_tested.before' => array('prepareDefaultDrupalDriver', 11),
-            'tester.outline_tested.before' => array('prepareDefaultDrupalDriver', 11),
+            'tester.example_tested.before' => array('prepareDefaultDrupalDriver', 11),
         );
         $this->getSubscribedEvents()->shouldReturn($subscribedEvents);;
     }

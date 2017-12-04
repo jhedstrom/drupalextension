@@ -27,13 +27,6 @@ infrastructure. It also makes documentation consistent and reliable.
      :language: javascript 
      :linenos:
 
-  For Drupal 8, you'll need to specify the correct version of Guzzle:
-
-  .. literalinclude:: _static/snippets/composer.json.d8
-     :language: javascript
-     :linenos:
-     :emphasize-lines: 4
-
 4. Run the following command to install the Drupal Extension and all those
    dependencies. This takes a while before you start to see output::
 

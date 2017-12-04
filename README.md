@@ -7,7 +7,9 @@ sites.
 
 [![Build Status](https://travis-ci.org/jhedstrom/drupalextension.png?branch=master)](https://travis-ci.org/jhedstrom/drupalextension)
 
-The Drupal Extension 3 supports Drupal 6, 7 and 8, and utilizes Behat 3.
+The Drupal Extension 4.x supports Drupal 6, 7 and 8, utilizes Behat 3.2+ and
+runs on PHP 5.5+. It is compatible with Symfony components 2.x as well as 3.x
+so it can be used on Drupal 8.4.x.
 
 [![Latest Stable Version](https://poser.pugx.org/drupal/drupal-extension/v/stable.svg)](https://packagist.org/packages/drupal/drupal-extension)
 [![Total Downloads](https://poser.pugx.org/drupal/drupal-extension/downloads.svg)](https://packagist.org/packages/drupal/drupal-extension)
@@ -67,7 +69,7 @@ the [Full documentation](https://behat-drupal-extension.readthedocs.org)
 
 1. Define your own steps in `projectdir\features\FeatureContext.php`
 
-1. Start adding your [feature files](http://docs.behat.org/en/latest/guides/1.gherkin.html) 
+1. Start adding your [feature files](http://behat.org/en/latest/user_guide/gherkin.html) 
    to the `features` directory of your repository.
 
 ## Additional resources
@@ -84,3 +86,32 @@ the [Full documentation](https://behat-drupal-extension.readthedocs.org)
  * [Drupal form element visibility](https://gist.github.com/pbuyle/7698675)
  * [Track down PHP notices](https://www.godel.com.au/blog/use-behat-track-down-php-notices-they-take-over-your-drupal-site-forever)
  * [Support for sites using basic HTTP authentication](https://gist.github.com/jhedstrom/5bc5192d6dacbf8cc459)
+
+## Release notes
+
+### Backwards incompatible changes
+
+Starting with 3.3.0 Behat Drupal Extension depends on Behat 3.2.0 which
+requires all callbacks to be defined as static methods.
+
+Before 3.3.0:
+
+```
+/**
+ * @afterUserCreate
+ */
+public function afterUserCreate(EntityScope $scope) {
+  // ...
+}
+```
+
+Starting with 3.3.0:
+
+```
+/**
+ * @afterUserCreate
+ */
+public static function afterUserCreate(EntityScope $scope) {
+  // ...
+}
+```

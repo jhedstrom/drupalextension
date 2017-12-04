@@ -106,20 +106,24 @@ Feature: DrupalContext
   @d7
   Scenario: Create users with roles
     Given users:
-    | name     | mail            | roles         |
-    | Joe User | joe@example.com | administrator |
+    | name      | mail             | roles         |
+    | Joe User  | joe@example.com  | administrator |
+    | Jane User | jane@example.com |               |
     And I am logged in as a user with the "administrator" role
     When I visit "admin/people"
     Then I should see the text "administrator" in the "Joe User" row
+    And  I should not see the text "administrator" in the "Jane User" row
 
   @d8
   Scenario: Create users with roles
     Given users:
-    | name     | mail            | roles         |
-    | Joe User | joe@example.com | administrator |
+    | name      | mail             | roles         |
+    | Joe User  | joe@example.com  | administrator |
+    | Jane User | jane@example.com |               |
     And I am logged in as a user with the "administrator" role
     When I visit "admin/people"
     Then I should see the text "Administrator" in the "Joe User" row
+    And  I should not see the text "administrator" in the "Jane User" row
 
   @d7 @d8
   Scenario: Login as a user created during this scenario
@@ -200,16 +204,17 @@ Feature: DrupalContext
     | name      |
     | Tag one   |
     | Tag two   |
-    | Tag three |
+    | Tag,three |
     | Tag four  |
     And "article" content:
-    | title           | body             | promote | field_tags                  |
-    | Article by Joe  | PLACEHOLDER BODY |       1 | Tag one, Tag two, Tag three |
-    | Article by Mike | PLACEHOLDER BODY |       1 | Tag four                    |
+    | title           | body             | promote | field_tags                    |
+    # Field values containing commas should be escaped with double quotes.
+    | Article by Joe  | PLACEHOLDER BODY |       1 | Tag one, Tag two, "Tag,three" |
+    | Article by Mike | PLACEHOLDER BODY |       1 | Tag four                      |
     When I am on the homepage
     Then I should see the link "Tag one"
     And I should see the link "Tag two"
-    And I should see the link "Tag three"
+    And I should see the link "Tag,three"
     And I should see the link "Tag four"
 
   @d7 @d8

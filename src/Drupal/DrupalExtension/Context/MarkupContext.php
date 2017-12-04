@@ -104,18 +104,24 @@ class MarkupContext extends RawMinkContext {
     }
     if (!empty($attribute)) {
       $found = FALSE;
+      $attrfound = FALSE;
       foreach ($elements as $element) {
         $attr = $element->getAttribute($attribute);
         if (!empty($attr)) {
-          $found = TRUE;
-          if (strpos($attr, "$value") === FALSE) {
-            throw new \Exception(sprintf('The "%s" attribute does not equal "%s" on the element "%s" in the "%s" region on the page %s', $attribute, $value, $tag, $region, $this->getSession()->getCurrentUrl()));
+          $attrfound = TRUE;
+          if (strpos($attr, "$value") !== FALSE) {
+            $found = TRUE;
+            break;
           }
-          break;
         }
       }
       if (!$found) {
-        throw new \Exception(sprintf('The "%s" attribute is not present on the element "%s" in the "%s" region on the page %s', $attribute, $tag, $region, $this->getSession()->getCurrentUrl()));
+        if (!$attrfound) {
+          throw new \Exception(sprintf('The "%s" attribute is not present on the element "%s" in the "%s" region on the page %s', $attribute, $tag, $region, $this->getSession()->getCurrentUrl()));
+        }
+        else {
+          throw new \Exception(sprintf('The "%s" attribute does not equal "%s" on the element "%s" in the "%s" region on the page %s', $attribute, $value, $tag, $region, $this->getSession()->getCurrentUrl()));
+        }
       }
     }
   }
