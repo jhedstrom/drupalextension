@@ -22,14 +22,13 @@ class BatchContext extends RawMinkContext {
   }
 
   /**
-   * Creats a queue item. Defaults inputs if none are available.
+   * Creates a queue item. Defaults inputs if none are available.
    *
-   * Expects the data to be a json encoded string.
+   * Expects the `data` to be a json encoded string.
    *
    * @Given there is an item in the system queue:
    */
-  public function thereIsAnItemInTheSystemQueue(TableNode $table)
-  {
+  public function thereIsAnItemInTheSystemQueue(TableNode $table) {
     // Gather the data.
     $fields = $table->getRowsHash();
 
