@@ -123,19 +123,22 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    * @Given I am logged in as a user with the :permissions permission(s)
    */
   public function assertLoggedInWithPermissions($permissions) {
+    // Create a temporary role with given permissions.
+    $permissions = array_map('trim', explode(',', $permissions));
+    $role = $this->getDriver()->roleCreate($permissions);
+
     // Create user.
     $user = (object) array(
       'name' => $this->getRandom()->name(8),
       'pass' => $this->getRandom()->name(16),
+      'role' => $role,
     );
     $user->mail = "{$user->name}@example.com";
     $this->userCreate($user);
 
-    // Create and assign a temporary role with given permissions.
-    $permissions = array_map('trim', explode(',', $permissions));
-    $rid = $this->getDriver()->roleCreate($permissions);
-    $this->getDriver()->userAddRole($user, $rid);
-    $this->roles[] = $rid;
+    // Assign the temporary role with given permissions.
+    $this->getDriver()->userAddRole($user, $role);
+    $this->roles[] = $role;
 
     // Login.
     $this->login($user);
