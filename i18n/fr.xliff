@@ -3,283 +3,283 @@
     <body>
       <trans-unit id="i-am-an-anonymous-user">
         <source><![CDATA[I am an anonymous user]]></source>
-        <target><![CDATA[I am an anonymous user]]></target>
+        <target><![CDATA[je suis un utilisateur anonyme]]></target>
       </trans-unit>
       <trans-unit id="i-am-not-logged-in">
         <source><![CDATA[I am not logged in]]></source>
-        <target><![CDATA[I am not logged in]]></target>
+        <target><![CDATA[je ne suis pas connecté]]></target>
       </trans-unit>
       <trans-unit id="i-am-logged-in-as-a-user-with-the-role-roles">
         <source><![CDATA[I am logged in as a user with the :role role(s)]]></source>
-        <target><![CDATA[I am logged in as a user with the :role role(s)]]></target>
+        <target><![CDATA[je suis connecté en tant qu'utilisateur possédant le(s) role(s) :role]]></target>
       </trans-unit>
       <trans-unit id="i-am-logged-in-as-name">
         <source><![CDATA[I am logged in as :name]]></source>
-        <target><![CDATA[I am logged in as :name]]></target>
+        <target><![CDATA[je suis connecté en tant qu'utilisateur :name]]></target>
       </trans-unit>
       <trans-unit id="i-am-logged-in-as-a-user-with-the-permissions-permissions">
         <source><![CDATA[I am logged in as a user with the :permissions permission(s)]]></source>
-        <target><![CDATA[I am logged in as a user with the :permissions permission(s)]]></target>
+        <target><![CDATA[je suis connecté en tant qu'utilisateur possédant la(es) permission(s) :permissions]]></target>
       </trans-unit>
       <trans-unit id="i-should-see-the-text-text-in-the-rowtext-row">
-        <source><![CDATA[I should see (the text ):text in the ":rowText" row]]></source>
-        <target><![CDATA[I should see (the text ):text in the ":rowText" row]]></target>
+        <source><![CDATA[I should see (the text ):text in the :rowText row]]></source>
+        <target><![CDATA[je devrais voir (la chaîne ):text dans la ligne :rowText]]></target>
       </trans-unit>
       <trans-unit id="i-click-link-in-the-rowtext-row">
         <source><![CDATA[I click :link in the :rowText row]]></source>
-        <target><![CDATA[I click :link in the :rowText row]]></target>
+        <target><![CDATA[je clique sur :link dans la ligne :rowText]]></target>
       </trans-unit>
       <trans-unit id="i-should-see-the-link-in-the-rowtext-row">
         <source><![CDATA[I (should )see the :link in the :rowText row]]></source>
-        <target><![CDATA[I (should )see the :link in the :rowText row]]></target>
+        <target><![CDATA[je devrais (probablement )voir le lien :link dans la ligne :rowText]]></target>
       </trans-unit>
       <trans-unit id="the-cache-has-been-cleared">
         <source><![CDATA[the cache has been cleared]]></source>
-        <target><![CDATA[the cache has been cleared]]></target>
+        <target><![CDATA[le cache a été vidé]]></target>
       </trans-unit>
       <trans-unit id="i-run-cron">
         <source><![CDATA[I run cron]]></source>
-        <target><![CDATA[I run cron]]></target>
+        <target><![CDATA[je lance la cron]]></target>
       </trans-unit>
       <trans-unit id="i-am-viewing-a-an-type-content-with-the-title-title">
         <source><![CDATA[I am viewing a/an :type (content )with the title :title]]></source>
-        <target><![CDATA[I am viewing a/an :type (content )with the title :title]]></target>
+        <target><![CDATA[je consulte un/une :type (contenu )dont le titre est :title]]></target>
       </trans-unit>
       <trans-unit id="a-an-type-content-with-the-title-title">
         <source><![CDATA[a/an :type (content )with the title :title]]></source>
-        <target><![CDATA[a/an :type (content )with the title :title]]></target>
+        <target><![CDATA[un/une :type (contenu )dont le titre est :title]]></target>
       </trans-unit>
       <trans-unit id="i-am-viewing-my-type-content-with-the-title-title">
         <source><![CDATA[I am viewing my :type (content )with the title :title]]></source>
-        <target><![CDATA[I am viewing my :type (content )with the title :title]]></target>
+        <target><![CDATA[je consulte mon/ma(contenu ) :type dont le titre est :title]]></target>
       </trans-unit>
       <trans-unit id="type-content">
         <source><![CDATA[:type content:]]></source>
-        <target><![CDATA[:type content:]]></target>
+        <target><![CDATA[:type contenu :]]></target>
       </trans-unit>
       <trans-unit id="i-am-viewing-a-an-type-content">
         <source><![CDATA[I am viewing a/an :type( content):]]></source>
-        <target><![CDATA[I am viewing a/an :type( content):]]></target>
+        <target><![CDATA[je consulte un/une :type( content) :]]></target>
       </trans-unit>
       <trans-unit id="i-should-be-able-to-edit-a-an-type-content">
         <source><![CDATA[I should be able to edit a/an :type( content)]]></source>
-        <target><![CDATA[I should be able to edit a/an :type( content)]]></target>
+        <target><![CDATA[je devrais pouvoir modifier un/une :type( contenu)]]></target>
       </trans-unit>
       <trans-unit id="i-am-viewing-a-an-vocabulary-term-with-the-name-name">
         <source><![CDATA[I am viewing a/an :vocabulary term with the name :name]]></source>
-        <target><![CDATA[I am viewing a/an :vocabulary term with the name :name]]></target>
+        <target><![CDATA[je consulte un terme du vocabulaire :vocabulary dont le nom est :name]]></target>
       </trans-unit>
       <trans-unit id="a-an-vocabulary-term-with-the-name-name">
         <source><![CDATA[a/an :vocabulary term with the name :name]]></source>
-        <target><![CDATA[a/an :vocabulary term with the name :name]]></target>
+        <target><![CDATA[un terme du vocabulaire :vocabulary dont le nom est :name]]></target>
       </trans-unit>
       <trans-unit id="users">
         <source><![CDATA[users:]]></source>
-        <target><![CDATA[users:]]></target>
+        <target><![CDATA[utilisateurs :]]></target>
       </trans-unit>
       <trans-unit id="vocabulary-terms">
         <source><![CDATA[:vocabulary terms:]]></source>
-        <target><![CDATA[:vocabulary terms:]]></target>
+        <target><![CDATA[termes du vocabulaire :vocabulary :]]></target>
       </trans-unit>
       <trans-unit id="i-break">
         <source><![CDATA[(I )break]]></source>
-        <target><![CDATA[(I )break]]></target>
+        <target><![CDATA[(je )patiente]]></target>
       </trans-unit>
       <trans-unit id="i-run-drush-command">
         <source><![CDATA[I run drush :command]]></source>
-        <target><![CDATA[I run drush :command]]></target>
+        <target><![CDATA[je lance drush :command]]></target>
       </trans-unit>
       <trans-unit id="i-run-drush-command-arguments">
         <source><![CDATA[I run drush :command :arguments]]></source>
-        <target><![CDATA[I run drush :command :arguments]]></target>
+        <target><![CDATA[je lance drush :command :arguments]]></target>
       </trans-unit>
       <trans-unit id="drush-output-should-contain-output">
         <source><![CDATA[drush output should contain :output]]></source>
-        <target><![CDATA[drush output should contain :output]]></target>
+        <target><![CDATA[L'affichage de drush devrait contenir :output]]></target>
       </trans-unit>
       <trans-unit id="drush-output-should-not-contain-output">
         <source><![CDATA[drush output should not contain :output]]></source>
-        <target><![CDATA[drush output should not contain :output]]></target>
+        <target><![CDATA[L'affichage de drush ne devrait pas contenir :output]]></target>
       </trans-unit>
       <trans-unit id="print-last-drush-output">
         <source><![CDATA[print last drush output]]></source>
-        <target><![CDATA[print last drush output]]></target>
+        <target><![CDATA[montre le dernier affichage de drush]]></target>
       </trans-unit>
       <trans-unit id="i-should-see-the-error-message-containing-message">
         <source><![CDATA[I should see the error message( containing) :message]]></source>
-        <target><![CDATA[I should see the error message( containing) :message]]></target>
+        <target><![CDATA[je devrais voir le message d'erreur( contenant) :message]]></target>
       </trans-unit>
       <trans-unit id="i-should-see-the-following-error-messages">
         <source><![CDATA[I should see the following error message(s):]]></source>
-        <target><![CDATA[I should see the following error message(s):]]></target>
+        <target><![CDATA[je devrais voir le(s) message(s) d'erreur(s) suivant(s) :]]></target>
       </trans-unit>
       <trans-unit id="i-should-not-see-the-error-message-containing-message">
         <source><![CDATA[I should not see the error message( containing) :message]]></source>
-        <target><![CDATA[I should not see the error message( containing) :message]]></target>
+        <target><![CDATA[je ne devrais pas voir le message d'erreur( contenant) :message]]></target>
       </trans-unit>
       <trans-unit id="i-should-not-see-the-following-error-messages">
         <source><![CDATA[I should not see the following error messages:]]></source>
-        <target><![CDATA[I should not see the following error messages:]]></target>
+        <target><![CDATA[je ne devrais pas voir le(s) message(s) d'erreur(s) suivant(s) :]]></target>
       </trans-unit>
       <trans-unit id="i-should-see-the-success-message-containing-message">
         <source><![CDATA[I should see the success message( containing) :message]]></source>
-        <target><![CDATA[I should see the success message( containing) :message]]></target>
+        <target><![CDATA[je devrais voir le message de confirmation( contenant) :message]]></target>
       </trans-unit>
       <trans-unit id="i-should-see-the-following-success-messages">
         <source><![CDATA[I should see the following success messages:]]></source>
-        <target><![CDATA[I should see the following success messages:]]></target>
+        <target><![CDATA[je devrais voir le(s) message(s) de confirmation(s) suivant(s) :]]></target>
       </trans-unit>
       <trans-unit id="i-should-not-see-the-success-message-containing-message">
         <source><![CDATA[I should not see the success message( containing) :message]]></source>
-        <target><![CDATA[I should not see the success message( containing) :message]]></target>
+        <target><![CDATA[je ne devrais pas voir le message de confirmation( contenant) :message]]></target>
       </trans-unit>
       <trans-unit id="i-should-not-see-the-following-success-messages">
         <source><![CDATA[I should not see the following success messages:]]></source>
-        <target><![CDATA[I should not see the following success messages:]]></target>
+        <target><![CDATA[je ne devrais pas voir le(s) message(s) de confirmation(s) suivant(s) :]]></target>
       </trans-unit>
       <trans-unit id="i-should-see-the-warning-message-containing-message">
         <source><![CDATA[I should see the warning message( containing) :message]]></source>
-        <target><![CDATA[I should see the warning message( containing) :message]]></target>
+        <target><![CDATA[je devrais voir le(s) message(s) d'alerte(s) suivant(s) :]]></target>
       </trans-unit>
       <trans-unit id="i-should-see-the-following-warning-messages">
         <source><![CDATA[I should see the following warning messages:]]></source>
-        <target><![CDATA[I should see the following warning messages:]]></target>
+        <target><![CDATA[je devrais voir le(s) message(s) d'alerte(s) suivant(s) :]]></target>
       </trans-unit>
       <trans-unit id="i-should-not-see-the-warning-message-containing-message">
         <source><![CDATA[I should not see the warning message( containing) :message]]></source>
-        <target><![CDATA[I should not see the warning message( containing) :message]]></target>
+        <target><![CDATA[je ne devrais pas voir le(s) message(s) d'alerte(s) suivant(s) :]]></target>
       </trans-unit>
       <trans-unit id="i-should-not-see-the-following-warning-messages">
         <source><![CDATA[I should not see the following warning messages:]]></source>
-        <target><![CDATA[I should not see the following warning messages:]]></target>
+        <target><![CDATA[je ne devrais pas voir le(s) message(s) d'alerte(s) suivant(s) :]]></target>
       </trans-unit>
       <trans-unit id="i-should-see-the-message-containing-message">
         <source><![CDATA[I should see the message( containing) :message]]></source>
-        <target><![CDATA[I should see the message( containing) :message]]></target>
+        <target><![CDATA[je devrais voir le(s) message(s)( contenant) :message]]></target>
       </trans-unit>
       <trans-unit id="i-should-not-see-the-message-containing-message">
         <source><![CDATA[I should not see the message( containing) :message]]></source>
-        <target><![CDATA[I should not see the message( containing) :message]]></target>
+        <target><![CDATA[je ne devrais pas voir le(s) message(s)( contenant) :message]]></target>
       </trans-unit>
       <trans-unit id="i-am-at-path">
         <source><![CDATA[I am at :path]]></source>
-        <target><![CDATA[I am at :path]]></target>
+        <target><![CDATA[je suis sur :path]]></target>
       </trans-unit>
       <trans-unit id="i-visit-path">
         <source><![CDATA[I visit :path]]></source>
-        <target><![CDATA[I visit :path]]></target>
+        <target><![CDATA[je visite :path]]></target>
       </trans-unit>
       <trans-unit id="i-click-link">
         <source><![CDATA[I click :link]]></source>
-        <target><![CDATA[I click :link]]></target>
+        <target><![CDATA[je clique sur :link]]></target>
       </trans-unit>
       <trans-unit id="for-field-i-enter-value">
         <source><![CDATA[for :field I enter :value]]></source>
-        <target><![CDATA[for :field I enter :value]]></target>
+        <target><![CDATA[pour :field je saisis :value]]></target>
       </trans-unit>
       <trans-unit id="i-enter-value-for-field">
         <source><![CDATA[I enter :value for :field]]></source>
-        <target><![CDATA[I enter :value for :field]]></target>
+        <target><![CDATA[je saisis :value pour :field]]></target>
       </trans-unit>
       <trans-unit id="i-wait-for-ajax-to-finish">
         <source><![CDATA[I wait for AJAX to finish]]></source>
-        <target><![CDATA[I wait for AJAX to finish]]></target>
+        <target><![CDATA[J'attends que l'AJAX se termine]]></target>
       </trans-unit>
       <trans-unit id="i-press-the-button-button">
         <source><![CDATA[I press the :button button]]></source>
-        <target><![CDATA[I press the :button button]]></target>
+        <target><![CDATA[je presse le bouton :button]]></target>
       </trans-unit>
       <trans-unit id="i-press-the-char-key-in-the-field-field">
         <source><![CDATA[I press the :char key in the :field field]]></source>
-        <target><![CDATA[I press the :char key in the :field field]]></target>
+        <target><![CDATA[je presse la touche :char du champ :field]]></target>
       </trans-unit>
       <trans-unit id="i-should-see-the-link-link">
         <source><![CDATA[I should see the link :link]]></source>
-        <target><![CDATA[I should see the link :link]]></target>
+        <target><![CDATA[je devrais voir le lien :link]]></target>
       </trans-unit>
       <trans-unit id="i-should-not-see-the-link-link">
         <source><![CDATA[I should not see the link :link]]></source>
-        <target><![CDATA[I should not see the link :link]]></target>
+        <target><![CDATA[je ne devrais pas voir le lien :link]]></target>
       </trans-unit>
       <trans-unit id="i-should-see-the-heading-heading">
         <source><![CDATA[I (should )see the heading :heading]]></source>
-        <target><![CDATA[I (should )see the heading :heading]]></target>
+        <target><![CDATA[je devrais (probablement )voir le titre :heading]]></target>
       </trans-unit>
       <trans-unit id="i-should-not-see-the-heading-heading">
         <source><![CDATA[I (should )not see the heading :heading]]></source>
-        <target><![CDATA[I (should )not see the heading :heading]]></target>
+        <target><![CDATA[je ne devrais (probablement )pas voir le titre :heading]]></target>
       </trans-unit>
       <trans-unit id="i-should-see-the-heading-heading-in-the-region-region">
         <source><![CDATA[I should see the heading :heading in the :region( region)]]></source>
-        <target><![CDATA[I should see the heading :heading in the :region( region)]]></target>
+        <target><![CDATA[je devrais voir le titre :heading dans( la région) :region]]></target>
       </trans-unit>
       <trans-unit id="i-should-see-the-heading-heading-in-the-region-region-1">
         <source><![CDATA[I should see the :heading heading in the :region( region)]]></source>
-        <target><![CDATA[I should see the :heading heading in the :region( region)]]></target>
+        <target><![CDATA[je devrais voir le titre :heading dans( la region) :region]]></target>
       </trans-unit>
       <trans-unit id="i-follow-click-link-in-the-region-region">
         <source><![CDATA[I follow/click :link in the :region( region)]]></source>
-        <target><![CDATA[I follow/click :link in the :region( region)]]></target>
+        <target><![CDATA[je suis/clique sur le lien :link dans( la région) :region]]></target>
       </trans-unit>
       <trans-unit id="i-should-see-the-link-link-in-the-region-region">
         <source><![CDATA[I should see the link :link in the :region( region)]]></source>
-        <target><![CDATA[I should see the link :link in the :region( region)]]></target>
+        <target><![CDATA[je devrais voir le lien :link dans( la région) :region]]></target>
       </trans-unit>
       <trans-unit id="i-should-not-see-the-link-link-in-the-region-region">
         <source><![CDATA[I should not see the link :link in the :region( region)]]></source>
-        <target><![CDATA[I should not see the link :link in the :region( region)]]></target>
+        <target><![CDATA[je ne devrais pas voir le lien :link dans( la région) :region]]></target>
       </trans-unit>
       <trans-unit id="i-should-see-the-text-text-in-the-region-region">
         <source><![CDATA[I should see( the text) :text in the :region( region)]]></source>
-        <target><![CDATA[I should see( the text) :text in the :region( region)]]></target>
+        <target><![CDATA[je devrais voir( le texte) :text dans( la région) :region]]></target>
       </trans-unit>
       <trans-unit id="i-should-not-see-the-text-text-in-the-region-region">
         <source><![CDATA[I should not see( the text) :text in the :region( region)]]></source>
-        <target><![CDATA[I should not see( the text) :text in the :region( region)]]></target>
+        <target><![CDATA[je ne devrais pas voir( le texte) :text dans( la région) :region]]></target>
       </trans-unit>
       <trans-unit id="i-press-button-in-the-region-region">
         <source><![CDATA[I press :button in the :region( region)]]></source>
-        <target><![CDATA[I press :button in the :region( region)]]></target>
+        <target><![CDATA[je presse :button dans( la région) :region]]></target>
       </trans-unit>
       <trans-unit id="i-fill-in-value-for-field-in-the-region-region">
         <source><![CDATA[I fill in :value for :field in the :region( region)]]></source>
-        <target><![CDATA[I fill in :value for :field in the :region( region)]]></target>
+        <target><![CDATA[je remplis :value pour :field dans( la région) :region]]></target>
       </trans-unit>
       <trans-unit id="i-fill-in-field-with-value-in-the-region-region">
         <source><![CDATA[I fill in :field with :value in the :region( region)]]></source>
-        <target><![CDATA[I fill in :field with :value in the :region( region)]]></target>
+        <target><![CDATA[je remplis :field avec :value dans( la région) :region]]></target>
       </trans-unit>
       <trans-unit id="i-should-see-the-text-text">
         <source><![CDATA[I (should )see the text :text]]></source>
-        <target><![CDATA[I (should )see the text :text]]></target>
+        <target><![CDATA[je devrais (probablement )voir le texte :text]]></target>
       </trans-unit>
       <trans-unit id="i-should-not-see-the-text-text">
         <source><![CDATA[I should not see the text :text]]></source>
-        <target><![CDATA[I should not see the text :text]]></target>
+        <target><![CDATA[je ne devrais pas voir le texte :text]]></target>
       </trans-unit>
       <trans-unit id="i-should-get-a-code-http-response">
         <source><![CDATA[I should get a :code HTTP response]]></source>
-        <target><![CDATA[I should get a :code HTTP response]]></target>
+        <target><![CDATA[je devrais recevoir une réponse HTTP :code]]></target>
       </trans-unit>
       <trans-unit id="i-should-not-get-a-code-http-response">
         <source><![CDATA[I should not get a :code HTTP response]]></source>
-        <target><![CDATA[I should not get a :code HTTP response]]></target>
+        <target><![CDATA[je ne devrais pas recevoir une réponse HTTP :code]]></target>
       </trans-unit>
       <trans-unit id="i-check-the-box-checkbox">
         <source><![CDATA[I check the box :checkbox]]></source>
-        <target><![CDATA[I check the box :checkbox]]></target>
+        <target><![CDATA[je coche la case :checkbox]]></target>
       </trans-unit>
       <trans-unit id="i-uncheck-the-box-checkbox">
         <source><![CDATA[I uncheck the box :checkbox]]></source>
-        <target><![CDATA[I uncheck the box :checkbox]]></target>
+        <target><![CDATA[je décoche la case :checkbox]]></target>
       </trans-unit>
       <trans-unit id="i-select-the-radio-button-label-with-the-id-id">
         <source><![CDATA[I select the radio button :label with the id :id]]></source>
-        <target><![CDATA[I select the radio button :label with the id :id]]></target>
+        <target><![CDATA[je sélectionne le bouton radio :label dont l'id est :id]]></target>
       </trans-unit>
       <trans-unit id="i-select-the-radio-button-label">
         <source><![CDATA[I select the radio button :label]]></source>
-        <target><![CDATA[I select the radio button :label]]></target>
+        <target><![CDATA[je sélectionne le bouton radio :label]]></target>
       </trans-unit>
     </body>
   </file>
