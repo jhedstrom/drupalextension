@@ -118,16 +118,16 @@ class DrupalExtension implements ExtensionInterface {
           addDefaultsIfNotSet()->
           children()->
             scalarNode('log_in')->
-              defaultValue('Log in')->
+              defaultValue('edit-submit')->
             end()->
             scalarNode('log_out')->
               defaultValue('Log out')->
             end()->
             scalarNode('password_field')->
-              defaultValue('Password')->
+              defaultValue('edit-pass')->
             end()->
             scalarNode('username_field')->
-              defaultValue('Username')->
+              defaultValue('edit-user')->
             end()->
           end()->
         end()->
