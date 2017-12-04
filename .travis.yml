@@ -86,8 +86,8 @@ script:
   - vendor/bin/phpspec run -f pretty --no-interaction
   - vendor/bin/behat -fprogress --strict
   - vendor/bin/behat -fprogress --profile=drupal${DRUPAL_VERSION} --strict
-  # Do not test the Drush profile unless Drupal 7 was installed.
-  - test ${DRUPAL_VERSION} -ne 7 || vendor/bin/behat -fprogress --profile=drush --strict
+  # Test the Drush profile on Drupal 7 and Drupal 8, but not on Drupal 6.
+  - test ${DRUPAL_VERSION} -eq 6 || vendor/bin/behat -fprogress --profile=drush --strict
 
 after_failure:
   - cat ~/debug.txt
