@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!-- PHP_CodeSniffer standard -->
+<!-- See https://github.com/squizlabs/PHP_CodeSniffer/wiki/Annotated-ruleset.xml -->
+<ruleset name="drupal/drupal-extension">
+    <description>Drupal Behat Extension coding standards</description>
+
+    <file>./src</file>
+
+    <exclude-pattern>^/doc/*</exclude-pattern>
+    <exclude-pattern>^/drupal/*</exclude-pattern>
+    <exclude-pattern>^/drush/*</exclude-pattern>
+    <exclude-pattern>^/fixtures/*</exclude-pattern>
+    <exclude-pattern>^/reports/*</exclude-pattern>
+    <exclude-pattern>^/spec/*</exclude-pattern>
+    <exclude-pattern>^/vendor/*</exclude-pattern>
+    <exclude-pattern>^/README.md</exclude-pattern>
+
+    <rule ref="PSR2">
+        <!-- @todo Fix long line length issues -->
+        <exclude name="Generic.Files.LineLength.TooLong" />
+    </rule>
+
+</ruleset>

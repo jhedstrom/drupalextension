@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\behat_test\Plugin\field\widget\AddressFieldWidget.
- */
-
 namespace Drupal\behat_test\Plugin\Field\FieldWidget;
 
 use Drupal\Core\Field\FieldItemListInterface;

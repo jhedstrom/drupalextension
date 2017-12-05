@@ -11,41 +11,66 @@ use Drupal\DrupalExtension\Context\DrupalAwareInterface;
 use Drupal\DrupalExtension\Manager\DrupalAuthenticationManagerInterface;
 use Drupal\DrupalExtension\Manager\DrupalUserManagerInterface;
 
-class DrupalAwareInitializer implements ContextInitializer {
-  private $drupal, $parameters, $dispatcher, $authenticationManager, $userManager;
+class DrupalAwareInitializer implements ContextInitializer
+{
+    /**
+     * @var DrupalDriverManager
+     */
+    private $drupal;
 
-  public function __construct(DrupalDriverManager $drupal, array $parameters, HookDispatcher $dispatcher, DrupalAuthenticationManagerInterface $authenticationManager, DrupalUserManagerInterface $userManager) {
-    $this->drupal = $drupal;
-    $this->parameters = $parameters;
-    $this->dispatcher = $dispatcher;
-    $this->authenticationManager = $authenticationManager;
-    $this->userManager = $userManager;
-  }
+    /**
+     * @var array
+     */
+    private $parameters;
+
+    /**
+     * @var HookDispatcher
+     */
+    private $dispatcher;
+
+    /**
+     * @var DrupalAuthenticationManagerInterface
+     */
+    private $authenticationManager;
+
+    /**
+     * @var DrupalUserManagerInterface
+     */
+    private $userManager;
+
+    public function __construct(DrupalDriverManager $drupal, array $parameters, HookDispatcher $dispatcher, DrupalAuthenticationManagerInterface $authenticationManager, DrupalUserManagerInterface $userManager)
+    {
+        $this->drupal = $drupal;
+        $this->parameters = $parameters;
+        $this->dispatcher = $dispatcher;
+        $this->authenticationManager = $authenticationManager;
+        $this->userManager = $userManager;
+    }
 
   /**
    * {@inheritdocs}
    */
-  public function initializeContext(Context $context) {
+    public function initializeContext(Context $context)
+    {
 
-    // All contexts are passed here, only DrupalAwareInterface is allowed.
-    if (!$context instanceof DrupalAwareInterface) {
-      return;
+        // All contexts are passed here, only DrupalAwareInterface is allowed.
+        if (!$context instanceof DrupalAwareInterface) {
+            return;
+        }
+
+        // Set Drupal driver manager.
+        $context->setDrupal($this->drupal);
+
+        // Set event dispatcher.
+        $context->setDispatcher($this->dispatcher);
+
+        // Add all parameters to the context.
+        $context->setDrupalParameters($this->parameters);
+
+        // Set the Drupal authentication manager.
+        $context->setAuthenticationManager($this->authenticationManager);
+
+        // Set the Drupal user manager.
+        $context->setUserManager($this->userManager);
     }
-
-    // Set Drupal driver manager.
-    $context->setDrupal($this->drupal);
-
-    // Set event dispatcher.
-    $context->setDispatcher($this->dispatcher);
-
-    // Add all parameters to the context.
-    $context->setDrupalParameters($this->parameters);
-
-    // Set the Drupal authentication manager.
-    $context->setAuthenticationManager($this->authenticationManager);
-
-    // Set the Drupal user manager.
-    $context->setUserManager($this->userManager);
-  }
-
 }

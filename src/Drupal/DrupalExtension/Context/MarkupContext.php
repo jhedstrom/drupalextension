@@ -7,7 +7,8 @@ use Behat\MinkExtension\Context\RawMinkContext;
 /**
  * Extensions to the Mink Extension.
  */
-class MarkupContext extends RawMinkContext {
+class MarkupContext extends RawMinkContext
+{
 
   /**
    * Return a region from the current page.
@@ -22,15 +23,16 @@ class MarkupContext extends RawMinkContext {
    *
    * @todo this should be a trait when PHP 5.3 support is dropped.
    */
-  public function getRegion($region) {
-    $session = $this->getSession();
-    $regionObj = $session->getPage()->find('region', $region);
-    if (!$regionObj) {
-      throw new \Exception(sprintf('No region "%s" found on the page %s.', $region, $session->getCurrentUrl()));
-    }
+    public function getRegion($region)
+    {
+        $session = $this->getSession();
+        $regionObj = $session->getPage()->find('region', $region);
+        if (!$regionObj) {
+            throw new \Exception(sprintf('No region "%s" found on the page %s.', $region, $session->getCurrentUrl()));
+        }
 
-    return $regionObj;
-  }
+        return $regionObj;
+    }
 
   /**
    * Checks if a button with id|name|title|alt|value exists in a region
@@ -46,155 +48,161 @@ class MarkupContext extends RawMinkContext {
    * @throws \Exception
    *   If region or button within it cannot be found.
    */
-  public function assertRegionButton($button, $region) {
-    $regionObj = $this->getRegion($region);
+    public function assertRegionButton($button, $region)
+    {
+        $regionObj = $this->getRegion($region);
 
-    $buttonObj = $regionObj->findButton($button);
-    if (empty($buttonObj)) {
-      throw new \Exception(sprintf("The button '%s' was not found in the region '%s' on the page %s", $button, $region, $this->getSession()->getCurrentUrl()));
+        $buttonObj = $regionObj->findButton($button);
+        if (empty($buttonObj)) {
+            throw new \Exception(sprintf("The button '%s' was not found in the region '%s' on the page %s", $button, $region, $this->getSession()->getCurrentUrl()));
+        }
     }
-  }
 
   /**
    * @Then I( should) see the :tag element in the :region( region)
    */
-  public function assertRegionElement($tag, $region) {
-    $regionObj = $this->getRegion($region);
-    $elements = $regionObj->findAll('css', $tag);
-    if (!empty($elements)) {
-      return;
+    public function assertRegionElement($tag, $region)
+    {
+        $regionObj = $this->getRegion($region);
+        $elements = $regionObj->findAll('css', $tag);
+        if (!empty($elements)) {
+            return;
+        }
+        throw new \Exception(sprintf('The element "%s" was not found in the "%s" region on the page %s', $tag, $region, $this->getSession()->getCurrentUrl()));
     }
-    throw new \Exception(sprintf('The element "%s" was not found in the "%s" region on the page %s', $tag, $region, $this->getSession()->getCurrentUrl()));
-  }
 
   /**
    * @Then I( should) not see the :tag element in the :region( region)
    */
-  public function assertNotRegionElement($tag, $region) {
-    $regionObj = $this->getRegion($region);
-    $result = $regionObj->findAll('css', $tag);
-    if (!empty($result)) {
-      throw new \Exception(sprintf('The element "%s" was found in the "%s" region on the page %s', $tag, $region, $this->getSession()->getCurrentUrl()));
+    public function assertNotRegionElement($tag, $region)
+    {
+        $regionObj = $this->getRegion($region);
+        $result = $regionObj->findAll('css', $tag);
+        if (!empty($result)) {
+            throw new \Exception(sprintf('The element "%s" was found in the "%s" region on the page %s', $tag, $region, $this->getSession()->getCurrentUrl()));
+        }
     }
-  }
 
   /**
    * @Then I( should) not see :text in the :tag element in the :region( region)
    */
-  public function assertNotRegionElementText($text, $tag, $region) {
-    $regionObj = $this->getRegion($region);
-    $results = $regionObj->findAll('css', $tag);
-    if (!empty($results)) {
-      foreach ($results as $result) {
-        if ($result->getText() == $text) {
-          throw new \Exception(sprintf('The text "%s" was found in the "%s" element in the "%s" region on the page %s', $text, $tag, $region, $this->getSession()->getCurrentUrl()));
+    public function assertNotRegionElementText($text, $tag, $region)
+    {
+        $regionObj = $this->getRegion($region);
+        $results = $regionObj->findAll('css', $tag);
+        if (!empty($results)) {
+            foreach ($results as $result) {
+                if ($result->getText() == $text) {
+                    throw new \Exception(sprintf('The text "%s" was found in the "%s" element in the "%s" region on the page %s', $text, $tag, $region, $this->getSession()->getCurrentUrl()));
+                }
+            }
         }
-      }
     }
-  }
 
   /**
    * @Then I( should) see the :tag element with the :attribute attribute set to :value in the :region( region)
    */
-  public function assertRegionElementAttribute($tag, $attribute, $value, $region) {
-    $regionObj = $this->getRegion($region);
-    $elements = $regionObj->findAll('css', $tag);
-    if (empty($elements)) {
-      throw new \Exception(sprintf('The element "%s" was not found in the "%s" region on the page %s', $tag, $region, $this->getSession()->getCurrentUrl()));
+    public function assertRegionElementAttribute($tag, $attribute, $value, $region)
+    {
+        $regionObj = $this->getRegion($region);
+        $elements = $regionObj->findAll('css', $tag);
+        if (empty($elements)) {
+            throw new \Exception(sprintf('The element "%s" was not found in the "%s" region on the page %s', $tag, $region, $this->getSession()->getCurrentUrl()));
+        }
+        if (!empty($attribute)) {
+            $found = false;
+            $attrfound = false;
+            foreach ($elements as $element) {
+                $attr = $element->getAttribute($attribute);
+                if (!empty($attr)) {
+                    $attrfound = true;
+                    if (strpos($attr, "$value") !== false) {
+                        $found = true;
+                        break;
+                    }
+                }
+            }
+            if (!$found) {
+                if (!$attrfound) {
+                    throw new \Exception(sprintf('The "%s" attribute is not present on the element "%s" in the "%s" region on the page %s', $attribute, $tag, $region, $this->getSession()->getCurrentUrl()));
+                } else {
+                    throw new \Exception(sprintf('The "%s" attribute does not equal "%s" on the element "%s" in the "%s" region on the page %s', $attribute, $value, $tag, $region, $this->getSession()->getCurrentUrl()));
+                }
+            }
+        }
     }
-    if (!empty($attribute)) {
-      $found = FALSE;
-      $attrfound = FALSE;
-      foreach ($elements as $element) {
-        $attr = $element->getAttribute($attribute);
-        if (!empty($attr)) {
-          $attrfound = TRUE;
-          if (strpos($attr, "$value") !== FALSE) {
-            $found = TRUE;
-            break;
-          }
-        }
-      }
-      if (!$found) {
-        if (!$attrfound) {
-          throw new \Exception(sprintf('The "%s" attribute is not present on the element "%s" in the "%s" region on the page %s', $attribute, $tag, $region, $this->getSession()->getCurrentUrl()));
-        }
-        else {
-          throw new \Exception(sprintf('The "%s" attribute does not equal "%s" on the element "%s" in the "%s" region on the page %s', $attribute, $value, $tag, $region, $this->getSession()->getCurrentUrl()));
-        }
-      }
-    }
-  }
 
   /**
    * @Then I( should) see :text in the :tag element with the :attribute attribute set to :value in the :region( region)
    */
-  public function assertRegionElementTextAttribute($text, $tag, $attribute, $value, $region) {
-    $regionObj = $this->getRegion($region);
-    $elements = $regionObj->findAll('css', $tag);
-    if (empty($elements)) {
-      throw new \Exception(sprintf('The element "%s" was not found in the "%s" region on the page %s', $tag, $region, $this->getSession()->getCurrentUrl()));
-    }
+    public function assertRegionElementTextAttribute($text, $tag, $attribute, $value, $region)
+    {
+        $regionObj = $this->getRegion($region);
+        $elements = $regionObj->findAll('css', $tag);
+        if (empty($elements)) {
+            throw new \Exception(sprintf('The element "%s" was not found in the "%s" region on the page %s', $tag, $region, $this->getSession()->getCurrentUrl()));
+        }
 
-    $found = FALSE;
-    foreach ($elements as $element) {
-      if ($element->getText() == $text) {
-        $found = TRUE;
-        break;
-      }
-    }
-    if (!$found) {
-      throw new \Exception(sprintf('The text "%s" was not found in the "%s" element in the "%s" region on the page %s', $text, $tag, $region, $this->getSession()->getCurrentUrl()));
-    }
+        $found = false;
+        foreach ($elements as $element) {
+            if ($element->getText() == $text) {
+                $found = true;
+                break;
+            }
+        }
+        if (!$found) {
+            throw new \Exception(sprintf('The text "%s" was not found in the "%s" element in the "%s" region on the page %s', $text, $tag, $region, $this->getSession()->getCurrentUrl()));
+        }
 
-    if (!empty($attribute)) {
-      $attr = $element->getAttribute($attribute);
-      if (empty($attr)) {
-        throw new \Exception(sprintf('The "%s" attribute is not present on the element "%s" in the "%s" region on the page %s', $attribute, $tag, $region, $this->getSession()->getCurrentUrl()));
-      }
-      if (strpos($attr, "$value") === FALSE) {
-        throw new \Exception(sprintf('The "%s" attribute does not equal "%s" on the element "%s" in the "%s" region on the page %s', $attribute, $value, $tag, $region, $this->getSession()->getCurrentUrl()));
-      }
+        if (!empty($attribute)) {
+            $attr = $element->getAttribute($attribute);
+            if (empty($attr)) {
+                throw new \Exception(sprintf('The "%s" attribute is not present on the element "%s" in the "%s" region on the page %s', $attribute, $tag, $region, $this->getSession()->getCurrentUrl()));
+            }
+            if (strpos($attr, "$value") === false) {
+                throw new \Exception(sprintf('The "%s" attribute does not equal "%s" on the element "%s" in the "%s" region on the page %s', $attribute, $value, $tag, $region, $this->getSession()->getCurrentUrl()));
+            }
+        }
     }
-  }
 
   /**
    * @Then I( should) see :text in the :tag element with the :property CSS property set to :value in the :region( region)
    */
-  public function assertRegionElementTextCss($text, $tag, $property, $value, $region) {
-    $regionObj = $this->getRegion($region);
-    $elements = $regionObj->findAll('css', $tag);
-    if (empty($elements)) {
-      throw new \Exception(sprintf('The element "%s" was not found in the "%s" region on the page %s', $tag, $region, $this->getSession()->getCurrentUrl()));
-    }
-
-    $found = FALSE;
-    foreach ($elements as $element) {
-      if ($element->getText() == $text) {
-        $found = TRUE;
-        break;
-      }
-    }
-    if (!$found) {
-      throw new \Exception(sprintf('The text "%s" was not found in the "%s" element in the "%s" region on the page %s', $text, $tag, $region, $this->getSession()->getCurrentUrl()));
-    }
-
-    $found = FALSE;
-    if (!empty($property)) {
-      $style = $element->getAttribute('style');
-      $rules = explode(";", $style);
-      foreach ($rules as $rule) {
-        if (strpos($rule, $property) !== FALSE) {
-          if (strpos($rule, $value) === FALSE) {
-            throw new \Exception(sprintf('The "%s" style property does not equal "%s" on the element "%s" in the "%s" region on the page %s', $property, $value, $tag, $region, $this->getSession()->getCurrentUrl()));
-          }
-          $found = TRUE;
-          break;
+    public function assertRegionElementTextCss($text, $tag, $property, $value, $region)
+    {
+        $regionObj = $this->getRegion($region);
+        $elements = $regionObj->findAll('css', $tag);
+        if (empty($elements)) {
+            throw new \Exception(sprintf('The element "%s" was not found in the "%s" region on the page %s', $tag, $region, $this->getSession()->getCurrentUrl()));
         }
-      }
-      if (!$found) {
-        throw new \Exception(sprintf('The "%s" style property was not found in the "%s" element in the "%s" region on the page %s', $property, $tag, $region, $this->getSession()->getCurrentUrl()));
-      }
+
+        $found = false;
+        foreach ($elements as $element) {
+            if ($element->getText() == $text) {
+                $found = true;
+                break;
+            }
+        }
+        if (!$found) {
+            throw new \Exception(sprintf('The text "%s" was not found in the "%s" element in the "%s" region on the page %s', $text, $tag, $region, $this->getSession()->getCurrentUrl()));
+        }
+
+        $found = false;
+        if (!empty($property)) {
+            $style = $element->getAttribute('style');
+            $rules = explode(";", $style);
+            foreach ($rules as $rule) {
+                if (strpos($rule, $property) !== false) {
+                    if (strpos($rule, $value) === false) {
+                        throw new \Exception(sprintf('The "%s" style property does not equal "%s" on the element "%s" in the "%s" region on the page %s', $property, $value, $tag, $region, $this->getSession()->getCurrentUrl()));
+                    }
+                    $found = true;
+                    break;
+                }
+            }
+            if (!$found) {
+                throw new \Exception(sprintf('The "%s" style property was not found in the "%s" element in the "%s" region on the page %s', $property, $tag, $region, $this->getSession()->getCurrentUrl()));
+            }
+        }
     }
-  }
 }

@@ -8,9 +8,11 @@ namespace Drupal\DrupalExtension\Definition\Proposal;
 
 use Behat\Behat\Definition\Proposal\AnnotatedDefinitionProposal as BaseAnnotatedDefinitionProposal;
 
-class AnnotatedDefinitionProposal extends BaseAnnotatedDefinitionProposal {
-  protected function generateSnippet($regex, $methodName, array $args) {
-    return sprintf(<<<PHP
+class AnnotatedDefinitionProposal extends BaseAnnotatedDefinitionProposal
+{
+    protected function generateSnippet($regex, $methodName, array $args)
+    {
+        return sprintf(<<<PHP
   /**
    * @%s /^%s$/
    */
@@ -18,7 +20,6 @@ class AnnotatedDefinitionProposal extends BaseAnnotatedDefinitionProposal {
     throw new PendingException();
   }
 PHP
-      , '%s', $regex, $methodName, implode(', ', $args)
-    );
-  }
+        , '%s', $regex, $methodName, implode(', ', $args));
+    }
 }

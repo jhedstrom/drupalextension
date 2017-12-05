@@ -1,16 +1,14 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\behat_test\Config\BehatTestExtensionInstallStorage
- */
-
 namespace Drupal\behat_test\Config;
 
 use Drupal\Core\Config\ExtensionInstallStorage;
 use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\Extension\ExtensionDiscovery;
 
+/**
+ * Finds module folders.
+ */
 class BehatTestExtensionInstallStorage extends ExtensionInstallStorage {
 
   /**
@@ -29,7 +27,7 @@ class BehatTestExtensionInstallStorage extends ExtensionInstallStorage {
     if (!isset($this->folders)) {
       $listing = new ExtensionDiscovery(\Drupal::root());
       $modules = $listing->scan('module');
-      $this->folders = $this->getComponentNames(array('behat_test' => $modules['behat_test']));
+      $this->folders = $this->getComponentNames(['behat_test' => $modules['behat_test']]);
     }
     return $this->folders;
   }

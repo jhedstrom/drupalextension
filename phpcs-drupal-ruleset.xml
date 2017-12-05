@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!-- PHP_CodeSniffer standard -->
+<!-- See https://github.com/squizlabs/PHP_CodeSniffer/wiki/Annotated-ruleset.xml -->
+<ruleset name="drupal/drupal-extension-fixtures">
+    <description>Drupal Behat Extension coding standards for packaged Drupal code</description>
+
+    <file>./fixtures</file>
+
+    <exclude-pattern>^/doc/*</exclude-pattern>
+    <exclude-pattern>^/drupal/*</exclude-pattern>
+    <exclude-pattern>^/drush/*</exclude-pattern>
+    <exclude-pattern>^/reports/*</exclude-pattern>
+    <exclude-pattern>^/spec/*</exclude-pattern>
+    <exclude-pattern>^/vendor/*</exclude-pattern>
+    <exclude-pattern>^/README.md</exclude-pattern>
+
+    <rule ref="./vendor/drupal/coder/coder_sniffer/Drupal"></rule>
+
+</ruleset>

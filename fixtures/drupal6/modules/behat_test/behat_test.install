@@ -1,6 +1,11 @@
 <?php
 
 /**
+ * @file
+ * Install hooks for the behat_test module.
+ */
+
+/**
  * Implements hook_install().
  */
 function behat_test_install() {

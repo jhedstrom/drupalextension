@@ -18,7 +18,8 @@ use Drupal\DrupalDriverManager;
  *
  * See the documentation on "Contributed module subcontexts".
  */
-interface DrupalSubContextInterface extends Context {
+interface DrupalSubContextInterface extends Context
+{
 
   /**
    * Instantiates the subcontext.
@@ -26,6 +27,5 @@ interface DrupalSubContextInterface extends Context {
    * @param \Drupal\DrupalDriverManager $drupal
    *   The Drupal Driver manager.
    */
-  public function __construct(DrupalDriverManager $drupal);
-
+    public function __construct(DrupalDriverManager $drupal);
 }
