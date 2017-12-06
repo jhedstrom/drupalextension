@@ -10,15 +10,16 @@ use Behat\Testwork\Hook\Scope\HookScope;
 /**
  * Represents an Entity hook scope.
  */
-final class BeforeTermCreateScope extends TermScope {
+final class BeforeTermCreateScope extends TermScope
+{
 
   /**
    * Return the scope name.
    *
    * @return string
    */
-  public function getName() {
-    return self::BEFORE;
-  }
-
+    public function getName()
+    {
+        return self::BEFORE;
+    }
 }

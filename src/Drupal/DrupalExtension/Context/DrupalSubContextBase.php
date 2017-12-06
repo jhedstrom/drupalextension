@@ -12,14 +12,15 @@ use Drupal\DrupalDriverManager;
 /**
  * Base class for subcontexts that use the Drupal API.
  */
-abstract class DrupalSubContextBase extends RawDrupalContext implements DrupalSubContextInterface {
+abstract class DrupalSubContextBase extends RawDrupalContext implements DrupalSubContextInterface
+{
 
   /**
    * The Drupal Driver Manager.
    *
    * @var \Drupal\DrupalDriverManager $drupal
    */
-  protected $drupal;
+    protected $drupal;
 
   /**
    * Constructs a DrupalSubContextBase object.
@@ -27,9 +28,10 @@ abstract class DrupalSubContextBase extends RawDrupalContext implements DrupalSu
    * @param \Drupal\DrupalDriverManager $drupal
    *   The Drupal driver manager.
    */
-  public function __construct(DrupalDriverManager $drupal) {
-    $this->drupal = $drupal;
-  }
+    public function __construct(DrupalDriverManager $drupal)
+    {
+        $this->drupal = $drupal;
+    }
 
   /**
    * Get the currently logged in user from DrupalContext.
@@ -39,16 +41,16 @@ abstract class DrupalSubContextBase extends RawDrupalContext implements DrupalSu
    *   The currently logged in user is now available in all context classes.
    *   Use $this->getUserManager()->getCurrentUser() instead.
    */
-  protected function getUser() {
-    trigger_error('DrupalSubContextBase::getUser() is deprecated. Use RawDrupalContext::getUserManager()->getCurrentUser() instead.', E_USER_DEPRECATED);
+    protected function getUser()
+    {
+        trigger_error('DrupalSubContextBase::getUser() is deprecated. Use RawDrupalContext::getUserManager()->getCurrentUser() instead.', E_USER_DEPRECATED);
 
-    $user = $this->getUserManager()->getCurrentUser();
+        $user = $this->getUserManager()->getCurrentUser();
 
-    if (empty($user)) {
-      throw new \Exception('No user is logged in.');
+        if (empty($user)) {
+            throw new \Exception('No user is logged in.');
+        }
+
+        return $user;
     }
-
-    return $user;
-  }
-
 }

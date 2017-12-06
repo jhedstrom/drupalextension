@@ -83,6 +83,8 @@ before_script:
 
 script:
   - vendor/bin/parallel-lint src spec features fixtures
+  - vendor/bin/phpcs --standard=./phpcs-ruleset.xml -p
+  - vendor/bin/phpcs --standard=./phpcs-drupal-ruleset.xml -p
   - vendor/bin/phpspec run -f pretty --no-interaction
   - vendor/bin/behat -fprogress --strict
   - vendor/bin/behat -fprogress --profile=drupal${DRUPAL_VERSION} --strict

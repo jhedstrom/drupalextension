@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * behat_test.features.field_instance.inc
@@ -10,7 +11,7 @@
 function behat_test_field_default_field_instances() {
   $field_instances = array();
 
-  // Exported field_instance: 'node-post-body'
+  // Exported field_instance: 'node-post-body'.
   $field_instances['node-post-body'] = array(
     'bundle' => 'post',
     'default_value' => NULL,
@@ -54,7 +55,7 @@ function behat_test_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-post-field_post_address'
+  // Exported field_instance: 'node-post-field_post_address'.
   $field_instances['node-post-field_post_address'] = array(
     'bundle' => 'post',
     'default_value' => NULL,
@@ -109,7 +110,7 @@ function behat_test_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-post-field_post_date'
+  // Exported field_instance: 'node-post-field_post_date'.
   $field_instances['node-post-field_post_date'] = array(
     'bundle' => 'post',
     'deleted' => 0,
@@ -162,7 +163,7 @@ function behat_test_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-post-field_post_dates'
+  // Exported field_instance: 'node-post-field_post_dates'.
   $field_instances['node-post-field_post_dates'] = array(
     'bundle' => 'post',
     'deleted' => 0,
@@ -215,7 +216,7 @@ function behat_test_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-post-field_post_links'
+  // Exported field_instance: 'node-post-field_post_links'.
   $field_instances['node-post-field_post_links'] = array(
     'bundle' => 'post',
     'default_value' => NULL,
@@ -272,7 +273,7 @@ function behat_test_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-post-field_post_reference'
+  // Exported field_instance: 'node-post-field_post_reference'.
   $field_instances['node-post-field_post_reference'] = array(
     'bundle' => 'post',
     'default_value' => NULL,
@@ -311,7 +312,7 @@ function behat_test_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-post-field_post_select'
+  // Exported field_instance: 'node-post-field_post_select'.
   $field_instances['node-post-field_post_select'] = array(
     'bundle' => 'post',
     'default_value' => NULL,
@@ -348,7 +349,7 @@ function behat_test_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'user-user-field_post_address'
+  // Exported field_instance: 'user-user-field_post_address'.
   $field_instances['user-user-field_post_address'] = array(
     'bundle' => 'user',
     'default_value' => NULL,
@@ -397,7 +398,7 @@ function behat_test_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'user-user-field_post_reference'
+  // Exported field_instance: 'user-user-field_post_reference'.
   $field_instances['user-user-field_post_reference'] = array(
     'bundle' => 'user',
     'default_value' => NULL,
@@ -430,7 +431,7 @@ function behat_test_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'user-user-field_tags'
+  // Exported field_instance: 'user-user-field_tags'.
   $field_instances['user-user-field_tags'] = array(
     'bundle' => 'user',
     'default_value' => NULL,

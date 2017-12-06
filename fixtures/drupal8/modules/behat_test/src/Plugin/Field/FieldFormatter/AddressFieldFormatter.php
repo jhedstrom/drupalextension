@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\behat_test\Plugin\Field\FieldFormatter\AddressFieldFormatter.
- */
-
 namespace Drupal\behat_test\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Field\FieldDefinitionInterface;
@@ -31,7 +26,7 @@ class AddressFieldFormatter extends FormatterBase implements ContainerFactoryPlu
   /**
    * The country manager.
    *
-   * @var \Drupal\Core\Locale\CountryManagerInterface;
+   * @var \Drupal\Core\Locale\CountryManagerInterface
    */
   protected $countryManager;
 

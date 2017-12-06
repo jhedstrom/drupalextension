@@ -13,36 +13,39 @@ use Behat\Gherkin\Node\TableNode;
 /**
  * Provides pre-built step definitions for interacting with Drupal config.
  */
-class ConfigContext extends RawDrupalContext implements TranslatableContext {
+class ConfigContext extends RawDrupalContext implements TranslatableContext
+{
 
   /**
    * {@inheritDoc}
    */
-  public static function getTranslationResources() {
-    return glob(__DIR__ . '/../../../../i18n/*.xliff');
-  }
+    public static function getTranslationResources()
+    {
+        return glob(__DIR__ . '/../../../../i18n/*.xliff');
+    }
 
   /**
    * Keep track of any config that was changed so they can easily be reverted.
    *
    * @var array
    */
-  protected $config = array();
+    protected $config = array();
 
   /**
    * Revert any changed config.
    *
    * @AfterScenario
    */
-  public function cleanConfig() {
-    // Revert config that was changed.
-    foreach ($this->config as $name => $key_value) {
-      foreach ($key_value as $key => $value) {
-        $this->getDriver()->configSet($name, $key, $value);
-      }
+    public function cleanConfig()
+    {
+        // Revert config that was changed.
+        foreach ($this->config as $name => $key_value) {
+            foreach ($key_value as $key => $value) {
+                $this->getDriver()->configSet($name, $key, $value);
+            }
+        }
+        $this->config = array();
     }
-    $this->config = array();
-  }
 
   /**
    * Sets basic configuration item.
@@ -56,9 +59,10 @@ class ConfigContext extends RawDrupalContext implements TranslatableContext {
    *
    * @Given I set the configuration item :name with key :key to :value
    */
-  public function setBasicConfig($name, $key, $value) {
-    $this->setConfig($name, $key, $value);
-  }
+    public function setBasicConfig($name, $key, $value)
+    {
+        $this->setConfig($name, $key, $value);
+    }
 
   /**
    * Sets complex configuration.
@@ -76,17 +80,18 @@ class ConfigContext extends RawDrupalContext implements TranslatableContext {
    *  | key   | value  |
    *  | foo   | bar    |
    */
-  public function setComplexConfig($name, $key, TableNode $config_table) {
-    $value = array();
-    foreach ($config_table->getHash() as $row) {
-      // Allow json values for extra complexity.
-      if (json_decode($row['value'])) {
-        $row['value'] = json_decode($row['value'], TRUE);
-      }
-      $value[$row['key']] = $row['value'];
+    public function setComplexConfig($name, $key, TableNode $config_table)
+    {
+        $value = array();
+        foreach ($config_table->getHash() as $row) {
+            // Allow json values for extra complexity.
+            if (json_decode($row['value'])) {
+                $row['value'] = json_decode($row['value'], true);
+            }
+            $value[$row['key']] = $row['value'];
+        }
+        $this->setConfig($name, $key, $value);
     }
-    $this->setConfig($name, $key, $value);
-  }
 
   /**
    * Sets a value in a configuration object.
@@ -98,10 +103,10 @@ class ConfigContext extends RawDrupalContext implements TranslatableContext {
    * @param mixed $value
    *   Value to associate with identifier.
    */
-  public function setConfig($name, $key, $value) {
-    $backup = $this->getDriver()->configGet($name, $key);
-    $this->getDriver()->configSet($name, $key, $value);
-    $this->config[$name][$key] = $backup;
-  }
-
+    public function setConfig($name, $key, $value)
+    {
+        $backup = $this->getDriver()->configGet($name, $key);
+        $this->getDriver()->configSet($name, $key, $value);
+        $this->config[$name][$key] = $backup;
+    }
 }

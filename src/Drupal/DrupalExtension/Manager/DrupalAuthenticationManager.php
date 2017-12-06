@@ -75,21 +75,23 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
     /**
      * {@inheritdoc}
      */
-    public function logout() {
+    public function logout()
+    {
         $this->getSession()->visit($this->locatePath('/user/logout'));
-        $this->userManager->setCurrentUser(FALSE);
+        $this->userManager->setCurrentUser(false);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function loggedIn() {
+    public function loggedIn()
+    {
         $session = $this->getSession();
 
         // If the session has not been started yet, or no page has yet been loaded,
         // then this is a brand new test session and the user is not logged in.
         if (!$session->isStarted() || !$page = $session->getPage()) {
-            return FALSE;
+            return false;
         }
 
         // Look for a css selector to determine if a user is logged in.
@@ -97,7 +99,7 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
         // Which should work with almost any theme.
         try {
             if ($page->has('css', $this->getDrupalSelector('logged_in_selector'))) {
-                return TRUE;
+                return true;
             }
         } catch (DriverException $e) {
             // This test may fail if the driver did not load any site yet.
@@ -107,7 +109,7 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
         // login form is displayed on /user/login.
         $session->visit($this->locatePath('/user/login'));
         if (!$page->has('css', $this->getDrupalSelector('login_form_selector'))) {
-            return TRUE;
+            return true;
         }
 
         $session->visit($this->locatePath('/'));
@@ -115,13 +117,13 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
         // As a last resort, if a logout link is found, we are logged in. While not
         // perfect, this is how Drupal SimpleTests currently work as well.
         if ($page->findLink($this->getDrupalText('log_out'))) {
-            return TRUE;
+            return true;
         }
 
         // The user appears to be anonymous. Clear the current user from the user
         // manager so this reflects the actual situation.
-        $this->userManager->setCurrentUser(FALSE);
+        $this->userManager->setCurrentUser(false);
 
-        return FALSE;
+        return false;
     }
 }
