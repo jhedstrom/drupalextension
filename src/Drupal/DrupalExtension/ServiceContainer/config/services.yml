@@ -42,12 +42,12 @@ services:
       - {}
       - "@drupal.random"
   drupal.authentication_manager:
-    class: %drupal.authentication_manager.class%
+    class: "%drupal.authentication_manager.class%"
     arguments:
       - "@mink"
       - "@drupal.user_manager"
-      - %mink.parameters%
-      - %drupal.parameters%
+      - "%mink.parameters%"
+      - "%drupal.parameters%"
   drupal.user_manager:
     class: "%drupal.user_manager.class%"
   drupal.random:
