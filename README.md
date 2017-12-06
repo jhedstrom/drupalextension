@@ -72,6 +72,13 @@ the [Full documentation](https://behat-drupal-extension.readthedocs.org)
 1. Start adding your [feature files](http://behat.org/en/latest/user_guide/gherkin.html) 
    to the `features` directory of your repository.
 
+## Credits
+
+ * Originally developed by [Jonathan Hedstrom](https://github.com/jhedstrom) with great help from [eliza411](https://github.com/eliza411)
+ * Maintainers
+   * [Pieter Frenssen](https://github.com/pfrenssen)
+   * [All these great contributors](https://github.com/jhedstrom/drupalextension/graphs/contributors)
+
 ## Additional resources
 
  * [Behat Drupal Extension documentation](https://behat-drupal-extension.readthedocs.org)

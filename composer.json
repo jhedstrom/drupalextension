@@ -6,10 +6,18 @@
   "homepage": "http://drupal.org/project/drupalextension",
   "license": "GPL-2.0+",
   "authors": [
-     {
-       "name": "Jonathan Hedstrom",
-       "email": "jhedstrom@gmail.com"
-     }
+    {
+      "name": "Jonathan Hedstrom",
+      "email": "jhedstrom@gmail.com"
+    },
+    {
+      "name": "Melissa Anderson",
+      "homepage": "https://github.com/eliza411"
+    },
+    {
+      "name": "Pieter Frenssen",
+      "homepage": "https://github.com/pfrenssen"
+    }
   ],
   "minimum-stability": "dev",
   "prefer-stable": true,
