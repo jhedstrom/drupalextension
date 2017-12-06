@@ -21,6 +21,7 @@ use Drupal\DrupalExtension\Hook\Scope\BeforeLanguageEnableScope;
 use Drupal\DrupalExtension\Hook\Scope\BeforeNodeCreateScope;
 use Drupal\DrupalExtension\Hook\Scope\BeforeUserCreateScope;
 use Drupal\DrupalExtension\Hook\Scope\BeforeTermCreateScope;
+use Drupal\DrupalExtension\Manager\FastLogoutInterface;
 
 /**
  * Provides the raw functionality for interacting with Drupal.
@@ -266,7 +267,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
             $this->getDriver()->processBatch();
             $this->userManager->clearUsers();
             if ($this->loggedIn()) {
-                $this->logout();
+                $this->logout(true);
             }
         }
     }
@@ -531,10 +532,17 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
 
   /**
    * Logs the current user out.
+   *
+   * @param bool $fast
+   *   Utilize direct logout by session if available.
    */
-    public function logout()
+    public function logout($fast = false)
     {
-        $this->getAuthenticationManager()->logOut();
+        if ($fast && $this->getAuthenticationManager() instanceof FastLogoutInterface) {
+            $this->getAuthenticationManager()->fastLogout();
+        } else {
+            $this->getAuthenticationManager()->logOut();
+        }
     }
 
   /**

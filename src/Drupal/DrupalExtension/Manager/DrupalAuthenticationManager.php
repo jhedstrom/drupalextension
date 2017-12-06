@@ -10,7 +10,7 @@ use Drupal\DrupalExtension\MinkAwareTrait;
 /**
  * Default implementation of the Drupal authentication manager service.
  */
-class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterface
+class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterface, FastLogoutInterface
 {
 
     use DrupalParametersTrait;
@@ -44,10 +44,8 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
      */
     public function logIn(\stdClass $user)
     {
-        // Check if we are already logged in.
-        if ($this->loggedIn()) {
-            $this->logout();
-        }
+        // Ensure we aren't already logged in.
+        $this->fastLogout();
 
         $this->getSession()->visit($this->locatePath('/user'));
         $element = $this->getSession()->getPage();
@@ -108,8 +106,9 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
         // Some themes do not add that class to the body, so lets check if the
         // login form is displayed on /user/login.
         $session->visit($this->locatePath('/user/login'));
-        if (!$page->has('css', $this->getDrupalSelector('login_form_selector'))) {
-            return true;
+        if ($page->has('css', $this->getDrupalSelector('login_form_selector'))) {
+            $this->fastLogout();
+            return false;
         }
 
         $session->visit($this->locatePath('/'));
@@ -120,10 +119,18 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
             return true;
         }
 
-        // The user appears to be anonymous. Clear the current user from the user
-        // manager so this reflects the actual situation.
-        $this->userManager->setCurrentUser(false);
-
+        // The user appears to be anonymous. Calling logout() both ensures this is the
+        // case and updates the userManager to reflect this.
+        $this->fastLogout();
         return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function fastLogout()
+    {
+        $this->getSession()->reset();
+        $this->userManager->setCurrentUser(false);
     }
 }
