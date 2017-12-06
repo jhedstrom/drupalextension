@@ -61,6 +61,12 @@ Feature: Test DrupalContext
     Given I am on the homepage
     Then I should see "Drupal" in the "h1" element with the "id" attribute set to "site-name" in the "left header" region
 
+  Scenario: Find element with attribute set on a region
+    Given I am at "assertRegionElementAttribute.html"
+    Then I should see the "div" element with the "class" attribute set to "class1" in the "left header" region
+    And I should see the "div" element with the "class" attribute set to "class2" in the "left header" region
+    And I should see the "div" element with the "class" attribute set to "class3" in the "left header" region
+
   Scenario: Error messages
    Given I am on "user.html"
    When I press "Log in"

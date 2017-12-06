@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\behat_test\Plugin\Field\FieldType\AddressFieldItem.
- */
-
 namespace Drupal\behat_test\Plugin\Field\FieldType;
 
 use Drupal\Core\Field\FieldItemBase;

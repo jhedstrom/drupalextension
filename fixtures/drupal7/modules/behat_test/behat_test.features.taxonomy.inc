@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * behat_test.features.taxonomy.inc

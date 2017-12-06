@@ -15,36 +15,39 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  *
  * Determines which Drupal driver to use for a given scenario or outline.
  */
-class DriverListener implements EventSubscriberInterface {
+class DriverListener implements EventSubscriberInterface
+{
 
   /**
    * Drupal driver manager.
    *
    * @var \Drupal\DrupalDriverManager
    */
-  private $drupal;
+    private $drupal;
 
   /**
    * Test parameters.
    *
    * @var array
    */
-  private $parameters;
+    private $parameters;
 
-  public function __construct(DrupalDriverManager $drupal, array $parameters) {
-    $this->drupal = $drupal;
-    $this->parameters = $parameters;
-  }
+    public function __construct(DrupalDriverManager $drupal, array $parameters)
+    {
+        $this->drupal = $drupal;
+        $this->parameters = $parameters;
+    }
 
   /**
    * {@inheritDoc}
    */
-  public static function getSubscribedEvents() {
-    return array(
-      ScenarioTested::BEFORE => array('prepareDefaultDrupalDriver', 11),
-      ExampleTested::BEFORE => array('prepareDefaultDrupalDriver', 11),
-    );
-  }
+    public static function getSubscribedEvents()
+    {
+        return array(
+        ScenarioTested::BEFORE => array('prepareDefaultDrupalDriver', 11),
+        ExampleTested::BEFORE => array('prepareDefaultDrupalDriver', 11),
+        );
+    }
 
   /**
    * Configures default Drupal driver to use before each scenario or outline.
@@ -55,25 +58,25 @@ class DriverListener implements EventSubscriberInterface {
    *
    * @param ScenarioEvent|OutlineEvent $event
    */
-  public function prepareDefaultDrupalDriver($event) {
-    $feature = $event->getFeature();
-    $scenario = $event instanceof ScenarioLikeTested ? $event->getScenario() : $event->getOutline();
+    public function prepareDefaultDrupalDriver($event)
+    {
+        $feature = $event->getFeature();
+        $scenario = $event instanceof ScenarioLikeTested ? $event->getScenario() : $event->getOutline();
 
-    // Get the default driver.
-    $driver = $this->parameters['default_driver'];
+        // Get the default driver.
+        $driver = $this->parameters['default_driver'];
 
-    foreach (array_merge($feature->getTags(), $scenario->getTags()) as $tag) {
-      if (!empty($this->parameters[$tag . '_driver'])) {
-        $driver = $this->parameters[$tag . '_driver'];
-      }
+        foreach (array_merge($feature->getTags(), $scenario->getTags()) as $tag) {
+            if (!empty($this->parameters[$tag . '_driver'])) {
+                $driver = $this->parameters[$tag . '_driver'];
+            }
+        }
+
+        // Set the default driver.
+        $this->drupal->setDefaultDriverName($driver);
+
+        // Set the environment.
+        $environment = $event->getEnvironment();
+        $this->drupal->setEnvironment($environment);
     }
-
-    // Set the default driver.
-    $this->drupal->setDefaultDriverName($driver);
-
-    // Set the environment.
-    $environment = $event->getEnvironment();
-    $this->drupal->setEnvironment($environment);
-  }
-
 }

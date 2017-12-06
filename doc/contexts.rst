@@ -34,6 +34,9 @@ following contexts:
 *DrushContext*
   Allows steps to directly call drush commands.
 
+*BatchContext*
+  Steps for creating batch items and ensuring a batch is finished processing.
+
 Custom Contexts
 ---------------
 
