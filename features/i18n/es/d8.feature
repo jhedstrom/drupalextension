@@ -27,7 +27,7 @@ Característica: DrupalContext
         | Jane Doe | jane@example.com |                |
       Y estoy conectado como usuario con rol "administrator"
     Cuando visito "admin/people"
-    Entoces debo ver el texto "administrator" en la fila "Joe User"
+    Entonces debo ver el texto "administrator" en la fila "Joe User"
       Y no debo ver el texto "administrator" en la fila "Jane Doe"
 
   Escenario: Encontrar un encabezado en una zona
