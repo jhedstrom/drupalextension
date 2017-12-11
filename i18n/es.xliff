@@ -26,8 +26,12 @@
         <target><![CDATA[(que )estoy conectado com un usuario con permiso(s) :permissions]]></target>
       </trans-unit>
       <trans-unit id="i-should-see-the-text-text-in-the-rowtext-row">
-        <source><![CDATA[I should see (the text ):text in the ":rowText" row]]></source>
-        <target><![CDATA[debo ver (el texto ):text en la fila ":rowText"]]></target>
+        <source><![CDATA[I should see (the text ):text in the :rowText row]]></source>
+        <target><![CDATA[debo ver (el texto ):text en la fila :rowText]]></target>
+      </trans-unit>
+      <trans-unit id="i-not-should-see-the-text-text-in-the-rowtext-row">
+        <source><![CDATA[I not should see (the text ):text in the :rowText row]]></source>
+        <target><![CDATA[no debo ver (el texto ):text en la fila :rowText]]></target>
       </trans-unit>
       <trans-unit id="i-click-link-in-the-rowtext-row">
         <source><![CDATA[I click :link in the :rowText row]]></source>
@@ -79,7 +83,7 @@
       </trans-unit>
       <trans-unit id="users">
         <source><![CDATA[users:]]></source>
-        <target><![CDATA[users:]]></target>
+        <target><![CDATA[usuarios:]]></target>
       </trans-unit>
       <trans-unit id="vocabulary-terms">
         <source><![CDATA[:vocabulary terms:]]></source>
