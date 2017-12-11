@@ -13,6 +13,10 @@
         <source><![CDATA[I am logged in as a user with the :role role(s)]]></source>
         <target><![CDATA[(que )estoy conectado como usuario con rol(es) :role]]></target>
       </trans-unit>
+      <trans-unit id="I-am-logged-in-as-a-an-role">
+        <source><![CDATA[I am logged in as a/an :role]]></source>
+        <target><![CDATA[(que )estoy conectado como un :role]]></target>
+      </trans-unit>
       <trans-unit id="i-am-logged-in-as-name">
         <source><![CDATA[I am logged in as :name]]></source>
         <target><![CDATA[(que )estoy conectado como :name]]></target>
@@ -280,6 +284,10 @@
       <trans-unit id="i-select-the-radio-button-label">
         <source><![CDATA[I select the radio button :label]]></source>
         <target><![CDATA[selecciono el botón de radio :label]]></target>
+      </trans-unit>
+      <trans-unit id="the-these-following-languages-are-available">
+        <source><![CDATA[the/these (following )languages are available:]]></source>
+        <target><![CDATA[(que )el/los siguiente(s) idioma(s) esta(n) disponible(s):]]></target>
       </trans-unit>
     </body>
   </file>
