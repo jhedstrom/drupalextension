@@ -132,8 +132,8 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
     {
         $session = $this->getSession();
         if ($session->isStarted()) {
-          $session->reset();
-          $this->userManager->setCurrentUser(FALSE);
+            $session->reset();
+            $this->userManager->setCurrentUser(false);
         }
     }
 }
