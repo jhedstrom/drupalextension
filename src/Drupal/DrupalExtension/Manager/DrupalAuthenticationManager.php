@@ -130,7 +130,10 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
      */
     public function fastLogout()
     {
-        $this->getSession()->reset();
+        $session = $this->getSession();
+        if ($session->isStarted()) {
+            $session->reset();
+        }
         $this->userManager->setCurrentUser(false);
     }
 }
