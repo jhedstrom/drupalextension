@@ -30,7 +30,7 @@
         <target><![CDATA[debo ver (el texto ):text en la fila :rowText]]></target>
       </trans-unit>
       <trans-unit id="i-not-should-see-the-text-text-in-the-rowtext-row">
-        <source><![CDATA[I not should see (the text ):text in the :rowText row]]></source>
+        <source><![CDATA[I should not see (the text ):text in the :rowText row]]></source>
         <target><![CDATA[no debo ver (el texto ):text en la fila :rowText]]></target>
       </trans-unit>
       <trans-unit id="i-click-link-in-the-rowtext-row">
@@ -171,7 +171,7 @@
       </trans-unit>
       <trans-unit id="i-am-at-path">
         <source><![CDATA[I am at :path]]></source>
-        <target><![CDATA[(que )estoy en :path]]></target>
+        <target><![CDATA[(que )estoy en la URL :path]]></target>
       </trans-unit>
       <trans-unit id="i-visit-path">
         <source><![CDATA[I visit :path]]></source>

@@ -14,8 +14,8 @@ Característica: DrupalContext
     Entonces debo ver el texto "Member for"
 
   Escenario: Enlaces dentro de filas de tablas
-    Dado que estoy conectado como usuario con rol "administrator"
-    Cuando estoy en "admin/structure/types"
+    Dado que estoy conectado como un "administrator"
+    Cuando estoy en la URL "admin/structure/types"
       Y hago click en el enlace "Manage fields" de la fila "Article"
     Entonces debo estar en "admin/structure/types/manage/article/fields"
       Y debo ver el enlace "Add field"
@@ -27,7 +27,7 @@ Característica: DrupalContext
         | Jane Doe | jane@example.com |                |
       Y estoy conectado como usuario con rol "administrator"
     Cuando visito "admin/people"
-    Entonces debo ver el texto "administrator" en la fila "Joe User"
+    Entonces debo ver el texto "Administrator" en la fila "Joe User"
       Y no debo ver el texto "administrator" en la fila "Jane Doe"
 
   Escenario: Encontrar un encabezado en una zona
