@@ -266,8 +266,11 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
             }
             $this->getDriver()->processBatch();
             $this->userManager->clearUsers();
-            if ($this->loggedIn()) {
+            // If the authentication manager supports logout, no need to check if the user is logged in.
+            if ($this->getAuthenticationManager() instanceof FastLogoutInterface) {
                 $this->logout(true);
+            } elseif ($this->loggedIn()) {
+                $this->logout();
             }
         }
     }
