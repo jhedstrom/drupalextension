@@ -13,6 +13,10 @@
         <source><![CDATA[I am logged in as a user with the :role role(s)]]></source>
         <target><![CDATA[(que )estoy conectado como usuario con rol(es) :role]]></target>
       </trans-unit>
+      <trans-unit id="I-am-logged-in-as-a-an-role">
+        <source><![CDATA[I am logged in as a/an :role]]></source>
+        <target><![CDATA[(que )estoy conectado como un :role]]></target>
+      </trans-unit>
       <trans-unit id="i-am-logged-in-as-name">
         <source><![CDATA[I am logged in as :name]]></source>
         <target><![CDATA[(que )estoy conectado como :name]]></target>
@@ -22,8 +26,12 @@
         <target><![CDATA[(que )estoy conectado com un usuario con permiso(s) :permissions]]></target>
       </trans-unit>
       <trans-unit id="i-should-see-the-text-text-in-the-rowtext-row">
-        <source><![CDATA[I should see (the text ):text in the ":rowText" row]]></source>
-        <target><![CDATA[debo ver (el texto ):text en la fila ":rowText"]]></target>
+        <source><![CDATA[I should see (the text ):text in the :rowText row]]></source>
+        <target><![CDATA[debo ver (el texto ):text en la fila :rowText]]></target>
+      </trans-unit>
+      <trans-unit id="i-not-should-see-the-text-text-in-the-rowtext-row">
+        <source><![CDATA[I should not see (the text ):text in the :rowText row]]></source>
+        <target><![CDATA[no debo ver (el texto ):text en la fila :rowText]]></target>
       </trans-unit>
       <trans-unit id="i-click-link-in-the-rowtext-row">
         <source><![CDATA[I click :link in the :rowText row]]></source>
@@ -75,7 +83,7 @@
       </trans-unit>
       <trans-unit id="users">
         <source><![CDATA[users:]]></source>
-        <target><![CDATA[users:]]></target>
+        <target><![CDATA[usuarios:]]></target>
       </trans-unit>
       <trans-unit id="vocabulary-terms">
         <source><![CDATA[:vocabulary terms:]]></source>
@@ -107,7 +115,7 @@
       </trans-unit>
       <trans-unit id="i-should-see-the-error-message-containing-message">
         <source><![CDATA[I should see the error message( containing) :message]]></source>
-        <target><![CDATA[debo ver un mensaje de error( conteniendo) :message]]></target>
+        <target><![CDATA[debo ver el mensaje de error( conteniendo) :message]]></target>
       </trans-unit>
       <trans-unit id="i-should-see-the-following-error-messages">
         <source><![CDATA[I should see the following error message(s):]]></source>
@@ -115,7 +123,7 @@
       </trans-unit>
       <trans-unit id="i-should-not-see-the-error-message-containing-message">
         <source><![CDATA[I should not see the error message( containing) :message]]></source>
-        <target><![CDATA[no debo ver un mensaje de error( conteniendo) :message]]></target>
+        <target><![CDATA[no debo ver el mensaje de error( conteniendo) :message]]></target>
       </trans-unit>
       <trans-unit id="i-should-not-see-the-following-error-messages">
         <source><![CDATA[I should not see the following error messages:]]></source>
@@ -163,7 +171,7 @@
       </trans-unit>
       <trans-unit id="i-am-at-path">
         <source><![CDATA[I am at :path]]></source>
-        <target><![CDATA[(que )estoy en :path]]></target>
+        <target><![CDATA[(que )estoy en la URL :path]]></target>
       </trans-unit>
       <trans-unit id="i-visit-path">
         <source><![CDATA[I visit :path]]></source>
@@ -280,6 +288,50 @@
       <trans-unit id="i-select-the-radio-button-label">
         <source><![CDATA[I select the radio button :label]]></source>
         <target><![CDATA[selecciono el botón de radio :label]]></target>
+      </trans-unit>
+      <trans-unit id="the-these-following-languages-are-available">
+        <source><![CDATA[the/these (following )languages are available:]]></source>
+        <target><![CDATA[(que )el/los siguiente(s) idioma(s) esta(n) disponible(s):]]></target>
+      </trans-unit>
+      <trans-unit id="I-should-see-the-button-button">
+        <source><![CDATA[I (should ) see the button :button]]></source>
+        <target><![CDATA[debo ver el botón :button]]></target>
+      </trans-unit>
+      <trans-unit id="I-should-not-see-the-button-button">
+        <source><![CDATA[I should not see the button :button]]></source>
+        <target><![CDATA[no debo ver el botón :button]]></target>
+      </trans-unit>
+      <trans-unit id="I-should-see-the-button-button-in-the-region-region">
+        <source><![CDATA[I should see the button :button in the :region( region)]]></source>
+        <target><![CDATA[debo ver el botón :button en (la zona ):region]]></target>
+      </trans-unit>
+      <trans-unit id="I-should-see-the-tag-element-in-the-region-region">
+        <source><![CDATA[I( should) see the :tag element in the :region( region)]]></source>
+        <target><![CDATA[debo ver un elemento :tag en (la zona ):region]]></target>
+      </trans-unit>
+      <trans-unit id="I-should-not-see-the-tag-element-in-the-region-region">
+        <source><![CDATA[I( should) not see the :tag element in the :region( region)]]></source>
+        <target><![CDATA[no debo ver un elemento :tag en (la zona ):region]]></target>
+      </trans-unit>
+      <trans-unit id="I-should-see-text-in-the-tag-element-in-the-region-region">
+        <source><![CDATA[I( should) see :text in the :tag element in the :region( region)]]></source>
+        <target><![CDATA[debo ver :text en un elemento :tag en (la zona ):region]]></target>
+      </trans-unit>
+      <trans-unit id="I-should-not-see-text-in-the-tag-element-in-the-region-region">
+        <source><![CDATA[I( should) not see :text in the :tag element in the :region( region)]]></source>
+        <target><![CDATA[no debo ver :text en un elemento :tag en (la zona ):region]]></target>
+      </trans-unit>
+      <trans-unit id="I-should-see-the-tag-element-with-the-attribute-attribute-set-to-value-in-the-region-region">
+        <source><![CDATA[I( should) see the :tag element with the :attribute attribute set to :value in the :region( region)]]></source>
+        <target><![CDATA[debo ver un elemento :tag con el atributo :attribute igual a :value en (la zona ):region]]></target>
+      </trans-unit>
+      <trans-unit id="I-should-see-text-in-the-tag-element-with-the-attribute-attribute-set-to-value-in-the-region-region-">
+        <source><![CDATA[I( should) see :text in the :tag element with the :attribute attribute set to :value in the :region( region)]]></source>
+        <target><![CDATA[debo ver :text en un elemento :tag con atributo :attribute igual a :value en (la zona ):region]]></target>
+      </trans-unit>
+      <trans-unit id="I-should-see-text-in-the-tag-element-with-the-property-CSS-property-set-to-value-in-the-region-region">
+        <source><![CDATA[I( should) see :text in the :tag element with the :property CSS property set to :value in the :region( region)]]></source>
+        <target><![CDATA[debo ver :text en un elemento :tag con estilo CSS :property igual a :value en (la zona ):region]]></target>
       </trans-unit>
     </body>
   </file>
