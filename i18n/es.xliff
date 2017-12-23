@@ -170,6 +170,8 @@
         <target><![CDATA[no debo ver el mensaje( conteniendo) :message]]></target>
       </trans-unit>
       <trans-unit id="i-am-at-path">
+        <!-- Esta traducción puede colisionar con la traducción de
+             MinkContext::visit de MinkExtension (ver #444) -->
         <source><![CDATA[I am at :path]]></source>
         <target><![CDATA[(que )estoy en la URL :path]]></target>
       </trans-unit>
