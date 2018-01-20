@@ -71,7 +71,7 @@ class RawMailContext extends RawDrupalContext {
     }));
 
     // Return an individual mail if specified by an index.
-    if (is_null($index)) {
+    if (is_null($index) || count($mail) === 0) {
       return $mail;
     }
     else {
