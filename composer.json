@@ -19,6 +19,12 @@
       "homepage": "https://github.com/pfrenssen"
     }
   ],
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/phenaproxima/drupaldriver"
+    }
+  ],
   "minimum-stability": "dev",
   "prefer-stable": true,
   "require": {

@@ -37,6 +37,14 @@ following contexts:
 *BatchContext*
   Steps for creating batch items and ensuring a batch is finished processing.
 
+*TestModuleContext*
+  Allows modules to be automatically installed during a scenario, then
+  automatically uninstalled afterwards. Scenarios can enable as many modules as
+  they like using tags; for example, a scenario with the ```@with-module:webform```
+  tag will install Webform before the scenario begins, then uninstall it after
+  the scenario ends. Features can also use this tag to enable modules for every
+  one of their scenarios.
+
 Custom Contexts
 ---------------
 
