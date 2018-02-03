@@ -22,7 +22,7 @@
   "repositories": [
     {
       "type": "vcs",
-      "url": "https://github.com/phenaproxima/drupaldriver"
+      "url": "https://github.com/phenaproxima/DrupalDriver"
     }
   ],
   "minimum-stability": "dev",
