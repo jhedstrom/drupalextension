@@ -4,7 +4,7 @@
   "description": "Drupal extension for Behat",
   "keywords": ["drupal", "web", "test"],
   "homepage": "http://drupal.org/project/drupalextension",
-  "license": "GPL-2.0+",
+  "license": "GPL-2.0-or-later",
   "authors": [
     {
       "name": "Jonathan Hedstrom",
