@@ -27,8 +27,8 @@ Drupal Alias (For local or remote sites)
 ++++++++++++++++++++++++++++++++++++++++
 
 You'll need ssh-key access to a remote server to use Drush. If Drush and Drush
-aliases are new to you, see the `Drush site <http://drush.ws/help>`_ for
-`detailed examples <http://drush.ws/examples/example.aliases.drushrc.php>`_
+aliases are new to you, see the `Drush site <http://drush.org>`_ for
+`detailed examples <http://docs.drush.org/en/master/usage/#site-aliases>`_
 
 The alias for our example looks like:
 
