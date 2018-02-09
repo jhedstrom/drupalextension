@@ -44,7 +44,7 @@ Install the Drupal Extension
 
 3. Run the install command::
 
-    sudo composer install
+    composer install
 
   It will be a bit before you start seeing any output. It will also suggest
   that you install additional tools, but they're not normally needed so you can
