@@ -19,41 +19,16 @@ class DrupalMailManager implements DrupalMailManagerInterface {
    * @var \Drupal\Driver\DriverInterface
    */
   protected $driver;
-
-  /**
-   * The name or config array of the initial mail backend.
-   *
-   * @var mixed
-   */
-  protected $initialMailBackend;
   
   public function __construct(DriverInterface $driver) {
     $this->driver = $driver;
   }
 
   /**
-   * Replace the initial mail backend with the test mail backend.
-   */
-  protected function enableTestMailBackend() {
-    if (is_null($this->initialMailBackend)) {
-      $this->initialMailBackend = $this->driver->getMailBackend();
-    }
-    // @todo Use a collector that supports html after D#2223967 lands.
-    $this->driver->setMailBackend('test_mail_collector');
-  }
-
-  /**
-   * Restore the initial mail backend.
-   */
-  protected function restoreInitialMailBackend() {
-    $this->driver->setMailBackend($this->initialMailBackend);
-  }
-
-  /**
    * {@inheritdoc}
    */
   public function startCollectingMail() {
-    $this->enableTestMailBackend();
+    $this->driver->startCollectingMail();
     $this->clearMail();
   }
 
@@ -61,14 +36,14 @@ class DrupalMailManager implements DrupalMailManagerInterface {
    * {@inheritdoc}
    */
   public function stopCollectingMail() {
-    $this->restoreInitialMailBackend();
+    $this->driver->stopCollectingMail();
   }
   
   /**
    * {@inheritdoc}
    */
   public function enableMail() {
-    $this->restoreInitialMailBackend();
+    $this->stopCollectingMail();
   }
 
   /**
