@@ -42,7 +42,8 @@
     "psr-0": {
       "Drupal\\Drupal": "src/",
       "Drupal\\Exception": "src/",
-      "Drupal\\DrupalExtension": "src/"
+      "Drupal\\DrupalExtension": "src/",
+      "Drupal\\MinkExtension": "src/"
     }
   },
   "extra": {

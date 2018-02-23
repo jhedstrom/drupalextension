@@ -8,7 +8,7 @@ default:
         - Drupal\DrupalExtension\Context\MessageContext
         - Drupal\DrupalExtension\Context\DrushContext
   extensions:
-    Behat\MinkExtension:
+    Drupal\MinkExtension:
       goutte: ~
       selenium2: ~
       base_url: http://seven.l
