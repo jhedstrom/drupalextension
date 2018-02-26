@@ -147,7 +147,7 @@ class MinkContext extends MinkExtension implements TranslatableContext
       );
     }());
 JS;
-        $result = $this->getSession()->wait(5000, $condition);
+        $result = $this->getSession()->wait(1000 * $this->getMinkParameter('ajax_timeout'), $condition);
         if (!$result) {
             throw new \RuntimeException('Unable to complete AJAX request.');
         }
