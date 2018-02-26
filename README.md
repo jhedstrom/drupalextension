@@ -96,6 +96,8 @@ the [Full documentation](https://behat-drupal-extension.readthedocs.org)
 
 ## Release notes
 
+See [CHANGELOG](CHANGELOG.md).
+
 ### Backwards incompatible changes
 
 Starting with 3.3.0 Behat Drupal Extension depends on Behat 3.2.0 which
