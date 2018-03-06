@@ -26,6 +26,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
   /**
    * @Given I am an anonymous user
    * @Given I am not logged in
+   * @Then I log out
    */
     public function assertAnonymousUser()
     {
