@@ -5,27 +5,28 @@ namespace Drupal;
 /**
  * Interface for classes that manage mail created during tests.
  */
-interface DrupalMailManagerInterface {
+interface DrupalMailManagerInterface
+{
 
   /**
    * Collect outbound mail for analysis.
    */
-  public function startCollectingMail();
+    public function startCollectingMail();
 
   /**
    * Stop collecting outbound mail.
    */
-  public function stopCollectingMail();
+    public function stopCollectingMail();
   
   /**
    * Allow mail to be actually sent out.
    */
-  public function enableMail();
+    public function enableMail();
 
   /**
    * Prevent mail from being actually sent out.
    */
-  public function disableMail();
+    public function disableMail();
 
   /**
    * Get all collected mail.
@@ -37,11 +38,10 @@ interface DrupalMailManagerInterface {
    *   An array of collected emails, each formatted as a Drupal 8
    * \Drupal\Core\Mail\MailInterface::mail $message array.
    */
-  public function getMail($store);
+    public function getMail($store);
 
   /**
    * Empty the store of collected mail.
    */
-  public function clearMail($store);
-
+    public function clearMail($store);
 }
