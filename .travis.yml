@@ -39,7 +39,7 @@ install:
   # @see https://github.com/jhedstrom/drupalextension/issues/413
   # @todo Re-enable behat drush endpoint testing.
   # @see https://github.com/jhedstrom/drupalextension/issues/458
-  - test ${DRUPAL_VERSION} -ne 8 || composer require --prefer-source drush/drush:~9.0 symfony/dependency-injection:3.2.8
+  - test ${DRUPAL_VERSION} -ne 8 || composer require --prefer-source drush/drush:~9.0 symfony/dependency-injection:3.4.4
   - composer install
   # Install drush globally.
   - (test ${DRUPAL_VERSION} -ne 8 && composer global require drush/drush:~8.0) || composer global require drush/drush:~9.0
