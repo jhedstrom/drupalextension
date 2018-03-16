@@ -28,8 +28,8 @@
     "behat/mink-goutte-driver": "~1.0",
     "behat/mink-selenium2-driver": "~1.1",
     "drupal/drupal-driver": "dev-reroll-email-support",
-    "symfony/dependency-injection": "~2.7|~3.0",
-    "symfony/event-dispatcher": "~2.7|~3.0"
+    "symfony/dependency-injection": "~3.0",
+    "symfony/event-dispatcher": "~3.0"
   },
   "require-dev": {
     "phpspec/phpspec": "~2.0",
