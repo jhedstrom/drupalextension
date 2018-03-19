@@ -6,8 +6,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+## [4.0.0 alpha4] 2018-03-19
+### Added
+  * [#195](https://github.com/jhedstrom/drupalextension/issues/195): Support for testing emails sent from Drupal.
+  * [#477](https://github.com/jhedstrom/drupalextension/pull/477): Adds a `composer test` script.
+### Changed
+  * Switches from `1.x` to `2.x` version of the DrupalDriver. This was necessary for the email testing in
+    [#195](https://github.com/jhedstrom/drupalextension/issues/195).
+### Fixed
+  * [#464](https://github.com/jhedstrom/drupalextension/pull/464): Remove outdated `sudo` installation instructions.
 
-## [4.0.0 alpha3]
+## [4.0.0 alpha3] 2018-02-26
 ### Added
   * [#467](https://github.com/jhedstrom/drupalextension/pull/467): Allows
      AJAX timeout to be overridden via an `ajax_timeout` parameter in `behat.yml`.
@@ -23,14 +32,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   * [#462](https://github.com/jhedstrom/drupalextension/pull/462): The version of DrupalDriver is now pinned to a stable
     release instead of `dev-master`.
 
-## [4.0.0 alpha2]
+## [4.0.0 alpha2] 2017-12-14
 ### Added
   * [#448](https://github.com/jhedstrom/drupalextension/pull/448): Additional use of the fast logout method.
 ### Fixed
   * [#447](https://github.com/jhedstrom/drupalextension/pull/447): Only reset session if it is started during fast
     logout.
 
-## [4.0.0 alpha1]
+## [4.0.0 alpha1] 2017-12-06
 ### Added
   * [#268](https://github.com/jhedstrom/drupalextension/pull/268): Added a `BatchContext` for testing queue-runners and
     other batch-related functionality.
@@ -60,7 +69,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   * [#437](https://github.com/jhedstrom/drupalextension/pull/437): Radio button selector fix.
   * [#439](https://github.com/jhedstrom/drupalextension/pull/439): Symfony 3 compatibility follow-up fix.
 
-[Unreleased]: https://github.com/jhedstrom/drupalextension/compare/v4.0.0alpha2...HEAD
+[Unreleased]: https://github.com/jhedstrom/drupalextension/compare/v4.0.0alpha4...HEAD
+[4.0.0 alpha4]:https://github.com/jhedstrom/drupalextension/compare/v4.0.0alpha3...v4.0.0alpha4
 [4.0.0 alpha3]:https://github.com/jhedstrom/drupalextension/compare/v4.0.0alpha2...v4.0.0alpha3
 [4.0.0 alpha2]:https://github.com/jhedstrom/drupalextension/compare/v4.0.0alpha1...v4.0.0alpha2
 [4.0.0 alpha1]:https://github.com/jhedstrom/drupalextension/compare/v3.4.0...v4.0.0alpha1
