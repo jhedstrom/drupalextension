@@ -32,11 +32,19 @@
     "symfony/event-dispatcher": "~3.0"
   },
   "require-dev": {
-    "phpspec/phpspec": "~2.0",
-    "phpunit/phpunit": "3.7.*",
+    "phpspec/phpspec": "~2.0 || ~4.0",
     "behat/mink-zombie-driver": "^1.2",
     "jakub-onderka/php-parallel-lint": "^0.9.2",
     "drupal/coder": "^8.2"
+  },
+  "scripts": {
+    "test": [
+      "composer validate --no-interaction",
+      "parallel-lint src spec features fixtures",
+      "phpcs --standard=./phpcs-ruleset.xml -p",
+      "phpcs --standard=./phpcs-drupal-ruleset.xml -p",
+      "phpspec run -f pretty --no-interaction"
+    ]
   },
   "autoload": {
     "psr-0": {
