@@ -114,6 +114,7 @@ drupal8:
         - Drupal\DrupalExtension\Context\MinkContext
         - Drupal\DrupalExtension\Context\MarkupContext
         - Drupal\DrupalExtension\Context\MessageContext
+        - Drupal\DrupalExtension\Context\BigPipeContext
       filters:
         tags: "@d8&&~@d8wip"
   extensions:
@@ -129,3 +130,4 @@ drupal8:
         content: "#content"
       selectors:
         error_message_selector: '.messages--error'
+        success_message_selector: '.messages--status'
