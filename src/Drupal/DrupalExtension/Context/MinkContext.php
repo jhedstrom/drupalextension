@@ -127,7 +127,7 @@ class MinkContext extends MinkExtension implements TranslatableContext
    *
    * @Given I wait for AJAX to finish
    */
-    public function iWaitForAjaxToFinish($event = NULL)
+    public function iWaitForAjaxToFinish($event = null)
     {
         $condition = <<<JS
     (function() {
@@ -149,19 +149,18 @@ class MinkContext extends MinkExtension implements TranslatableContext
 JS;
         $result = $this->getSession()->wait(1000 * $this->getMinkParameter('ajax_timeout'), $condition);
         if (!$result) {
-          if ($event) {
-            /** @var \Behat\Behat\Hook\Scope\BeforeStepScope $event */
-            $event_data = ' ' . json_encode([
-              'name' => $event->getName(),
-              'feature' => $event->getFeature()->getTitle(),
-              'step' => $event->getStep()->getText(),
-              'suite' => $event->getSuite()->getName(),
-            ]);
-          }
-          else {
-            $event_data = '';
-          }
-           throw new \RuntimeException('Unable to complete AJAX request.' . $event_data);
+            if ($event) {
+                /** @var \Behat\Behat\Hook\Scope\BeforeStepScope $event */
+                $event_data = ' ' . json_encode([
+                    'name' => $event->getName(),
+                    'feature' => $event->getFeature()->getTitle(),
+                    'step' => $event->getStep()->getText(),
+                    'suite' => $event->getSuite()->getName(),
+                ]);
+            } else {
+                $event_data = '';
+            }
+            throw new \RuntimeException('Unable to complete AJAX request.' . $event_data);
         }
     }
   /**
