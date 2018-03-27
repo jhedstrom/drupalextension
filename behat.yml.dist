@@ -115,6 +115,7 @@ drupal8:
         - Drupal\DrupalExtension\Context\MarkupContext
         - Drupal\DrupalExtension\Context\MessageContext
         - Drupal\DrupalExtension\Context\MailContext
+        - Drupal\DrupalExtension\Context\RandomContext
       filters:
         tags: "@d8&&~@d8wip"
   extensions:
