@@ -5,12 +5,15 @@ namespace Drupal\DrupalExtension\Context;
 use Behat\Behat\Context\TranslatableContext;
 use Behat\Mink\Exception\UnsupportedDriverActionException;
 use Behat\MinkExtension\Context\MinkContext as MinkExtension;
+use Drupal\DrupalExtension\ScenarioTagTrait;
 
 /**
  * Extensions to the Mink Extension.
  */
 class MinkContext extends MinkExtension implements TranslatableContext
 {
+
+    use ScenarioTagTrait;
 
   /**
    * Returns list of definition translation resources paths.
@@ -92,7 +95,7 @@ class MinkContext extends MinkExtension implements TranslatableContext
     public function beforeJavascriptStep($event)
     {
         /** @var \Behat\Behat\Hook\Scope\BeforeStepScope $event */
-        $tags = $event->getFeature()->getTags();
+        $tags = $this->getCurrentScenarioTags($event);
         if (!in_array('javascript', $tags)) {
             return;
         }
@@ -110,7 +113,7 @@ class MinkContext extends MinkExtension implements TranslatableContext
     public function afterJavascriptStep($event)
     {
         /** @var \Behat\Behat\Hook\Scope\BeforeStepScope $event */
-        $tags = $event->getFeature()->getTags();
+        $tags = $this->getCurrentScenarioTags($event);
         if (!in_array('javascript', $tags)) {
             return;
         }
