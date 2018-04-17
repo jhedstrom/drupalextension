@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+## [4.0.0 beta1] 2018-04-17
+### Added
+  * [#479](https://github.com/jhedstrom/drupalextension/issues/479): Provide more verbose exception when AJAX fails.
+  * [#482](https://github.com/jhedstrom/drupalextension/pull/481): Adds a RandomContext for generating random string
+    replacements during scenarios.
+### Fixed
+  * [#484](https://github.com/jhedstrom/drupalextension/pull/484): Scenario-level tags are now properly processed for
+    before/after hooks in the `MinkContext`.
 ## [4.0.0 alpha4] 2018-03-19
 ### Added
   * [#195](https://github.com/jhedstrom/drupalextension/issues/195): Support for testing emails sent from Drupal.
@@ -69,7 +77,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   * [#437](https://github.com/jhedstrom/drupalextension/pull/437): Radio button selector fix.
   * [#439](https://github.com/jhedstrom/drupalextension/pull/439): Symfony 3 compatibility follow-up fix.
 
-[Unreleased]: https://github.com/jhedstrom/drupalextension/compare/v4.0.0alpha4...HEAD
+[Unreleased]: https://github.com/jhedstrom/drupalextension/compare/v4.0.0beta1...HEAD
+[4.0.0 beta1]: https://github.com/jhedstrom/drupalextension/compare/v4.0.0alpha4...v4.0.0beta1
 [4.0.0 alpha4]:https://github.com/jhedstrom/drupalextension/compare/v4.0.0alpha3...v4.0.0alpha4
 [4.0.0 alpha3]:https://github.com/jhedstrom/drupalextension/compare/v4.0.0alpha2...v4.0.0alpha3
 [4.0.0 alpha2]:https://github.com/jhedstrom/drupalextension/compare/v4.0.0alpha1...v4.0.0alpha2
