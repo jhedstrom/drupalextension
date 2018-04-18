@@ -21,13 +21,19 @@
   ],
   "minimum-stability": "dev",
   "prefer-stable": true,
+  "repositories": [
+    {
+      "type": "git",
+      "url": "https://github.com/jonathanjfshaw/DrupalDriver.git"
+    }
+  ],
   "require": {
     "behat/behat": "~3.2",
     "behat/mink": "~1.5",
     "behat/mink-extension": "~2.0",
     "behat/mink-goutte-driver": "~1.0",
     "behat/mink-selenium2-driver": "~1.1",
-    "drupal/drupal-driver": "^2.0.0",
+    "drupal/drupal-driver": "dev-plugins",
     "symfony/dependency-injection": "~3.0",
     "symfony/event-dispatcher": "~3.0"
   },
