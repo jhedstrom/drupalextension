@@ -4,6 +4,8 @@ namespace Drupal\DrupalExtension\Manager;
 
 use Behat\Mink\Exception\DriverException;
 use Behat\Mink\Mink;
+use Drupal\Driver\AuthenticationDriverInterface;
+use Drupal\DrupalDriverManagerInterface;
 use Drupal\DrupalExtension\DrupalParametersTrait;
 use Drupal\DrupalExtension\MinkAwareTrait;
 
@@ -24,17 +26,28 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
     protected $userManager;
 
     /**
+     * The active driver.
+     *
+     * @var \Drupal\DrupalExtension\DrupalDriverManagerInterface
+     */
+    protected $driverManager;
+
+    /**
      * Constructs a DrupalAuthenticationManager object.
      *
      * @param \Behat\Mink\Mink $mink
      *   The Mink sessions manager.
      * @param \Drupal\DrupalExtension\Manager\DrupalUserManagerInterface $drupalUserManager
      *   The Drupal user manager.
+     * @param DrupalDriverManagerInterface $driverManager
+     * @param array $minkParameters
+     * @param array $drupalParameters
      */
-    public function __construct(Mink $mink, DrupalUserManagerInterface $drupalUserManager, array $minkParameters, array $drupalParameters)
+    public function __construct(Mink $mink, DrupalUserManagerInterface $drupalUserManager, DrupalDriverManagerInterface $driverManager, array $minkParameters, array $drupalParameters)
     {
         $this->setMink($mink);
         $this->userManager = $drupalUserManager;
+        $this->driverManager = $driverManager;
         $this->setMinkParameters($minkParameters);
         $this->setDrupalParameters($drupalParameters);
     }
@@ -68,6 +81,11 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
         }
 
         $this->userManager->setCurrentUser($user);
+
+        // Log the user in on the backend if possible.
+        if ($this->driverManager->getDriver() instanceof AuthenticationDriverInterface) {
+            $this->driverManager->getDriver()->login($user);
+        }
     }
 
     /**
@@ -77,6 +95,11 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
     {
         $this->getSession()->visit($this->locatePath('/user/logout'));
         $this->userManager->setCurrentUser(false);
+
+        // Log the user out on the backend if possible.
+        if ($this->driverManager->getDriver() instanceof AuthenticationDriverInterface) {
+            $this->driverManager->getDriver()->logout();
+        }
     }
 
     /**
@@ -135,5 +158,10 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
             $session->reset();
         }
         $this->userManager->setCurrentUser(false);
+
+        // Log the user out on the backend if possible.
+        if ($this->driverManager->getDriver() instanceof AuthenticationDriverInterface) {
+            $this->driverManager->getDriver()->logout();
+        }
     }
 }
