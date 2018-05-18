@@ -35,11 +35,9 @@ sudo: false
 install:
   - composer self-update
   # For Drupal 8 install the behat drush endpoint.
-  # Pins symfony/dependency-injection to match core.
-  # @see https://github.com/jhedstrom/drupalextension/issues/413
   # @todo Re-enable behat drush endpoint testing.
   # @see https://github.com/jhedstrom/drupalextension/issues/458
-  - test ${DRUPAL_VERSION} -ne 8 || composer require --prefer-source drush/drush:~9.0 symfony/dependency-injection:3.4.4
+  - test ${DRUPAL_VERSION} -ne 8 || composer require drush/drush:^9.0 drupal/core:^8.5 composer/installers:^1.5 drupal-composer/drupal-scaffold:^2.4
   - composer install
   # Install drush globally.
   - (test ${DRUPAL_VERSION} -ne 8 && composer global require drush/drush:~8.0 drupal/drupal-driver) || composer global require drush/drush:~9.0
@@ -64,7 +62,7 @@ before_script:
   # cannot simply require drupal/drupal since it hardcodes it's autoloader
   # and we'd need to use drupal-scaffold, etc, etc.
   - test ${DRUPAL_VERSION} -eq 8 || drush dl --quiet --yes drupal-${DRUPAL_VERSION}.x --all --drupal-project-rename=drupal
-  - test ${DRUPAL_VERSION} -ne 8 || (mkdir -p tmp && cd tmp && composer require --no-interaction drupal/drupal && cd - && rm -rf drupal && mv tmp/vendor/drupal/drupal ./drupal && cd drupal && composer install && cd - && rm -rf tmp)
+  - test ${DRUPAL_VERSION} -ne 8 || mv ./web ./drupal
   - drush --yes --root=$PWD/drupal site-install --db-url=mysql://travis:@127.0.0.1/drupal
   # Copy the static HTML that is used for blackbox testing in the web root.
   - cp -r fixtures/blackbox $PWD/drupal

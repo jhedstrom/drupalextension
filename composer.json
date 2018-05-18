@@ -57,6 +57,9 @@
   "extra": {
     "branch-alias": {
       "dev-master": "4.0.x-dev"
+    },
+    "installer-paths": {
+      "web/core": ["type:drupal-core"]
     }
   }
 }

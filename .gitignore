@@ -2,6 +2,7 @@
 *.phar
 composer.lock
 vendor
+/web
 /drupal*
 behat.yml
 /node_modules
