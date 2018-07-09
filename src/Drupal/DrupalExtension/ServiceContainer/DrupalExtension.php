@@ -115,6 +115,7 @@ class DrupalExtension implements ExtensionInterface {
             . '  password_field: "Enter your password"' . PHP_EOL
             . '  username_field: "Nickname"'
           )->
+          ignoreExtraKeys(false)->
           addDefaultsIfNotSet()->
           children()->
             scalarNode('log_in')->
@@ -132,6 +133,7 @@ class DrupalExtension implements ExtensionInterface {
           end()->
         end()->
         arrayNode('selectors')->
+          ignoreExtraKeys(false)->
           addDefaultsIfNotSet()->
           children()->
             scalarNode('message_selector')->end()->
