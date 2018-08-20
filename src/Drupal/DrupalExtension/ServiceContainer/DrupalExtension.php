@@ -145,7 +145,7 @@ class DrupalExtension implements ExtensionInterface
             scalarNode('success_message_selector')->end()->
             scalarNode('warning_message_selector')->end()->
             scalarNode('login_form_selector')->
-              defaultValue('form#user-login')->
+              defaultValue('form#user-login,form#user-login-form')->
             end()->
             scalarNode('logged_in_selector')->
               defaultValue('body.logged-in,body.user-logged-in')->
