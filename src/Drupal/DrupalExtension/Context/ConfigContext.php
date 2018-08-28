@@ -105,7 +105,7 @@ class ConfigContext extends RawDrupalContext implements TranslatableContext
    */
     public function setConfig($name, $key, $value)
     {
-        $backup = $this->getDriver()->configGet($name, $key);
+        $backup = $this->getDriver()->configGetOriginal($name, $key);
         $this->getDriver()->configSet($name, $key, $value);
         $this->config[$name][$key] = $backup;
     }
