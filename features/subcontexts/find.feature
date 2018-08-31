@@ -54,15 +54,15 @@ Feature: Ability to find Drupal sub-contexts
       """
 
   Scenario: Step-definitions in sub-contexts are available
-   When I run "behat --no-colors -dl"
-   Then the output should contain:
+    When I run "behat --no-colors -dl"
+    Then the output should contain:
       """
       Then /^I should have a subcontext definition$/
       """
 
- Scenario: Subcontext can be instantiated
-   When I run "behat --no-colors"
-   Then the output should contain:
-     """
-     TODO: write pending definition
-     """
+  Scenario: Subcontext can be instantiated
+    When I run "behat --no-colors"
+    Then the output should contain:
+      """
+      TODO: write pending definition
+      """
