@@ -7,7 +7,7 @@ Feature: Ensure that messages are working properly on local installs
     Given I am on "/user/login"
     When I fill in "a fake user" for "Username"
     And I fill in "a fake password" for "Password"
-    When I press "Log in"
+    And I press "Log in"
     Then I should see the error message "Unrecognized username or password"
 
   @javascript
@@ -15,5 +15,5 @@ Feature: Ensure that messages are working properly on local installs
     Given I am on "/user/login"
     When I fill in "a fake user" for "Username"
     And I fill in "a fake password" for "Password"
-    When I press "Log in"
+    And I press "Log in"
     Then I should see the error message "Unrecognized username or password"

@@ -134,7 +134,7 @@ Feature: FieldHandlers
     But I should not see the link "Tag three"
     And I should see "Page one"
     And I should see "Page two"
-    But I should not see "Page three"
+    And I should not see "Page three"
     And I should see "Belgium"
     And I should see "Brussel"
     And I should see "1000"
