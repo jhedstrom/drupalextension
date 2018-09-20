@@ -71,9 +71,12 @@ before_script:
   - cd drupal
   - drush --yes en behat_test
   - drush cc drush
+  - test \! ${DRUPAL_VERSION} -eq 8 || which drush
+  - test \! ${DRUPAL_VERSION} -eq 8 || drush version
+  - test \! ${DRUPAL_VERSION} -eq 8 || ../vendor/bin/drush version
   - test \! ${DRUPAL_VERSION} -eq 8 || drush ev 'return \Drush\Drush::config()->export();' --format=yaml
   - test \! ${DRUPAL_VERSION} -eq 8 || drush list
-  - test ${DRUPAL_VERSION} -eq 6 || drush help behat
+  - test ${DRUPAL_VERSION} -eq 6 || ../vendor/bin/drush help behat
   # Only revert features on Drupal 7.
   - test \! ${DRUPAL_VERSION} -eq 7 || drush --yes fr behat_test
   # Disable the page cache on Drupal 8.
@@ -91,7 +94,7 @@ script:
   - vendor/bin/behat -fprogress --strict
   - vendor/bin/behat -fprogress --profile=drupal${DRUPAL_VERSION} --strict
   # Do not test the Drush profile unless Drupal 7 or 8 were installed.
-  - test ${DRUPAL_VERSION} -eq 8 || vendor/bin/behat -fprogress --profile=drush --strict
+  - test ${DRUPAL_VERSION} -eq 6 || vendor/bin/behat -fprogress --profile=drush --strict
 
 after_failure:
   - cat ~/debug.txt
