@@ -42,9 +42,11 @@
       "composer validate --no-interaction",
       "parallel-lint src spec features fixtures",
       "phpcs --standard=./phpcs-ruleset.xml -p",
-      "phpcs --standard=./phpcs-drupal-ruleset.xml -p",
       "npm test",
       "phpspec run -f pretty --no-interaction"
+    ],
+    "removed-test": [
+      "phpcs --standard=./phpcs-drupal-ruleset.xml -p"
     ]
   },
   "autoload": {
