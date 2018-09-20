@@ -71,7 +71,8 @@ before_script:
   - cd drupal
   - drush --yes en behat_test
   - drush cc drush
-  - test ${DRUPAL_VERSION} -eq 6 || drush help behat --root=drupal
+  - test ${DRUPAL_VERSION} -ne 7 || drush help behat
+  - test ${DRUPAL_VERSION} -ne 8 || drush help behat --root=drupal
   # Only revert features on Drupal 7.
   - test \! ${DRUPAL_VERSION} -eq 7 || drush --yes fr behat_test
   # Disable the page cache on Drupal 8.
