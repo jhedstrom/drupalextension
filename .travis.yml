@@ -71,8 +71,8 @@ before_script:
   - cd drupal
   - drush --yes en behat_test
   - drush cc drush
-  - find ../drush -type f
-  - ls
+  - test \! ${DRUPAL_VERSION} -eq 8 || drush ev 'return \Drush\Drush::config()->export();' --format=yaml
+  - test \! ${DRUPAL_VERSION} -eq 8 || drush list
   - test ${DRUPAL_VERSION} -eq 6 || drush help behat
   # Only revert features on Drupal 7.
   - test \! ${DRUPAL_VERSION} -eq 7 || drush --yes fr behat_test
