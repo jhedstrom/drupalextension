@@ -34,6 +34,10 @@ sudo: false
 
 install:
   - composer self-update
+  # Temporary: set minimum stability so that we can install a dev version of Drush.
+  # remove and switch Drush installs to ^9.5 once that version ships.
+  - test \! ${DRUPAL_VERSION} -eq 8 || composer config minimum-stability dev
+  - test \! ${DRUPAL_VERSION} -eq 8 || composer global config minimum-stability dev
   # For Drupal 8 install the behat drush endpoint.
   # Pins symfony/dependency-injection to match core.
   # @see https://github.com/jhedstrom/drupalextension/issues/413
@@ -71,12 +75,6 @@ before_script:
   - cd drupal
   - drush --yes en behat_test
   - drush cc drush
-  - test \! ${DRUPAL_VERSION} -eq 8 || which drush
-  - test \! ${DRUPAL_VERSION} -eq 8 || drush version
-  - test \! ${DRUPAL_VERSION} -eq 8 || ../vendor/bin/drush version
-  - test \! ${DRUPAL_VERSION} -eq 8 || drush ev 'return \Drush\Drush::config()->export();' --format=yaml
-  - test \! ${DRUPAL_VERSION} -eq 8 || drush list
-  - test ${DRUPAL_VERSION} -eq 6 || ../vendor/bin/drush help behat
   # Only revert features on Drupal 7.
   - test \! ${DRUPAL_VERSION} -eq 7 || drush --yes fr behat_test
   # Disable the page cache on Drupal 8.
