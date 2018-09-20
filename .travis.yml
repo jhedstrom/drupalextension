@@ -37,7 +37,7 @@ install:
   # For Drupal 8 install the behat drush endpoint.
   # Pins symfony/dependency-injection to match core.
   # @see https://github.com/jhedstrom/drupalextension/issues/413
-  - test ${DRUPAL_VERSION} -ne 8 || composer require --prefer-source drupal/drupal-driver drush/drush:^9.0.0-dev symfony/dependency-injection:3.4.4 && (git clone https://github.com/drush-ops/behat-drush-endpoint.git drush/Commands/contrib/behat-drush-endpoint)
+  - test ${DRUPAL_VERSION} -ne 8 || composer require --no-dev --prefer-source drupal/drupal-driver drush/drush:^9.0.0-dev symfony/dependency-injection:3.4.4 && (git clone https://github.com/drush-ops/behat-drush-endpoint.git drush/Commands/contrib/behat-drush-endpoint)
   - composer install
   # Install drush globally.
   - (test ${DRUPAL_VERSION} -ne 8 && composer global require drush/drush:~8.0 drupal/drupal-driver) || composer global require drush/drush:^9.0.0-dev
@@ -71,7 +71,7 @@ before_script:
   - cd drupal
   - drush --yes en behat_test
   - drush cc drush
-  - test ${DRUPAL_VERSION} -eq 6 || drush help behat
+  - test ${DRUPAL_VERSION} -eq 6 || drush help behat --root=drupal
   # Only revert features on Drupal 7.
   - test \! ${DRUPAL_VERSION} -eq 7 || drush --yes fr behat_test
   # Disable the page cache on Drupal 8.
