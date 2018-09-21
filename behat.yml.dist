@@ -80,7 +80,7 @@ drupal7:
 
 # Separate profile for testing using the Drush driver. Assumes a stock
 # Drupal 7 install.
-drush:
+drushDrupal7:
   suites:
     default:
       contexts:
