@@ -27,7 +27,7 @@
     "behat/mink-extension": "~2.0",
     "behat/mink-goutte-driver": "~1.0",
     "behat/mink-selenium2-driver": "~1.1",
-    "drupal/drupal-driver": "dev-master as 2.0.0-alpha4",
+    "drupal/drupal-driver": "^2.0.0-alpha5",
     "symfony/dependency-injection": "~3.0",
     "symfony/event-dispatcher": "~3.0"
   },
@@ -43,9 +43,7 @@
       "parallel-lint src spec features fixtures",
       "phpcs --standard=./phpcs-ruleset.xml -p",
       "npm test",
-      "phpspec run -f pretty --no-interaction"
-    ],
-    "removed-test": [
+      "phpspec run -f pretty --no-interaction",
       "phpcs --standard=./phpcs-drupal-ruleset.xml -p"
     ]
   },
