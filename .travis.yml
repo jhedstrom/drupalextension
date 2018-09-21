@@ -91,7 +91,8 @@ script:
   - vendor/bin/behat -fprogress --strict
   - vendor/bin/behat -fprogress --profile=drupal${DRUPAL_VERSION} --strict
   # Do not test the Drush profile unless Drupal 7 or 8 were installed.
-  - test ${DRUPAL_VERSION} -eq 6 || vendor/bin/behat -fprogress --profile=drush --strict
+  - test ${DRUPAL_VERSION} -ne 7 || vendor/bin/behat -fprogress --profile=drush --strict
+  - test ${DRUPAL_VERSION} -ne 8 || vendor/bin/behat -fprogress --profile=drushDrupal8 --strict
 
 after_failure:
   - cat ~/debug.txt

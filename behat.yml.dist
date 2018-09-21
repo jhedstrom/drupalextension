@@ -131,3 +131,34 @@ drupal8:
         content: "#content"
       selectors:
         error_message_selector: '.messages--error'
+
+
+# Separate profile for testing D8 with Drush. Assumes a stock Drupal 8 install.
+drushDrupal8:
+  suites:
+    default:
+      contexts:
+        - FeatureContext
+        - Drupal\DrupalExtension\Context\ConfigContext
+        - Drupal\DrupalExtension\Context\DrupalContext
+        - Drupal\DrupalExtension\Context\DrushContext
+        - Drupal\DrupalExtension\Context\MinkContext
+        - Drupal\DrupalExtension\Context\MarkupContext
+        - Drupal\DrupalExtension\Context\MessageContext
+        - Drupal\DrupalExtension\Context\MailContext
+        - Drupal\DrupalExtension\Context\RandomContext
+      filters:
+        tags: "@d8&&~@d8wip&&@drushTest"
+  extensions:
+    Behat\MinkExtension:
+      base_url: http://127.0.0.1:8888
+    Drupal\DrupalExtension:
+      api_driver: "drush"
+      drush_driver: "drush"
+      drush:
+        root: "drupal"
+      region_map:
+        left sidebar: "#sidebar-first"
+        content: "#content"
+      selectors:
+        error_message_selector: '.messages--error'
