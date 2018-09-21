@@ -19,12 +19,6 @@
       "homepage": "https://github.com/pfrenssen"
     }
   ],
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://github.com/greg-1-anderson/DrupalDriver"
-    }
-  ],
   "minimum-stability": "dev",
   "prefer-stable": true,
   "require": {
@@ -33,7 +27,7 @@
     "behat/mink-extension": "~2.0",
     "behat/mink-goutte-driver": "~1.0",
     "behat/mink-selenium2-driver": "~1.1",
-    "drupal/drupal-driver": "dev-cr-for-9 as 2.0.0-alpha2",
+    "drupal/drupal-driver": "dev-master as 2.0.0-alpha4",
     "symfony/dependency-injection": "~3.0",
     "symfony/event-dispatcher": "~3.0"
   },
