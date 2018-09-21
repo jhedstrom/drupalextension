@@ -34,17 +34,13 @@ sudo: false
 
 install:
   - composer self-update
-  # Temporary: set minimum stability so that we can install a dev version of Drush.
-  # remove and switch Drush installs to ^9.5 once that version ships.
-  - test \! ${DRUPAL_VERSION} -eq 8 || composer config minimum-stability dev
-  - test \! ${DRUPAL_VERSION} -eq 8 || composer global config minimum-stability dev
   # For Drupal 8 install the behat drush endpoint.
   # Pins symfony/dependency-injection to match core.
   # @see https://github.com/jhedstrom/drupalextension/issues/413
-  - test ${DRUPAL_VERSION} -ne 8 || (composer require --prefer-source drupal/drupal-driver drush/drush:^9.0.0-dev symfony/dependency-injection:3.4.4 && (git clone --branch=9.x https://github.com/drush-ops/behat-drush-endpoint.git drush/Commands/contrib/behat-drush-endpoint))
+  - test ${DRUPAL_VERSION} -ne 8 || (composer require --prefer-source drupal/drupal-driver 'drush/drush:dev-master as 9.5.0' symfony/dependency-injection:3.4.4 && (git clone --branch=9.x https://github.com/drush-ops/behat-drush-endpoint.git drush/Commands/contrib/behat-drush-endpoint))
   - composer install
   # Install drush globally.
-  - (test ${DRUPAL_VERSION} -ne 8 && composer global require drush/drush:~8.0 drupal/drupal-driver) || composer global require drush/drush:^9.0.0-dev
+  - (test ${DRUPAL_VERSION} -ne 8 && composer global require drush/drush:~8.0 drupal/drupal-driver) || composer global require 'drush/drush:dev-master as 9.5.0'
   # Install the Behat Drush Endpoint for Drupal 7 tests.
   - test ${DRUPAL_VERSION} -ne 7 || (git clone --branch=8.x https://github.com/drush-ops/behat-drush-endpoint.git drush/behat-drush-endpoint && (cd drush/behat-drush-endpoint && composer install && cd -))
   # Pin node version.
@@ -75,6 +71,10 @@ before_script:
   - cd drupal
   - drush --yes en behat_test
   - drush cc drush
+  - test \! ${DRUPAL_VERSION} -eq 8 || drush version
+  - test \! ${DRUPAL_VERSION} -eq 8 || ../vendor/bin/drush version
+  - test \! ${DRUPAL_VERSION} -eq 8 || drush ev 'return \Drush\Drush::config()->export();' --format=yaml
+  - test ${DRUPAL_VERSION} -eq 6 || drush help behat
   # Only revert features on Drupal 7.
   - test \! ${DRUPAL_VERSION} -eq 7 || drush --yes fr behat_test
   # Disable the page cache on Drupal 8.
