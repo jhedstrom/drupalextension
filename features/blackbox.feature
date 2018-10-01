@@ -86,3 +86,9 @@ Feature: Test DrupalContext
     Given I am on the homepage
     When I click "Download & Extend"
     Then I should see the link "Distributions"
+
+  @scenariotag
+  Scenario: Check tags on feature and scenario
+    Then the "scenariotag" tag should be present
+    And the "blackbox" tag should be present
+    But the "nonexisting" tag should not be present
