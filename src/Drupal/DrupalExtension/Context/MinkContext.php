@@ -98,7 +98,7 @@ class MinkContext extends MinkExtension implements TranslatableContext
         // Make sure the feature is registered in case this hook fires before
         // ::registerFeature() which is also a @BeforeStep. Behat doesn't
         // support ordering hooks.
-        $this->getTagTraitHelper()->registerFeature($event);
+        $this->registerFeature($event);
         if (!$this->hasTag('javascript')) {
             return;
         }
