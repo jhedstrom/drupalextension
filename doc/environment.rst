@@ -40,39 +40,44 @@ object into a single line and surround with single quotes:
 
 You must also remove (or comment out) the entries that you use in behat.yml for the values in BEHAT_PARAMS to take affect.
 
-```yml
-default:
-  suites:
+.. code-block:: yml
+
     default:
-      contexts:
-        - FeatureContext
-        - Drupal\DrupalExtension\Context\DrupalContext
-        - Drupal\DrupalExtension\Context\MinkContext
-        - Drupal\DrupalExtension\Context\MessageContext
-        - Drupal\DrupalExtension\Context\DrushContext
-  extensions:
-    Behat\MinkExtension:
-      goutte: ~
-      selenium2: ~
-# Must comment out for BEHAT_PARAMS to be effective.
-#      base_url: http://seven.l
-    Drupal\DrupalExtension:
-      blackbox: ~
+      suites:
+        default:
+          contexts:
+            - FeatureContext
+            - Drupal\DrupalExtension\Context\DrupalContext
+            - Drupal\DrupalExtension\Context\MinkContext
+            - Drupal\DrupalExtension\Context\MessageContext
+            - Drupal\DrupalExtension\Context\DrushContext
+      extensions:
+        Behat\MinkExtension:
+          goutte: ~
+          selenium2: ~
+    # Must comment out for BEHAT_PARAMS to be effective.
+    #      base_url: http://seven.l
+        Drupal\DrupalExtension:
+          # Anything used in BEHAT_PARAMS must be removed or commented.
+          # drupal:
+            # drupal_root: /var/www
+          # drush:
+            # alias: '@site'
+          blackbox: ~
 
-# You can use profiles if you wish to allow users to run tests locally.
-# Usage: 
-#   bin/behat --profile=local
-local:
-  extensions:
-    Behat\MinkExtension:
-    base_url: 'localhost'
-    Drupal\DrupalExtension:
-      drush:
-        alias: '@self'
-      drupal:
-        drupal_root: '../web'
+    # You can use profiles if you wish to allow users to run tests locally.
+    # Usage: 
+    #   bin/behat --profile=local
+    local:
+      extensions:
+        Behat\MinkExtension:
+        base_url: 'localhost'
+        Drupal\DrupalExtension:
+          drush:
+            alias: '@self'
+          drupal:
+            drupal_root: '../web'
 
-```
 
 
 There is also a `Drush extension <https://github.com/pfrenssen/drush-bde-env>`_
