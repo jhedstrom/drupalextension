@@ -37,10 +37,10 @@ install:
   # For Drupal 8 install the behat drush endpoint.
   # Pins symfony/dependency-injection to match core.
   # @see https://github.com/jhedstrom/drupalextension/issues/413
-  - test ${DRUPAL_VERSION} -ne 8 || (composer require 'drush/drush:dev-master as 9.5.0' symfony/dependency-injection:3.4.4 && (git clone --branch=9.x https://github.com/drush-ops/behat-drush-endpoint.git drush/Commands/contrib/behat-drush-endpoint))
+  - test ${DRUPAL_VERSION} -ne 8 || (composer require 'drush/drush:^9.5' symfony/dependency-injection:3.4.4 && (git clone --branch=9.x https://github.com/drush-ops/behat-drush-endpoint.git drush/Commands/contrib/behat-drush-endpoint))
   - composer install
   # Install drush globally.
-  - (test ${DRUPAL_VERSION} -ne 8 && composer global require drush/drush:~8.0 drupal/drupal-driver) || composer global require 'drush/drush:dev-master as 9.5.0'
+  - (test ${DRUPAL_VERSION} -ne 8 && composer global require drush/drush:~8.0 drupal/drupal-driver) || composer global require 'drush/drush:^9.5'
   # Install the Behat Drush Endpoint for Drupal 7 tests.
   - test ${DRUPAL_VERSION} -ne 7 || (git clone --branch=8.x https://github.com/drush-ops/behat-drush-endpoint.git drush/behat-drush-endpoint && (cd drush/behat-drush-endpoint && composer install && cd -))
   # Pin node version.
