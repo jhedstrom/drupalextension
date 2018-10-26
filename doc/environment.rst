@@ -11,7 +11,7 @@ If you intend to run your tests on different environments these settings should
 not be committed to ``behat.yml``. Instead they should be exported in an
 environment variable. Before running tests Behat will check the ``BEHAT_PARAMS``
 environment variable and add these settings to the ones that are present in
-``behat.yml``. This variable should contain a JSON object with your settings.
+``behat.yml``. This variable should contain a JSON object with your settings. 
 
 Example JSON object:
 
@@ -37,6 +37,48 @@ object into a single line and surround with single quotes:
 .. code-block: bash
 
     $ export BEHAT_PARAMS='{"extensions":{"Behat\\MinkExtension":{"base_url":"http://myproject.localhost"},"Drupal\\DrupalExtension":{"drupal":{"drupal_root":"/var/www/myproject"}}}}'
+
+You must also remove (or comment out) the entries that you use in behat.yml for the values in BEHAT_PARAMS to take affect.
+
+.. code-block:: yml
+
+    default:
+      suites:
+        default:
+          contexts:
+            - FeatureContext
+            - Drupal\DrupalExtension\Context\DrupalContext
+            - Drupal\DrupalExtension\Context\MinkContext
+            - Drupal\DrupalExtension\Context\MessageContext
+            - Drupal\DrupalExtension\Context\DrushContext
+      extensions:
+        Behat\MinkExtension:
+          goutte: ~
+          selenium2: ~
+    # Must comment out for BEHAT_PARAMS to be effective.
+    #      base_url: http://seven.l
+        Drupal\DrupalExtension:
+          # Anything used in BEHAT_PARAMS must be removed or commented.
+          # drupal:
+            # drupal_root: /var/www
+          # drush:
+            # alias: '@site'
+          blackbox: ~
+
+    # You can use profiles if you wish to allow users to run tests locally.
+    # Usage: 
+    #   bin/behat --profile=local
+    local:
+      extensions:
+        Behat\MinkExtension:
+        base_url: 'localhost'
+        Drupal\DrupalExtension:
+          drush:
+            alias: '@self'
+          drupal:
+            drupal_root: '../web'
+
+
 
 There is also a `Drush extension <https://github.com/pfrenssen/drush-bde-env>`_
 that can help you generate these environment variables.
