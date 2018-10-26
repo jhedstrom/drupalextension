@@ -5,7 +5,7 @@ namespace Drupal\DrupalExtension\Context;
 use Behat\Behat\Context\TranslatableContext;
 use Behat\Mink\Exception\UnsupportedDriverActionException;
 use Behat\MinkExtension\Context\MinkContext as MinkExtension;
-use Drupal\DrupalExtension\ScenarioTagTrait;
+use Drupal\DrupalExtension\TagTrait;
 
 /**
  * Extensions to the Mink Extension.
@@ -13,7 +13,7 @@ use Drupal\DrupalExtension\ScenarioTagTrait;
 class MinkContext extends MinkExtension implements TranslatableContext
 {
 
-    use ScenarioTagTrait;
+    use TagTrait;
 
   /**
    * Returns list of definition translation resources paths.
@@ -95,8 +95,11 @@ class MinkContext extends MinkExtension implements TranslatableContext
     public function beforeJavascriptStep($event)
     {
         /** @var \Behat\Behat\Hook\Scope\BeforeStepScope $event */
-        $tags = $this->getCurrentScenarioTags($event);
-        if (!in_array('javascript', $tags)) {
+        // Make sure the feature is registered in case this hook fires before
+        // ::registerFeature() which is also a @BeforeStep. Behat doesn't
+        // support ordering hooks.
+        $this->registerFeature($event);
+        if (!$this->hasTag('javascript')) {
             return;
         }
         $text = $event->getStep()->getText();
@@ -113,8 +116,7 @@ class MinkContext extends MinkExtension implements TranslatableContext
     public function afterJavascriptStep($event)
     {
         /** @var \Behat\Behat\Hook\Scope\BeforeStepScope $event */
-        $tags = $this->getCurrentScenarioTags($event);
-        if (!in_array('javascript', $tags)) {
+        if (!$this->hasTag('javascript')) {
             return;
         }
         $text = $event->getStep()->getText();
