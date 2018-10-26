@@ -5,6 +5,7 @@ php:
   - 5.6
   - 7.0
   - 7.1
+  - 7.2
 
 env:
   global:
@@ -24,6 +25,8 @@ matrix:
     - php: 7.0
       env: DRUPAL_VERSION=6
     - php: 7.1
+      env: DRUPAL_VERSION=6
+    - php: 7.2
       env: DRUPAL_VERSION=6
 
 # Enable Travis containers.
@@ -73,6 +76,9 @@ before_script:
   # @todo Re-enable behat drush endpoint testing.
   # @see https://github.com/jhedstrom/drupalextension/issues/458
   - test ${DRUPAL_VERSION} -eq 6 || test ${DRUPAL_VERSION} -eq 8 || (test ${DRUPAL_VERSION} -eq 7 && drush help behat)
+  # Patch Features to work with PHP 7.2 on Drupal 7.
+  # @see https://www.drupal.org/project/features/issues/2931464
+  - test \! ${DRUPAL_VERSION} -eq 7 || curl -s https://www.drupal.org/files/issues/2018-03-12/features-support_php_72-2931464-10.patch | patch -p1 -d ${TRAVIS_BUILD_DIR}/${MODULE_PATH}/features/
   # Only revert features on Drupal 7.
   - test \! ${DRUPAL_VERSION} -eq 7 || drush --yes fr behat_test
   # Disable the page cache on Drupal 8.
