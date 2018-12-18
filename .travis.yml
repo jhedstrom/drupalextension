@@ -9,7 +9,7 @@ php:
 
 env:
   global:
-    - PATH=$PATH:/home/travis/.composer/vendor/bin
+    - PATH=$PATH:/home/travis/.config/composer/vendor/bin
     - TRAVIS_NODE_VERSION="4.0.0"
   matrix:
     - DRUPAL_VERSION=6
@@ -39,7 +39,7 @@ install:
   # @see https://github.com/jhedstrom/drupalextension/issues/413
   # @todo Re-enable behat drush endpoint testing.
   # @see https://github.com/jhedstrom/drupalextension/issues/458
-  - test ${DRUPAL_VERSION} -ne 8 || composer require --prefer-source drush/drush:~9.0 symfony/dependency-injection:3.4.4
+  - test ${DRUPAL_VERSION} -ne 8 || COMPOSER_MEMORY_LIMIT=-1 travis_retry composer require drush/drush:~9.0 symfony/dependency-injection:3.4.4
   - composer install
   # Install drush globally.
   - (test ${DRUPAL_VERSION} -ne 8 && composer global require drush/drush:~8.0 drupal/drupal-driver) || composer global require drush/drush:~9.0
