@@ -193,9 +193,9 @@ function behat_test_field_default_field_bases() {
     'module' => 'list',
     'settings' => array(
       'allowed_values' => array(
-        1 => 'One',
-        2 => 'Two',
-        3 => 'Three',
+        1 => 'Select value one',
+        2 => 'Select value two',
+        3 => 'Select value three',
       ),
       'allowed_values_function' => '',
     ),

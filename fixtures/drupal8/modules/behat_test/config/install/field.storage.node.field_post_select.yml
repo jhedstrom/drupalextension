@@ -12,17 +12,17 @@ settings:
   allowed_values:
     -
       value: '1'
-      label: One
+      label: Select value one
     -
       value: '2'
-      label: Two
+      label: Select value two
     -
       value: '3'
-      label: Three
+      label: Select value three
   allowed_values_function: ''
 module: options
 locked: false
-cardinality: 1
+cardinality: -1
 translatable: true
 indexes: {  }
 persist_with_no_fields: false
