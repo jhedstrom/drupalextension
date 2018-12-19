@@ -6,6 +6,22 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+## [4.0.0 beta2] 2018-12-19
+### Added
+  * [#514](https://github.com/jhedstrom/drupalextension/pull/514) Add a note about the need to remove the entries in behat.yml to use BEHAT_PARAMS.
+  * [#504](https://github.com/jhedstrom/drupalextension/issues/504) Added Gherkin linting.
+  * [#507](https://github.com/jhedstrom/drupalextension/pull/511) Test Drupal 7 on PHP 7.
+  * [#516](https://github.com/jhedstrom/drupalextension/pull/516) Warn users when message table is not correctly formatted.
+### Changed
+  * [#510](https://github.com/jhedstrom/drupalextension/pull/510) Provide TagTrait to replace ScenarioTagTrait.
+  * [#512](https://github.com/jhedstrom/drupalextension/pull/512) Start testing on PHP 7.2.
+  * [#521](https://github.com/jhedstrom/drupalextension/pull/521) Updated tests to work with DrupalDriver string field handlers change.
+### Fixed
+  * [#522](https://github.com/jhedstrom/drupalextension/pull/522) Composer path changed on travis.
+  * [#520](https://github.com/jhedstrom/drupalextension/pull/520) Removes patch applied to Features module that was committed.
+  * [#502](https://github.com/jhedstrom/drupalextension/pull/502) RawDrupalContext::loggedIn() can return false positive.
+  * [#507](https://github.com/jhedstrom/drupalextension/issues/507) PHP coding standards update.
+  * [#499](https://github.com/jhedstrom/drupalextension/pull/499) Fix config context backup strategy.
 ## [4.0.0 beta1] 2018-04-17
 ### Added
   * [#479](https://github.com/jhedstrom/drupalextension/issues/479): Provide more verbose exception when AJAX fails.
@@ -77,7 +93,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   * [#437](https://github.com/jhedstrom/drupalextension/pull/437): Radio button selector fix.
   * [#439](https://github.com/jhedstrom/drupalextension/pull/439): Symfony 3 compatibility follow-up fix.
 
-[Unreleased]: https://github.com/jhedstrom/drupalextension/compare/v4.0.0beta1...HEAD
+[Unreleased]: https://github.com/jhedstrom/drupalextension/compare/v4.0.0beta2...HEAD
+[4.0.0 beta2]: https://github.com/jhedstrom/drupalextension/compare/v4.0.0beta1...v4.0.0beta2
 [4.0.0 beta1]: https://github.com/jhedstrom/drupalextension/compare/v4.0.0alpha4...v4.0.0beta1
 [4.0.0 alpha4]:https://github.com/jhedstrom/drupalextension/compare/v4.0.0alpha3...v4.0.0alpha4
 [4.0.0 alpha3]:https://github.com/jhedstrom/drupalextension/compare/v4.0.0alpha2...v4.0.0alpha3
