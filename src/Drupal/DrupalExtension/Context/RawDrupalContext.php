@@ -547,9 +547,9 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
 
     $this->getSession()->visit($this->locatePath('/user'));
     $element = $this->getSession()->getPage();
-    $element->fillField($this->getDrupalText('username_field'), $user->name);
-    $element->fillField($this->getDrupalText('password_field'), $user->pass);
-    $submit = $element->findButton($this->getDrupalText('log_in'));
+    $element->fillField('name', $user->name);
+    $element->fillField('pass', $user->pass);
+    $submit = $element->find('xpath', '//form[@id="user-login-form"]')->find('xpath', '//input[@type="submit"]');
     if (empty($submit)) {
       throw new \Exception(sprintf("No submit button at %s", $this->getSession()->getCurrentUrl()));
     }
