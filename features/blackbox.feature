@@ -41,6 +41,10 @@ Feature: Test DrupalContext
     Given I am on the homepage
     Then I should see the "Search" button in the "navigation"
 
+  Scenario: Button not in region
+    Given I am on the homepage
+    Then I should not see the "Search" button in the "content" region
+
   Scenario: Find an element in a region
     Given I am on the homepage
     Then I should see the "h1" element in the "left header"
