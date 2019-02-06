@@ -43,7 +43,7 @@ Feature: Test DrupalContext
 
   Scenario: Button not in region
     Given I am on the homepage
-    Then I should not see the "Search" button in the "content" region
+    Then I should not see the "Search" button in the "right header" region
 
   Scenario: Find an element in a region
     Given I am on the homepage
