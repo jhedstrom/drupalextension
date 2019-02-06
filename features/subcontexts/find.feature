@@ -43,7 +43,7 @@ Feature: Ability to find Drupal sub-contexts
           default:
             contexts: [Drupal\DrupalExtension\Context\DrupalContext]
         extensions:
-          Behat\MinkExtension:
+          Drupal\MinkExtension:
             goutte: ~
             selenium2: ~
             base_url: http://drupal.org
