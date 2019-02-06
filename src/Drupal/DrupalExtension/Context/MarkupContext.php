@@ -58,6 +58,30 @@ class MarkupContext extends RawMinkContext
         }
     }
 
+    /**
+     * Asserts that a button does not exists in a region.
+     *
+     * @Then I should not see the button :button in the :region( region)
+     * @Then I should not see the :button button in the :region( region)
+     *
+     * @param $button
+     *   string The id|name|title|alt|value of the button
+     * @param $region
+     *   string The region in which the button should not be found
+     *
+     * @throws \Exception
+     *   If region is not found or the button is found within the region.
+     */
+    public function assertNotRegionButton($button, $region)
+    {
+        $regionObj = $this->getRegion($region);
+
+        $buttonObj = $regionObj->findButton($button);
+        if (!empty($buttonObj)) {
+            throw new \Exception(sprintf("The button '%s' was found in the region '%s' on the page %s but should not", $button, $region, $this->getSession()->getCurrentUrl()));
+        }
+    }
+
   /**
    * @Then I( should) see the :tag element in the :region( region)
    */
