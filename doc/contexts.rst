@@ -75,7 +75,7 @@ Drupal Extension Hooks
 In addition to the `hooks provided by Behat
 <http://behat.readthedocs.org/en/v2.5/guides/3.hooks.html>`_, the Drupal
 Extension provides three additional ways to tag the methods in your
-``CustomContext`` class in order to have them fire befor certain events.
+``CustomContext`` class in order to have them fire before certain events.
 
   1. ``@beforeNodeCreate``
   2. ``@beforeTermCreate``
