@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
   * [#528](https://github.com/jhedstrom/drupalextension/pull/528) Show a more helpful failure when running `@javascript`
     scenarios with incorrect configuration.
+### Added
+  * [#527](https://github.com/jhedstrom/drupalextension/pull/527) Provide a step to check that a button is not in a region.
 ## [4.0.0 beta2] 2018-12-19
 ### Added
   * [#514](https://github.com/jhedstrom/drupalextension/pull/514) Add a note about the need to remove the entries in behat.yml to use BEHAT_PARAMS.
