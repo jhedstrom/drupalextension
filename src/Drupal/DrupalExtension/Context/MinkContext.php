@@ -152,8 +152,12 @@ class MinkContext extends MinkExtension implements TranslatableContext
       );
     }());
 JS;
-        $result = $this->getSession()->wait(1000 * $this->getMinkParameter('ajax_timeout'), $condition);
+        $ajax_timeout = $this->getMinkParameter('ajax_timeout');
+        $result = $this->getSession()->wait(1000 * $ajax_timeout, $condition);
         if (!$result) {
+            if ($ajax_timeout === null) {
+                throw new \Exception('No AJAX timeout has been defined. Please verify that "Drupal\MinkExtension" is configured in behat.yml (and not "Behat\MinkExtension").');
+            }
             if ($event) {
                 /** @var \Behat\Behat\Hook\Scope\BeforeStepScope $event */
                 $event_data = ' ' . json_encode([

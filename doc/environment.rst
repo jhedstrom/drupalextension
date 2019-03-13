@@ -19,7 +19,7 @@ Example JSON object:
 
     {
         "extensions": {
-            "Behat\\MinkExtension": {
+            "Drupal\\MinkExtension": {
                 "base_url": "http://myproject.localhost"
             },
             "Drupal\\DrupalExtension": {
@@ -36,7 +36,7 @@ object into a single line and surround with single quotes:
 
 .. code-block:: bash
 
-    $ export BEHAT_PARAMS='{"extensions":{"Behat\\MinkExtension":{"base_url":"http://myproject.localhost"},"Drupal\\DrupalExtension":{"drupal":{"drupal_root":"/var/www/myproject"}}}}'
+    $ export BEHAT_PARAMS='{"extensions":{"Drupal\\MinkExtension":{"base_url":"http://myproject.localhost"},"Drupal\\DrupalExtension":{"drupal":{"drupal_root":"/var/www/myproject"}}}}'
 
 You must also remove (or comment out) the entries that you use in behat.yml for the values in BEHAT_PARAMS to take affect.
 
@@ -52,7 +52,7 @@ You must also remove (or comment out) the entries that you use in behat.yml for 
             - Drupal\DrupalExtension\Context\MessageContext
             - Drupal\DrupalExtension\Context\DrushContext
       extensions:
-        Behat\MinkExtension:
+        Drupal\MinkExtension:
           goutte: ~
           selenium2: ~
     # Must comment out for BEHAT_PARAMS to be effective.
@@ -70,7 +70,7 @@ You must also remove (or comment out) the entries that you use in behat.yml for 
     #   bin/behat --profile=local
     local:
       extensions:
-        Behat\MinkExtension:
+        Drupal\MinkExtension:
         base_url: 'localhost'
         Drupal\DrupalExtension:
           drush:

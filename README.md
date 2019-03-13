@@ -48,7 +48,7 @@ the [Full documentation](https://behat-drupal-extension.readthedocs.org)
         contexts:
           - Drupal\DrupalExtension\Context\DrupalContext
     extensions:
-      Behat\MinkExtension:
+      Drupal\MinkExtension:
         goutte: ~
         base_url: http://example.org/  # Replace with your site's URL
       Drupal\DrupalExtension:
