@@ -98,9 +98,3 @@ Característica: Test DrupalContext
        | error messages                                                                |
        | Sorry, unrecognized username or password                                      |
        | Unable to send e-mail. Contact the site administrator if the problem persists |
-
-  @javascript
-  Escenario: El driver Zombie funciona adecuadamente
-    Dado estoy en la página de inicio
-    Cuando hago click en "Download & Extend"
-    Entonces debo ver el enlace "Distributions"

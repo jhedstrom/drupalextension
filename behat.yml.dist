@@ -13,9 +13,7 @@ default:
   extensions:
     Drupal\MinkExtension:
       goutte: ~
-      zombie: ~
       base_url: http://127.0.0.1:8888/blackbox
-      javascript_session: zombie
     Drupal\DrupalExtension:
       blackbox: ~
       region_map:
