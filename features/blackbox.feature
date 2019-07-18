@@ -85,12 +85,6 @@ Feature: Test DrupalContext
       | Sorry, unrecognized username or password                                      |
       | Unable to send e-mail. Contact the site administrator if the problem persists |
 
-  @javascript
-  Scenario: Zombie driver is functional
-    Given I am on the homepage
-    When I click "Download & Extend"
-    Then I should see the link "Distributions"
-
   @scenariotag
   Scenario: Check tags on feature and scenario
     Then the "scenariotag" tag should be present
