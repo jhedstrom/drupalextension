@@ -22,6 +22,8 @@ matrix:
       env: DRUPAL_VERSION=8
     - php: 5.6
       env: DRUPAL_VERSION=6
+    - php: 5.6
+      env: DRUPAL_VERSION=8
     - php: 7.0
       env: DRUPAL_VERSION=6
     - php: 7.1
@@ -75,7 +77,7 @@ before_script:
   - drush cc drush
   # @todo Re-enable behat drush endpoint testing.
   # @see https://github.com/jhedstrom/drupalextension/issues/458
-  - test ${DRUPAL_VERSION} -eq 6 || test ${DRUPAL_VERSION} -eq 8 || (test ${DRUPAL_VERSION} -eq 7 && drush help behat)
+  # - test ${DRUPAL_VERSION} -eq 6 || test ${DRUPAL_VERSION} -eq 8 || (test ${DRUPAL_VERSION} -eq 7 && drush help behat)
   # Only revert features on Drupal 7.
   - test \! ${DRUPAL_VERSION} -eq 7 || drush --yes fr behat_test
   # Disable the page cache on Drupal 8.
