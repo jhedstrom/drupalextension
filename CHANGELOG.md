@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   * [#544](https://github.com/jhedstrom/drupalextension/issue/544) Added a 'Contributing' section to the README.
 ### Fixed
   * [#542](https://github.com/jhedstrom/drupalextension/pull/542) Fix issue with certain symfony 4 components being pulled in.
+  * [#537](https://github.com/jhedstrom/drupalextension/pull/537) Remove usage of deprecated `SnippetAcceptingContext`.
+
 ## [4.0.0 beta2] 2018-12-19
 ### Added
   * [#514](https://github.com/jhedstrom/drupalextension/pull/514) Add a note about the need to remove the entries in behat.yml to use BEHAT_PARAMS.
