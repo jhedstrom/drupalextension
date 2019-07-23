@@ -13,6 +13,7 @@ use Behat\Testwork\Environment\Reader\EnvironmentReader;
 use Drupal\DrupalDriverManager;
 use Drupal\Driver\SubDriverFinderInterface;
 
+use Drupal\DrupalExtension\Context\DrupalSubContextInterface;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RegexIterator;
@@ -159,6 +160,7 @@ final class Reader implements EnvironmentReader
 
             // Additional subcontext locations may be specified manually in behat.yml.
             if (isset($this->parameters['subcontexts']['paths'])) {
+                @trigger_error('The `subcontexts.paths` parameter is deprecated in Drupal Behat Extension 4.0.0 and will be removed in 4.1.0. Normal Behat contexts should be used instead and loaded via behat.yml.', E_USER_DEPRECATED);
                 $paths = array_merge($paths, $this->parameters['subcontexts']['paths']);
             }
 
@@ -173,7 +175,8 @@ final class Reader implements EnvironmentReader
             $classes = get_declared_classes();
             foreach ($classes as $class) {
                 $reflect = new \ReflectionClass($class);
-                if (!$reflect->isAbstract() && $reflect->implementsInterface('Drupal\DrupalExtension\Context\DrupalSubContextInterface')) {
+                if (!$reflect->isAbstract() && $reflect->implementsInterface(DrupalSubContextInterface::class)) {
+                    @trigger_error('Sub-contexts are deprecated in Drupal Behat Extension 4.0.0 and will be removed in 4.1.0. Class ' . $class . ' is a subcontext. This logic should be moved to a normal Behat context and loaded via behat.yml.', E_USER_DEPRECATED);
                     $class_names[] = $class;
                 }
             }
