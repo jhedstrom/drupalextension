@@ -108,7 +108,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   * [#439](https://github.com/jhedstrom/drupalextension/pull/439): Symfony 3 compatibility follow-up fix.
 
 [Unreleased]: https://github.com/jhedstrom/drupalextension/compare/v4.0.0...HEAD
-[4.0.0]: https://github.com/jhedstrom/drupalextension/compare/v4.0.0beta2...v4.0.0
+[4.0.0 rc1]: https://github.com/jhedstrom/drupalextension/compare/v4.0.0beta2...v4.0.0rc1
 [4.0.0 beta2]: https://github.com/jhedstrom/drupalextension/compare/v4.0.0beta1...v4.0.0beta2
 [4.0.0 beta1]: https://github.com/jhedstrom/drupalextension/compare/v4.0.0alpha4...v4.0.0beta1
 [4.0.0 alpha4]:https://github.com/jhedstrom/drupalextension/compare/v4.0.0alpha3...v4.0.0alpha4
