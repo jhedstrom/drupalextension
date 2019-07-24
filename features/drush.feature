@@ -18,9 +18,11 @@ Feature: Drush-specific steps
     And I run drush "en" "toolbar -y"
     Then drush output should contain "toolbar is already enabled."
 
-  Scenario: Create and view a node with fields using the Drush driver
-    Given I am viewing an "Article":
-    | title | My article with fields! |
-    | body  | A placeholder           |
-    Then I should see the heading "My article with fields!"
-    And I should see the text "A placeholder"
+# @todo Re-enable behat drush endpoint testing.
+# @see https://github.com/jhedstrom/drupalextension/issues/458
+#  Scenario: Create and view a node with fields using the Drush driver
+#    Given I am viewing an "Article":
+#    | title | My article with fields! |
+#    | body  | A placeholder           |
+#    Then I should see the heading "My article with fields!"
+#    And I should see the text "A placeholder"

@@ -22,6 +22,8 @@ matrix:
       env: DRUPAL_VERSION=8
     - php: 5.6
       env: DRUPAL_VERSION=6
+    - php: 5.6
+      env: DRUPAL_VERSION=8
     - php: 7.0
       env: DRUPAL_VERSION=6
     - php: 7.1
@@ -51,8 +53,6 @@ install:
   - npm install
 
 before_script:
-  # Set NODE_PATH for zombie driver.
-  - export NODE_PATH="`pwd`/node_modules"
   # Define the module path according to the Drupal version being tested.
   - test ${DRUPAL_VERSION} -ne 8 || export MODULE_PATH="drupal/modules"
   - test ${DRUPAL_VERSION} -eq 8 || export MODULE_PATH="drupal/sites/all/modules" && mkdir -p ${MODULE_PATH}
@@ -75,7 +75,7 @@ before_script:
   - drush cc drush
   # @todo Re-enable behat drush endpoint testing.
   # @see https://github.com/jhedstrom/drupalextension/issues/458
-  - test ${DRUPAL_VERSION} -eq 6 || test ${DRUPAL_VERSION} -eq 8 || (test ${DRUPAL_VERSION} -eq 7 && drush help behat)
+  # - test ${DRUPAL_VERSION} -eq 6 || test ${DRUPAL_VERSION} -eq 8 || (test ${DRUPAL_VERSION} -eq 7 && drush help behat)
   # Only revert features on Drupal 7.
   - test \! ${DRUPAL_VERSION} -eq 7 || drush --yes fr behat_test
   # Disable the page cache on Drupal 8.
@@ -90,6 +90,7 @@ before_script:
 
 script:
   - composer test
+  - npm test
   - vendor/bin/behat -fprogress --strict
   - vendor/bin/behat -fprogress --profile=drupal${DRUPAL_VERSION} --strict
   # Do not test the Drush profile unless Drupal 7 was installed.

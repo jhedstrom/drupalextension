@@ -10,8 +10,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
   * [#528](https://github.com/jhedstrom/drupalextension/pull/528) Show a more helpful failure when running `@javascript`
     scenarios with incorrect configuration.
+  * [#545](https://github.com/jhedstrom/drupalextension/issue/545) Remove Zombie JS testing on Travis.  
+  * [#518](https://github.com/jhedstrom/drupalextension/issue/518) Subcontexts are deprecated and will be removed in v4.1.0.
 ### Added
   * [#527](https://github.com/jhedstrom/drupalextension/pull/527) Provide a step to check that a button is not in a region.
+  * [#543](https://github.com/jhedstrom/drupalextension/issue/543) Run gherkin-lint against feature files on Travis.
+  * [#544](https://github.com/jhedstrom/drupalextension/issue/544) Added a 'Contributing' section to the README.
+### Fixed
+  * [#542](https://github.com/jhedstrom/drupalextension/pull/542) Fix issue with certain symfony 4 components being pulled in.
+  * [#537](https://github.com/jhedstrom/drupalextension/pull/537) Remove usage of deprecated `SnippetAcceptingContext`.
+
 ## [4.0.0 beta2] 2018-12-19
 ### Added
   * [#514](https://github.com/jhedstrom/drupalextension/pull/514) Add a note about the need to remove the entries in behat.yml to use BEHAT_PARAMS.

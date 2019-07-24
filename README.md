@@ -98,6 +98,11 @@ the [Full documentation](https://behat-drupal-extension.readthedocs.org)
 
 See [CHANGELOG](CHANGELOG.md).
 
+## Contributing
+
+Features and bug fixes are welcome! First-time contributors can jump in with the
+issues tagged [good first issue](https://github.com/jhedstrom/drupalextension/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22).
+
 ### Backwards incompatible changes
 
 Starting with 3.3.0 Behat Drupal Extension depends on Behat 3.2.0 which
