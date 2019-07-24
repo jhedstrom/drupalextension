@@ -160,7 +160,12 @@ final class Reader implements EnvironmentReader
 
             // Additional subcontext locations may be specified manually in behat.yml.
             if (isset($this->parameters['subcontexts']['paths'])) {
-                @trigger_error('The `subcontexts.paths` parameter is deprecated in Drupal Behat Extension 4.0.0 and will be removed in 4.1.0. Normal Behat contexts should be used instead and loaded via behat.yml.', E_USER_DEPRECATED);
+                if (!empty($this->parameters['subcontexts']['paths'])) {
+                    @trigger_error(
+                        'The `subcontexts.paths` parameter is deprecated in Drupal Behat Extension 4.0.0 and will be removed in 4.1.0. Normal Behat contexts should be used instead and loaded via behat.yml.',
+                        E_USER_DEPRECATED
+                    );
+                }
                 $paths = array_merge($paths, $this->parameters['subcontexts']['paths']);
             }
 
