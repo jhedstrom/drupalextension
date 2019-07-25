@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+## [4.0.0 rc1] 2019-07-24
 ### Changed
   * [#528](https://github.com/jhedstrom/drupalextension/pull/528) Show a more helpful failure when running `@javascript`
     scenarios with incorrect configuration.
@@ -106,7 +107,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   * [#437](https://github.com/jhedstrom/drupalextension/pull/437): Radio button selector fix.
   * [#439](https://github.com/jhedstrom/drupalextension/pull/439): Symfony 3 compatibility follow-up fix.
 
-[Unreleased]: https://github.com/jhedstrom/drupalextension/compare/v4.0.0beta2...HEAD
+[Unreleased]: https://github.com/jhedstrom/drupalextension/compare/v4.0.0rc1...HEAD
+[4.0.0 rc1]: https://github.com/jhedstrom/drupalextension/compare/v4.0.0beta2...v4.0.0rc1
 [4.0.0 beta2]: https://github.com/jhedstrom/drupalextension/compare/v4.0.0beta1...v4.0.0beta2
 [4.0.0 beta1]: https://github.com/jhedstrom/drupalextension/compare/v4.0.0alpha4...v4.0.0beta1
 [4.0.0 alpha4]:https://github.com/jhedstrom/drupalextension/compare/v4.0.0alpha3...v4.0.0alpha4
