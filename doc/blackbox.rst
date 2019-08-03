@@ -4,13 +4,13 @@ Blackbox Driver
 The blackbox driver assumes no privileged access to the site. You can run the
 tests on a local or remote server, and all the actions will take place through
 the site's user interface. This driver was enabled as part of the installation
-instructions by lines 13 and 14, highlighted below.
+instructions by lines 14 and 15, highlighted below.
 
 .. literalinclude:: _static/snippets/behat-bb.yml
    :language: yaml
    :linenos:
-   :lines: 1-14
-   :emphasize-lines: 13-14
+   :lines: 1-15
+   :emphasize-lines: 14-15
 
 Region steps
 ------------
@@ -36,7 +36,7 @@ A stock Drupal 7 installation has a footer area identified by the CSS Id
 .. literalinclude:: _static/snippets/behat-bb.yml
    :language: yaml
    :linenos:
-   :emphasize-lines: 15-16
+   :emphasize-lines: 16-17
 
 You can use a step like the following without writing any custom PHP::
 
