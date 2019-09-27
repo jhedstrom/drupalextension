@@ -55,10 +55,5 @@
       "Drupal\\DrupalExtension": "src/",
       "Drupal\\MinkExtension": "src/"
     }
-  },
-  "extra": {
-    "branch-alias": {
-      "dev-master": "4.0.x-dev"
-    }
   }
 }
