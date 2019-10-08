@@ -30,7 +30,6 @@
     "drupal/drupal-driver": "^2.0.0",
     "symfony/browser-kit": "^3.4",
     "symfony/dependency-injection": "~3.0",
-    "symfony/event-dispatcher": "~3.0",
     "symfony/translation": "^3.4"
   },
   "require-dev": {
