@@ -60,7 +60,7 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
         // Ensure we aren't already logged in.
         $this->fastLogout();
 
-        $this->getSession()->visit($this->locatePath('/user'));
+        $this->getSession()->visit($this->locatePath($this->getDrupalText('login_url')));
         $element = $this->getSession()->getPage();
         $element->fillField($this->getDrupalText('username_field'), $user->name);
         $element->fillField($this->getDrupalText('password_field'), $user->pass);
@@ -93,7 +93,7 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
      */
     public function logout()
     {
-        $this->getSession()->visit($this->locatePath('/user/logout'));
+        $this->getSession()->visit($this->locatePath($this->getDrupalText('logout_url')));
         $this->userManager->setCurrentUser(false);
 
         // Log the user out on the backend if possible.
@@ -127,8 +127,9 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
         }
 
         // Some themes do not add that class to the body, so lets check if the
-        // login form is displayed on /user/login.
-        $session->visit($this->locatePath('/user/login'));
+        // login form is displayed on the page with the login form (defaults to
+        // /user/login)
+        $session->visit($this->locatePath($this->getDrupalText('login_url')));
         if ($page->has('css', $this->getDrupalSelector('login_form_selector'))) {
             $this->fastLogout();
             return false;

@@ -48,7 +48,7 @@ the [Full documentation](https://behat-drupal-extension.readthedocs.org)
         contexts:
           - Drupal\DrupalExtension\Context\DrupalContext
     extensions:
-      Behat\MinkExtension:
+      Drupal\MinkExtension:
         goutte: ~
         base_url: http://example.org/  # Replace with your site's URL
       Drupal\DrupalExtension:
@@ -97,6 +97,11 @@ the [Full documentation](https://behat-drupal-extension.readthedocs.org)
 ## Release notes
 
 See [CHANGELOG](CHANGELOG.md).
+
+## Contributing
+
+Features and bug fixes are welcome! First-time contributors can jump in with the
+issues tagged [good first issue](https://github.com/jhedstrom/drupalextension/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22).
 
 ### Backwards incompatible changes
 

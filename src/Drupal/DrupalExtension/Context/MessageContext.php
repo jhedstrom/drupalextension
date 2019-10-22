@@ -41,14 +41,17 @@ class MessageContext extends RawDrupalContext implements TranslatableContext
   /**
    * Checks if the current page contains the given set of error messages
    *
-   * @param $messages
-   *   array An array of texts to be checked
+   * @param array $messages
+   *   An array of texts to be checked. The first row should consist of the
+   *   string "Error messages".
    *
    * @Then I should see the following error message(s):
    */
     public function assertMultipleErrors(TableNode $messages)
     {
+        $this->assertValidMessageTable($messages, 'error messages');
         foreach ($messages->getHash() as $key => $value) {
+            $value = array_change_key_case($value);
             $message = trim($value['error messages']);
             $this->assertErrorVisible($message);
         }
@@ -74,14 +77,17 @@ class MessageContext extends RawDrupalContext implements TranslatableContext
   /**
    * Checks if the current page does not contain the given set error messages
    *
-   * @param $messages
-   *   array An array of texts to be checked
+   * @param array $messages
+   *   An array of texts to be checked. The first row should consist of the
+   *   string "Error messages".
    *
    * @Then I should not see the following error messages:
    */
     public function assertNotMultipleErrors(TableNode $messages)
     {
+        $this->assertValidMessageTable($messages, 'error messages');
         foreach ($messages->getHash() as $key => $value) {
+            $value = array_change_key_case($value);
             $message = trim($value['error messages']);
             $this->assertNotErrorVisible($message);
         }
@@ -108,14 +114,17 @@ class MessageContext extends RawDrupalContext implements TranslatableContext
   /**
    * Checks if the current page contains the given set of success messages
    *
-   * @param $message
-   *   array An array of texts to be checked
+   * @param array $message
+   *   An array of texts to be checked. The first row should consist of the
+   *   string "Success messages".
    *
    * @Then I should see the following success messages:
    */
     public function assertMultipleSuccessMessage(TableNode $messages)
     {
+        $this->assertValidMessageTable($messages, 'success messages');
         foreach ($messages->getHash() as $key => $value) {
+            $value = array_change_key_case($value);
             $message = trim($value['success messages']);
             $this->assertSuccessMessage($message);
         }
@@ -141,14 +150,17 @@ class MessageContext extends RawDrupalContext implements TranslatableContext
   /**
    * Checks if the current page does not contain the given set of success messages
    *
-   * @param $message
-   *   array An array of texts to be checked
+   * @param array $message
+   *   An array of texts to be checked. The first row should consist of the
+   *   string "Success messages".
    *
    * @Then I should not see the following success messages:
    */
     public function assertNotMultipleSuccessMessage(TableNode $messages)
     {
+        $this->assertValidMessageTable($messages, 'success messages');
         foreach ($messages->getHash() as $key => $value) {
+            $value = array_change_key_case($value);
             $message = trim($value['success messages']);
             $this->assertNotSuccessMessage($message);
         }
@@ -175,14 +187,17 @@ class MessageContext extends RawDrupalContext implements TranslatableContext
   /**
    * Checks if the current page contains the given set of warning messages
    *
-   * @param $message
-   *   array An array of texts to be checked
+   * @param array $message
+   *   An array of texts to be checked. The first row should consist of the
+   *   string "Warning messages".
    *
    * @Then I should see the following warning messages:
    */
     public function assertMultipleWarningMessage(TableNode $messages)
     {
+        $this->assertValidMessageTable($messages, 'warning messages');
         foreach ($messages->getHash() as $key => $value) {
+            $value = array_change_key_case($value);
             $message = trim($value['warning messages']);
             $this->assertWarningMessage($message);
         }
@@ -208,14 +223,17 @@ class MessageContext extends RawDrupalContext implements TranslatableContext
   /**
    * Checks if the current page does not contain the given set of warning messages
    *
-   * @param $message
-   *   array An array of texts to be checked
+   * @param array $message
+   *   An array of texts to be checked. The first row should consist of the
+   *   string "Warning messages".
    *
    * @Then I should not see the following warning messages:
    */
     public function assertNotMultipleWarningMessage(TableNode $messages)
     {
+        $this->assertValidMessageTable($messages, 'warning messages');
         foreach ($messages->getHash() as $key => $value) {
+            $value = array_change_key_case($value);
             $message = trim($value['warning messages']);
             $this->assertNotWarningMessage($message);
         }
@@ -254,6 +272,35 @@ class MessageContext extends RawDrupalContext implements TranslatableContext
             'message_selector',
             "The page '%s' contains the message '%s'"
         );
+    }
+
+    /**
+     * Checks whether the given list of messages is valid.
+     *
+     * This checks whether the list has only one column and has the correct
+     * header.
+     *
+     * @param \Behat\Gherkin\Node\TableNode $messages
+     *   The list of messages.
+     * @param string $expected_header
+     *   The header that should be present in the list.
+     */
+    protected function assertValidMessageTable(TableNode $messages, $expected_header)
+    {
+        // Check that the table only contains a single column.
+        $header_row = $messages->getRow(0);
+
+        $column_count = count($header_row);
+        if ($column_count != 1) {
+            throw new \RuntimeException("The list of $expected_header should only contain 1 column. It has $column_count columns.");
+        }
+
+        // Check that the correct header is used.
+        $actual_header = reset($header_row);
+        if (strtolower(trim($actual_header)) !== $expected_header) {
+            $capitalized_header = ucfirst($expected_header);
+            throw new \RuntimeException("The list of $expected_header should have the header '$capitalized_header'.");
+        }
     }
 
   /**
