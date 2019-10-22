@@ -1,5 +1,5 @@
 @api
-Feature: DrupalContext
+Feature: DrupalContext general testing
   In order to prove the Drupal context is working properly
   As a developer
   I need to use the step definitions of this context
@@ -13,32 +13,18 @@ Feature: DrupalContext
     Then I should see the text "Member for"
 
   @drushTest @d7
-  Scenario: Target links within table rows
+  Scenario: Target links within table rows for Drush and Drupal 7
     Given I am logged in as a user with the "administrator" role
     When I am at "admin/structure/types"
     And I click "manage fields" in the "Article" row
     Then I should be on "admin/structure/types/manage/article/fields"
     And I should see text matching "Add new field"
 
-  @d8
-  Scenario: Target links within table rows
-    Given I am logged in as a user with the "administrator" role
-    When I am at "admin/structure/types"
-    And I click "Manage fields" in the "Article" row
-    Then I should be on "admin/structure/types/manage/article/fields"
-    And I should see text matching "Add field"
-
   @drushTest @d7
-  Scenario: Find a heading in a region
+  Scenario: Find a heading in a region for Drupal 7
     Given I am not logged in
     When I am on the homepage
     Then I should see the heading "User login" in the "left sidebar" region
-
-  @d8
-  Scenario: Find a heading in a region
-    Given I am not logged in
-    When I am on the homepage
-    Then I should see the heading "Search" in the "left sidebar" region
 
   @drushTest @d7 @d8
   Scenario: Clear cache
@@ -104,7 +90,7 @@ Feature: DrupalContext
     Then I should see the link "Joe User"
 
   @d7
-  Scenario: Create users with roles
+  Scenario: Create users with roles for Drupal 7
     Given users:
     | name      | mail             | roles         |
     | Joe User  | joe@example.com  | administrator |
@@ -112,17 +98,6 @@ Feature: DrupalContext
     And I am logged in as a user with the "administrator" role
     When I visit "admin/people"
     Then I should see the text "administrator" in the "Joe User" row
-    And  I should not see the text "administrator" in the "Jane User" row
-
-  @d8
-  Scenario: Create users with roles
-    Given users:
-    | name      | mail             | roles         |
-    | Joe User  | joe@example.com  | administrator |
-    | Jane User | jane@example.com |               |
-    And I am logged in as a user with the "administrator" role
-    When I visit "admin/people"
-    Then I should see the text "Administrator" in the "Joe User" row
     And  I should not see the text "administrator" in the "Jane User" row
 
   @d7 @d8
@@ -140,7 +115,7 @@ Feature: DrupalContext
     Then I should see the heading "My tag"
 
   @d7
-  Scenario: Create many terms
+  Scenario: Create many terms for Drupal 7
     Given "tags" terms:
     | name    |
     | Tag one |
@@ -151,7 +126,7 @@ Feature: DrupalContext
     And I should see "Tag two"
 
   @d8
-  Scenario: Create many terms
+  Scenario: Create many terms for Drupal 8
     Given "tags" terms:
     | name    |
     | Tag one |
@@ -162,7 +137,7 @@ Feature: DrupalContext
     And I should see "Tag two"
 
   @d7
-  Scenario: Create terms using vocabulary title rather than machine name.
+  Scenario: Create terms using vocabulary title rather than machine name for Drupal 7.
     Given "Tags" terms:
     | name    |
     | Tag one |
@@ -173,7 +148,7 @@ Feature: DrupalContext
     And I should see "Tag two"
 
   @d8
-  Scenario: Create terms using vocabulary title rather than machine name.
+  Scenario: Create terms using vocabulary title rather than machine name for Drupal 8.
     Given "Tags" terms:
     | name    |
     | Tag one |
@@ -248,7 +223,7 @@ Feature: DrupalContext
     Then I should see the link "Joe User"
 
   @d7
-  Scenario: Term hooks are functioning
+  Scenario: Term hooks are functioning for Drupal 7
     Given "tags" terms:
     | Label     |
     | Tag one   |
@@ -259,7 +234,7 @@ Feature: DrupalContext
     And I should see "Tag two"
 
   @d8
-  Scenario: Term hooks are functioning
+  Scenario: Term hooks are functioning for Drupal 8
     Given "tags" terms:
     | Label     |
     | Tag one   |

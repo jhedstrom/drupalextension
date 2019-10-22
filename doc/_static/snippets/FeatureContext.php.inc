@@ -2,14 +2,13 @@
 
 use Behat\Behat\Tester\Exception\PendingException;
 use Drupal\DrupalExtension\Context\RawDrupalContext;
-use Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 
 /**
  * Defines application features from the specific context.
  */
-class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext {
+class FeatureContext extends RawDrupalContext {
 
   /**
    * Initializes context.

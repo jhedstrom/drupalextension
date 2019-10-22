@@ -5,6 +5,7 @@ use Behat\Gherkin\Node\TableNode;
 use Drupal\DrupalExtension\Context\RawDrupalContext;
 use Drupal\DrupalExtension\Hook\Scope\BeforeNodeCreateScope;
 use Drupal\DrupalExtension\Hook\Scope\EntityScope;
+use Drupal\DrupalExtension\TagTrait;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
 
@@ -16,6 +17,9 @@ use Symfony\Component\Process\Process;
  * conflicts.
  */
 class FeatureContext extends RawDrupalContext {
+
+    use TagTrait;
+
   /**
    * Hook into node creation to test `@beforeNodeCreate`
    *
@@ -453,6 +457,36 @@ class FeatureContext extends RawDrupalContext {
             }
 
             PHPUnit_Framework_Assert::assertEquals(0, $this->getExitCode());
+        }
+    }
+
+    /**
+     * Checks if the current scenario or feature has the given tag.
+     *
+     * @Then the :tag tag should be present
+     *
+     * @param string $tag
+     *   The tag to check.
+     */
+    public function shouldHaveTag($tag)
+    {
+        if (!$this->hasTag($tag)) {
+            throw new \Exception("Expected tag $tag was not found in the scenario or feature.");
+        }
+    }
+
+    /**
+     * Checks if the current scenario or feature does not have the given tag.
+     *
+     * @Then the :tag tag should not be present
+     *
+     * @param string $tag
+     *   The tag to check.
+     */
+    public function shouldNotHaveTag($tag)
+    {
+        if ($this->hasTag($tag)) {
+            throw new \Exception("Expected tag $tag was found in the scenario or feature.");
         }
     }
 

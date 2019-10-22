@@ -19,7 +19,7 @@ Feature: FieldHandlers
       | field_post_reference | Page one, Page two                                                               |
       | field_post_date      | 2015-02-08 17:45:00                                                              |
       | field_post_links     | Link 1 - http://example.com, Link 2 - http://example.com                         |
-      | field_post_select    | One, Two                                                                         |
+      | field_post_select    | Select value one, Select value two                                                                         |
       | field_post_address   | country: BE - locality: Brussel - thoroughfare: Louisalaan 1 - postal_code: 1000 |
     Then I should see "Post title"
     And I should see "PLACEHOLDER BODY"
@@ -28,8 +28,9 @@ Feature: FieldHandlers
     And I should see "Sunday, February 8, 2015"
     And I should see the link "Link 1"
     And I should see the link "Link 2"
-    And I should see "One"
-    And I should see "Two"
+    And I should see "Select value one"
+    And I should see "Select value two"
+    And I should not see "Select value three"
     And I should see "Belgium"
     And I should see "Brussel"
     And I should see "1000"
@@ -52,15 +53,15 @@ Feature: FieldHandlers
       | reference | Page one, Page two                                                               |
       | date      | 2015-02-08 17:45:00                                                              |
       | links     | Link 1 - http://example.com, Link 2 - http://example.com                         |
-      | select    | One, Two                                                                         |
+      | select    | Select value one, Select value two                                               |
       | address   | country: BE - locality: Brussel - thoroughfare: Louisalaan 1 - postal_code: 1000 |
     Then I should see "Page one"
     And I should see "Page two"
     And I should see "Sunday, February 8, 2015"
     And I should see the link "Link 1"
     And I should see the link "Link 2"
-    And I should see "One"
-    And I should see "Two"
+    And I should see "Select value one"
+    And I should see "Select value two"
     And I should see "Belgium"
     And I should see "Brussel"
     And I should see "1000"
@@ -134,7 +135,7 @@ Feature: FieldHandlers
     But I should not see the link "Tag three"
     And I should see "Page one"
     And I should see "Page two"
-    But I should not see "Page three"
+    And I should not see "Page three"
     And I should see "Belgium"
     And I should see "Brussel"
     And I should see "1000"

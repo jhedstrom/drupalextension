@@ -18,7 +18,6 @@ class ClassGenerator implements BehatClassGenerator
 <?php
 
 {namespace}use Drupal\DrupalExtension\Context\RawDrupalContext;
-use Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Behat\Tester\Exception\PendingException;
@@ -26,7 +25,7 @@ use Behat\Behat\Tester\Exception\PendingException;
 /**
  * Defines application features from the specific context.
  */
-class {className} extends RawDrupalContext implements SnippetAcceptingContext {
+class {className} extends RawDrupalContext {
 
   /**
    * Initializes context.
