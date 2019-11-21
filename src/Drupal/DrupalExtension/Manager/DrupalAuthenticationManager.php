@@ -42,7 +42,7 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
     /**
      * {@inheritdoc}
      */
-    public function logIn(\stdClass $user)
+    public function logIn(\stdClass $user, $extra_fields = array())
     {
         // Ensure we aren't already logged in.
         $this->fastLogout();
@@ -51,6 +51,18 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
         $element = $this->getSession()->getPage();
         $element->fillField($this->getDrupalText('username_field'), $user->name);
         $element->fillField($this->getDrupalText('password_field'), $user->pass);
+
+        // Fill in extra fields.
+        foreach ($extra_fields as $field_name) {
+          // Check if the field is in the form.
+          $locator = str_replace('field_', 'edit-', $field_name);
+          if ($element->findField($locator)) {
+            $value = $user->{$field_name};
+            $value = (is_array($value)) ? reset($value) : $value;
+            $element->fillField($locator, $value);
+          }
+        }
+
         $submit = $element->findButton($this->getDrupalText('log_in'));
         if (empty($submit)) {
             throw new \Exception(sprintf("No submit button at %s", $this->getSession()->getCurrentUrl()));

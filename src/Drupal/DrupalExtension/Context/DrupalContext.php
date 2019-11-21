@@ -91,6 +91,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
             // Assign fields to user before creation.
             foreach ($fields->getRowsHash() as $field => $value) {
                   $user->{$field} = $value;
+                  $extra_fields[] = $field;
             }
 
             $this->userCreate($user);
@@ -105,7 +106,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
             }
 
             // Login.
-            $this->login($user);
+            $this->login($user, $extra_fields);
         }
     }
 

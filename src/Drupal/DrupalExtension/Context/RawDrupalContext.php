@@ -527,10 +527,13 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
    *
    * @param \stdClass $user
    *   The user to log in.
+   *
+   * @param array $extra_fields
+   *   Extra fields used during log in.
    */
-    public function login(\stdClass $user)
+    public function login(\stdClass $user, $extra_fields = array())
     {
-        $this->getAuthenticationManager()->logIn($user);
+        $this->getAuthenticationManager()->logIn($user, $extra_fields);
     }
 
   /**

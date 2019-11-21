@@ -13,8 +13,11 @@ interface DrupalAuthenticationManagerInterface
      *
      * @param \stdClass $user
      *   The user to log in.
+     *
+     * @param array $extra_fields
+     *   Extra fields used during log in.
      */
-    public function logIn(\stdClass $user);
+    public function logIn(\stdClass $user, $extra_fields = array());
 
     /**
      * Logs the current user out.
