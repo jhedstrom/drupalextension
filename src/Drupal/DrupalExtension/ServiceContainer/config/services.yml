@@ -46,6 +46,7 @@ services:
     arguments:
       - "@mink"
       - "@drupal.user_manager"
+      - "@drupal.drupal"
       - "%mink.parameters%"
       - "%drupal.parameters%"
   drupal.user_manager:

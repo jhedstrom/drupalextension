@@ -194,6 +194,43 @@ class FeatureContext extends RawDrupalContext {
     $this->login($user);
   }
 
+    /**
+     * Verifies a user is logged in on the backend.
+     *
+     * @Then I should be logged in on the backend
+     * @Then I am logged in on the backend
+     */
+    public function assertBackendLogin()
+    {
+        if (!$user = $this->getUserManager()->getCurrentUser()) {
+            throw new \LogicException('No current user in the user manager.');
+        }
+        if (!$account = \Drupal::entityTypeManager()->getStorage('user')->load($user->uid)) {
+            throw new \LogicException('No user found in the system.');
+        }
+        if (!$account->id()) {
+            throw new \LogicException('Current user is anonymous.');
+        }
+        if ($account->id() != \Drupal::currentUser()->id()) {
+            throw new \LogicException('User logged in on the backend does not match current user.');
+        }
+    }
+
+    /**
+     * Verifies there is no user logged in on the backend.
+     *
+     * @Then I should be logged out on the backend
+     */
+    public function assertBackendLoggedOut()
+    {
+        if ($this->getUserManager()->getCurrentUser()) {
+            throw new \LogicException('User is still logged in in the manager.');
+        }
+        if (!\Drupal::currentUser()->isAnonymous()) {
+            throw new \LogicException('User is still logged in on the backend.');
+        }
+    }
+
   /**
    * From here down is the Behat FeatureContext.
    *
