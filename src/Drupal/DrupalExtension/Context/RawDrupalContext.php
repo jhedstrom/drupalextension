@@ -404,17 +404,17 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
             // Reset the multicolumn field if the field name does not contain a column.
             if (strpos($field, ':') === false) {
                 $multicolumn_field = '';
-            } // Start tracking a new multicolumn field if the field name contains a ':'
-            // which is preceded by at least 1 character.
-            elseif (strpos($field, ':', 1) !== false) {
+            } elseif (strpos($field, ':', 1) !== false) {
+                // Start tracking a new multicolumn field if the field name contains a ':'
+                // which is preceded by at least 1 character.
                 list($multicolumn_field, $multicolumn_column) = explode(':', $field);
-            } // If a field name starts with a ':' but we are not yet tracking a
-            // multicolumn field we don't know to which field this belongs.
-            elseif (empty($multicolumn_field)) {
+            } elseif (empty($multicolumn_field)) {
+                // If a field name starts with a ':' but we are not yet tracking a
+                // multicolumn field we don't know to which field this belongs.
                 throw new \Exception('Field name missing for ' . $field);
-            } // Update the column name if the field name starts with a ':' and we are
-            // already tracking a multicolumn field.
-            else {
+            } else {
+                // Update the column name if the field name starts with a ':' and we are
+                // already tracking a multicolumn field.
                 $multicolumn_column = substr($field, 1);
             }
 

@@ -13,9 +13,7 @@ default:
   extensions:
     Drupal\MinkExtension:
       goutte: ~
-      zombie: ~
       base_url: http://127.0.0.1:8888/blackbox
-      javascript_session: zombie
     Drupal\DrupalExtension:
       blackbox: ~
       region_map:
@@ -44,7 +42,7 @@ drupal6:
       filters:
         tags: "@d6"
   extensions:
-    Behat\MinkExtension:
+    Drupal\MinkExtension:
       base_url: http://127.0.0.1:8888
     Drupal\DrupalExtension:
       api_driver: "drupal"
@@ -67,7 +65,7 @@ drupal7:
       filters:
         tags: "@d7"
   extensions:
-    Behat\MinkExtension:
+    Drupal\MinkExtension:
       base_url: http://127.0.0.1:8888
     Drupal\DrupalExtension:
       api_driver: "drupal"
@@ -92,7 +90,7 @@ drush:
       filters:
         tags: "@drushTest"
   extensions:
-    Behat\MinkExtension:
+    Drupal\MinkExtension:
       base_url: http://127.0.0.1:8888
     Drupal\DrupalExtension:
       api_driver: "drush"
@@ -119,7 +117,7 @@ drupal8:
       filters:
         tags: "@d8&&~@d8wip"
   extensions:
-    Behat\MinkExtension:
+    Drupal\MinkExtension:
       base_url: http://127.0.0.1:8888
     Drupal\DrupalExtension:
       api_driver: "drupal"

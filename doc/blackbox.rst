@@ -89,6 +89,8 @@ customized the label visible to users, you can change that text as follows:
 
      Drupal\DrupalExtension:
        text:
+         login_url: "/user"
+         logout_url: "/user/logout"
          log_out: "Sign out"
          log_in: "Sign in"
          password_field: "Enter your password"

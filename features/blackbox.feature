@@ -41,6 +41,10 @@ Feature: Test DrupalContext
     Given I am on the homepage
     Then I should see the "Search" button in the "navigation"
 
+  Scenario: Button not in region
+    Given I am on the homepage
+    Then I should not see the "Search" button in the "right header" region
+
   Scenario: Find an element in a region
     Given I am on the homepage
     Then I should see the "h1" element in the "left header"
@@ -68,21 +72,21 @@ Feature: Test DrupalContext
     And I should see the "div" element with the "class" attribute set to "class3" in the "left header" region
 
   Scenario: Error messages
-   Given I am on "user.html"
-   When I press "Log in"
-   Then I should see the error message "Password field is required"
-   And I should not see the error message "Sorry, unrecognized username or password"
-   And I should see the following error messages:
-   | error messages                       |
-   | Username or email field is required. |
-   | Password field is required           |
-   And I should not see the following error messages:
-   | error messages                                                                |
-   | Sorry, unrecognized username or password                                      |
-   | Unable to send e-mail. Contact the site administrator if the problem persists |
+    Given I am on "user.html"
+    When I press "Log in"
+    Then I should see the error message "Password field is required"
+    And I should not see the error message "Sorry, unrecognized username or password"
+    And I should see the following error messages:
+      | error messages                       |
+      | Username or email field is required. |
+      | Password field is required           |
+    And I should not see the following error messages:
+      | error messages                                                                |
+      | Sorry, unrecognized username or password                                      |
+      | Unable to send e-mail. Contact the site administrator if the problem persists |
 
- @javascript
- Scenario: Zombie driver is functional
-   Given I am on the homepage
-   When I click "Download & Extend"
-   Then I should see the link "Distributions"
+  @scenariotag
+  Scenario: Check tags on feature and scenario
+    Then the "scenariotag" tag should be present
+    And the "blackbox" tag should be present
+    But the "nonexisting" tag should not be present

@@ -1,5 +1,5 @@
 @d6 @d7 @d8 @api
-Feature: DrupalContext
+Feature: DrupalContext with background steps
   Test DrupalContext in combination with Backgrounds
 
   Background:
@@ -8,12 +8,12 @@ Feature: DrupalContext
       | Tag one |
       | Tag two |
 
-    Given users:
+    And users:
       | name     |
       | User one |
       | User two |
 
-    Given "article" content:
+    And "article" content:
       | title    |
       | Node one |
       | Node two |

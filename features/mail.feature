@@ -49,7 +49,6 @@ Feature: MailContext
       | subject |
       | test 1  |
 
-
   Scenario: No mail is sent
     Then no mail has been sent
 
