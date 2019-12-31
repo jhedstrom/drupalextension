@@ -4,6 +4,7 @@ php:
   - 7.0
   - 7.1
   - 7.2
+  - 7.3
 
 env:
   global:
@@ -26,10 +27,10 @@ install:
   # @see https://github.com/jhedstrom/drupalextension/issues/413
   # @todo Re-enable behat drush endpoint testing.
   # @see https://github.com/jhedstrom/drupalextension/issues/458
-  - test ${DRUPAL_VERSION} -ne 8 || COMPOSER_MEMORY_LIMIT=-1 travis_retry composer require drush/drush:~9.0 symfony/dependency-injection:3.4.4
+  - test ${DRUPAL_VERSION} -ne 8 || COMPOSER_MEMORY_LIMIT=-1 travis_retry composer require drush/drush:~10.0 symfony/dependency-injection:3.4.4
   - composer install
   # Install drush globally.
-  - (test ${DRUPAL_VERSION} -ne 8 && composer global require drush/drush:~8.0 drupal/drupal-driver) || composer global require drush/drush:~9.0
+  - (test ${DRUPAL_VERSION} -ne 8 && composer global require drush/drush:~8.0 drupal/drupal-driver) || composer global require drush/drush:~10.0
   # Install the Behat Drush Endpoint for Drupal 7 tests.
   - test ${DRUPAL_VERSION} -ne 7 || (git clone https://github.com/drush-ops/behat-drush-endpoint.git drush/behat-drush-endpoint && (cd drush/behat-drush-endpoint && composer install && cd -))
   # Pin node version.
