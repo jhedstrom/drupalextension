@@ -63,7 +63,7 @@ interface DrupalUserManagerInterface
    * @return \stdClass
    *   The user object.
    *
-   * @throws \Exception
+   * @throws \InvalidArgumentException
    *   Thrown when the user with the given name does not exist.
    */
     public function getUser($userName);

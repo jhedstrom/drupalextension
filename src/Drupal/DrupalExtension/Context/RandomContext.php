@@ -2,8 +2,7 @@
 
 namespace Drupal\DrupalExtension\Context;
 
-use Behat\Behat\Hook\Scope\AfterScenarioScope;
-use Behat\Behat\Hook\Scope\BeforeScenarioScope;
+use Behat\Behat\Hook\Scope\ScenarioScope;
 
 /**
  * Class RandomContext
@@ -52,7 +51,7 @@ class RandomContext extends RawDrupalContext
      *
      * @BeforeScenario
      */
-    public function beforeScenarioSetVariables(BeforeScenarioScope $scope)
+    public function beforeScenarioSetVariables(ScenarioScope $scope)
     {
         $steps = [];
         if ($scope->getFeature()->hasBackground()) {
@@ -83,7 +82,7 @@ class RandomContext extends RawDrupalContext
      *
      * @AfterScenario
      */
-    public function afterScenarioResetVariables(AfterScenarioScope $scope)
+    public function afterScenarioResetVariables(ScenarioScope $scope)
     {
         $this->values = [];
     }

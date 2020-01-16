@@ -60,7 +60,7 @@ class DrupalUserManager implements DrupalUserManagerInterface
     public function getUser($userName)
     {
         if (!isset($this->users[$userName])) {
-            throw new \Exception(sprintf('No user with %s name is registered with the driver.', $userName));
+            throw new \InvalidArgumentException(sprintf('No user with %s name is registered with the driver.', $userName));
         }
         return $this->users[$userName];
     }

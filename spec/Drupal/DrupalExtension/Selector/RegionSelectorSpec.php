@@ -2,11 +2,9 @@
 
 namespace spec\Drupal\DrupalExtension\Selector;
 
-use Behat\Mink\Selector\SelectorInterface;
 use Behat\Mink\Selector\CssSelector;
-
+use Drupal\DrupalExtension\Selector\RegionSelector;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class RegionSelectorSpec extends ObjectBehavior
 {
@@ -15,22 +13,23 @@ class RegionSelectorSpec extends ObjectBehavior
         $regionMap = array(
             'Left sidebar' => '#left-sidebar',
         );
+        $selector->translateToXPath('#left-sidebar')->willReturn('some xpath');
+
         $this->beConstructedWith($selector, $regionMap);
     }
 
     function it_is_initializable()
     {
-        $this->shouldHaveType('Drupal\DrupalExtension\Selector\RegionSelector');
+        $this->shouldHaveType(RegionSelector::class);
     }
 
     function it_should_translate_to_xpath()
     {
-        // @todo this is not returning properly for some reason.
-        $xpath = $this->translateToXPath('Left sidebar');
+        $this->translateToXPath('Left sidebar')->shouldBe('some xpath');
     }
 
     function it_should_not_accept_invalid_regions()
     {
-        $this->shouldThrow('\InvalidArgumentException')->duringTranslateToXPath('Invalid region');
+        $this->shouldThrow(\InvalidArgumentException::class)->duringTranslateToXPath('Invalid region');
     }
 }

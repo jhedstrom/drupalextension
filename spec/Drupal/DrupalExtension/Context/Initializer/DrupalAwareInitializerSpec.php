@@ -4,6 +4,7 @@ namespace spec\Drupal\DrupalExtension\Context\Initializer;
 
 use Behat\Behat\Context\Context;
 
+use Behat\Behat\Context\Initializer\ContextInitializer;
 use Drupal\DrupalDriverManager;
 use Drupal\DrupalExtension\Context\DrupalAwareInterface;
 
@@ -33,7 +34,7 @@ class DrupalAwareInitializerSpec extends ObjectBehavior
 
     function it_is_a_context_initializer()
     {
-        $this->shouldHaveType('Behat\Behat\Context\Initializer\ContextInitializer');
+        $this->shouldHaveType(ContextInitializer::class);
     }
 
     function it_does_nothing_for_basic_contexts(Context $context)

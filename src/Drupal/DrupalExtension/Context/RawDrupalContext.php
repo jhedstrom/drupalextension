@@ -3,11 +3,10 @@
 namespace Drupal\DrupalExtension\Context;
 
 use Behat\MinkExtension\Context\RawMinkContext;
-use Behat\Mink\Exception\DriverException;
 use Behat\Testwork\Hook\HookDispatcher;
 use Behat\Behat\Context\Environment\InitializedContextEnvironment;
 
-use Drupal\DrupalDriverManager;
+use Drupal\DrupalDriverManagerInterface;
 use Drupal\DrupalExtension\DrupalParametersTrait;
 use Drupal\DrupalExtension\Manager\DrupalAuthenticationManagerInterface;
 use Drupal\DrupalExtension\Manager\DrupalUserManagerInterface;
@@ -90,7 +89,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
   /**
    * {@inheritDoc}
    */
-    public function setDrupal(DrupalDriverManager $drupal)
+    public function setDrupal(DrupalDriverManagerInterface $drupal)
     {
         $this->drupal = $drupal;
     }

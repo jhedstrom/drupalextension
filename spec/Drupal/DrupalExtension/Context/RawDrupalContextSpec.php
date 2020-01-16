@@ -2,11 +2,9 @@
 
 namespace spec\Drupal\DrupalExtension\Context;
 
+use Drupal\DrupalDriverManagerInterface;
+use Drupal\DrupalExtension\Context\DrupalAwareInterface;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
-
-use Behat\Testwork\Hook\HookDispatcher;
-use Behat\Testwork\Hook\HookRepository;
 
 use Drupal\DrupalDriverManager;
 
@@ -14,13 +12,13 @@ class RawDrupalContextSpec extends ObjectBehavior
 {
     function it_should_be_drupal_aware()
     {
-        $this->shouldHaveType('Drupal\DrupalExtension\Context\DrupalAwareInterface');
+        $this->shouldHaveType(DrupalAwareInterface::class);
     }
 
-    function it_can_set_and_get_drupal_manager(DrupalDriverManager $drupal)
+    function it_can_set_and_get_drupal_manager(DrupalDriverManagerInterface $drupal)
     {
         $this->setDrupal($drupal);
-        $this->getDrupal()->shouldBeAnInstanceOf('Drupal\DrupalDriverManager');
+        $this->getDrupal()->shouldBeAnInstanceOf(DrupalDriverManagerInterface::class);
     }
 
     function it_can_set_and_get_drupal_parameters()
