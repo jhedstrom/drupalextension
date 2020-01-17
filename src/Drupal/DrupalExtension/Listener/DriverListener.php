@@ -6,6 +6,7 @@ use Behat\Behat\EventDispatcher\Event\ExampleTested;
 use Behat\Behat\EventDispatcher\Event\ScenarioLikeTested;
 use Behat\Behat\EventDispatcher\Event\ScenarioTested;
 
+use Behat\Testwork\EventDispatcher\Event\LifecycleEvent;
 use Drupal\DrupalDriverManager;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -44,8 +45,8 @@ class DriverListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return array(
-        ScenarioTested::BEFORE => array('prepareDefaultDrupalDriver', 11),
-        ExampleTested::BEFORE => array('prepareDefaultDrupalDriver', 11),
+            ScenarioTested::BEFORE => array('prepareDefaultDrupalDriver', 11),
+            ExampleTested::BEFORE => array('prepareDefaultDrupalDriver', 11),
         );
     }
 
@@ -56,9 +57,9 @@ class DriverListener implements EventSubscriberInterface
    *
    * Other scenarios get the `default_driver` as the default driver.
    *
-   * @param ScenarioEvent|OutlineEvent $event
+   * @param ScenarioTested|OutlineEvent $event
    */
-    public function prepareDefaultDrupalDriver($event)
+    public function prepareDefaultDrupalDriver(LifecycleEvent $event)
     {
         $feature = $event->getFeature();
         $scenario = $event instanceof ScenarioLikeTested ? $event->getScenario() : $event->getOutline();
