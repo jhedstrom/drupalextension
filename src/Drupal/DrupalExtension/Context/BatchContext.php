@@ -43,10 +43,10 @@ class BatchContext extends RawMinkContext
         // @see SystemQueue::createItem().
         $query = db_insert('queue')
         ->fields([
-        'name' => $fields['name'] ?: user_password(),
-        'data' => serialize(json_decode($fields['data'])),
-        'created' => $fields['created'] ?: REQUEST_TIME,
-        'expire' => $fields['expire'] ?: 0,
+            'name' => $fields['name'] ?: user_password(),
+            'data' => serialize(json_decode($fields['data'])),
+            'created' => $fields['created'] ?: REQUEST_TIME,
+            'expire' => $fields['expire'] ?: 0,
         ]);
         if (!$query->execute()) {
             throw new Exception('Unable to create the queue item.');

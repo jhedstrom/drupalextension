@@ -46,7 +46,7 @@ final class Reader implements EnvironmentReader
    *
    * @var array
    */
-    static protected $subContexts;
+    protected static $subContexts;
 
   /**
    * Register the Drupal driver manager.

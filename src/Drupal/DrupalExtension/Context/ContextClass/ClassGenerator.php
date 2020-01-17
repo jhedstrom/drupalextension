@@ -65,8 +65,8 @@ PHP;
         return strtr(
             static::$template,
             [
-            '{namespace}' => $namespace,
-            '{className}' => $contextClass,
+                '{namespace}' => $namespace,
+                '{className}' => $contextClass,
             ]
         );
     }

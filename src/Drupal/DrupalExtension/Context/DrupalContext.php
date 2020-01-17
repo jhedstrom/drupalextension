@@ -46,9 +46,9 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
         if (!$this->loggedInWithRole($role)) {
             // Create user (and project)
             $user = (object) [
-            'name' => $this->getRandom()->name(8),
-            'pass' => $this->getRandom()->name(16),
-            'role' => $role,
+                'name' => $this->getRandom()->name(8),
+                'pass' => $this->getRandom()->name(16),
+                'role' => $role,
             ];
             $user->mail = "{$user->name}@example.com";
 
@@ -82,9 +82,9 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
         if (!$this->loggedInWithRole($role)) {
             // Create user (and project)
             $user = (object) [
-            'name' => $this->getRandom()->name(8),
-            'pass' => $this->getRandom()->name(16),
-            'role' => $role,
+                'name' => $this->getRandom()->name(8),
+                'pass' => $this->getRandom()->name(16),
+                'role' => $role,
             ];
             $user->mail = "{$user->name}@example.com";
 
@@ -135,9 +135,9 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
 
         // Create user.
         $user = (object) [
-        'name' => $this->getRandom()->name(8),
-        'pass' => $this->getRandom()->name(16),
-        'role' => $role,
+            'name' => $this->getRandom()->name(8),
+            'pass' => $this->getRandom()->name(16),
+            'role' => $role,
         ];
         $user->mail = "{$user->name}@example.com";
         $this->userCreate($user);
@@ -246,8 +246,8 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
     {
         // @todo make this easily extensible.
         $node = (object) [
-        'title' => $title,
-        'type' => $type,
+            'title' => $title,
+            'type' => $type,
         ];
         $saved = $this->nodeCreate($node);
         // Set internal page on the new node.
@@ -266,10 +266,10 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
         }
 
         $node = (object) [
-        'title' => $title,
-        'type' => $type,
-        'body' => $this->getRandom()->name(255),
-        'uid' => $this->getUserManager()->getCurrentUser()->uid,
+            'title' => $title,
+            'type' => $type,
+            'body' => $this->getRandom()->name(255),
+            'uid' => $this->getUserManager()->getCurrentUser()->uid,
         ];
         $saved = $this->nodeCreate($node);
 
@@ -307,7 +307,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
     public function assertViewingNode($type, TableNode $fields)
     {
         $node = (object) [
-        'type' => $type,
+            'type' => $type,
         ];
         foreach ($fields->getRowsHash() as $field => $value) {
             $node->{$field} = $value;
@@ -327,8 +327,8 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
     public function assertEditNodeOfType($type)
     {
         $node = (object) [
-        'type' => $type,
-        'title' => "Test $type",
+            'type' => $type,
+            'title' => "Test $type",
         ];
         $saved = $this->nodeCreate($node);
 
@@ -350,9 +350,9 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
     {
         // @todo make this easily extensible.
         $term = (object) [
-        'name' => $name,
-        'vocabulary_machine_name' => $vocabulary,
-        'description' => $this->getRandom()->name(255),
+            'name' => $name,
+            'vocabulary_machine_name' => $vocabulary,
+            'description' => $this->getRandom()->name(255),
         ];
         $saved = $this->termCreate($term);
 
@@ -435,7 +435,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
     {
         foreach ($langcodesTable->getHash() as $row) {
             $language = (object) [
-            'langcode' => $row['languages'],
+                'langcode' => $row['languages'],
             ];
             $this->languageCreate($language);
         }

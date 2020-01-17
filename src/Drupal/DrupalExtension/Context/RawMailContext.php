@@ -175,8 +175,8 @@ class RawMailContext extends RawDrupalContext
                 $prettyActualMail = [];
                 foreach ($actualMail as $singleActualMail) {
                     $prettyActualMail[] = [
-                    'to' => $singleActualMail['to'],
-                    'subject' => $singleActualMail['subject'],
+                        'to' => $singleActualMail['to'],
+                        'subject' => $singleActualMail['subject'],
                     ];
                 }
                 throw new \Exception(sprintf("Expected %s mail, but %s found:\n\n%s", $expectedCount, $actualCount, print_r($prettyActualMail, true)));

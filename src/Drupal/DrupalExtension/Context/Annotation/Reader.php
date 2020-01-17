@@ -23,12 +23,12 @@ class Reader implements AnnotationReader
    * @var string[]
    */
     private static $classes = [
-    'afternodecreate' => 'Drupal\DrupalExtension\Hook\Call\AfterNodeCreate',
-    'aftertermcreate' => 'Drupal\DrupalExtension\Hook\Call\AfterTermCreate',
-    'afterusercreate' => 'Drupal\DrupalExtension\Hook\Call\AfterUserCreate',
-    'beforenodecreate' => 'Drupal\DrupalExtension\Hook\Call\BeforeNodeCreate',
-    'beforetermcreate' => 'Drupal\DrupalExtension\Hook\Call\BeforeTermCreate',
-    'beforeusercreate' => 'Drupal\DrupalExtension\Hook\Call\BeforeUserCreate',
+        'afternodecreate' => 'Drupal\DrupalExtension\Hook\Call\AfterNodeCreate',
+        'aftertermcreate' => 'Drupal\DrupalExtension\Hook\Call\AfterTermCreate',
+        'afterusercreate' => 'Drupal\DrupalExtension\Hook\Call\AfterUserCreate',
+        'beforenodecreate' => 'Drupal\DrupalExtension\Hook\Call\BeforeNodeCreate',
+        'beforetermcreate' => 'Drupal\DrupalExtension\Hook\Call\BeforeTermCreate',
+        'beforeusercreate' => 'Drupal\DrupalExtension\Hook\Call\BeforeUserCreate',
     ];
 
   /**

@@ -21,5 +21,6 @@
     </rule>
 
     <rule ref="Generic.Arrays.DisallowLongArraySyntax" />
+    <rule ref="Generic.Arrays.ArrayIndent" />
 
 </ruleset>
