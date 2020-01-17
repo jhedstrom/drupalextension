@@ -2,6 +2,7 @@
 
 namespace spec\Drupal\DrupalExtension\Context;
 
+use Drupal\Driver\DriverInterface;
 use Drupal\DrupalDriverManagerInterface;
 use Drupal\DrupalExtension\Context\DrupalAwareInterface;
 use PhpSpec\ObjectBehavior;
@@ -44,10 +45,11 @@ class RawDrupalContextSpec extends ObjectBehavior
         $this->shouldThrow('Exception')->duringGetDrupalText('No such string');
     }
 
-    function it_can_get_the_current_drupal_driver(DrupalDriverManager $drupal)
+    function it_can_get_the_current_drupal_driver(DrupalDriverManagerInterface $drupal, DriverInterface $driver)
     {
+        $drupal->getDriver($this->an)->willReturn($driver);
         $this->setDrupal($drupal);
-        $this->getDriver();
+        $this->getDriver()->shouldBeAnInstanceOf(DriverInterface::class);
     }
 
 }
