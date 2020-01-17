@@ -204,7 +204,7 @@ JS;
    */
     public function pressKey($char, $field)
     {
-        static $keys = array(
+        static $keys = [
         'backspace' => 8,
         'tab' => 9,
         'enter' => 13,
@@ -226,7 +226,7 @@ JS;
         'pageup' => 33,
         'pagedown' => 34,
         'capslock' => 20,
-        );
+        ];
 
         if (is_string($char)) {
             if (strlen($char) < 1) {
@@ -330,7 +330,7 @@ JS;
     public function assertHeading($heading)
     {
         $element = $this->getSession()->getPage();
-        foreach (array('h1', 'h2', 'h3', 'h4', 'h5', 'h6') as $tag) {
+        foreach (['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] as $tag) {
             $results = $element->findAll('css', $tag);
             foreach ($results as $result) {
                 if ($result->getText() == $heading) {
@@ -347,7 +347,7 @@ JS;
     public function assertNotHeading($heading)
     {
         $element = $this->getSession()->getPage();
-        foreach (array('h1', 'h2', 'h3', 'h4', 'h5', 'h6') as $tag) {
+        foreach (['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] as $tag) {
             $results = $element->findAll('css', $tag);
             foreach ($results as $result) {
                 if ($result->getText() == $heading) {
@@ -455,7 +455,7 @@ JS;
     {
         $regionObj = $this->getRegion($region);
 
-        foreach (array('h1', 'h2', 'h3', 'h4', 'h5', 'h6') as $tag) {
+        foreach (['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] as $tag) {
             $elements = $regionObj->findAll('css', $tag);
             if (!empty($elements)) {
                 foreach ($elements as $element) {
@@ -598,7 +598,7 @@ JS;
     public function assertSelectRadioById($label, $id = '')
     {
         $element = $this->getSession()->getPage();
-        $radiobutton = $id ? $element->findById($id) : $element->find('named', array('radio', $this->getSession()->getSelectorsHandler()->xpathLiteral($label)));
+        $radiobutton = $id ? $element->findById($id) : $element->find('named', ['radio', $this->getSession()->getSelectorsHandler()->xpathLiteral($label)]);
         if ($radiobutton === null) {
             throw new \Exception(sprintf('The radio button with "%s" was not found on the page %s', $id ? $id : $label, $this->getSession()->getCurrentUrl()));
         }
