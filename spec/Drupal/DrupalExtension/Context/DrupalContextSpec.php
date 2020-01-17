@@ -2,19 +2,20 @@
 
 namespace spec\Drupal\DrupalExtension\Context;
 
+use Behat\Behat\Context\TranslatableContext;
+use Drupal\DrupalExtension\Context\RawDrupalContext;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class DrupalContextSpec extends ObjectBehavior
 {
     function it_is_drupal_aware()
     {
-        $this->shouldHaveType('Drupal\DrupalExtension\Context\RawDrupalContext');
+        $this->shouldHaveType(RawDrupalContext::class);
     }
 
     function it_is_a_translatable_context()
     {
-        $this->shouldHaveType('Behat\Behat\Context\TranslatableContext');
+        $this->shouldHaveType(TranslatableContext::class);
     }
 
 }

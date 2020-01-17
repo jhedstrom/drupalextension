@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   * [#488](https://github.com/jhedstrom/drupalextension/issues/488) Authenticate user in the backend bootstrap process on login.
 ### Changed
   * [#563](https://github.com/jhedstrom/drupalextension/issues/563) Test on PHP 7.1 through 7.3 (and use Drush 10), remove testing on PHP 7.0.
+  * [#565](https://github.com/jhedstrom/drupalextension/issues/565) Improved PHPSpec coverage and changed type-hinting to use proper interfaces where necessary.
 ## [4.0.1] 2019-10-08
 ### Fixed
   * [#552](https://github.com/jhedstrom/drupalextension/issue/552) Remove hard-coded symfony/event-dispatcher requirement.

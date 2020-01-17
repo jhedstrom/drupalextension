@@ -10,12 +10,14 @@ use Behat\Testwork\Suite\Suite;
 
 use Drupal\DrupalDriverManager;
 
+use Drupal\DrupalDriverManagerInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class DriverListenerSpec extends ObjectBehavior
 {
-    function let(DrupalDriverManager $drupal, ScenarioTested $event, FeatureNode $feature, ScenarioNode $scenario, Suite $suite, Environment $environment)
+    function let(DrupalDriverManager $drupal, ScenarioTested $event, FeatureNode $feature, ScenarioNode $scenario, Environment $environment)
     {
         $parameters = array(
             'default_driver' => 'blackbox',
@@ -35,10 +37,10 @@ class DriverListenerSpec extends ObjectBehavior
 
     function it_should_be_an_event_subscriber()
     {
-        $this->shouldHaveType('Symfony\Component\EventDispatcher\EventSubscriberInterface');
+        $this->shouldHaveType(EventSubscriberInterface::class);
     }
 
-    function it_resets_the_default_drupal_driver_before_scenarios($event, $drupal, $environment, $feature, $scenario)
+    function it_resets_the_default_drupal_driver_before_scenarios(ScenarioTested $event, DrupalDriverManagerInterface $drupal, Environment $environment, FeatureNode $feature, ScenarioNode $scenario)
     {
         $drupal->setDefaultDriverName('drupal_driver')->shouldBeCalled();
         $drupal->setEnvironment($environment)->shouldBeCalled();
