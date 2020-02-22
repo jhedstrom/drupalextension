@@ -33,7 +33,7 @@ install:
   # can create conflicts.
   # @todo Change test process to require drupalextension from the local folder
   #   to let composer handle compatibility and simulate a more common process.
-  - test ${DRUPAL_VERSION} -eq 8 && COMPOSER_MEMORY_LIMIT=-1 travis_retry composer require "symfony/browser-kit:~3.4" "symfony/dependency-injection:~3.0" "symfony/translation:^3.4"
+  - test ${DRUPAL_VERSION} -ne 8 || COMPOSER_MEMORY_LIMIT=-1 travis_retry composer require "symfony/browser-kit:~3.4" "symfony/dependency-injection:~3.0" "symfony/translation:^3.4"
   # Install drush globally.
   - (test ${DRUPAL_VERSION} -ne 8 && composer global require drush/drush:~8.0 drupal/drupal-driver) || composer global require drush/drush:~10.0
   # Install the Behat Drush Endpoint for Drupal 7 tests.
