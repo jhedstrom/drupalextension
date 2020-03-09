@@ -28,6 +28,12 @@ install:
   # @see https://github.com/jhedstrom/drupalextension/issues/458
   - test ${DRUPAL_VERSION} -ne 8 || COMPOSER_MEMORY_LIMIT=-1 travis_retry composer require drush/drush:~10.0 symfony/dependency-injection:3.4.4
   - composer install
+  # For Drupal 8, change composer.json to require symfony 3.x as conflicting
+  # versions between the separate drupal and drupalextension vendor folders
+  # can create conflicts.
+  # @todo Change test process to require drupalextension from the local folder
+  #   to let composer handle compatibility and simulate a more common process.
+  - test ${DRUPAL_VERSION} -ne 8 || COMPOSER_MEMORY_LIMIT=-1 travis_retry composer require "symfony/browser-kit:~3.4" "symfony/dependency-injection:~3.0" "symfony/translation:^3.4"
   # Install drush globally.
   - (test ${DRUPAL_VERSION} -ne 8 && composer global require drush/drush:~8.0 drupal/drupal-driver) || composer global require drush/drush:~10.0
   # Install the Behat Drush Endpoint for Drupal 7 tests.
