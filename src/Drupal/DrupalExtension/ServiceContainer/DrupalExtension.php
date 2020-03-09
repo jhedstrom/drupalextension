@@ -209,7 +209,7 @@ class DrupalExtension implements ExtensionInterface
     private function loadParameters(ContainerBuilder $container, array $config)
     {
         // Store config in parameters array to be passed into the DrupalContext.
-        $drupal_parameters = array();
+        $drupal_parameters = [];
         foreach ($config as $key => $value) {
             $drupal_parameters[$key] = $value;
         }
@@ -269,7 +269,7 @@ class DrupalExtension implements ExtensionInterface
     {
         if (isset($config['drush']['global_options'])) {
             $definition = $container->getDefinition('drupal.driver.drush');
-            $definition->addMethodCall('setArguments', array($config['drush']['global_options']));
+            $definition->addMethodCall('setArguments', [$config['drush']['global_options']]);
         }
     }
 
@@ -301,7 +301,7 @@ class DrupalExtension implements ExtensionInterface
         $definition = $container->getDefinition('drupal.context.environment.reader');
 
         foreach ($references as $reference) {
-            $definition->addMethodCall('registerContextReader', array($reference));
+            $definition->addMethodCall('registerContextReader', [$reference]);
         }
     }
 

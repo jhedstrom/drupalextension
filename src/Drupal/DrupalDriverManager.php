@@ -28,7 +28,7 @@ class DrupalDriverManager implements DrupalDriverManagerInterface
    *
    * @var \Drupal\Driver\DriverInterface[]
    */
-    private $drivers = array();
+    private $drivers = [];
 
   /**
    * Behat environment.
@@ -43,7 +43,7 @@ class DrupalDriverManager implements DrupalDriverManagerInterface
    * @param \Drupal\Driver\DriverInterface[] $drivers
    *   An array of drivers to register.
    */
-    public function __construct(array $drivers = array())
+    public function __construct(array $drivers = [])
     {
         foreach ($drivers as $name => $driver) {
             $this->registerDriver($name, $driver);

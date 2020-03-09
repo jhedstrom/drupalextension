@@ -69,10 +69,10 @@ class MailContext extends RawMailContext
     public function drupalSendsMail(TableNode $fields)
     {
         $mail = [
-        'body' => $this->getRandom()->name(255),
-        'subject' => $this->getRandom()->name(20),
-        'to' => $this->getRandom()->name(10) . '@anonexample.com',
-        'langcode' => '',
+            'body' => $this->getRandom()->name(255),
+            'subject' => $this->getRandom()->name(20),
+            'to' => $this->getRandom()->name(10) . '@anonexample.com',
+            'langcode' => '',
         ];
         foreach ($fields->getRowsHash() as $field => $value) {
             $mail[$field] = $value;

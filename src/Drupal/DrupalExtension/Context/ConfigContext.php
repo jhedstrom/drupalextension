@@ -29,7 +29,7 @@ class ConfigContext extends RawDrupalContext implements TranslatableContext
    *
    * @var array
    */
-    protected $config = array();
+    protected $config = [];
 
   /**
    * Revert any changed config.
@@ -44,7 +44,7 @@ class ConfigContext extends RawDrupalContext implements TranslatableContext
                 $this->getDriver()->configSet($name, $key, $value);
             }
         }
-        $this->config = array();
+        $this->config = [];
     }
 
   /**
@@ -82,7 +82,7 @@ class ConfigContext extends RawDrupalContext implements TranslatableContext
    */
     public function setComplexConfig($name, $key, TableNode $config_table)
     {
-        $value = array();
+        $value = [];
         foreach ($config_table->getHash() as $row) {
             // Allow json values for extra complexity.
             if (json_decode($row['value'])) {

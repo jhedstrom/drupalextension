@@ -28,7 +28,7 @@ class EventSubscriberPass implements CompilerPassInterface
                 $priority = isset($attribute['priority']) ? intval($attribute['priority']) : 0;
                 $dispatcherDefinition->addMethodCall(
                     'addSubscriber',
-                    array(new Reference($id), $priority)
+                    [new Reference($id), $priority]
                 );
             }
         }

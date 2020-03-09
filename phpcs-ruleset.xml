@@ -20,4 +20,7 @@
         <exclude name="Generic.Files.LineLength.TooLong" />
     </rule>
 
+    <rule ref="Generic.Arrays.DisallowLongArraySyntax" />
+    <rule ref="Generic.Arrays.ArrayIndent" />
+
 </ruleset>

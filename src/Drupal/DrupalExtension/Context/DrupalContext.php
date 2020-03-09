@@ -45,11 +45,11 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
         // Check if a user with this role is already logged in.
         if (!$this->loggedInWithRole($role)) {
             // Create user (and project)
-            $user = (object) array(
-            'name' => $this->getRandom()->name(8),
-            'pass' => $this->getRandom()->name(16),
-            'role' => $role,
-            );
+            $user = (object) [
+                'name' => $this->getRandom()->name(8),
+                'pass' => $this->getRandom()->name(16),
+                'role' => $role,
+            ];
             $user->mail = "{$user->name}@example.com";
 
             $this->userCreate($user);
@@ -57,7 +57,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
             $roles = explode(',', $role);
             $roles = array_map('trim', $roles);
             foreach ($roles as $role) {
-                if (!in_array(strtolower($role), array('authenticated', 'authenticated user'))) {
+                if (!in_array(strtolower($role), ['authenticated', 'authenticated user'])) {
                     // Only add roles other than 'authenticated user'.
                     $this->getDriver()->userAddRole($user, $role);
                 }
@@ -81,11 +81,11 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
         // Check if a user with this role is already logged in.
         if (!$this->loggedInWithRole($role)) {
             // Create user (and project)
-            $user = (object) array(
-            'name' => $this->getRandom()->name(8),
-            'pass' => $this->getRandom()->name(16),
-            'role' => $role,
-            );
+            $user = (object) [
+                'name' => $this->getRandom()->name(8),
+                'pass' => $this->getRandom()->name(16),
+                'role' => $role,
+            ];
             $user->mail = "{$user->name}@example.com";
 
             // Assign fields to user before creation.
@@ -98,7 +98,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
             $roles = explode(',', $role);
             $roles = array_map('trim', $roles);
             foreach ($roles as $role) {
-                if (!in_array(strtolower($role), array('authenticated', 'authenticated user'))) {
+                if (!in_array(strtolower($role), ['authenticated', 'authenticated user'])) {
                     // Only add roles other than 'authenticated user'.
                     $this->getDriver()->userAddRole($user, $role);
                 }
@@ -134,11 +134,11 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
         $role = $this->getDriver()->roleCreate($permissions);
 
         // Create user.
-        $user = (object) array(
-        'name' => $this->getRandom()->name(8),
-        'pass' => $this->getRandom()->name(16),
-        'role' => $role,
-        );
+        $user = (object) [
+            'name' => $this->getRandom()->name(8),
+            'pass' => $this->getRandom()->name(16),
+            'role' => $role,
+        ];
         $user->mail = "{$user->name}@example.com";
         $this->userCreate($user);
 
@@ -245,10 +245,10 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
     public function createNode($type, $title)
     {
         // @todo make this easily extensible.
-        $node = (object) array(
-        'title' => $title,
-        'type' => $type,
-        );
+        $node = (object) [
+            'title' => $title,
+            'type' => $type,
+        ];
         $saved = $this->nodeCreate($node);
         // Set internal page on the new node.
         $this->getSession()->visit($this->locatePath('/node/' . $saved->nid));
@@ -265,12 +265,12 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
             throw new \Exception(sprintf('There is no current logged in user to create a node for.'));
         }
 
-        $node = (object) array(
-        'title' => $title,
-        'type' => $type,
-        'body' => $this->getRandom()->name(255),
-        'uid' => $this->getUserManager()->getCurrentUser()->uid,
-        );
+        $node = (object) [
+            'title' => $title,
+            'type' => $type,
+            'body' => $this->getRandom()->name(255),
+            'uid' => $this->getUserManager()->getCurrentUser()->uid,
+        ];
         $saved = $this->nodeCreate($node);
 
         // Set internal page on the new node.
@@ -306,9 +306,9 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
    */
     public function assertViewingNode($type, TableNode $fields)
     {
-        $node = (object) array(
-        'type' => $type,
-        );
+        $node = (object) [
+            'type' => $type,
+        ];
         foreach ($fields->getRowsHash() as $field => $value) {
             $node->{$field} = $value;
         }
@@ -326,10 +326,10 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
    */
     public function assertEditNodeOfType($type)
     {
-        $node = (object) array(
-        'type' => $type,
-        'title' => "Test $type",
-        );
+        $node = (object) [
+            'type' => $type,
+            'title' => "Test $type",
+        ];
         $saved = $this->nodeCreate($node);
 
         // Set internal browser on the node edit page.
@@ -349,11 +349,11 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
     public function createTerm($vocabulary, $name)
     {
         // @todo make this easily extensible.
-        $term = (object) array(
-        'name' => $name,
-        'vocabulary_machine_name' => $vocabulary,
-        'description' => $this->getRandom()->name(255),
-        );
+        $term = (object) [
+            'name' => $name,
+            'vocabulary_machine_name' => $vocabulary,
+            'description' => $this->getRandom()->name(255),
+        ];
         $saved = $this->termCreate($term);
 
         // Set internal page on the term.
@@ -374,7 +374,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
     {
         foreach ($usersTable->getHash() as $userHash) {
             // Split out roles to process after user is created.
-            $roles = array();
+            $roles = [];
             if (isset($userHash['roles'])) {
                 $roles = explode(',', $userHash['roles']);
                 $roles = array_filter(array_map('trim', $roles));
@@ -434,9 +434,9 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
     public function createLanguages(TableNode $langcodesTable)
     {
         foreach ($langcodesTable->getHash() as $row) {
-            $language = (object) array(
-            'langcode' => $row['languages'],
-            );
+            $language = (object) [
+                'langcode' => $row['languages'],
+            ];
             $this->languageCreate($language);
         }
     }

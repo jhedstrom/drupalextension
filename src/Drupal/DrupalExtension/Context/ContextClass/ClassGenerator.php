@@ -64,10 +64,10 @@ PHP;
 
         return strtr(
             static::$template,
-            array(
-            '{namespace}' => $namespace,
-            '{className}' => $contextClass,
-            )
+            [
+                '{namespace}' => $namespace,
+                '{className}' => $contextClass,
+            ]
         );
     }
 }

@@ -27,7 +27,7 @@ final class Reader implements EnvironmentReader
   /**
    * @var ContextReader[]
    */
-    private $contextReaders = array();
+    private $contextReaders = [];
 
   /**
    * Drupal driver manager.
@@ -46,7 +46,7 @@ final class Reader implements EnvironmentReader
    *
    * @var array
    */
-    static protected $subContexts;
+    protected static $subContexts;
 
   /**
    * Register the Drupal driver manager.
@@ -88,7 +88,7 @@ final class Reader implements EnvironmentReader
             ), $environment);
         }
 
-        $callees = array();
+        $callees = [];
         if (!$environment instanceof UninitializedContextEnvironment) {
             return $callees;
         }
@@ -111,7 +111,7 @@ final class Reader implements EnvironmentReader
                 );
 
                 // Register context.
-                $environment->registerContextClass($contextClass, array($this->drupal));
+                $environment->registerContextClass($contextClass, [$this->drupal]);
             }
         }
 
@@ -128,7 +128,7 @@ final class Reader implements EnvironmentReader
      */
     private function readContextCallees(ContextEnvironment $environment, $contextClass)
     {
-        $callees = array();
+        $callees = [];
         foreach ($this->contextReaders as $loader) {
             $callees = array_merge(
                 $callees,
@@ -144,11 +144,11 @@ final class Reader implements EnvironmentReader
    */
     private function findSubContextClasses()
     {
-        $class_names = array();
+        $class_names = [];
 
         // Initialize any available sub-contexts.
         if (isset($this->parameters['subcontexts'])) {
-            $paths = array();
+            $paths = [];
             // Drivers may specify paths to subcontexts.
             if ($this->parameters['subcontexts']['autoload']) {
                 foreach ($this->drupal->getDrivers() as $name => $driver) {
@@ -208,7 +208,7 @@ final class Reader implements EnvironmentReader
             return static::$subContexts[$pattern][$path];
         }
 
-        static::$subContexts[$pattern][$path] = array();
+        static::$subContexts[$pattern][$path] = [];
 
         $fileIterator = new RegexIterator(
             new RecursiveIteratorIterator(

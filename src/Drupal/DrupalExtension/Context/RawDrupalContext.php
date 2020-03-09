@@ -63,28 +63,28 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
    *
    * @var array
    */
-    protected $nodes = array();
+    protected $nodes = [];
 
   /**
    * Keep track of all terms that are created so they can easily be removed.
    *
    * @var array
    */
-    protected $terms = array();
+    protected $terms = [];
 
   /**
    * Keep track of any roles that are created so they can easily be removed.
    *
    * @var array
    */
-    protected $roles = array();
+    protected $roles = [];
 
   /**
    * Keep track of any languages that are created so they can easily be removed.
    *
    * @var array
    */
-    protected $languages = array();
+    protected $languages = [];
 
   /**
    * {@inheritDoc}
@@ -228,7 +228,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
         // On Drupal 8 the timestamps should be in UNIX time.
         switch ($api_version) {
             case 8:
-                foreach (array('changed', 'created', 'revision_timestamp') as $field) {
+                foreach (['changed', 'created', 'revision_timestamp'] as $field) {
                     if (!empty($node->$field) && !is_numeric($node->$field)) {
                         $node->$field = strtotime($node->$field);
                     }
@@ -248,7 +248,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
         foreach ($this->nodes as $node) {
             $this->getDriver()->nodeDelete($node);
         }
-        $this->nodes = array();
+        $this->nodes = [];
     }
 
   /**
@@ -285,7 +285,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
         foreach ($this->terms as $term) {
             $this->getDriver()->termDelete($term);
         }
-        $this->terms = array();
+        $this->terms = [];
     }
 
   /**
@@ -299,7 +299,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
         foreach ($this->roles as $rid) {
             $this->getDriver()->roleDelete($rid);
         }
-        $this->roles = array();
+        $this->roles = [];
     }
 
   /**
@@ -397,7 +397,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
     public function parseEntityFields($entity_type, \stdClass $entity)
     {
         $multicolumn_field = '';
-        $multicolumn_fields = array();
+        $multicolumn_fields = [];
 
         foreach (clone $entity as $field => $field_value) {
             // Reset the multicolumn field if the field name does not contain a column.
@@ -421,13 +421,13 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
             $field_name = $multicolumn_field ?: $field;
             if ($this->getDriver()->isField($entity_type, $field_name)) {
                 // Split up multiple values in multi-value fields.
-                $values = array();
+                $values = [];
                 foreach (str_getcsv($field_value) as $key => $value) {
                     $value = trim($value);
                     $columns = $value;
                     // Split up field columns if the ' - ' separator is present.
                     if (strstr($value, ' - ') !== false) {
-                        $columns = array();
+                        $columns = [];
                         foreach (explode(' - ', $value) as $column) {
                             // Check if it is an inline named column.
                             if (!$is_multicolumn && strpos($column, ': ', 1) !== false) {

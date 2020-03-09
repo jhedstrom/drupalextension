@@ -44,10 +44,10 @@ class DriverListener implements EventSubscriberInterface
    */
     public static function getSubscribedEvents()
     {
-        return array(
-            ScenarioTested::BEFORE => array('prepareDefaultDrupalDriver', 11),
-            ExampleTested::BEFORE => array('prepareDefaultDrupalDriver', 11),
-        );
+        return [
+            ScenarioTested::BEFORE => ['prepareDefaultDrupalDriver', 11],
+            ExampleTested::BEFORE => ['prepareDefaultDrupalDriver', 11],
+        ];
     }
 
   /**
