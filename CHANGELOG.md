@@ -6,11 +6,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+## [4.1.0]
 ### Added
   * [#488](https://github.com/jhedstrom/drupalextension/issues/488) Authenticate user in the backend bootstrap process on login.
 ### Changed
   * [#563](https://github.com/jhedstrom/drupalextension/issues/563) Test on PHP 7.1 through 7.3 (and use Drush 10), remove testing on PHP 7.0.
   * [#565](https://github.com/jhedstrom/drupalextension/issues/565) Improved PHPSpec coverage and changed type-hinting to use proper interfaces where necessary.
+  * [#569](https://github.com/jhedstrom/drupalextension/pull/569) Drupal 9 support by allowing Symfony 4.
+### Fixed
+  * [#561](https://github.com/jhedstrom/drupalextension/pull/561) Add space around keyword to avoid incorrect matching.
 ## [4.0.1] 2019-10-08
 ### Fixed
   * [#552](https://github.com/jhedstrom/drupalextension/issue/552) Remove hard-coded symfony/event-dispatcher requirement.
@@ -118,7 +122,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   * [#437](https://github.com/jhedstrom/drupalextension/pull/437): Radio button selector fix.
   * [#439](https://github.com/jhedstrom/drupalextension/pull/439): Symfony 3 compatibility follow-up fix.
 
-[Unreleased]: https://github.com/jhedstrom/drupalextension/compare/v4.0.1...HEAD
+[Unreleased]: https://github.com/jhedstrom/drupalextension/compare/v4.1.0...HEAD
+[4.1.0]: https://github.com/jhedstrom/drupalextension/compare/v4.0.1...v4.1.0
 [4.0.1]: https://github.com/jhedstrom/drupalextension/compare/v4.0.0...v4.0.1
 [4.0.0]: https://github.com/jhedstrom/drupalextension/compare/v4.0.0rc1...v4.0.0
 [4.0.0 rc1]: https://github.com/jhedstrom/drupalextension/compare/v4.0.0beta2...v4.0.0rc1
