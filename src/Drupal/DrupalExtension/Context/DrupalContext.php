@@ -35,7 +35,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
   /**
    * Creates and authenticates a user with the given role(s).
    *
-   * @Given I am logged in as a user with the :role role(s)
+   * @Given I am logged in as a user with the :role role
    * @Given I am logged in as a/an :role
    */
   public function assertAuthenticatedByRole($role) {
@@ -71,7 +71,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    * | field_user_surname  | Smith |
    * | ...                 | ...   |
    *
-   * @Given I am logged in as a user with the :role role(s) and I have the following fields:
+   * @Given I am logged in as a user with the :role role and I have the following fields:
    */
   public function assertAuthenticatedByRoleWithGivenFields($role, TableNode $fields) {
     // Check if a user with this role is already logged in.
