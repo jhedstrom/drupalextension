@@ -26,7 +26,7 @@ install:
   # @see https://github.com/jhedstrom/drupalextension/issues/413
   # @todo Re-enable behat drush endpoint testing.
   # @see https://github.com/jhedstrom/drupalextension/issues/458
-  - test ${DRUPAL_VERSION} -ne 8 || COMPOSER_MEMORY_LIMIT=-1 travis_retry composer require drush/drush:~10.0 symfony/dependency-injection:3.4.4
+  - test ${DRUPAL_VERSION} -ne 8 || COMPOSER_MEMORY_LIMIT=-1 travis_retry composer require drush/drush:~10.0
   - composer install
   # For Drupal 8, change composer.json to require symfony 3.x as conflicting
   # versions between the separate drupal and drupalextension vendor folders
@@ -45,8 +45,8 @@ install:
 
 before_script:
   # Define the module path according to the Drupal version being tested.
-  - test ${DRUPAL_VERSION} -ne 8 || export MODULE_PATH="drupal/modules"
-  - test ${DRUPAL_VERSION} -eq 8 || export MODULE_PATH="drupal/sites/all/modules" && mkdir -p ${MODULE_PATH}
+  - test ${DRUPAL_VERSION} -lt 8 || export MODULE_PATH="drupal/modules"
+  - test ${DRUPAL_VERSION} -ge 8 || export MODULE_PATH="drupal/sites/all/modules" && mkdir -p ${MODULE_PATH}
   # Set sendmail so drush doesn't throw an error during site install.
   - echo "sendmail_path='true'" >> `php --ini | grep "Loaded Configuration" | awk '{print $4}'`
   - mysql -e 'create database drupal'
@@ -54,9 +54,10 @@ before_script:
   # For Drush 9, dl is deprecated so we must use composer. However, we still
   # cannot simply require drupal/drupal since it hardcodes it's autoloader
   # and we'd need to use drupal-scaffold, etc, etc.
-  - test ${DRUPAL_VERSION} -eq 8 || drush dl --quiet --yes drupal-${DRUPAL_VERSION}.x --all --drupal-project-rename=drupal
-  - test ${DRUPAL_VERSION} -ne 8 || (mkdir -p tmp && cd tmp && composer require --no-interaction drupal/drupal && cd - && rm -rf drupal && mv tmp/vendor/drupal/drupal ./drupal && cd drupal && composer install && cd - && rm -rf tmp)
-  - drush --yes --root=$PWD/drupal site-install --db-url=mysql://travis:@127.0.0.1/drupal
+  - test ${DRUPAL_VERSION} -ge 8 || drush dl --quiet --yes drupal-${DRUPAL_VERSION}.x --all --drupal-project-rename=drupal
+  - test ${DRUPAL_VERSION} -lt 8 || (rm -rf drupal && mkdir -p drupal && cd drupal && composer require --no-interaction --dev --no-update drupal/core-recommended:^${DRUPAL_VERSION} drupal/core-composer-scaffold:^${DRUPAL_VERSION} drush/drush && composer install && cd ..)
+  # Install Drupal
+  - ls -l drupal && cat drupal/composer.json && drush --yes --root=$PWD/drupal site-install --db-url=mysql://travis:@127.0.0.1/drupal
   # Copy the static HTML that is used for blackbox testing in the web root.
   - cp -r fixtures/blackbox $PWD/drupal
   # Copy our test module to the correct location.
