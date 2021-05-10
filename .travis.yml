@@ -37,7 +37,7 @@ install:
   # Install drush globally.
   - (test ${DRUPAL_VERSION} -lt 8 && composer global require drush/drush:~8.0 drupal/drupal-driver) || composer global require drush/drush:~10.0
   # Install the Behat Drush Endpoint for Drupal 7 tests.
-  - test ${DRUPAL_VERSION} -gt 7 || (git clone https://github.com/drush-ops/behat-drush-endpoint.git drush/behat-drush-endpoint && (cd drush/behat-drush-endpoint && composer install && cd -))
+  - test ${DRUPAL_VERSION} -gt 7 || (git clone https://github.com/drush-ops/behat-drush-endpoint.git drush/behat-drush-endpoint && (cd drush/behat-drush-endpoint && composer install --no-dev && cd -))
   # Pin node version.
   # @see http://austinpray.com/ops/2015/09/20/change-travis-node-version.html
   - rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm && (cd ~/.nvm && git checkout `git describe --abbrev=0 --tags`) && source ~/.nvm/nvm.sh && nvm install $TRAVIS_NODE_VERSION
