@@ -55,7 +55,7 @@ before_script:
   # and we'd need to use drupal-scaffold, etc, etc.
   - test ${DRUPAL_VERSION} -ge 8 || drush dl --quiet --yes drupal-${DRUPAL_VERSION}.x --all --drupal-project-rename=drupal
   # Install Drupal.
-  - ls -l drupal && drush --yes --root=$PWD/drupal site-install --db-url=mysql://travis:@127.0.0.1/drupal
+  - drush --yes --root=$PWD/drupal site-install --db-url=mysql://travis:@127.0.0.1/drupal --debug
   # Copy the static HTML that is used for blackbox testing in the web root.
   - cp -r fixtures/blackbox $PWD/drupal
   # Copy our test module to the correct location.
