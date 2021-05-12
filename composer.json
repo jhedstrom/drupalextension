@@ -33,6 +33,7 @@
     "symfony/translation": "^3.4|~4.4"
   },
   "require-dev": {
+    "composer/installers": "^1.2",
     "drupal/coder": "^8.3",
     "drupal/core-composer-scaffold": "^9.1",
     "drupal/core-recommended": "^9.1",
