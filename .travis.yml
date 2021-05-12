@@ -26,8 +26,9 @@ install:
   # @see https://github.com/jhedstrom/drupalextension/issues/413
   # @todo Re-enable behat drush endpoint testing.
   # @see https://github.com/jhedstrom/drupalextension/issues/458
-  - test ${DRUPAL_VERSION} -ne 8 || COMPOSER_MEMORY_LIMIT=-1 travis_retry composer require drush/drush:^10
-  - test ${DRUPAL_VERSION} -lt 8 || (composer require --no-interaction --dev --no-update drupal/core-recommended:^${DRUPAL_VERSION} drupal/core-composer-scaffold:^${DRUPAL_VERSION} drush/drush:^10)
+  - test ${DRUPAL_VERSION} -lt 8 || composer require --no-interaction --dev --no-update drupal/core-recommended:^${DRUPAL_VERSION} drupal/core-composer-scaffold:^${DRUPAL_VERSION} drush/drush:^10
+  # Remove core/drush deps for Drupal 7.
+  - test ${DRUPAL_VERSION} -ge 8 || composer remove --dev drush/drush drupal/core-recommended drupal/core-composer-scaffold
   - composer install
   # For Drupal 8, change composer.json to require symfony 3.x as conflicting
   # versions between the separate drupal and drupalextension vendor folders
