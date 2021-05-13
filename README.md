@@ -7,9 +7,9 @@ sites.
 
 [![Build Status](https://travis-ci.org/jhedstrom/drupalextension.png?branch=master)](https://travis-ci.org/jhedstrom/drupalextension)
 
-The Drupal Extension 4.x supports Drupal 6, 7 and 8, utilizes Behat 3.2+ and
-runs on PHP 5.5+. It is compatible with Symfony components 2.x as well as 3.x
-so it can be used on Drupal 8.4.x.
+The Drupal Extension 4.x supports Drupal 7, 8, and 9, utilizes Behat 3.2+ and
+runs on PHP 7.3+. It is compatible with Symfony components 3.x as well as 4.x
+so it can be used on Drupal 8 and 9.
 
 [![Latest Stable Version](https://poser.pugx.org/drupal/drupal-extension/v/stable.svg)](https://packagist.org/packages/drupal/drupal-extension)
 [![Total Downloads](https://poser.pugx.org/drupal/drupal-extension/downloads.svg)](https://packagist.org/packages/drupal/drupal-extension)
@@ -102,30 +102,3 @@ See [CHANGELOG](CHANGELOG.md).
 
 Features and bug fixes are welcome! First-time contributors can jump in with the
 issues tagged [good first issue](https://github.com/jhedstrom/drupalextension/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22).
-
-### Backwards incompatible changes
-
-Starting with 3.3.0 Behat Drupal Extension depends on Behat 3.2.0 which
-requires all callbacks to be defined as static methods.
-
-Before 3.3.0:
-
-```
-/**
- * @afterUserCreate
- */
-public function afterUserCreate(EntityScope $scope) {
-  // ...
-}
-```
-
-Starting with 3.3.0:
-
-```
-/**
- * @afterUserCreate
- */
-public static function afterUserCreate(EntityScope $scope) {
-  // ...
-}
-```
