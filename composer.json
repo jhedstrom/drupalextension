@@ -19,7 +19,6 @@
       "homepage": "https://github.com/pfrenssen"
     }
   ],
-  "minimum-stability": "dev",
   "prefer-stable": true,
   "require": {
     "behat/behat": "~3.2",
