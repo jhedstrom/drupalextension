@@ -1,0 +1,18 @@
+# Schema for the configuration files of the Behat Test module.
+
+field.value.behat_test_address_field:
+  type: mapping
+  label: 'Default value'
+  mapping:
+    country:
+      type: string
+      label: 'Country'
+    locality:
+      type: string
+      label: 'Locality'
+    thoroughfare:
+      type: string
+      label: 'Thoroughfare'
+    postal_code:
+      type: string
+      label: 'Postal code'

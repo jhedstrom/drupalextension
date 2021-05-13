@@ -19,7 +19,6 @@
       "homepage": "https://github.com/pfrenssen"
     }
   ],
-  "minimum-stability": "dev",
   "prefer-stable": true,
   "require": {
     "behat/behat": "~3.2",
@@ -33,9 +32,13 @@
     "symfony/translation": "^3.4|~4.4"
   },
   "require-dev": {
-    "phpspec/phpspec": "~2.0 || ~4.0",
+    "composer/installers": "^1.2",
+    "drupal/coder": "^8.3",
+    "drupal/core-composer-scaffold": "^9.1",
+    "drupal/core-recommended": "^9.1",
+    "drush/drush": "^10.5",
     "jakub-onderka/php-parallel-lint": "^0.9.2",
-    "drupal/coder": "^8.3"
+    "phpspec/phpspec": "^4.0 || ^6.0"
   },
   "scripts": {
     "test": [
@@ -58,6 +61,16 @@
   "extra": {
     "branch-alias": {
       "dev-master": "4.1.x-dev"
+    },
+    "installer-paths": {
+      "drupal/core": [
+        "type:drupal-core"
+      ]
+    },
+    "drupal-scaffold": {
+      "locations": {
+        "web-root": "drupal/"
+      }
     }
-  }
+}
 }

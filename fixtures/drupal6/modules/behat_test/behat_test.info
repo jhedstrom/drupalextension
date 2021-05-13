@@ -1,3 +1,0 @@
-name = Behat test
-description = Test feature exposing basic configuration for Behat Drupal extension test.
-core = 6.x

@@ -1,0 +1,71 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.post.body
+    - field.field.node.post.field_post_address
+    - field.field.node.post.field_post_date
+    - field.field.node.post.field_post_links
+    - field.field.node.post.field_post_reference
+    - field.field.node.post.field_post_select
+    - node.type.post
+  module:
+    - datetime
+    - link
+    - options
+    - text
+    - user
+id: node.post.default
+targetEntityType: node
+bundle: post
+mode: default
+content:
+  links:
+    weight: 100
+    settings: {  }
+    third_party_settings: {  }
+  body:
+    label: hidden
+    type: text_default
+    weight: 101
+    settings: {  }
+    third_party_settings: {  }
+  field_post_reference:
+    weight: 102
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+  field_post_address:
+    weight: 107
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: behat_test_address_field
+  field_post_date:
+    weight: 103
+    label: above
+    settings:
+      timezone_override: ''
+      date_format: 'l, F j, Y'
+    third_party_settings: {  }
+    type: datetime_custom
+  field_post_select:
+    weight: 105
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: list_default
+  field_post_links:
+    weight: 106
+    label: above
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    type: link
+hidden: {  }
