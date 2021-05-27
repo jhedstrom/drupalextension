@@ -1,0 +1,7 @@
+langcode: en
+status: true
+dependencies: {  }
+id: user_comments
+label: 'User comments'
+target_entity_type_id: user
+description: ''
