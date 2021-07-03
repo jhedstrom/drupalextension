@@ -26,6 +26,7 @@ Feature: Test DrupalContext
   Scenario: Submit a form in a region
     Given I am on the homepage
     When I fill in "Search…" with "Views" in the "navigation" region
+    And I check "extra" in the "navigation" region
     And I press "Search" in the "navigation" region
     Then I should see the text "Search again" in the "right sidebar" region
 
