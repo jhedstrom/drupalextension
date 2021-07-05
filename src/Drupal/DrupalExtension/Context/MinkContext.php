@@ -103,7 +103,7 @@ class MinkContext extends MinkExtension implements TranslatableContext
             return;
         }
         $text = $event->getStep()->getText();
-        if (preg_match('/\b(follow|press|click|submit)\b/i', $text)) {
+        if (preg_match('/\b(follow|press|click|submit|attach)\b/i', $text)) {
             $this->iWaitForAjaxToFinish($event);
         }
     }
@@ -120,7 +120,7 @@ class MinkContext extends MinkExtension implements TranslatableContext
             return;
         }
         $text = $event->getStep()->getText();
-        if (preg_match('/\b(follow|press|click|submit)\b/i', $text)) {
+        if (preg_match('/\b(follow|press|click|submit|attach)\b/i', $text)) {
             $this->iWaitForAjaxToFinish($event);
         }
     }
