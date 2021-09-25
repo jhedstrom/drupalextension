@@ -619,7 +619,7 @@ JS;
     public function iExpandDetailsByLabel($summary)
     {
         $page = $this->getSession()->getPage();
-        $element = $page->find('xpath', "//details/summary[@aria-expanded='false']/*[text()='$summary']");
+        $element = $page->find('xpath', "//details/summary[@aria-expanded='false'][text()][contains(., '$summary')]");
         if (empty($element)) {
             throw new \Exception("Unable to find details element containing text $summary");
         }
