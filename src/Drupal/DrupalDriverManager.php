@@ -64,7 +64,12 @@ class DrupalDriverManager implements DrupalDriverManagerInterface
      */
     public function getDriver($name = null)
     {
-        $name = strtolower($name) ?: $this->defaultDriverName;
+        if (null === $name) {
+            $name = $this->defaultDriverName;
+        }
+        else {
+            $name = strtolower($name);
+        }
 
         if (null === $name) {
             throw new \InvalidArgumentException('Specify a Drupal driver to get.');
