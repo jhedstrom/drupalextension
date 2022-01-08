@@ -147,7 +147,7 @@ class MinkContext extends MinkExtension implements TranslatableContext
       return (
         // Assert no AJAX request is running (via jQuery or Drupal) and no
         // animation is running.
-        (typeof jQuery === 'undefined' || (jQuery.active === 0 && jQuery(':animated').length === 0)) &&
+        (typeof jQuery === 'undefined' || jQuery.hasOwnProperty('active') === false || (jQuery.active === 0 && jQuery(':animated').length === 0)) &&
         d7_not_ajaxing && d8_not_ajaxing
       );
     }());
