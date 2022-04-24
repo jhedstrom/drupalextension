@@ -23,7 +23,7 @@
   "require": {
     "behat/behat": "~3.2",
     "behat/mink": "~1.5",
-    "behat/mink-extension": "~2.0",
+    "friends-of-behat/mink-extension": "^2",
     "behat/mink-goutte-driver": "~1.0",
     "behat/mink-selenium2-driver": "~1.1",
     "drupal/drupal-driver": "^2.1.0",
