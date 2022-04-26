@@ -44,7 +44,7 @@ class MailContext extends RawMailContext
    * Allow opting in to mail collection. When using the default mail manager
    * service, it is not necessary to use this tag.
    *
-   * @BeforeScenario @mail @email
+   * @BeforeScenario @mail,@email
    */
     public function collectMail()
     {
@@ -54,7 +54,7 @@ class MailContext extends RawMailContext
   /**
    * Stop collecting mail at scenario end.
    *
-   * @AfterScenario @mail @email
+   * @AfterScenario @mail,@email
    */
     public function stopCollectingMail()
     {
@@ -143,7 +143,7 @@ class MailContext extends RawMailContext
         $count = $count === 'an' ? 1 : $count;
         $this->assertMailCount($actualMail, $count);
     }
-  
+
   /**
    * @When I follow the link to :urlFragment from the (e)mail
    * @When I follow the link to :urlFragment from the (e)mail to :to
