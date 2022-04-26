@@ -3,6 +3,8 @@ language: php
 php:
   - 7.3
   - 7.4
+  - 8.0
+  - 8.1
 
 env:
   global:
@@ -10,7 +12,6 @@ env:
     - TRAVIS_NODE_VERSION="4.0.0"
   matrix:
     - DRUPAL_VERSION=7
-    - DRUPAL_VERSION=8
     - DRUPAL_VERSION=9
 
 # Enable Travis containers.

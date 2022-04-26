@@ -38,7 +38,7 @@ class AddressFieldWidget extends WidgetBase {
       $element[$key] = [
         '#type' => 'textfield',
         '#title' => $title,
-        '#default_value' => isset($items[$delta]->$key) ? $items[$delta]->$key : '',
+        '#default_value' => $items[$delta]->$key ?? '',
       ];
     }
 

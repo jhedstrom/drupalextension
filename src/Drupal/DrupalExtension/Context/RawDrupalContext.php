@@ -423,7 +423,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
                 // Split up multiple values in multi-value fields.
                 $values = [];
                 foreach (str_getcsv($field_value) as $key => $value) {
-                    $value = trim($value);
+                    $value = trim((string) $value);
                     $columns = $value;
                     // Split up field columns if the ' - ' separator is present.
                     if (strstr($value, ' - ') !== false) {
