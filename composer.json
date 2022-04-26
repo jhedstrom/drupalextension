@@ -58,6 +58,7 @@
       "Drupal\\MinkExtension": "src/"
     }
   },
+  "extra": {
     "installer-paths": {
       "drupal/core": [
         "type:drupal-core"
