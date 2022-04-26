@@ -5,7 +5,7 @@ The Drupal Extension is an integration layer between [Behat](http://behat.org),
 provides step definitions for common testing scenarios specific to Drupal
 sites.
 
-[![Build Status](https://travis-ci.com/jhedstrom/drupalextension.png?branch=master)](https://travis-ci.com/jhedstrom/drupalextension)
+[![Build Status](https://app.travis-ci.com/jhedstrom/drupalextension.svg?branch=master)](https://app.travis-ci.com/github/jhedstrom/drupalextension)
 
 The Drupal Extension 4.x supports Drupal 7, 8, and 9, utilizes Behat 3.2+ and
 runs on PHP 7.3+. It is compatible with Symfony components 3.x as well as 4.x
