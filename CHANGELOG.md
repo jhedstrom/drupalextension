@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+## [4.2.0]
+### Added
+  * [#606](https://github.com/jhedstrom/drupalextension/pull/606) Added PHP 8.1 support.
+### Changed
+  * Removed Drupal 6 test fixtures
+### Fixed
+  * [#600](https://github.com/jhedstrom/drupalextension/issues/600) Removes whitespace in tags.
+  * [#603](https://github.com/jhedstrom/drupalextension/pull/603) Test for jQuery.hasOwnProperty('active').
 ## [4.1.0]
 ### Added
   * [#488](https://github.com/jhedstrom/drupalextension/issues/488) Authenticate user in the backend bootstrap process on login.
@@ -122,7 +130,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   * [#437](https://github.com/jhedstrom/drupalextension/pull/437): Radio button selector fix.
   * [#439](https://github.com/jhedstrom/drupalextension/pull/439): Symfony 3 compatibility follow-up fix.
 
-[Unreleased]: https://github.com/jhedstrom/drupalextension/compare/v4.1.0...HEAD
+[Unreleased]: https://github.com/jhedstrom/drupalextension/compare/v4.2.0...HEAD
+[4.2.0]: https://github.com/jhedstrom/drupalextension/compare/v4.1.0...v4.2.0
 [4.1.0]: https://github.com/jhedstrom/drupalextension/compare/v4.0.1...v4.1.0
 [4.0.1]: https://github.com/jhedstrom/drupalextension/compare/v4.0.0...v4.0.1
 [4.0.0]: https://github.com/jhedstrom/drupalextension/compare/v4.0.0rc1...v4.0.0
