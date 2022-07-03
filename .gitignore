@@ -7,3 +7,5 @@ behat.yml
 /package-lock.json
 /node_modules
 /.docksal
+/.editorconfig
+/.gitattributes
