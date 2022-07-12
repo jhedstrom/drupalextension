@@ -91,6 +91,10 @@ Feature: Test DrupalContext
     And the "blackbox" tag should be present
     But the "nonexisting" tag should not be present
 
-  Scenario: Regression test https://www.drupal.org/project/drupal/issues/3175718
+  Scenario: Regression test. See:
+    - https://github.com/minkphp/MinkBrowserKitDriver/issues/153
+    - https://www.drupal.org/project/drupal/issues/3175718
+    - https://www.drupal.org/project/drupal/issues/3295472
+    - https://github.com/jhedstrom/drupalextension/pull/612
     Given I am on the homepage
     Then I should not see "This text shouldn't be visible"
