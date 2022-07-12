@@ -41,12 +41,6 @@ class DrupalExtension implements ExtensionInterface
     public function __construct(ServiceProcessor $processor = null)
     {
         $this->processor = $processor ? : new ServiceProcessor();
-
-        // Workaround a bug in BrowserKitDriver that wrongly considers as text
-        // of the page, pieces of texts inside the <head> section.
-        // @see https://github.com/minkphp/MinkBrowserKitDriver/issues/153
-        // @see https://www.drupal.org/project/drupal/issues/3175718
-        class_alias('\Drupal\DocumentElement', '\Behat\Mink\Element\DocumentElement', true);
     }
 
   /**
@@ -69,6 +63,12 @@ class DrupalExtension implements ExtensionInterface
    */
     public function load(ContainerBuilder $container, array $config)
     {
+        // Workaround a bug in BrowserKitDriver that wrongly considers as text
+        // of the page, pieces of texts inside the <head> section.
+        // @see https://github.com/minkphp/MinkBrowserKitDriver/issues/153
+        // @see https://www.drupal.org/project/drupal/issues/3175718
+        class_alias('\Drupal\DocumentElement', '\Behat\Mink\Element\DocumentElement', true);
+
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/config'));
         $loader->load('services.yml');
         $container->setParameter('drupal.drupal.default_driver', $config['default_driver']);
