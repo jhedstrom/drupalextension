@@ -56,10 +56,7 @@
       "Drupal\\Exception": "src/",
       "Drupal\\DrupalExtension": "src/",
       "Drupal\\MinkExtension": "src/"
-    },
-    "classmap": [
-        "src/Drupal/DocumentElement.php"
-    ]
+    }
   },
   "extra": {
     "branch-alias": {

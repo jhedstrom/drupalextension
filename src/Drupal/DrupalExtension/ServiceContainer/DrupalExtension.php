@@ -67,6 +67,7 @@ class DrupalExtension implements ExtensionInterface
         // of the page, pieces of texts inside the <head> section.
         // @see https://github.com/minkphp/MinkBrowserKitDriver/issues/153
         // @see https://www.drupal.org/project/drupal/issues/3175718
+        require_once(__DIR__ . '/../../DocumentElement.php');
         class_alias('\Drupal\DocumentElement', '\Behat\Mink\Element\DocumentElement', true);
 
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/config'));
