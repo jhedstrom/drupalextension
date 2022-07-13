@@ -198,7 +198,7 @@ Feature: DrupalContext general testing
     | title        | body             | created            | status | promote |
     | Test article | PLACEHOLDER BODY | 07/27/2014 12:03am |      1 |       1 |
     When I am on the homepage
-    Then I should see the text "Sun, 07/27/2014 - 00:03"
+    Then I should see the text "27 July, 2014"
 
   @d7 @d8
   Scenario: Node hooks are functioning
@@ -206,7 +206,7 @@ Feature: DrupalContext general testing
     | title        | body        | published on       | status | promote |
     | Test article | PLACEHOLDER | 04/27/2013 11:11am |      1 |       1 |
     When I am on the homepage
-    Then I should see the text "Sat, 04/27/2013 - 11:11"
+    Then I should see the text "27 April, 2013"
 
   @d7 @d8
   Scenario: Node edit access by administrator

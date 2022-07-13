@@ -33,7 +33,7 @@ Característica: DrupalContext
   Escenario: Encontrar un encabezado en una zona
     Dado que no estoy conectado
     Cuando estoy en la página de inicio
-    Entonces debo ver el encabezado "Search" en la zona "left sidebar"
+    Entonces debo ver el encabezado "Welcome!" en la zona "main content"
 
   # lo siguiente comprueba que un usuario creado por una clase Conexto (en este
   # caso FeatureContext::assertLoggedInByUsernameAndPassword()) puede ser utilizado
