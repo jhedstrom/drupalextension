@@ -132,7 +132,6 @@ drupal9:
         # Change this to the absolute path to Drupal install.
         drupal_root: "drupal"
       region_map:
-        left sidebar: "#sidebar-first"
-        content: "#content"
+        main content: "#main"
       selectors:
         error_message_selector: '.messages--error'
