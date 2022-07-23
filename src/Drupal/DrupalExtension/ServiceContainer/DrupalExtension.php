@@ -8,6 +8,7 @@ use Behat\Testwork\ServiceContainer\ExtensionManager;
 use Behat\Testwork\ServiceContainer\ServiceProcessor;
 use Drupal\DrupalExtension\Compiler\DriverPass;
 use Drupal\DrupalExtension\Compiler\EventSubscriberPass;
+use DrupalFinder\DrupalFinder;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -63,6 +64,18 @@ class DrupalExtension implements ExtensionInterface
    */
     public function load(ContainerBuilder $container, array $config)
     {
+        // Workaround a bug in BrowserKitDriver that wrongly considers as text
+        // of the page, pieces of texts inside the <head> section.
+        // @see https://github.com/minkphp/MinkBrowserKitDriver/issues/153
+        // @see https://www.drupal.org/project/drupal/issues/3175718
+        $drupalFinder = new DrupalFinder();
+        if (!$drupalFinder->locateRoot(getcwd())) {
+            throw new \RuntimeException('Cannot locate Drupal');
+        }
+        $drupalRoot = $drupalFinder->getDrupalRoot();
+        require_once($drupalRoot . '/core/tests/Drupal/Tests/DocumentElement.php');
+        class_alias('\Drupal\Tests\DocumentElement', '\Behat\Mink\Element\DocumentElement', true);
+
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/config'));
         $loader->load('services.yml');
         $container->setParameter('drupal.drupal.default_driver', $config['default_driver']);
