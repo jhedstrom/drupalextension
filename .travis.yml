@@ -51,7 +51,7 @@ script:
   - composer test
   - npm test
   - vendor/bin/behat -fprogress --strict
-  - vendor/bin/behat -fprogress --profile=drupal${DRUPAL_VERSION} --strict
+  - vendor/bin/behat -fprogress --profile=drupal --strict
 
 after_failure:
   - cat ~/debug.txt
