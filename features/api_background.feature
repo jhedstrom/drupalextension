@@ -1,4 +1,4 @@
-@d6 @d7 @d8 @api
+@api
 Feature: DrupalContext with background steps
   Test DrupalContext in combination with Backgrounds
 

@@ -42,7 +42,7 @@ drupal:
         - Drupal\DrupalExtension\Context\MailContext
         - Drupal\DrupalExtension\Context\RandomContext
       filters:
-        tags: "@d8&&~@d8wip"
+        tags: "~@wip"
   extensions:
     Drupal\MinkExtension:
       base_url: http://127.0.0.1:8888

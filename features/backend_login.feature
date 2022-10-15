@@ -1,4 +1,4 @@
-@api @d8
+@api
 Feature: Backend login/logout
   In order to prove that backend authentication is working
   As a developer

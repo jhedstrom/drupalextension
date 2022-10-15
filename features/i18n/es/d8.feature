@@ -1,10 +1,10 @@
 # language: es
-@d8 @api
+@api
 Característica: DrupalContext
   # Esta característica es copia traducida de la "feature" correspondiente
   # para demostrar que los correspondientes pasos están bien traducidos
   # al español
-  Para demostrar que el Contexto Drupal funciona adecuadamente con Drupal 8
+  Para demostrar que el Contexto Drupal funciona adecuadamente
   Como desarrollador
   Necesito usar los pasos definidos para éste Contexto
 

@@ -1,4 +1,4 @@
-@api @d7 @d8
+@api
 Feature: Language support
   In order to demonstrate the language integration
   As a developer for the Behat Extension

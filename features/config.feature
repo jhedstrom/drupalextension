@@ -1,4 +1,4 @@
-@api @d8
+@api
 Feature: ConfigContext
   In order to prove the Config context is working properly
   As a developer

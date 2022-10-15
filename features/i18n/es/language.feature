@@ -1,5 +1,5 @@
 # language: es
-@api @d7 @d8
+@api
 Característica: Soporte para idiomas
   # Esta característica es copia traducida de la "feature" correspondiente
   # para demostrar que los correspondientes pasos están bien traducidos

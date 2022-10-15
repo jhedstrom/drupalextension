@@ -1,4 +1,4 @@
-@api @d8 @random
+@api @random
 Feature: RandomContext functionality
   In order to prove the RandomContext is functional at transforming variables
   As a developer
