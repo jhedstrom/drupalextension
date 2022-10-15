@@ -21,7 +21,7 @@ services:
 
 install:
   - composer self-update
-  - test ${DRUPAL_VERSION} -lt 8 || composer require --no-interaction --dev --no-update drupal/core-recommended:^${DRUPAL_VERSION} drupal/core-composer-scaffold:^${DRUPAL_VERSION}
+  - composer require --no-interaction --dev --no-update drupal/core-recommended:^${DRUPAL_VERSION} drupal/core-composer-scaffold:^${DRUPAL_VERSION}
   - composer install
   # Pin node version.
   # @see http://austinpray.com/ops/2015/09/20/change-travis-node-version.html
