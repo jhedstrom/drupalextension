@@ -54,7 +54,7 @@ before_script:
   # Copy the static HTML that is used for blackbox testing in the web root.
   - cp -r fixtures/blackbox $PWD/drupal
   # Copy our test module to the correct location.
-  - cp -r fixtures/drupal${DRUPAL_VERSION}/modules/behat_test ${MODULE_PATH}
+  - cp -r fixtures/drupal/modules/behat_test drupal/modules
   - cd drupal
   - drush --yes en behat_test
   - drush cc drush
