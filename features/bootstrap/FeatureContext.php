@@ -284,7 +284,7 @@ class FeatureContext extends RawDrupalContext {
         }
         $this->workingDir = $dir;
         $this->phpBin = $php;
-        $this->process = new Process(null);
+        $this->process = new Process([]);
     }
 
     /**

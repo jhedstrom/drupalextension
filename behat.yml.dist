@@ -12,7 +12,7 @@ default:
         tags: "@blackbox"
   extensions:
     Drupal\MinkExtension:
-      goutte: ~
+      browserkit_http: ~
       base_url: http://127.0.0.1:8888/blackbox
     Drupal\DrupalExtension:
       blackbox: ~
