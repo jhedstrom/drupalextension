@@ -11,6 +11,7 @@ env:
     - TRAVIS_NODE_VERSION="4.0.0"
   matrix:
     - DRUPAL_VERSION=9
+    - DRUPAL_VERSION=10
 
 # Enable Travis containers.
 sudo: false
