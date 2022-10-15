@@ -37,15 +37,13 @@ before_script:
   - cp -r fixtures/blackbox $PWD/drupal
   # Copy our test module to the correct location.
   - cp -r fixtures/drupal/modules/behat_test drupal/modules
-  - cd drupal
-  - ./vendor/bin/drush --yes en behat_test
+  - ./vendor/bin/drush --yes --root=$PWD/drupal en behat_test
   # Disable the page cache.
-  - ./vendor/bin/drush --yes pmu page_cache
+  - ./vendor/bin/drush --yes --root=$PWD/drupal pmu page_cache
   # Test with big_pipe enabled.
-  - ./vendor/bin/drush --yes en -y big_pipe
+  - ./vendor/bin/drush --yes --root=$PWD/drupal en -y big_pipe
   # Clear the cache on Drupal 6 and 7, rebuild on Drupal 8.
   - ./vendor/bin/drush --debug runserver :8888 > ~/debug.txt 2>&1 &
-  - cd -
   - sleep 4s
 
 script:
