@@ -1,7 +1,7 @@
 name: ci
 on: [push, pull_request_target]
 jobs:
-  automated-tests:
+  tests:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
