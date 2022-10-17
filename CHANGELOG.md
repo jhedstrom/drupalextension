@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Added
+ * [#620](https://github.com/jhedstrom/drupalextension/pull/620) Drupal 10 compatibility.
+### Changed
+ * [#620](https://github.com/jhedstrom/drupalextension/pull/620) Support for Drupal 7 and 8 is discontinued.
+ * [#620](https://github.com/jhedstrom/drupalextension/pull/620) Testing pipeline moved to GitHib actions.
 ## [4.2.0]
 ### Added
   * [#606](https://github.com/jhedstrom/drupalextension/pull/606) Added PHP 8.1 support.
@@ -33,7 +38,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
   * [#528](https://github.com/jhedstrom/drupalextension/pull/528) Show a more helpful failure when running `@javascript`
     scenarios with incorrect configuration.
-  * [#545](https://github.com/jhedstrom/drupalextension/issue/545) Remove Zombie JS testing on Travis.  
+  * [#545](https://github.com/jhedstrom/drupalextension/issue/545) Remove Zombie JS testing on Travis.
   * [#518](https://github.com/jhedstrom/drupalextension/issue/518) Subcontexts are deprecated and will be removed in v4.1.0.
 ### Added
   * [#527](https://github.com/jhedstrom/drupalextension/pull/527) Provide a step to check that a button is not in a region.
@@ -86,7 +91,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   * [#449](https://github.com/jhedstrom/drupalextension/pull/449) Translate steps to Spanish.
 
 ### Fixed
-  * [#460](https://github.com/jhedstrom/drupalextension/pull/460): Fix links in documentation to `drush.org`.  
+  * [#460](https://github.com/jhedstrom/drupalextension/pull/460): Fix links in documentation to `drush.org`.
 
 ### Changed
   * [#457](https://github.com/jhedstrom/drupalextension/pull/457): Drupal 8 is now tested with Drush 9.

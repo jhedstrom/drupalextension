@@ -9,16 +9,16 @@ default:
         - "./path_to_module/features"
   extensions:
     Drupal\MinkExtension:
-      goutte: ~
+      browserkit_http: ~
       selenium2: ~
       base_url: http://seven.l
     Drupal\DrupalExtension:
       blackbox: ~
-      api_driver: 'drupal' 
+      api_driver: 'drupal'
       drush:
         alias: 'local'
-      drupal: 
-        drupal_root: '/var/www/seven/drupal' 
+      drupal:
+        drupal_root: '/var/www/seven/drupal'
       region_map:
         footer: "#footer"
       subcontexts:

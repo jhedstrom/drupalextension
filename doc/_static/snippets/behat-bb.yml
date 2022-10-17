@@ -7,7 +7,7 @@ default:
         - Drupal\DrupalExtension\Context\MinkContext
   extensions:
     Drupal\MinkExtension:
-      goutte: ~
+      browserkit_http: ~
       selenium2: ~
       base_url: http://seven.l
     Drupal\DrupalExtension:
