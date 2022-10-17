@@ -27,7 +27,7 @@
       "Step": "off"
     }
   ],
-  "no-restricted-tags": ["on", {"tags": ["@watch", "@wip"]}],
+  "no-restricted-tags": ["on", {"tags": ["@watch"]}],
   "use-and": "on",
   "no-duplicate-tags": "on",
   "no-superfluous-tags": "on",
