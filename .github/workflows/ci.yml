@@ -4,6 +4,7 @@ jobs:
   automated-tests:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         php_version: ["7.4", "8.0", "8.1"]
         drupal_version: ["9", "10"]
