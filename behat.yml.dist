@@ -42,7 +42,7 @@ drupal:
         - Drupal\DrupalExtension\Context\MailContext
         - Drupal\DrupalExtension\Context\RandomContext
       filters:
-        tags: "~@wip"
+        tags: "~@blackbox&&~@wip"
   extensions:
     Drupal\MinkExtension:
       base_url: http://drupal
