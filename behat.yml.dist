@@ -13,7 +13,7 @@ default:
   extensions:
     Drupal\MinkExtension:
       browserkit_http: ~
-      base_url: http://127.0.0.1:8888/blackbox
+      base_url: http://blackbox
     Drupal\DrupalExtension:
       blackbox: ~
       region_map:
@@ -45,12 +45,11 @@ drupal:
         tags: "~@wip"
   extensions:
     Drupal\MinkExtension:
-      base_url: http://127.0.0.1:8888
+      base_url: http://drupal
     Drupal\DrupalExtension:
       api_driver: "drupal"
       drupal:
-        # Change this to the absolute path to Drupal install.
-        drupal_root: "drupal"
+        drupal_root: "/var/www/html/drupal"
       region_map:
         main content: "#main"
       selectors:

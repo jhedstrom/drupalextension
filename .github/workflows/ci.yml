@@ -1,0 +1,48 @@
+name: ci
+on: [push, pull_request_target]
+jobs:
+  automated-tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php_version: ["7.4", "8.0", "8.1"]
+        drupal_version: ["9", "10"]
+        exclude:
+          - php_version: "7.4"
+            drupal_version: "10"
+          - php_version: "8.0"
+            drupal_version: "10"
+    env:
+      PHP_VERSION: ${{ matrix.php_version }}
+      DRUPAL_VERSION: ${{ matrix.drupal_version }}
+    steps:
+      - name: clone
+        uses: actions/checkout@v2
+      - run: docker-compose up -d
+      - name: npm install
+        run: docker-compose exec -T -u node node npm install
+      - name: php -v
+        run: docker-compose exec -T php php -v
+      - name: composer self-update
+        run: docker-compose exec -T php composer self-update
+      - name: composer require
+        run: docker-compose exec -T php composer require --no-interaction --dev --no-update drupal/core-recommended:^${DRUPAL_VERSION} drupal/core-composer-scaffold:^${DRUPAL_VERSION}
+      - name: composer install
+        run: docker-compose exec -T php composer install
+      - name: drush site-install
+        run: docker-compose exec -T php ./vendor/bin/drush --yes --root=drupal site-install --db-url=mysql://drupal:drupal@db/drupal --debug
+      - name: copy fixtures
+        run: docker-compose exec -T php cp -r fixtures/drupal/modules/behat_test drupal/modules
+      - name: drush pmu page_cache
+        run: docker-compose exec -T php ./vendor/bin/drush --yes --root=drupal pmu page_cache
+      - name: enable behat_test
+        run: docker-compose exec -T php ./vendor/bin/drush --yes --root=drupal en behat_test
+      - name: npm test
+        run: docker-compose exec -T -u node node npm test
+      - name: composer test
+        run: docker-compose exec -T php composer test
+      - name: behat blackbox
+        run: docker-compose exec -T php vendor/bin/behat -fprogress --strict
+      - name: behat drupal
+        run: docker-compose exec -T php vendor/bin/behat -fprogress --profile=drupal --strict
+
