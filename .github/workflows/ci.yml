@@ -20,11 +20,10 @@ jobs:
     steps:
       - name: clone
         uses: actions/checkout@v2
-      - run: docker-compose up -d
+      - name: docker-compose up -d
+        run: docker-compose up -d
       - name: npm install
         run: docker-compose exec -T -u node node npm install
-      - name: php -v
-        run: docker-compose exec -T php php -v
       - name: composer self-update
         run: docker-compose exec -T php composer self-update
       - name: composer require
@@ -43,8 +42,7 @@ jobs:
         run: docker-compose exec -T -u node node npm test
       - name: composer test
         run: docker-compose exec -T php composer test
-      - name: behat blackbox
+      - name: behat --profile=blackbox
         run: docker-compose exec -T php vendor/bin/behat -fprogress --strict
-      - name: behat drupal
-        run: docker-compose exec -T php vendor/bin/behat -fprogress --profile=drupal --strict
-
+      - name: behat --profile=drupal
+        run: docker-compose exec -T php cat && docker-compose exec -T php vendor/bin/behat -fprogress --profile=drupal --strict
