@@ -15,12 +15,14 @@ use Drupal\DrupalExtension\Hook\Scope\AfterLanguageEnableScope;
 use Drupal\DrupalExtension\Hook\Scope\AfterNodeCreateScope;
 use Drupal\DrupalExtension\Hook\Scope\AfterTermCreateScope;
 use Drupal\DrupalExtension\Hook\Scope\AfterUserCreateScope;
+use Drupal\DrupalExtension\Hook\Scope\AfterEntityCreateScope;
 use Drupal\DrupalExtension\Hook\Scope\BaseEntityScope;
 use Drupal\DrupalExtension\Hook\Scope\BeforeLanguageEnableScope;
 use Drupal\DrupalExtension\Hook\Scope\BeforeNodeCreateScope;
 use Drupal\DrupalExtension\Hook\Scope\BeforeUserCreateScope;
 use Drupal\DrupalExtension\Hook\Scope\BeforeTermCreateScope;
 use Drupal\DrupalExtension\Manager\FastLogoutInterface;
+use Drupal\DrupalExtension\Hook\Scope\BeforeEntityCreateScope;
 
 /**
  * Provides the raw functionality for interacting with Drupal.
@@ -85,6 +87,13 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
    * @var array
    */
     protected $languages = [];
+
+  /**
+   * Keep track of any entities that are created so they can easily be removed.
+   *
+   * @var array
+   */
+  protected $entities = array();
 
   /**
    * {@inheritDoc}
@@ -571,6 +580,41 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
     {
         return $this->loggedIn() && $this->getUserManager()->currentUserHasRole($role);
     }
+
+  /**
+   * Create an entity.
+   *
+   * @return object
+   *   The created entity.
+   */
+  public function entityCreate($entity_type, $entity) {
+	if (empty($entity_type)) {
+	        throw new \Exception("Steps must specify an entity type in order to create an entity.");
+	}
+    // We want hooks & cleanup to know the entity type
+    $entity->step_entity_type = $entity_type;
+	
+    $this->dispatchHooks('BeforeEntityCreateScope', $entity);
+    $this->parseEntityFields($entity_type, $entity);
+    $saved = $this->getDriver()->createEntity($entity_type, $entity);
+    $saved->step_entity_type = $entity_type;
+    $this->dispatchHooks('AfterEntityCreateScope', $saved);
+    $this->entities[] = $saved;
+    return $saved;
+  }
+
+  /**
+   * Remove any content entities created by entityCreate(),
+   * but not those created by nodeCreate(), termCreate() or userCreate().
+   *
+   * @AfterScenario
+   */
+  public function cleanEntities() {
+    foreach ($this->entities as $entity) {
+      $this->getDriver()->entityDelete($entity->step_entity_type, $entity);
+    }
+    $this->entities = array();
+  }
 
   /**
    * Returns the Behat context that corresponds with the given class name.
