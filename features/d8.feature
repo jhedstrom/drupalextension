@@ -29,7 +29,7 @@ Feature: DrupalContext for Drupal 8
   Scenario: Find a heading in a region for Drupal 8
     Given I am not logged in
     When I am on the homepage
-    Then I should see the heading "Search" in the "left sidebar" region
+    Then I should see the heading "Welcome!" in the "main content" region
 
   # This tests that a user that is created in one particular Context class (in
   # this case FeatureContext::assertLoggedInByUsernameAndPassword()) can be

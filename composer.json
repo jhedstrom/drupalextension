@@ -59,6 +59,9 @@
     }
   },
   "extra": {
+    "branch-alias": {
+      "dev-master": "5.0.x-dev"
+    },
     "installer-paths": {
       "drupal/core": [
         "type:drupal-core"
@@ -69,5 +72,12 @@
         "web-root": "drupal/"
       }
     }
-}
+  },
+  "config": {
+    "allow-plugins": {
+      "composer/installers": true,
+      "dealerdirect/phpcodesniffer-composer-installer": true,
+      "drupal/core-composer-scaffold": true
+    }
+  }
 }
