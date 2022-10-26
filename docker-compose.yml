@@ -2,7 +2,7 @@ version: "2"
 services:
 
   php:
-    image: wodby/drupal-php:8.1-4.37.12
+    image: wodby/drupal-php:${PHP_VERSION}
     environment:
       DB_HOST: db
       DB_USER: drupal
