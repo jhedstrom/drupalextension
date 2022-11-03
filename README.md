@@ -5,7 +5,7 @@ The Drupal Extension is an integration layer between [Behat](http://behat.org),
 provides step definitions for common testing scenarios specific to Drupal
 sites.
 
-[![ci](https://github.com/jhedstrom/drupalextension/actions/workflows/ci.yml/badge.svg)](https://github.com/claudiu-cristea/drupalextension/actions/workflows/ci.yml)
+[![ci](https://github.com/jhedstrom/drupalextension/actions/workflows/ci.yml/badge.svg)](https://github.com/jhedstrom/drupalextension/actions/workflows/ci.yml)
 
 The Drupal Extension 5.x supports Drupal 9 and 10, utilizes Behat 3.2+ and runs
 on:
