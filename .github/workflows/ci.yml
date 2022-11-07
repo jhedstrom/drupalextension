@@ -27,7 +27,7 @@ jobs:
       - name: composer self-update
         run: docker-compose exec -T php composer self-update
       - name: composer require
-        run: docker-compose exec -u ${DOCKER_USER_ID} -T php composer require --no-interaction --dev --no-update drupal/core-recommended:^${DRUPAL_VERSION} drupal/core-composer-scaffold:^${DRUPAL_VERSION}
+        run: docker-compose exec -u ${DOCKER_USER_ID} -T php composer require --no-interaction --dev --no-update drupal/core:^${DRUPAL_VERSION} drupal/core-composer-scaffold:^${DRUPAL_VERSION}
       - name: composer install
         run: docker-compose exec -T php composer install
       - name: drush site-install
