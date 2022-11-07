@@ -21,7 +21,7 @@ class BrowserKitFactory extends BrowserKitFactoryOriginal
         }
 
         $drupalFinder = new DrupalFinder();
-        $drupalFinder->locateRoot(__DIR__);
+        $drupalFinder->locateRoot(getcwd());
         $drupalRoot = $drupalFinder->getDrupalRoot();
         require_once "$drupalRoot/core/tests/Drupal/Tests/DrupalTestBrowser.php";
 
