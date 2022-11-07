@@ -173,7 +173,7 @@ class FeatureContext extends RawDrupalContext {
   /**
    * Creates and authenticates a user with the given username and password.
    *
-   * In Drupal 8 it is possible to register a user without an e-mail address,
+   * In Drupal it is possible to register a user without an e-mail address,
    * using only a username and password.
    *
    * This step definition is intended to test if users that are registered in
@@ -284,7 +284,7 @@ class FeatureContext extends RawDrupalContext {
         }
         $this->workingDir = $dir;
         $this->phpBin = $php;
-        $this->process = new Process(null);
+        $this->process = new Process([]);
     }
 
     /**

@@ -1,3 +1,4 @@
+@wip
 Feature: Ability to find Drupal sub-contexts
   In order to facilitate maintainable step-definitions
   As a feature developer
@@ -44,7 +45,7 @@ Feature: Ability to find Drupal sub-contexts
             contexts: [Drupal\DrupalExtension\Context\DrupalContext]
         extensions:
           Drupal\MinkExtension:
-            goutte: ~
+            browserkit_http: ~
             selenium2: ~
             base_url: http://drupal.org
           Drupal\DrupalExtension:

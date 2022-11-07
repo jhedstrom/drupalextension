@@ -9,7 +9,7 @@ default:
         - Drupal\DrupalExtension\Context\DrushContext
   extensions:
     Drupal\MinkExtension:
-      goutte: ~
+      browserkit_http: ~
       selenium2: ~
       base_url: http://seven.l
     Drupal\DrupalExtension:

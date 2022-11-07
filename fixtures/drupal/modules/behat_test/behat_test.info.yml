@@ -2,6 +2,6 @@ name: Behat test
 type: module
 description: 'Test feature exposing basic configuration for Behat Drupal extension test.'
 package: Test
-core_version_requirement: ^8 || ^9
+core_version_requirement: ^9 || ^10
 dependencies:
-  - language
+  - drupal:language

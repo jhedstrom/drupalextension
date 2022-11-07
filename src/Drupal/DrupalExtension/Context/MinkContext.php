@@ -73,7 +73,7 @@ class MinkContext extends MinkExtension implements TranslatableContext
    */
     public function assertClick($link)
     {
-        // Use the Mink Extenstion step definition.
+        // Use the Mink Extension step definition.
         $this->clickLink($link);
     }
 
@@ -83,7 +83,7 @@ class MinkContext extends MinkExtension implements TranslatableContext
    */
     public function assertEnterField($field, $value)
     {
-        // Use the Mink Extenstion step definition.
+        // Use the Mink Extension step definition.
         $this->fillField($field, $value);
     }
 

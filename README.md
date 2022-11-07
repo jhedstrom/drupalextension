@@ -5,11 +5,13 @@ The Drupal Extension is an integration layer between [Behat](http://behat.org),
 provides step definitions for common testing scenarios specific to Drupal
 sites.
 
-[![Build Status](https://app.travis-ci.com/jhedstrom/drupalextension.svg?branch=master)](https://app.travis-ci.com/github/jhedstrom/drupalextension)
+[![ci](https://github.com/jhedstrom/drupalextension/actions/workflows/ci.yml/badge.svg)](https://github.com/jhedstrom/drupalextension/actions/workflows/ci.yml)
 
-The Drupal Extension 4.x supports Drupal 7, 8, and 9, utilizes Behat 3.2+ and
-runs on PHP 7.3+. It is compatible with Symfony components 3.x as well as 4.x
-so it can be used on Drupal 8 and 9.
+The Drupal Extension 5.x supports Drupal 9 and 10, utilizes Behat 3.2+ and runs
+on:
+
+- PHP 7.4, 8.0, 8.1 with Drupal 9
+- PHP 8.1 with Drupal 10.
 
 [![Latest Stable Version](https://poser.pugx.org/drupal/drupal-extension/v/stable.svg)](https://packagist.org/packages/drupal/drupal-extension)
 [![Total Downloads](https://poser.pugx.org/drupal/drupal-extension/downloads.svg)](https://packagist.org/packages/drupal/drupal-extension)
@@ -17,11 +19,9 @@ so it can be used on Drupal 8 and 9.
 [![License](https://poser.pugx.org/drupal/drupal-extension/license.svg)](https://packagist.org/packages/drupal/drupal-extension)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/jhedstrom/drupalextension/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/jhedstrom/drupalextension/?branch=master)
 
-
-
 ## Use it for testing your Drupal site.
 
-If you're new to the Drupal Extension, we recommend starting with 
+If you're new to the Drupal Extension, we recommend starting with
 the [Full documentation](https://behat-drupal-extension.readthedocs.org)
 
 [![Documentation Status](https://readthedocs.org/projects/behat-drupal-extension/badge/?version=master)](https://behat-drupal-extension.readthedocs.org)
@@ -34,12 +34,12 @@ the [Full documentation](https://behat-drupal-extension.readthedocs.org)
     mkdir projectdir
     cd projectdir
     curl -sS https://getcomposer.org/installer | php
-    COMPOSER_BIN_DIR=bin php composer.phar require drupal/drupal-extension='~4.0'
+    COMPOSER_BIN_DIR=bin php composer.phar require drupal/drupal-extension='~5.0'
     ```
 
 1.  In the projectdir, create a file called `behat.yml`. Below is the
-    minimal configuration. Many more options are covered in the 
-    [Full documentation](https://behat-drupal-extension.readthedocs.org)  
+    minimal configuration. Many more options are covered in the
+    [Full documentation](https://behat-drupal-extension.readthedocs.org)
 
   ``` yaml
   default:
@@ -49,7 +49,7 @@ the [Full documentation](https://behat-drupal-extension.readthedocs.org)
           - Drupal\DrupalExtension\Context\DrupalContext
     extensions:
       Drupal\MinkExtension:
-        goutte: ~
+        browserkit_http: ~
         base_url: http://example.org/  # Replace with your site's URL
       Drupal\DrupalExtension:
         blackbox: ~
@@ -69,7 +69,7 @@ the [Full documentation](https://behat-drupal-extension.readthedocs.org)
 
 1. Define your own steps in `projectdir\features\FeatureContext.php`
 
-1. Start adding your [feature files](http://behat.org/en/latest/user_guide/gherkin.html) 
+1. Start adding your [feature files](http://behat.org/en/latest/user_guide/gherkin.html)
    to the `features` directory of your repository.
 
 ## Credits

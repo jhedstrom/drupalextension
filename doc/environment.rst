@@ -11,7 +11,7 @@ If you intend to run your tests on different environments these settings should
 not be committed to ``behat.yml``. Instead they should be exported in an
 environment variable. Before running tests Behat will check the ``BEHAT_PARAMS``
 environment variable and add these settings to the ones that are present in
-``behat.yml``. This variable should contain a JSON object with your settings. 
+``behat.yml``. This variable should contain a JSON object with your settings.
 
 Example JSON object:
 
@@ -53,7 +53,7 @@ You must also remove (or comment out) the entries that you use in behat.yml for 
             - Drupal\DrupalExtension\Context\DrushContext
       extensions:
         Drupal\MinkExtension:
-          goutte: ~
+          browserkit_http: ~
           selenium2: ~
     # Must comment out for BEHAT_PARAMS to be effective.
     #      base_url: http://seven.l
@@ -66,7 +66,7 @@ You must also remove (or comment out) the entries that you use in behat.yml for 
           blackbox: ~
 
     # You can use profiles if you wish to allow users to run tests locally.
-    # Usage: 
+    # Usage:
     #   bin/behat --profile=local
     local:
       extensions:

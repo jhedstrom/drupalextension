@@ -7,12 +7,12 @@ default:
         - Drupal\DrupalExtension\Context\MinkContext
   extensions:
     Drupal\MinkExtension:
-      goutte: ~
+      browserkit_http: ~
       selenium2: ~
       base_url: http://seven.l
     Drupal\DrupalExtension:
       blackbox: ~
-      api_driver: 'drush' 
+      api_driver: 'drush'
       drush:
         alias: 'local'
       region_map:

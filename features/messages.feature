@@ -1,6 +1,6 @@
-@api @d8
+@api
 Feature: Ensure that messages are working properly on local installs
-  In order to be sure that Drupal 8 with Big Pipe enabled can be tested
+  In order to be sure that Drupal Big Pipe enabled can be tested
   Messages are tested against a local installation
 
   Scenario: Non-JS messages

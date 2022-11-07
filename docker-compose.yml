@@ -1,0 +1,72 @@
+version: "2"
+services:
+
+  php:
+    image: wodby/drupal-php:${PHP_VERSION}
+    environment:
+      DB_HOST: db
+      DB_USER: drupal
+      DB_PASSWORD: drupal
+      DB_NAME: drupal
+      DB_DRIVER: mysql
+      PHP_FPM_USER: wodby
+      PHP_FPM_GROUP: wodby
+      PHP_FPM_CLEAR_ENV: "yes"
+      PHP_OPCACHE_PRELOAD_USER: wodby
+      PHP_XDEBUG_MODE: "off"
+      PHP_XDEBUG_REMOTE_CONNECT_BACK: 1
+      PHP_XDEBUG_REMOTE_HOST: "10.254.254.254"
+      PHP_XDEBUG_IDEKEY: "PHPSTORM"
+      PHP_IDE_CONFIG: "serverName=drupalextension"
+    volumes:
+      - ./:/var/www/html
+
+  drupal:
+    image: wodby/nginx:1.16-5.11.3
+    depends_on:
+      - php
+    environment:
+      NGINX_STATIC_OPEN_FILE_CACHE: "off"
+      NGINX_ERROR_LOG_LEVEL: debug
+      NGINX_BACKEND_HOST: php
+      NGINX_SERVER_ROOT: /var/www/html/drupal
+      NGINX_VHOST_PRESET: drupal9
+    volumes:
+      - ./:/var/www/html
+    ports:
+      - "8080:80"
+
+  blackbox:
+    image: wodby/nginx:1.16-5.11.3
+    environment:
+      NGINX_STATIC_OPEN_FILE_CACHE: "off"
+      NGINX_ERROR_LOG_LEVEL: debug
+      NGINX_SERVER_ROOT: /var/www/html/fixtures/blackbox
+      NGINX_VHOST_PRESET: html
+    volumes:
+      - ./:/var/www/html
+    ports:
+      - "8081:80"
+
+  db:
+    image: wodby/mariadb:10.3-3.8.4
+    stop_grace_period: 30s
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: drupal
+      MYSQL_USER: drupal
+      MYSQL_PASSWORD: drupal
+
+  node:
+    image: node:latest
+    user: "node"
+    working_dir: /home/node/app
+    environment:
+      - NODE_ENV="production npm run production"
+      - SHELL=bash
+    volumes:
+      - ./:/home/node/app
+    command: "sleep infinity"
+
+volumes:
+  codebase:
