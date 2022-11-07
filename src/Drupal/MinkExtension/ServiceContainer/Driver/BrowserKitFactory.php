@@ -23,13 +23,7 @@ class BrowserKitFactory extends BrowserKitFactoryOriginal
         $drupalFinder = new DrupalFinder();
         $drupalFinder->locateRoot(__DIR__);
         $drupalRoot = $drupalFinder->getDrupalRoot();
-        $vendorDir = $drupalFinder->getVendorDir();
-
-        /** @var \Composer\Autoload\ClassLoader $loader */
-        $loader = require "$vendorDir/autoload.php";
-        $loader->addClassMap(
-            ["$drupalRoot/core/tests/Drupal/Tests/DrupalTestBrowser.php"]
-        );
+        require_once "$drupalRoot/core/tests/Drupal/Tests/DrupalTestBrowser.php";
 
         if (!class_exists('Drupal\Tests\DrupalTestBrowser')) {
             throw new \RuntimeException(
