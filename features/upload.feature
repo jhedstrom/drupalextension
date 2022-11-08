@@ -1,5 +1,5 @@
 @api
-Feature: Upload test.
+Feature: File upload test.
 
   Scenario: Upload an image.
     Given I am logged in as a user with the "administrator" role
