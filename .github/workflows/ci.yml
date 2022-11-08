@@ -1,5 +1,5 @@
 name: ci
-on: [push, pull_request_target]
+on: [push]
 jobs:
   tests:
     runs-on: ubuntu-latest
