@@ -46,6 +46,7 @@ drupal:
   extensions:
     Drupal\MinkExtension:
       base_url: http://drupal
+      files_path: /var/www/html/fixtures/files
     Drupal\DrupalExtension:
       api_driver: "drupal"
       drupal:
