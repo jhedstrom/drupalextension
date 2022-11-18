@@ -3,6 +3,7 @@
 namespace Drupal\MinkExtension\ServiceContainer;
 
 use Behat\MinkExtension\ServiceContainer\MinkExtension as BaseMinkExtension;
+use Drupal\MinkExtension\ServiceContainer\Driver\BrowserKitFactory;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 
 class MinkExtension extends BaseMinkExtension
@@ -14,6 +15,15 @@ class MinkExtension extends BaseMinkExtension
      * @var int
      */
     const AJAX_TIMEOUT = 5;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function __construct()
+    {
+        parent::__construct();
+        $this->registerDriverFactory(new BrowserKitFactory());
+    }
 
     /**
      * {@inheritdoc}
