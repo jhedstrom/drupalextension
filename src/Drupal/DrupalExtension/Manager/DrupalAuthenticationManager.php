@@ -2,6 +2,7 @@
 
 namespace Drupal\DrupalExtension\Manager;
 
+use Behat\Mink\Element\DocumentElement;
 use Behat\Mink\Exception\DriverException;
 use Behat\Mink\Mink;
 use Drupal\Driver\AuthenticationDriverInterface;
@@ -53,6 +54,14 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
     }
 
     /**
+     * Helper to get the element we want to use for submitting the login form.
+     */
+    protected function getLoginSubmitElement(DocumentElement $element)
+    {
+        return $element->findButton($this->getDrupalText('log_in'));
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function logIn(\stdClass $user)
@@ -64,7 +73,7 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
         $element = $this->getSession()->getPage();
         $element->fillField($this->getDrupalText('username_field'), $user->name);
         $element->fillField($this->getDrupalText('password_field'), $user->pass);
-        $submit = $element->findButton($this->getDrupalText('log_in'));
+        $submit = $this->getLoginSubmitElement($element);
         if (empty($submit)) {
             throw new \Exception(sprintf("No submit button at %s", $this->getSession()->getCurrentUrl()));
         }
