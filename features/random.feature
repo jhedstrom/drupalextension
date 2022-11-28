@@ -19,3 +19,8 @@ Feature: RandomContext functionality
     And I fill in "Username" with "<?user>"
     When I press "Create new account"
     Then an email has been sent to "<?user>@example.com" with the subject "Account details for <?user>"
+
+  Scenario: Test RandomContext functionality in tables
+    Given I am viewing a page:
+      | title             | <?random_page> |
+    Then I should see the text "<?random_page>"
