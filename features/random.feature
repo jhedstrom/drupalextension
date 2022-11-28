@@ -22,5 +22,6 @@ Feature: RandomContext functionality
 
   Scenario: Test RandomContext functionality in tables
     Given I am viewing a page:
-      | title             | <?random_page> |
+      | title          |
+      | <?random_page> |
     Then I should see the text "<?random_page>"
