@@ -6,11 +6,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+## [5.0.0 alpha1]
 ### Added
  * [#620](https://github.com/jhedstrom/drupalextension/pull/620) Drupal 10 compatibility.
+ * [#634](https://github.com/jhedstrom/drupalextension/pull/634) Document local testing for contribution.
 ### Changed
+ * [#613](https://github.com/jhedstrom/drupalextension/pull/613) Test Drupal with Olivero theme.
  * [#620](https://github.com/jhedstrom/drupalextension/pull/620) Support for Drupal 7 and 8 is discontinued.
  * [#620](https://github.com/jhedstrom/drupalextension/pull/620) Testing pipeline moved to GitHib actions.
+ * [#620](https://github.com/jhedstrom/drupalextension/pull/620) Drop Goutte Driver in favor of BrowserKit.
+ * [#628](https://github.com/jhedstrom/drupalextension/pull/628) Use BrowserKit with Guzzle client.
 ## [4.2.0]
 ### Added
   * [#606](https://github.com/jhedstrom/drupalextension/pull/606) Added PHP 8.1 support.
@@ -135,7 +140,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   * [#437](https://github.com/jhedstrom/drupalextension/pull/437): Radio button selector fix.
   * [#439](https://github.com/jhedstrom/drupalextension/pull/439): Symfony 3 compatibility follow-up fix.
 
-[Unreleased]: https://github.com/jhedstrom/drupalextension/compare/v4.2.0...HEAD
+[Unreleased]: https://github.com/jhedstrom/drupalextension/compare/v5.0.0alpha1...HEAD
+[5.0.0 alpha1]: https://github.com/jhedstrom/drupalextension/compare/v4.2.0...v5.0.0alpha1
 [4.2.0]: https://github.com/jhedstrom/drupalextension/compare/v4.1.0...v4.2.0
 [4.1.0]: https://github.com/jhedstrom/drupalextension/compare/v4.0.1...v4.1.0
 [4.0.1]: https://github.com/jhedstrom/drupalextension/compare/v4.0.0...v4.0.1
