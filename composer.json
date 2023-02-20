@@ -23,7 +23,7 @@
   "minimum-stability": "dev",
   "require": {
     "behat/behat": "~3.2",
-    "behat/mink-browserkit-driver": "^2.1.0",
+    "friends-of-behat/mink-browserkit-driver": "^1.6.1",
     "behat/mink-selenium2-driver": "~1.1",
     "drupal/drupal-driver": "^2.2.1",
     "friends-of-behat/mink-extension": "^2.7.1",
