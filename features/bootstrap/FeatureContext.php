@@ -26,7 +26,7 @@ class FeatureContext extends RawDrupalContext {
    * @beforeNodeCreate
    */
   public static function alterNodeParameters(BeforeNodeCreateScope $scope) {
-    call_user_func(static::class . '::alterNodeParameters', $scope);
+    parent::alterNodeParameters($scope);
     // @see `features/api.feature`
     // Change 'published on' to the expected 'created'.
     $node = $scope->getEntity();
