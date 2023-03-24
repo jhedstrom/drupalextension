@@ -6,7 +6,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php_version: ["7.4", "8.0", "8.1"]
+        php_version: ["7.4", "8.0", "8.1", "8.2"]
         drupal_version: ["9", "10"]
         exclude:
           - php_version: "7.4"
