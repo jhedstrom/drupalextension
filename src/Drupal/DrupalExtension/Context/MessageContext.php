@@ -361,4 +361,63 @@ class MessageContext extends RawDrupalContext implements TranslatableContext
             }
         }
     }
+
+  /**
+   * Check if the current page contains no messages of the specified selector.
+   *
+   * @Then /^I should see no (?P<selector>(?:success|error|warning)) message$/
+   */
+  public function assertSelectorNotVisible($selector): void {
+    switch ($selector) {
+      case 'success':
+        $selector_id = 'success_message_selector';
+        break;
+      case 'error':
+        $selector_id = 'error_message_selector';
+        break;
+      case 'warning':
+        $selector_id = 'warning_message_selector';
+        break;
+      default:
+        throw new ExpectationException(sprintf("Message type is invalid: %s", $selector), $this->getSession()->getDriver());
+    }
+    $this->assertNotVisible($selector_id);
+  }
+
+  /**
+   * Checks if the current page contains neither error nor warning messages.
+   *
+   * @Then I should see neither error nor warning messages
+   */
+  public function assertErrorWarningNotVisible(): void {
+    $this->assertNotVisible('error_message_selector');
+    $this->assertNotVisible('warning_message_selector');
+  }
+
+  /**
+   * Assert the selector is not visible.
+   *
+   * @param string $selector_id
+   *  The selector id to be checked.
+   *
+   * @throws \Behat\Mink\Exception\ExpectationException
+   *   Thrown when the unexpected message is present in the page.
+   */
+  private function assertNotVisible(string $selector_id): void {
+    $selector = $this->getDrupalSelector($selector_id);
+    $exception_msg = "The page '%s' contains $selector_id: %s";
+    $selector_objects = $this->getSession()->getPage()->findAll("css", $selector);
+    if (empty($selector_objects)) {
+      return;
+    }
+
+    foreach ($selector_objects as $selector_object) {
+      if (empty($selector_objects)) {
+        continue;
+      }
+      $visible_messages = $selector_object->getText();
+      throw new ExpectationException(sprintf($exception_msg, $this->getSession()->getCurrentUrl(), $visible_messages), $this->getSession()->getDriver());
+    }
+  }
+
 }

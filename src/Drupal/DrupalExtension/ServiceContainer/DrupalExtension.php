@@ -214,6 +214,22 @@ class DrupalExtension implements ExtensionInterface
         end()->
         end()->
         end();
+        // A new builder starts as exceeding 100 lines.
+        $builder->
+          children()->
+            // Screenshot path.
+            arrayNode('screenshot')->
+              children()->
+                scalarNode('path')->
+                  defaultValue('/tmp/screenshots')->
+                end()->
+                scalarNode('failure_suffix')->
+                  defaultValue('F')->
+                end()->
+              end()->
+            end()->
+          end()->
+        end();
     }
 
   /**

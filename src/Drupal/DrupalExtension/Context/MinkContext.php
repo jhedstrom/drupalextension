@@ -536,6 +536,23 @@ JS;
     }
 
   /**
+   * @Then I should not see ( the text) :text in the :region( region) or no such region
+   *
+   * @throws \RuntimeException
+   *   If region or text within it cannot be found.
+   */
+  public function assertNotRegionTextOrNoSuchRegion($text, $region): void {
+    $region_obj = $this->getSession()->getPage()->find('region', $region);
+
+    //Not find the text within the region.
+    $region_text = empty($region_obj) ? '' : $region_obj->getText();
+    if (strpos($region_text, $text) === FALSE) {
+      return;
+    }
+    throw new \RuntimeException(sprintf('The text "%s" was found in the region "%s" on the page %s', $text, $region, $this->getSession()->getCurrentUrl()));
+  }
+
+  /**
    * @Then I (should )see the text :text
    */
     public function assertTextVisible($text)

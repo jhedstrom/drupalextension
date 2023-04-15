@@ -20,7 +20,7 @@ class BatchContext extends RawMinkContext
    */
     public function iWaitForTheBatchJobToFinish()
     {
-        $this->getSession()->wait(180000, 'jQuery("#updateprogress").length === 0');
+        $this->getSession()->wait(180000, 'document.querySelectorAll("#updateprogress").length === 0');
     }
 
   /**

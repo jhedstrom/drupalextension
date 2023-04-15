@@ -22,6 +22,13 @@ trait FeatureTrait
     protected $currentFeature;
 
     /**
+     * The registered step.
+     *
+    * @var \Behat\Gherkin\Node\StepInterface
+    */
+    protected $currentStep;
+
+    /**
      * Register the feature.
      *
      * This fires on a BeforeStep rather than a BeforeFeature since the latter
@@ -34,6 +41,7 @@ trait FeatureTrait
     public function registerFeature(BeforeStepScope $scope)
     {
         $this->currentFeature = $scope->getFeature();
+        $this->currentStep = $scope->getStep();
     }
 
     /**
@@ -43,4 +51,13 @@ trait FeatureTrait
     {
         return $this->currentFeature;
     }
+
+   /**
+    * @return \Behat\Gherkin\Node\StepInterface
+    */
+   protected function getStep()
+   {
+     return $this->currentStep;
+   }
+
 }
