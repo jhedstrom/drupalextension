@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Added
+ * [#655](https://github.com/jhedstrom/drupalextension/pull/655) Configure Guzzle request options
 ## [5.0.0 rc1]
 ### Fixed
  * [#629](https://github.com/jhedstrom/drupalextension/pull/629) Fix upstream Drupal getText issue.
