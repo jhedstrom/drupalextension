@@ -13,7 +13,16 @@ Característica: DrupalContext
     Cuando hago click en "My account"
     Entonces debo ver el texto "Member for"
 
-  Escenario: Enlaces dentro de filas de tablas
+  @d9
+  Escenario: Enlaces dentro de filas de tablas  (Drupal 9)
+    Dado que estoy conectado como un "administrator"
+    Cuando estoy en la URL "admin/structure/types"
+      Y hago click en el enlace "Manage fields" de la fila "Article"
+    Entonces debo estar en "admin/structure/types/manage/article/fields"
+      Y debo ver el enlace "Add field"
+
+  @d10
+  Escenario: Enlaces dentro de filas de tablas  (Drupal 10)
     Dado que estoy conectado como un "administrator"
     Cuando estoy en la URL "admin/structure/types"
       Y hago click en el enlace "Manage fields" de la fila "Article"
