@@ -41,3 +41,5 @@ jobs:
         run: docker-compose exec -T php vendor/bin/behat -fprogress --strict
       - name: behat --profile=drupal
         run: docker-compose exec -T php cat && docker-compose exec -T php vendor/bin/behat -fprogress --profile=drupal --strict
+      - name: behat --profile=drupal_https
+        run: docker-compose exec -T php cat && docker-compose exec -T php vendor/bin/behat -fprogress --profile=drupal_https --strict

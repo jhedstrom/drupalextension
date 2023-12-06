@@ -55,3 +55,20 @@ drupal:
         main content: "#main"
       selectors:
         error_message_selector: '.messages--error'
+
+drupal_https:
+  suites:
+    default:
+      contexts:
+        - FeatureContext
+        - Drupal\DrupalExtension\Context\DrupalContext
+        - Drupal\DrupalExtension\Context\MinkContext
+      filters:
+        tags: "@https"
+  extensions:
+    Drupal\MinkExtension:
+      base_url: https://proxy
+    Drupal\DrupalExtension:
+      api_driver: "drupal"
+      drupal:
+        drupal_root: "/var/www/html/drupal"

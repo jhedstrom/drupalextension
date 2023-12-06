@@ -4,6 +4,7 @@ Feature: DrupalContext
   As a developer
   I need to use the step definitions of this context
 
+  @https
   Scenario: Target links within table rows
     Given I am logged in as a user with the "administrator" role
     When I am at "admin/structure/types"
