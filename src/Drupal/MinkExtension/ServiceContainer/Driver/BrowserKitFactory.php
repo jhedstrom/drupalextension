@@ -5,6 +5,7 @@ namespace Drupal\MinkExtension\ServiceContainer\Driver;
 use Behat\MinkExtension\ServiceContainer\Driver\BrowserKitFactory as BrowserKitFactoryOriginal;
 use Behat\Mink\Driver\BrowserKitDriver;
 use DrupalFinder\DrupalFinder;
+use GuzzleHttp\Client;
 use Symfony\Component\DependencyInjection\Definition;
 
 class BrowserKitFactory extends BrowserKitFactoryOriginal
@@ -31,8 +32,21 @@ class BrowserKitFactory extends BrowserKitFactoryOriginal
             );
         }
 
+        $guzzleClientService = new Definition(Client::class, [
+            [
+                // Disable SSL peer verification so that testing under HTTPS always
+                // works.
+                // @see \Drupal\Tests\BrowserTestBase::initMink
+                'verify' => false,
+                'allow_redirects' => false,
+                'cookies' => true,
+            ],
+        ]);
+        $testBrowserService = (new Definition('Drupal\Tests\DrupalTestBrowser'))
+          ->addMethodCall('setClient', [$guzzleClientService]);
+
         return new Definition(BrowserKitDriver::class, [
-            new Definition('Drupal\Tests\DrupalTestBrowser'),
+            $testBrowserService,
             '%mink.base_url%',
         ]);
     }
