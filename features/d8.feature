@@ -9,7 +9,7 @@ Feature: DrupalContext
     When I am at "admin/structure/types"
     And I click "Manage fields" in the "Article" row
     Then I should be on "admin/structure/types/manage/article/fields"
-    And I should see the link "Add field"
+    And I should see the link "Create a new field"
 
   Scenario: Create users with roles
     Given users:

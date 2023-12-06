@@ -18,7 +18,7 @@ Característica: DrupalContext
     Cuando estoy en la URL "admin/structure/types"
       Y hago click en el enlace "Manage fields" de la fila "Article"
     Entonces debo estar en "admin/structure/types/manage/article/fields"
-      Y debo ver el enlace "Add field"
+      Y debo ver el enlace "Create a new field"
 
   Escenario: Cear usuarios con roles
     Dados usuarios:
