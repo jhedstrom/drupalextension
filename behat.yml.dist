@@ -45,7 +45,7 @@ drupal:
         tags: "~@blackbox&&~@wip"
   extensions:
     Drupal\MinkExtension:
-      base_url: http://drupal
+      base_url: http://proxy
       files_path: /var/www/html/fixtures/files
     Drupal\DrupalExtension:
       api_driver: "drupal"

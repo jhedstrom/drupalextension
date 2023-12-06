@@ -20,9 +20,30 @@ services:
       PHP_IDE_CONFIG: "serverName=drupalextension"
     volumes:
       - ./:/var/www/html
+    labels:
+      - "traefik.enable=false"
+    depends_on:
+      - proxy
+
+  proxy:
+    image: traefik:v2.10
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker"
+      - "--entrypoints.http-80.address=:80"
+      - "--entrypoints.http-443.address=:443"
+    ports:
+      - "80:80"
+      - "443:443"
+      # The Web UI (enabled by --api.insecure=true)
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+      - "traefik.enable=false"
 
   drupal:
-    image: wodby/nginx:1.16-5.11.3
+    image: wodby/nginx
     depends_on:
       - php
     environment:
@@ -30,14 +51,18 @@ services:
       NGINX_ERROR_LOG_LEVEL: debug
       NGINX_BACKEND_HOST: php
       NGINX_SERVER_ROOT: /var/www/html/drupal
-      NGINX_VHOST_PRESET: drupal9
+      NGINX_VHOST_PRESET: drupal10
     volumes:
       - ./:/var/www/html
-    ports:
-      - "8080:80"
+    labels:
+      - "traefik.http.routers.drupal.rule=Host(`proxy`)"
+      - "traefik.http.routers.drupal.entrypoints=http-80"
+      - "traefik.http.routers.drupal-secure.rule=Host(`proxy`)"
+      - "traefik.http.routers.drupal-secure.tls=true"
+      - "traefik.http.routers.drupal-secure.entrypoints=http-443"
 
   blackbox:
-    image: wodby/nginx:1.16-5.11.3
+    image: wodby/nginx
     environment:
       NGINX_STATIC_OPEN_FILE_CACHE: "off"
       NGINX_ERROR_LOG_LEVEL: debug
@@ -45,8 +70,8 @@ services:
       NGINX_VHOST_PRESET: html
     volumes:
       - ./:/var/www/html
-    ports:
-      - "8081:80"
+    labels:
+      - "traefik.enable=false"
 
   db:
     image: wodby/mariadb:10.3-3.8.4
@@ -56,6 +81,8 @@ services:
       MYSQL_DATABASE: drupal
       MYSQL_USER: drupal
       MYSQL_PASSWORD: drupal
+    labels:
+      - "traefik.enable=false"
 
   node:
     image: node:latest
@@ -67,6 +94,5 @@ services:
     volumes:
       - ./:/home/node/app
     command: "sleep infinity"
-
-volumes:
-  codebase:
+    labels:
+      - "traefik.enable=false"
