@@ -68,6 +68,9 @@ drupal_https:
   extensions:
     Drupal\MinkExtension:
       base_url: https://proxy
+      browserkit_http:
+        guzzle_request_options:
+          verify: false
     Drupal\DrupalExtension:
       api_driver: "drupal"
       drupal:

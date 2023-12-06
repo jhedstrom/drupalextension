@@ -41,18 +41,25 @@ the [Full documentation](https://behat-drupal-extension.readthedocs.org)
     minimal configuration. Many more options are covered in the
     [Full documentation](https://behat-drupal-extension.readthedocs.org)
 
-  ``` yaml
-  default:
-    suites:
-      default:
-        contexts:
-          - Drupal\DrupalExtension\Context\DrupalContext
-    extensions:
-      Drupal\MinkExtension:
-        browserkit_http: ~
-        base_url: http://example.org/  # Replace with your site's URL
-      Drupal\DrupalExtension:
-        blackbox: ~
+    ``` yaml
+    default:
+      suites:
+        default:
+          contexts:
+            - Drupal\DrupalExtension\Context\DrupalContext
+      extensions:
+        Drupal\MinkExtension:
+          # Guzzle is used as HTTP client. You can configure the Guzzle request
+          # options by setting `browserkit_http.guzzle_request_options`. For
+          # instance the following configuration will disable SSL peer verification:
+          # browserkit_http:
+          #   guzzle_request_options:
+          #     verify: false
+          # See \GuzzleHttp\RequestOptions for all built-in Guzzle request options
+          browserkit_http: ~
+          base_url: http://example.org/  # Replace with your site's URL
+        Drupal\DrupalExtension:
+          blackbox: ~
   ```
 
 1. In the projectdir, run
