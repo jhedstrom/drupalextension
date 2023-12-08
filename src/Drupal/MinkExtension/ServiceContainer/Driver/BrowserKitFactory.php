@@ -5,6 +5,8 @@ namespace Drupal\MinkExtension\ServiceContainer\Driver;
 use Behat\MinkExtension\ServiceContainer\Driver\BrowserKitFactory as BrowserKitFactoryOriginal;
 use Behat\Mink\Driver\BrowserKitDriver;
 use DrupalFinder\DrupalFinder;
+use GuzzleHttp\Client;
+use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\Definition;
 
 class BrowserKitFactory extends BrowserKitFactoryOriginal
@@ -31,9 +33,32 @@ class BrowserKitFactory extends BrowserKitFactoryOriginal
             );
         }
 
+        $guzzleRequestOptions = $config['guzzle_request_options'] ?? [
+            'allow_redirects' => false,
+            'cookies' => true,
+        ];
+
+        $guzzleClientService = new Definition(Client::class, [$guzzleRequestOptions]);
+        $testBrowserService = (new Definition('Drupal\Tests\DrupalTestBrowser'))
+          ->addMethodCall('setClient', [$guzzleClientService]);
+
         return new Definition(BrowserKitDriver::class, [
-            new Definition('Drupal\Tests\DrupalTestBrowser'),
+            $testBrowserService,
             '%mink.base_url%',
         ]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function configure(ArrayNodeDefinition $builder): void
+    {
+        $builder->
+            children()->
+                arrayNode('guzzle_request_options')->
+                  prototype('variable')->end()->
+                info("Guzzle request options. See \\GuzzleHttp\\RequestOptions. Defaults to ['allow_redirects' => false, 'cookies' => true].")->
+                end()->
+            end();
     }
 }

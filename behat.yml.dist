@@ -29,7 +29,7 @@ default:
         success_message_selector: '.messages.status'
         warning_message_selector: '.messages.warning'
 
-drupal:
+drupal9:
   suites:
     default:
       contexts:
@@ -42,10 +42,10 @@ drupal:
         - Drupal\DrupalExtension\Context\MailContext
         - Drupal\DrupalExtension\Context\RandomContext
       filters:
-        tags: "~@blackbox&&~@wip"
+        tags: "~@blackbox&&~@wip&&~@d10"
   extensions:
     Drupal\MinkExtension:
-      base_url: http://drupal
+      base_url: http://proxy
       files_path: /var/www/html/fixtures/files
     Drupal\DrupalExtension:
       api_driver: "drupal"
@@ -55,3 +55,50 @@ drupal:
         main content: "#main"
       selectors:
         error_message_selector: '.messages--error'
+
+drupal10:
+  suites:
+    default:
+      contexts:
+        - FeatureContext
+        - Drupal\DrupalExtension\Context\ConfigContext
+        - Drupal\DrupalExtension\Context\DrupalContext
+        - Drupal\DrupalExtension\Context\MinkContext
+        - Drupal\DrupalExtension\Context\MarkupContext
+        - Drupal\DrupalExtension\Context\MessageContext
+        - Drupal\DrupalExtension\Context\MailContext
+        - Drupal\DrupalExtension\Context\RandomContext
+      filters:
+        tags: "~@blackbox&&~@wip&&~@d9"
+  extensions:
+    Drupal\MinkExtension:
+      base_url: http://proxy
+      files_path: /var/www/html/fixtures/files
+    Drupal\DrupalExtension:
+      api_driver: "drupal"
+      drupal:
+        drupal_root: "/var/www/html/drupal"
+      region_map:
+        main content: "#main"
+      selectors:
+        error_message_selector: '.messages--error'
+
+drupal_https:
+  suites:
+    default:
+      contexts:
+        - FeatureContext
+        - Drupal\DrupalExtension\Context\DrupalContext
+        - Drupal\DrupalExtension\Context\MinkContext
+      filters:
+        tags: "@https"
+  extensions:
+    Drupal\MinkExtension:
+      base_url: https://proxy
+      browserkit_http:
+        guzzle_request_options:
+          verify: false
+    Drupal\DrupalExtension:
+      api_driver: "drupal"
+      drupal:
+        drupal_root: "/var/www/html/drupal"
