@@ -3,6 +3,7 @@
 namespace Drupal\DrupalExtension\Context;
 
 use Behat\Behat\Context\TranslatableContext;
+use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\Mink\Exception\UnsupportedDriverActionException;
 use Behat\MinkExtension\Context\MinkContext as MinkExtension;
 use Drupal\DrupalExtension\TagTrait;
@@ -249,6 +250,31 @@ JS;
         // autocomplete.js.
         $driver->keyDown($element->getXpath(), $char);
         $driver->keyUp($element->getXpath(), $char);
+    }
+
+  /**
+   * Drag and drop one element onto another.
+   *
+   * @throws \Behat\Mink\Exception\ElementNotFoundException
+   *
+   * @Given I drag element :dragged onto element :target
+   */
+    public function dragElementOntoAnother($dragged, $target)
+    {
+        $session = $this->getSession();
+        $driver = $session->getDriver();
+
+        $draggedElement = $session->getPage()->find('css', $dragged);
+        if (empty($draggedElement)) {
+            throw new ElementNotFoundException($driver, 'dragged element', 'css selector', $dragged);
+        }
+
+        $targetElement = $session->getPage()->find('css', $target);
+        if (empty($targetElement)) {
+            throw new ElementNotFoundException($driver, 'target element', 'css selector', $target);
+        }
+
+        $draggedElement->dragTo($targetElement);
     }
 
   /**
