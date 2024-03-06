@@ -73,6 +73,17 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
     protected $terms = [];
 
   /**
+   * Keep track of created entities so they can be cleaned up.
+   *
+   * Each entry is expected to have the following keys:
+   * - type: The entity type.
+   * - entity: The saved entity object.
+   *
+   * @var array
+   */
+    protected $entities = [];
+
+  /**
    * Keep track of any roles that are created so they can easily be removed.
    *
    * @var array
@@ -289,6 +300,19 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
     }
 
   /**
+   * Remove any created entities.
+   *
+   * @AfterScenario
+   */
+    public function cleanEntities()
+    {
+        foreach (array_reverse($this->entities) as [$type, $entity]) {
+            $this->getDriver()->entityDelete($type, $entity);
+        }
+        $this->entities = [];
+    }
+
+  /**
    * Remove any created roles.
    *
    * @AfterScenario
@@ -419,40 +443,38 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
 
             $is_multicolumn = $multicolumn_field && $multicolumn_column;
             $field_name = $multicolumn_field ?: $field;
-            if ($this->getDriver()->isField($entity_type, $field_name)) {
-                // Split up multiple values in multi-value fields.
-                $values = [];
-                foreach (str_getcsv($field_value) as $key => $value) {
-                    $value = trim((string) $value);
-                    $columns = $value;
-                    // Split up field columns if the ' - ' separator is present.
-                    if (strstr($value, ' - ') !== false) {
-                        $columns = [];
-                        foreach (explode(' - ', $value) as $column) {
-                            // Check if it is an inline named column.
-                            if (!$is_multicolumn && strpos($column, ': ', 1) !== false) {
-                                list ($key, $column) = explode(': ', $column);
-                                $columns[$key] = $column;
-                            } else {
-                                $columns[] = $column;
-                            }
+            // Split up multiple values in multi-value fields.
+            $values = [];
+            foreach (str_getcsv($field_value) as $key => $value) {
+                $value = trim((string) $value);
+                $columns = $value;
+                // Split up field columns if the ' - ' separator is present.
+                if (strstr($value, ' - ') !== false) {
+                    $columns = [];
+                    foreach (explode(' - ', $value) as $column) {
+                        // Check if it is an inline named column.
+                        if (!$is_multicolumn && strpos($column, ': ', 1) !== false) {
+                            list ($key, $column) = explode(': ', $column);
+                            $columns[$key] = $column;
+                        } else {
+                            $columns[] = $column;
                         }
                     }
-                    // Use the column name if we are tracking a multicolumn field.
-                    if ($is_multicolumn) {
-                        $multicolumn_fields[$multicolumn_field][$key][$multicolumn_column] = $columns;
-                        unset($entity->$field);
-                    } else {
-                        $values[] = $columns;
-                    }
                 }
-                // Replace regular fields inline in the entity after parsing.
-                if (!$is_multicolumn) {
-                    $entity->$field_name = $values;
-                    // Don't specify any value if the step author has left it blank.
-                    if ($field_value === '') {
-                        unset($entity->$field_name);
-                    }
+                // Use the column name if we are tracking a multicolumn field.
+                if ($is_multicolumn) {
+                    $multicolumn_fields[$multicolumn_field][$key][$multicolumn_column] = $columns;
+                    unset($entity->$field);
+                } else {
+                    $values[] = $columns;
+                }
+            }
+            // Replace regular fields inline in the entity after parsing.
+            if (!$is_multicolumn) {
+                $entity->$field_name = count($values) > 1 ? $values : reset($values);
+                // Don't specify any value if the step author has left it blank.
+                if ($field_value === '') {
+                    unset($entity->$field_name);
                 }
             }
         }
@@ -463,7 +485,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
             if (count(array_filter($columns, function ($var) {
                 return ($var !== '');
             })) > 0) {
-                $entity->$field_name = $columns;
+                $entity->$field_name = count($columns) > 1 ? $columns : reset($columns);
             }
         }
     }
@@ -497,6 +519,22 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
         $saved = $this->getDriver()->createTerm($term);
         $this->dispatchHooks('AfterTermCreateScope', $saved);
         $this->terms[] = $saved;
+        return $saved;
+    }
+
+  /**
+   * Create an entity.
+   *
+   * @return object
+   *   The created entity.
+   */
+    public function entityCreate($type, $entity)
+    {
+        $this->dispatchHooks('BeforeEntityCreateScope', $entity);
+        $this->parseEntityFields($type, $entity);
+        $saved = $this->getDriver()->createEntity($type, $entity);
+        $this->dispatchHooks('AfterEntityCreateScope', $saved);
+        $this->entities[] = [$type, $saved];
         return $saved;
     }
 
