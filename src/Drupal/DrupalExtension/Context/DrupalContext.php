@@ -339,6 +339,23 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
         $this->assertSession()->statusCodeEquals('200');
     }
 
+  /**
+   * Creates entities of a given type provided in a table.
+   *
+   * Example:
+   * | title    | author     | status | created           |
+   * | My title | Joe Editor | 1      | 2014-10-17 8:00am |
+   * | ...      | ...        | ...    | ...               |
+   *
+   * @Given :type entities:
+   */
+    public function createEntities($type, TableNode $entitiesTable)
+    {
+        foreach ($entitiesTable->getHash() as $entityHash) {
+            $entity = (object) $entityHash;
+            $this->entityCreate($type, $entity);
+        }
+    }
 
   /**
    * Creates a term on an existing vocabulary.
