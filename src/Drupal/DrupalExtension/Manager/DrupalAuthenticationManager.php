@@ -148,7 +148,7 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
 
         // As a last resort, if a logout link is found, we are logged in. While not
         // perfect, this is how Drupal SimpleTests currently work as well.
-        if ($page->findLink($this->getDrupalText('log_out'))) {
+        if ($this->getLogoutLinkElement()) {
             return true;
         }
 
@@ -156,6 +156,14 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
         // case and updates the userManager to reflect this.
         $this->fastLogout();
         return false;
+    }
+
+    /**
+     * Helper to get the log out link from the page.
+     */
+    public function getLogoutLinkElement()
+    {
+        return $this->getSession()->getPage()->findLink($this->getDrupalText('log_out'));
     }
 
     /**
