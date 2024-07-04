@@ -103,6 +103,7 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
     public function logout()
     {
         $this->getSession()->visit($this->locatePath($this->getDrupalText('logout_url')));
+        $this->getSession()->getPage()->findButton($this->getDrupalText('log_out'))->click();
         $this->userManager->setCurrentUser(false);
 
         // Log the user out on the backend if possible.
