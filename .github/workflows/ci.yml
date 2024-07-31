@@ -22,36 +22,36 @@ jobs:
     steps:
       - name: clone
         uses: actions/checkout@v3
-      - name: docker-compose up -d
-        run: docker-compose up -d
+      - name: docker compose up -d
+        run: docker compose up -d
       - name: npm install
-        run: docker-compose exec -T -u node node npm install
+        run: docker compose exec -T -u node node npm install
       - name: composer self-update
-        run: docker-compose exec -T php composer self-update
+        run: docker compose exec -T php composer self-update
       - name: composer require
-        run: docker-compose exec -u ${DOCKER_USER_ID} -T php composer require --no-interaction --dev --no-update drupal/core:^${DRUPAL_VERSION} drupal/core-composer-scaffold:^${DRUPAL_VERSION}
+        run: docker compose exec -u ${DOCKER_USER_ID} -T php composer require --no-interaction --dev --no-update drupal/core:^${DRUPAL_VERSION} drupal/core-composer-scaffold:^${DRUPAL_VERSION}
       - name: composer install
-        run: docker-compose exec -T php composer install
+        run: docker compose exec -T php composer install
       - name: drush site-install
-        run: docker-compose exec -T php ./vendor/bin/drush --yes --root=drupal site-install --db-url=mysql://drupal:drupal@db/drupal --debug
+        run: docker compose exec -T php ./vendor/bin/drush --yes --root=drupal site-install --db-url=mysql://drupal:drupal@db/drupal --debug
       - name: copy fixtures
-        run: docker-compose exec -T php cp -r fixtures/drupal/modules/behat_test drupal/modules
+        run: docker compose exec -T php cp -r fixtures/drupal/modules/behat_test drupal/modules
       - name: drush pmu page_cache
-        run: docker-compose exec -T php ./vendor/bin/drush --yes --root=drupal pmu page_cache,big_pipe
+        run: docker compose exec -T php ./vendor/bin/drush --yes --root=drupal pmu page_cache,big_pipe
       - name: drush en behat_test
-        run: docker-compose exec -T php ./vendor/bin/drush --yes --root=drupal en behat_test
+        run: docker compose exec -T php ./vendor/bin/drush --yes --root=drupal en behat_test
       - name: npm test
-        run: docker-compose exec -T -u node node npm test
+        run: docker compose exec -T -u node node npm test
       - name: composer test
-        run: docker-compose exec -T php composer test
+        run: docker compose exec -T php composer test
       - name: behat --profile=blackbox
-        run: docker-compose exec -T php vendor/bin/behat -fprogress --strict
+        run: docker compose exec -T php vendor/bin/behat -fprogress --strict
       - name: behat --profile=drupal9
         if: "${{ matrix.drupal_version == '9'}}"
-        run: docker-compose exec -T php cat && docker-compose exec -T php vendor/bin/behat -fprogress --profile=drupal9 --strict
+        run: docker compose exec -T php cat && docker compose exec -T php vendor/bin/behat -fprogress --profile=drupal9 --strict
       - name: behat --profile=drupal10
         if: "${{ matrix.drupal_version != '9'}}"
-        run: docker-compose exec -T php cat && docker-compose exec -T php vendor/bin/behat -fprogress --profile=drupal10 --strict
+        run: docker compose exec -T php cat && docker compose exec -T php vendor/bin/behat -fprogress --profile=drupal10 --strict
       - name: behat --profile=drupal_https
         if: "${{ matrix.drupal_version != '9'}}"
-        run: docker-compose exec -T php cat && docker-compose exec -T php vendor/bin/behat -fprogress --profile=drupal_https --strict
+        run: docker compose exec -T php cat && docker compose exec -T php vendor/bin/behat -fprogress --profile=drupal_https --strict
