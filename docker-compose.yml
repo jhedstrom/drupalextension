@@ -74,7 +74,7 @@ services:
       - "traefik.enable=false"
 
   db:
-    image: wodby/mariadb:10.3-3.8.4
+    image: wodby/mariadb:10.6-3.28.3
     stop_grace_period: 30s
     environment:
       MYSQL_ROOT_PASSWORD: password
