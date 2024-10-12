@@ -402,7 +402,7 @@ JS;
     }
 
   /**
-   * Checks, if a button with id|name|title|alt|value exists or not and pressess the same
+   * Checks if a button with id|name|title|alt|value exists or not and presses the same
    *
    * @Given I press :button in the :region( region)
    *
@@ -440,6 +440,44 @@ JS;
         $value = $this->fixStepArgument($value);
         $regionObj = $this->getRegion($region);
         $regionObj->fillField($field, $value);
+    }
+
+  /**
+   * Checks if a checkbox with id|name|title|alt|value exists or not and checks the same
+   *
+   * @Given I check :locator in the :region( region)
+   *
+   * @param $locator
+   *   string The id|name|title|alt|value of the checkbox to be checked
+   * @param $region
+   *   string The region in which the checkbox should be checked
+   *
+   * @throws \Exception
+   *   If region or checkbox within it cannot be found.
+   */
+    public function assertRegionCheckBox($locator, $region)
+    {
+        $regionObj = $this->getRegion($region);
+        $regionObj->checkField($locator);
+    }
+
+  /**
+   * Checks if a checkbox with id|name|title|alt|value exists or not and unchecks the same
+   *
+   * @Given I uncheck :checkbox in the :region( region)
+   *
+   * @param $locator
+   *   string The id|name|title|alt|value of the checkbox to be unchecked
+   * @param $region
+   *   string The region in which the checkbox should be unchecked
+   *
+   * @throws \Exception
+   *   If region or checkbox within it cannot be found.
+   */
+    public function assertRegionUncheckBox($locator, $region)
+    {
+        $regionObj = $this->getRegion($region);
+        $regionObj->uncheckField($locator);
     }
 
   /**
