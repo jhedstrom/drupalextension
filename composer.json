@@ -57,9 +57,6 @@
     }
   },
   "extra": {
-    "branch-alias": {
-      "dev-master": "5.1.x-dev"
-    },
     "installer-paths": {
       "drupal/core": [
         "type:drupal-core"
