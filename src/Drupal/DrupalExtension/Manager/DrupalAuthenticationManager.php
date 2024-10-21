@@ -62,6 +62,14 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
     }
 
     /**
+     * Helper to get the submit element for the logout confirmation form.
+     */
+    protected function getLogoutConfirmSubmitElement(DocumentElement $element)
+    {
+        return $element->findButton($this->getDrupalText('log_out'));
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function logIn(\stdClass $user)
@@ -102,7 +110,13 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
      */
     public function logout()
     {
-        $this->getSession()->visit($this->locatePath($this->getDrupalText('logout_url')));
+        $session = $this->getSession();
+        $session->visit($this->locatePath($this->getDrupalText('logout_url')));
+        // Check to see if the user is on the logout confirm page (10.3+).
+        if ($session->getCurrentUrl() === $this->locatePath($this->getDrupalText('logout_confirm_url'))) {
+            $submit = $this->getLogoutConfirmSubmitElement($session->getPage());
+            $submit->click();
+        }
         $this->userManager->setCurrentUser(false);
 
         // Log the user out on the backend if possible.

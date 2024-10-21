@@ -229,6 +229,20 @@ class FeatureContext extends RawDrupalContext {
         if (!\Drupal::currentUser()->isAnonymous()) {
             throw new \LogicException('User is still logged in on the backend.');
         }
+        // Visit login page and ensure login form is present.
+        $this->getSession()->visit($this->locatePath($this->getDrupalText('login_url')));
+        $element = $this->getSession()->getPage();
+        $element->fillField($this->getDrupalText('username_field'), 'foo');
+    }
+
+    /**
+     * Logs out via the logout url rather than fast logout.
+     *
+     * @Then I log out via the logout url
+     */
+    public function logoutViaUrl()
+    {
+      $this->logout(false);
     }
 
   /**
