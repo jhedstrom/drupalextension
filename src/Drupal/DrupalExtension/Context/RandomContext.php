@@ -3,6 +3,7 @@
 namespace Drupal\DrupalExtension\Context;
 
 use Behat\Behat\Hook\Scope\ScenarioScope;
+use Behat\Gherkin\Node\TableNode;
 
 /**
  * Class RandomContext
