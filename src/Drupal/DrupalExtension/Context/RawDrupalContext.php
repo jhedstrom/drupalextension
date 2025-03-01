@@ -282,7 +282,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
     public function cleanTerms()
     {
         // Remove any terms that were created.
-        foreach ($this->terms as $term) {
+        foreach (array_reverse($this->terms) as $term) {
             $this->getDriver()->termDelete($term);
         }
         $this->terms = [];
