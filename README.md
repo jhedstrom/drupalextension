@@ -30,7 +30,7 @@ the [Full documentation](https://behat-drupal-extension.readthedocs.org)
 
 1. Install using [Composer](https://getcomposer.org/):
 
-    ``` bash
+    ```bash
     mkdir projectdir
     cd projectdir
     curl -sS https://getcomposer.org/installer | php
@@ -41,7 +41,7 @@ the [Full documentation](https://behat-drupal-extension.readthedocs.org)
     minimal configuration. Many more options are covered in the
     [Full documentation](https://behat-drupal-extension.readthedocs.org)
 
-    ``` yaml
+    ```yaml
     default:
       suites:
         default:
@@ -60,7 +60,7 @@ the [Full documentation](https://behat-drupal-extension.readthedocs.org)
           base_url: http://example.org/  # Replace with your site's URL
         Drupal\DrupalExtension:
           blackbox: ~
-  ```
+     ```
 
 1. In the projectdir, run
 
