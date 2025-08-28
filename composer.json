@@ -27,7 +27,7 @@
     "drupal/drupal-driver": "^2.2.1 || dev-master",
     "friends-of-behat/mink-extension": "^2.7.1",
     "lullabot/mink-selenium2-driver": "^1.7",
-    "symfony/http-client": "~4.4 || ^5 || ^6" || ^7,
+    "symfony/http-client": "~4.4 || ^5 || ^6 || ^7",
     "webflo/drupal-finder": "^1.2"
   },
   "require-dev": {
