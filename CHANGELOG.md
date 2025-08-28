@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+## [5.1.0]
+### Added
+ * [#677](https://github.com/jhedstrom/drupalextension/pull/677) - Drupal 11 support
 ## [5.0.0]
 ### Added
  * [#655](https://github.com/jhedstrom/drupalextension/pull/655) Configure Guzzle request options
@@ -148,7 +151,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   * [#437](https://github.com/jhedstrom/drupalextension/pull/437): Radio button selector fix.
   * [#439](https://github.com/jhedstrom/drupalextension/pull/439): Symfony 3 compatibility follow-up fix.
 
-[Unreleased]: https://github.com/jhedstrom/drupalextension/compare/v5.0.0...HEAD
+[Unreleased]: https://github.com/jhedstrom/drupalextension/compare/v5.1.0...HEAD
+[5.1.0]: https://github.com/jhedstrom/drupalextension/compare/v5.0.0...v5.1.0
 [5.0.0]: https://github.com/jhedstrom/drupalextension/compare/v5.0.0rc1...v5.0.0
 [5.0.0 alpha1]: https://github.com/jhedstrom/drupalextension/compare/v4.2.0...v5.0.0alpha1
 [4.2.0]: https://github.com/jhedstrom/drupalextension/compare/v4.1.0...v4.2.0
