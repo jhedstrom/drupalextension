@@ -51,12 +51,14 @@ class RawMailContext extends RawDrupalContext
    *   A particular mail to return, e.g. 0 for first or -1 for last.
    * @param string $store
    *   The name of the mail store to get mail from.
+   * @param array $attachments
+   *   An array of attachments (filenames) the mail must contain.
    *
    * @return \stdClass[]
    *   An array of mail, each formatted as a Drupal 8
    * \Drupal\Core\Mail\MailInterface::mail $message array.
    */
-    protected function getMail($matches = [], $new = false, $index = null, $store = 'default')
+    protected function getMail($matches = [], $new = false, $index = null, $store = 'default', array $attachments = [])
     {
         $mail = $this->getMailManager()->getMail($store);
         $previousMailCount = $this->getMailCount($store);
@@ -69,8 +71,8 @@ class RawMailContext extends RawDrupalContext
 
         // Filter mail based on $matches; keep only mail where each field mentioned
         // in $matches contains the value specified for that field.
-        $mail = array_values(array_filter($mail, function ($singleMail) use ($matches) {
-            return ($this->matchesMail($singleMail, $matches));
+        $mail = array_values(array_filter($mail, function ($singleMail) use ($matches, $attachments) {
+            return ($this->matchesMail($singleMail, $matches, $attachments));
         }));
 
         // Return an individual mail if specified by an index.
@@ -104,14 +106,18 @@ class RawMailContext extends RawDrupalContext
    *   The mail, as an array of mail fields.
    * @param array $matches
    *   The criteria: an associative array of mail fields and desired values.
+   * @param array $attachments
+   *   An array of attachments (filenames) the mail must contain.
    *
    * @return bool
    *   Whether the mail matches the criteria.
    */
-    protected function matchesMail($mail = [], $matches = [])
+    protected function matchesMail($mail = [], $matches = [], array $attachments = [])
     {
-        // Discard criteria that are just zero-length strings.
+        // Discard criteria or attachments that are just zero-length strings.
         $matches = array_filter($matches, 'strlen');
+        $attachments = array_filter($attachments, 'strlen');
+
         // For each criteria, check the specified mail field contains the value.
         foreach ($matches as $field => $value) {
             // Case insensitive.
@@ -119,6 +125,14 @@ class RawMailContext extends RawDrupalContext
                 return false;
             }
         }
+
+        // Check that the mail contains each specified attachment .
+        foreach ($attachments as $attachment) {
+            if (!isset($mail['params']['attachments']) || !in_array($attachment, array_column($mail['params']['attachments'], 'filename'))) {
+                return false;
+            }
+        }
+
         return true;
     }
 
@@ -183,7 +197,7 @@ class RawMailContext extends RawDrupalContext
             }
         }
     }
-  
+
   /**
    * Sort mail by to, subject and body.
    *
