@@ -86,8 +86,29 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
             throw new \Exception(sprintf("No submit button at %s", $this->getSession()->getCurrentUrl()));
         }
 
+        // Store the current URL before clicking login.
+        $loginUrl = $this->getSession()->getCurrentUrl();
+
         // Log in.
         $submit->click();
+
+        // Wait for URL change after login (max 3 seconds).
+        $timeout = microtime(true) + 3;
+        while (microtime(true) < $timeout && $this->getSession()->getCurrentUrl() === $loginUrl) {
+            usleep(100000);
+        }
+
+        // Wait for page to be fully loaded before check if loggedIn.
+        $session = $this->getSession();
+        $timeout = microtime(true) + 3;
+        while (microtime(true) < $timeout) {
+            if ($session->getPage() && $session->getPage()->find('css', 'body')) {
+                // Additional wait to ensure DOM is stable.
+                usleep(300000);
+                break;
+            }
+            usleep(100000);
+        }
 
         if (!$this->loggedIn()) {
             if (isset($user->role)) {
