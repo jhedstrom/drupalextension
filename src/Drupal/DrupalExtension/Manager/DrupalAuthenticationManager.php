@@ -99,14 +99,8 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
         }
 
         // Wait for page to be fully loaded before check if loggedIn.
-        $session = $this->getSession();
         $timeout = microtime(true) + 3;
-        while (microtime(true) < $timeout) {
-            if ($session->getPage() && $session->getPage()->find('css', 'body')) {
-                // Additional wait to ensure DOM is stable.
-                usleep(300000);
-                break;
-            }
+        while (microtime(true) < $timeout && !$this->getSession()->getPage()->find('css', 'body')) {
             usleep(100000);
         }
 
