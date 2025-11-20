@@ -62,6 +62,19 @@ jobs:
           docker compose exec -u 1001 -T php sh -c "LANG=C sed -i 's/\xc2\xa0/ /g' features/language.feature"
           docker compose exec -T php sh -c "ls -la  features/"
         shell: bash
+      - name: 🔍 Debug Feature File Content (Focus on Line 2)
+        run: |
+          echo "Dumping first 64 bytes of feature file..."
+          # Dump the hex to verify Line 1 and the start of Line 2
+          docker compose exec -T php xxd -l 64 features/language.feature
+
+          echo "---"
+
+          echo "Line 2 (In order to...) in hex:"
+          # Get just Line 2 from the file and dump its hex content
+          # This should be the most revealing command.
+          docker compose exec -T php sh -c "head -n 2 features/language.feature | tail -n 1 | xxd -p"
+        shell: bash
       - name: behat --profile=blackbox
         run: docker compose exec -T php vendor/bin/behat -fprogress --strict
       - name: behat --profile=drupal9
