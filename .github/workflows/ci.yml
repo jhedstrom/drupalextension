@@ -61,7 +61,7 @@ jobs:
           # The LANG=C ensures sed treats bytes literally, preventing locale-related issues.
           docker compose exec -T php sh -c "ls -la  features/"
         shell: bash
-      - name: 🔍 Debug Feature File Content (Focus on Line 2)
+      - name: Debug Feature File Content (Focus on Line 2)
         run: |
           echo "Dumping first 64 bytes of feature file..."
           # Dump the hex to verify Line 1 and the start of Line 2
