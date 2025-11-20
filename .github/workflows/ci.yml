@@ -59,8 +59,6 @@ jobs:
           docker compose exec -T php sh -c "whoami"
           # Replace all Non-Breaking Space characters (hex C2 A0) with standard Space (hex 20)
           # The LANG=C ensures sed treats bytes literally, preventing locale-related issues.
-          docker compose exec -u 1001 -T php sh -c "LANG=C sed -i 's/\xc2\xa0/ /g' features/language.feature"
-          docker compose exec -u 1001 -T php sh -c "LANG=C sed -i 's/\xc2\xa0/ /g' features/mail.feature"
           docker compose exec -T php sh -c "ls -la  features/"
         shell: bash
       - name: 🔍 Debug Feature File Content (Focus on Line 2)
@@ -76,16 +74,7 @@ jobs:
           # This should be the most revealing command.
           docker compose exec -T php sh -c "head -n 2 features/language.feature | tail -n 1 | xxd -p"
         shell: bash
-      - name: 🧹 Aggressively Sanitize Feature File (Strip Control Chars)
-        run: |
-          # Strip all non-printable ASCII control characters (0x01 to 0x1F and 0x7F)
-          # We use a temp file because we are piping the output of the sed command.
-          docker compose exec -u 1001 -T php sh -c "
-            # Strip all non-standard characters from the file.
-            LANG=C sed 's/[\x01-\x08\x0b-\x1f\x7f]//g' features/language.feature > features/language.tmp;
-            mv features/language.tmp features/language.feature
-          "
-        shell: bash
+
       - name: behat --profile=blackbox
         run: docker compose exec -T php vendor/bin/behat -fprogress --strict
       - name: behat --profile=drupal9
