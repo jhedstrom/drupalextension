@@ -27,13 +27,14 @@ jobs:
         # Use the host's git to globally trust the workspace directory.
         # This tells Git not to worry about the ownership mismatch in the workspace.
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
-
+      - name: Where is composer
+        run: which composer
       - name: docker compose up -d
         run: docker compose up -d
       - name: npm install
         run: docker compose exec -u ${DOCKER_USER_ID} -T -u node node npm install
       - name: composer self-update
-        run: docker compose exec -u ${DOCKER_USER_ID} -T php composer self-update
+        run: docker compose exec -u root -T php composer self-update
       - name: composer require
         run: docker compose exec -u ${DOCKER_USER_ID} -T php composer require --no-interaction --dev --no-update drupal/core:^${DRUPAL_VERSION} drupal/core-composer-scaffold:^${DRUPAL_VERSION}
       - name: composer install
