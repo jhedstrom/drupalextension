@@ -44,6 +44,15 @@ jobs:
         run: docker compose exec -T -u node node npm test
       - name: composer test
         run: docker compose exec -T php composer test
+      - name: Debug Feature File Content
+        run: |
+          echo "Behat version"
+          docker compose exec -T php vendor/bin/behat -V
+
+          echo "Find behat.yml"
+          docker compose exec -T find . -name "behat.yml" -exec echo "behat.yml found at: {}" \; -exec cat {} \;
+
+        shell: bash
       - name: behat --profile=blackbox
         run: docker compose exec -T php vendor/bin/behat -fprogress --strict
       - name: behat --profile=drupal9
