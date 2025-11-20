@@ -1,4 +1,3 @@
-@api
 Feature: Language support
   In order to demonstrate the language integration
   As a developer for the Behat Extension
