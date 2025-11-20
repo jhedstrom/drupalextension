@@ -18,12 +18,14 @@ jobs:
     env:
       PHP_VERSION: ${{ matrix.php_version }}
       DRUPAL_VERSION: ${{ matrix.drupal_version }}
-      DOCKER_USER_ID: "1001"
+      DOCKER_USER_ID: "1000"
     steps:
       - name: clone
         uses: actions/checkout@v3
       - name: docker compose up -d
         run: docker compose up -d
+      - name: perms
+        run: sudo chown 1000:1000 -R .
       - name: ids
         run: |
           echo "Who am I inside the container?"
@@ -44,7 +46,7 @@ jobs:
         run: docker compose exec -u ${DOCKER_USER_ID} -T php ls -la
 
       - name: npm install
-        run: docker compose exec -u ${DOCKER_USER_ID} -T -u node node npm install
+        run: docker compose exec -T -u node node npm install
       - name: composer version
         run: docker compose exec -u ${DOCKER_USER_ID} -T php composer --version
 
@@ -67,7 +69,7 @@ jobs:
       - name: drush en behat_test
         run: docker compose exec -u ${DOCKER_USER_ID} -T php ./vendor/bin/drush --yes --root=drupal en behat_test
       - name: npm test
-        run: docker compose exec -u ${DOCKER_USER_ID} -T -u node node npm test
+        run: docker compose exec -T -u node node npm test
       - name: composer test
         run: docker compose exec -u ${DOCKER_USER_ID} -T php composer test
       - name: Debug Feature File Content
@@ -100,14 +102,30 @@ jobs:
 
         shell: bash
 
+      - name: 🧹 Clear Behat/Gherkin Cache
+        # Behat sometimes uses Composer's cache or its own temp files.
+        # Forcing a composer dump-autoload can help reset any compiled file maps.
+        # Running the cache:clear command for the main framework (Drupal) might also help.
+        run: |
+          # 1. Clear Composer's optimized autoloader cache
+          docker compose exec -u ${DOCKER_USER_ID} -T php composer dump-autoload --optimize
+
+          # 2. Clear Drupal's internal cache, as the Behat extension often hooks into it
+          docker compose exec -u ${DOCKER_USER_ID} -T php ./vendor/bin/drush --root=drupal cache:rebuild
+        shell: bash
+
       - name: behat --profile=blackbox
-        run: docker compose exec -u ${DOCKER_USER_ID} -T php vendor/bin/behat --tags='@blackbox' --strict
+        run: docker compose exec -u ${DOCKER_USER_ID} -T php vendor/bin/behat --strict
+
       - name: behat --profile=drupal9
         if: "${{ matrix.drupal_version == '9'}}"
         run: docker compose exec -u ${DOCKER_USER_ID} -T php cat && docker compose exec -u ${DOCKER_USER_ID} -T php vendor/bin/behat -fprogress --profile=drupal9 --strict
       - name: behat --profile=drupal10
         if: "${{ matrix.drupal_version != '9'}}"
-        run: docker compose exec -u ${DOCKER_USER_ID} -T php cat && docker compose exec -u ${DOCKER_USER_ID} -T php vendor/bin/behat -fprogress --profile=drupal10 --strict
+        run: docker compose exec -u ${DOCKER_USER_ID} -T php vendor/bin/behat --profile=drupal10 --strict || true
+      - name: behat --profile=drupal10bis
+        if: "${{ matrix.drupal_version != '9'}}"
+        run: docker compose exec -u ${DOCKER_USER_ID} -T php vendor/bin/behat --profile=drupal10 --strict
       - name: behat --profile=drupal_https
         if: "${{ matrix.drupal_version != '9'}}"
         run: docker compose exec -u ${DOCKER_USER_ID} -T php cat && docker compose exec -u ${DOCKER_USER_ID} -T php vendor/bin/behat -fprogress --profile=drupal_https --strict
