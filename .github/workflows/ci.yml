@@ -60,6 +60,7 @@ jobs:
           # Replace all Non-Breaking Space characters (hex C2 A0) with standard Space (hex 20)
           # The LANG=C ensures sed treats bytes literally, preventing locale-related issues.
           docker compose exec -u 1001 -T php sh -c "LANG=C sed -i 's/\xc2\xa0/ /g' features/language.feature"
+          docker compose exec -T php sh -c "ls -la  features/"
         shell: bash
       - name: behat --profile=blackbox
         run: docker compose exec -T php vendor/bin/behat -fprogress --strict
