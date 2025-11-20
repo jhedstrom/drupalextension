@@ -44,23 +44,6 @@ jobs:
         run: docker compose exec -T -u node node npm test
       - name: composer test
         run: docker compose exec -T php composer test
-      - name: 🔍 Debug Feature File Content
-        run: |
-          echo "Dumping first 64 bytes of feature file..."
-          # Use xxd to dump the hex bytes (preferred, easier to read)
-          xxd -l 64 features/language.feature
-    
-          echo "---"
-    
-          echo "Inspecting indentation of the second line..."
-          # Use awk to read the second line and replace non-standard spaces with a marker
-          # The [[:blank:]] class includes standard space and tab, but often excludes NBSP.
-          # We will use tr to highlight any non-printable characters.
-          tr -c '[:print:]\n' '?' < features/language.feature | head -n 3
-
-          find . -name behat.yml
-          
-        shell: bash
       - name: behat --profile=blackbox
         run: docker compose exec -T php vendor/bin/behat -fprogress --strict
       - name: behat --profile=drupal9
