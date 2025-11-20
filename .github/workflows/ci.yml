@@ -58,8 +58,8 @@ jobs:
           # We will use tr to highlight any non-printable characters.
           tr -c '[:print:]\n' '?' < features/language.feature | head -n 3
 
-          # Display behat yml
-          cat behat.yml
+          find . -name behat.yml
+          
         shell: bash
       - name: behat --profile=blackbox
         run: docker compose exec -T php vendor/bin/behat -fprogress --strict
