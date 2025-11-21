@@ -58,16 +58,15 @@ jobs:
       - name: behat --profile=drupal9
         if: "${{ matrix.drupal_version == '9'}}"
         run: docker compose exec -u ${DOCKER_USER_ID} -T php cat && docker compose exec -u ${DOCKER_USER_ID} -T php vendor/bin/behat -fprogress --profile=drupal9 --strict
+      - name: Prepara date format for D11 tests
+        if: "${{ matrix.drupal_version == '11'}}"
+        run: docker compose exec -u ${DOCKER_USER_ID} -T php ./vendor/bin/drush sget core.date_format.olivero_medium pattern 'j F, Y'
       - name: behat --profile=drupal10
         if: "${{ matrix.drupal_version != '9'}}"
-        run: docker compose exec -u ${DOCKER_USER_ID} -T php vendor/bin/behat -fprogress  --profile=drupal10 --strict || true
-      - name: behat --profile=drupal10bis
-        if: "${{ matrix.drupal_version != '9'}}"
-        run: docker compose exec -u ${DOCKER_USER_ID} -T php vendor/bin/behat -fprogress  --profile=drupal10 --strict || true
+        run: docker compose exec -u ${DOCKER_USER_ID} -T php vendor/bin/behat -fprogress  --profile=drupal10 --strict
       - name: behat --profile=drupal_https
         if: "${{ matrix.drupal_version != '9'}}"
         run: docker compose exec -u ${DOCKER_USER_ID} -T php cat && docker compose exec -u ${DOCKER_USER_ID} -T php vendor/bin/behat -fprogress --profile=drupal_https --strict
-
 
       - name: Prepare different language features
         run: |
