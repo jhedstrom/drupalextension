@@ -1,6 +1,4 @@
 default:
-  gherkin:
-    language: en
   suites:
     default:
       contexts:
