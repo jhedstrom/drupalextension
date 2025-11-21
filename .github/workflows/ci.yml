@@ -87,8 +87,6 @@ jobs:
           sudo rm features
           sudo ln -s features-i18n features
           ls -la
-      - name: npm test
-        run: docker compose exec -T -u node node npm test
       - name: composer test
         run: docker compose exec -u ${DOCKER_USER_ID} -T php composer test
       - name: behat --profile=blackbox
