@@ -7,13 +7,13 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - php_version: "7.4"
-            drupal_version: "9"
           - php_version: "8.2"
             drupal_version: "10"
           - php_version: "8.3"
             drupal_version: "10"
           - php_version: "8.3"
+            drupal_version: "11"
+          - php_version: "8.4"
             drupal_version: "11"
     env:
       PHP_VERSION: ${{ matrix.php_version }}
@@ -26,19 +26,6 @@ jobs:
         run: docker compose up -d
       - name: perms
         run: sudo chown 1000:1000 -R .
-      - name: ids
-        run: |
-          echo "Who am I inside the container?"
-          docker compose exec -u ${DOCKER_USER_ID} -T php id
-
-          echo "Some ids"
-          docker compose exec -u ${DOCKER_USER_ID} -T php cat /etc/passwd
-
-        shell: bash
-
-      - name: 🔐 Fix Git Dubious Ownership
-        run: docker compose exec  -T php git config --global --add safe.directory /var/www/html
-
       - name: npm install
         run: docker compose exec -T -u node node npm install
       - name: composer version
