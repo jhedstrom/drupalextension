@@ -568,6 +568,21 @@ class FeatureContext extends RawDrupalContext {
     rmdir($path);
   }
 
+  /**
+   * @Given I wait until cron is not running
+   */
+  public function waitFroCronAndRun() {
+
+    $lock = \Drupal::service('lock');
+
+    $count = 0;
+    while (!$lock->lockMayBeAvailable('cron') || $count > 30) {
+      sleep(2);
+      $count++;
+    }
+
+    return \Drupal::service('cron')->run();
+  }
 
   /**
    * @} End of defgroup Behat FeatureContext.

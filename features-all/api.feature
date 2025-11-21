@@ -23,8 +23,8 @@ Feature: DrupalContext general testing
 
   Scenario: Run cron
     Given I am logged in as a user with the "administrator" role
-    When I run cron
-    And am on "admin/reports/dblog"
+    When I wait until cron is not running
+    And I go to "admin/reports/dblog"
     Then I should see the link "Cron run completed"
 
   Scenario: Create many nodes
