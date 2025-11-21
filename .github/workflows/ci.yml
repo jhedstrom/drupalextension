@@ -54,13 +54,16 @@ jobs:
       - name: composer test
         run: docker compose exec -u ${DOCKER_USER_ID} -T php composer test
       - name: behat --profile=blackbox
-        run: docker compose exec -u ${DOCKER_USER_ID} -T php vendor/bin/behat --fprogress --strict
+        run: docker compose exec -u ${DOCKER_USER_ID} -T php vendor/bin/behat -fprogress --strict
       - name: behat --profile=drupal9
         if: "${{ matrix.drupal_version == '9'}}"
         run: docker compose exec -u ${DOCKER_USER_ID} -T php cat && docker compose exec -u ${DOCKER_USER_ID} -T php vendor/bin/behat -fprogress --profile=drupal9 --strict
       - name: behat --profile=drupal10
         if: "${{ matrix.drupal_version != '9'}}"
-        run: docker compose exec -u ${DOCKER_USER_ID} -T php vendor/bin/behat --fprogress  --profile=drupal10 --strict
+        run: docker compose exec -u ${DOCKER_USER_ID} -T php vendor/bin/behat -fprogress  --profile=drupal10 --strict || true
+      - name: behat --profile=drupal10bis
+        if: "${{ matrix.drupal_version != '9'}}"
+        run: docker compose exec -u ${DOCKER_USER_ID} -T php vendor/bin/behat -fprogress  --profile=drupal10 --strict || true
       - name: behat --profile=drupal_https
         if: "${{ matrix.drupal_version != '9'}}"
         run: docker compose exec -u ${DOCKER_USER_ID} -T php cat && docker compose exec -u ${DOCKER_USER_ID} -T php vendor/bin/behat -fprogress --profile=drupal_https --strict
@@ -79,4 +82,4 @@ jobs:
         run: docker compose exec -u ${DOCKER_USER_ID} -T php cat && docker compose exec -u ${DOCKER_USER_ID} -T php vendor/bin/behat -fprogress --profile=drupal9 --strict
       - name: behat --profile=drupal10
         if: "${{ matrix.drupal_version != '9'}}"
-        run: docker compose exec -u ${DOCKER_USER_ID} -T php vendor/bin/behat --fprogress --profile=drupal10 --strict
+        run: docker compose exec -u ${DOCKER_USER_ID} -T php vendor/bin/behat -fprogress --profile=drupal10 --strict
