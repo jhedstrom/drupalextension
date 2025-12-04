@@ -36,7 +36,7 @@ jobs:
         run: docker compose exec -u ${DOCKER_USER_ID} -T php composer install
 
       - name: drush site-install
-        run: docker compose exec -u ${DOCKER_USER_ID} -T php ./vendor/bin/drush --yes --root=drupal site-install --db-url=mysql://drupal:drupal@db/drupal --debug
+        run: docker compose exec -u ${DOCKER_USER_ID} -T php ./vendor/bin/drush --yes --root=drupal site-install --db-url=mysql://drupal:drupal@db/drupal
       - name: copy fixtures
         run: docker compose exec -u ${DOCKER_USER_ID} -T php cp -r fixtures/drupal/modules/behat_test drupal/modules
       - name: drush pmu page_cache
@@ -46,9 +46,7 @@ jobs:
 
       - name: Prepare general features
         run: |
-          ls -la
           sudo ln -s features-all features
-          ls -la
       - name: npm test
         run: docker compose exec -T -u node node npm test
       - name: composer test
