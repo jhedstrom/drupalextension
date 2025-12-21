@@ -7,8 +7,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - php_version: "7.4"
-            drupal_version: "9"
           - php_version: "8.2"
             drupal_version: "10"
           - php_version: "8.3"
@@ -44,11 +42,15 @@ jobs:
         run: docker compose exec -T -u node node npm test
       - name: composer test
         run: docker compose exec -T php composer test
+      - name: Adjust Drupal 11 configurations for Drupal 11
+        if: "${{ matrix.drupal_version == '11'}}"
+        run: |
+          # Set configurations to values suitable for running tests.
+          docker compose exec -u ${DOCKER_USER_ID} -T php vendor/bin/drush cset core.date_format.olivero_medium pattern 'j F, Y'
+          docker compose exec -u ${DOCKER_USER_ID} -T php vendor/bin/drush cset automated_cron.settings interval 0
+          docker compose exec -u ${DOCKER_USER_ID} -T php vendor/bin/drush cset user.settings register visitors
       - name: behat --profile=blackbox
         run: docker compose exec -T php vendor/bin/behat -fprogress --strict
-      - name: behat --profile=drupal9
-        if: "${{ matrix.drupal_version == '9'}}"
-        run: docker compose exec -T php cat && docker compose exec -T php vendor/bin/behat -fprogress --profile=drupal9 --strict
       - name: behat --profile=drupal10
         if: "${{ matrix.drupal_version != '9'}}"
         run: docker compose exec -T php cat && docker compose exec -T php vendor/bin/behat -fprogress --profile=drupal10 --strict
