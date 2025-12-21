@@ -29,33 +29,6 @@ default:
         success_message_selector: '.messages.status'
         warning_message_selector: '.messages.warning'
 
-drupal9:
-  suites:
-    default:
-      contexts:
-        - FeatureContext
-        - Drupal\DrupalExtension\Context\ConfigContext
-        - Drupal\DrupalExtension\Context\DrupalContext
-        - Drupal\DrupalExtension\Context\MinkContext
-        - Drupal\DrupalExtension\Context\MarkupContext
-        - Drupal\DrupalExtension\Context\MessageContext
-        - Drupal\DrupalExtension\Context\MailContext
-        - Drupal\DrupalExtension\Context\RandomContext
-      filters:
-        tags: "~@blackbox&&~@wip&&~@d10"
-  extensions:
-    Drupal\MinkExtension:
-      base_url: http://proxy
-      files_path: /var/www/html/fixtures/files
-    Drupal\DrupalExtension:
-      api_driver: "drupal"
-      drupal:
-        drupal_root: "/var/www/html/drupal"
-      region_map:
-        main content: "#main"
-      selectors:
-        error_message_selector: '.messages--error'
-
 drupal10:
   suites:
     default:
@@ -69,7 +42,7 @@ drupal10:
         - Drupal\DrupalExtension\Context\MailContext
         - Drupal\DrupalExtension\Context\RandomContext
       filters:
-        tags: "~@blackbox&&~@wip&&~@d9"
+        tags: "~@blackbox&&~@wip"
   extensions:
     Drupal\MinkExtension:
       base_url: http://proxy

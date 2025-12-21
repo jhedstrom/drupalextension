@@ -4,14 +4,6 @@ Feature: DrupalContext
   As a developer
   I need to use the step definitions of this context
 
-  @d9
-  Scenario: Target links within table rows (Drupal 9)
-    Given I am logged in as a user with the "administrator" role
-    When I am at "admin/structure/types"
-    And I click "Manage fields" in the "Article" row
-    Then I should be on "admin/structure/types/manage/article/fields"
-    And I should see the link "Add field"
-
   @d10
   @https
   Scenario: Target links within table rows (Drupal 10)
