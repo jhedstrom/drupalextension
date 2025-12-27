@@ -220,6 +220,25 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
         throw new \Exception(sprintf('Found a row containing "%s", but no "%s" link on the page %s', $rowText, $link, $this->getSession()->getCurrentUrl()));
     }
 
+    /**
+     * Attempts to find a button in a table row containing giving text. This is
+     * for entity reference forms like Paragraphs, Inline entity form, etc.
+     * where there may be multiple entities in a table, each with separate edit
+     * buttons.
+     *
+     * @Given I press :button in the :rowText row
+     */
+    public function assertPressInTableRow($button, $rowText)
+    {
+        $page = $this->getSession()->getPage();
+        if ($button_element = $this->getTableRow($page, $rowText)->findButton($button)) {
+            // Press the button and return.
+            $button_element->press();
+            return;
+        }
+        throw new \Exception(sprintf('Found a row containing "%s", but no "%s" button on the page %s', $rowText, $button, $this->getSession()->getCurrentUrl()));
+    }
+
   /**
    * @Given the cache has been cleared
    */
