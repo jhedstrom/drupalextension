@@ -87,11 +87,14 @@ class MailContext extends RawMailContext
    * @Then (a )(an )(e)mail(s) has/have been sent to :to:
    * @Then (a )(an )(e)mail(s) has/have been sent with the subject :subject:
    * @Then (a )(an )(e)mail(s) has/have been sent to :to with the subject :subject:
+   * @Then (a )(an )(e)mail(s) has/have been sent with the attachment(s) :attachments:
+   * @Then (a )(an )(e)mail(s) has/have been sent to :to with the attachment(s) :attachments:
+   * @Then (a )(an )(e)mail(s) has/have been sent to :to with the subject :subject and the attachment(s) :attachments:
    */
-    public function mailHasBeenSent(TableNode $expectedMailTable, $to = '', $subject = '')
+    public function mailHasBeenSent(TableNode $expectedMailTable, $to = '', $subject = '', $attachments = '')
     {
         $expectedMail = $expectedMailTable->getHash();
-        $actualMail = $this->getMail(['to' => $to, 'subject' => $subject], false);
+        $actualMail = $this->getMail(['to' => $to, 'subject' => $subject], false, null, null, explode(',', $attachments));
         $this->compareMail($actualMail, $expectedMail);
     }
 
@@ -102,11 +105,14 @@ class MailContext extends RawMailContext
    * @Then (a )(an )new (e)mail(s) is/are sent to :to:
    * @Then (a )(an )new (e)mail(s) is/are sent with the subject :subject:
    * @Then (a )(an )new (e)mail(s) is/are sent to :to with the subject :subject:
+   * @Then (a )(an )new (e)mail(s) is/are sent with the attachment(s) :attachments:
+   * @Then (a )(an )new (e)mail(s) is/are sent to :to with the attachment(s) :attachments:
+   * @Then (a )(an )new (e)mail(s) is/are sent to :to with the subject :subject and the attachment(s) :attachments:
    */
-    public function newMailIsSent(TableNode $expectedMailTable, $to = '', $subject = '')
+    public function newMailIsSent(TableNode $expectedMailTable, $to = '', $subject = '', $attachments = '')
     {
         $expectedMail = $expectedMailTable->getHash();
-        $actualMail = $this->getMail(['to' => $to, 'subject' => $subject], true);
+        $actualMail = $this->getMail(['to' => $to, 'subject' => $subject], true, null, null, explode(',', $attachments));
         $this->compareMail($actualMail, $expectedMail);
     }
 
@@ -117,10 +123,13 @@ class MailContext extends RawMailContext
    * @Then :count (e)mail(s) has/have been sent to :to
    * @Then :count (e)mail(s) has/have been sent with the subject :subject
    * @Then :count (e)mail(s) has/have been sent to :to with the subject :subject
+   * @Then :count (e)mail(s) has/have been sent with the attachment(s) :attachments
+   * @Then :count (e)mail(s) has/have been sent to :to with the attachment(s) :attachments
+   * @Then :count (e)mail(s) has/have been sent to :to with the subject :subject and the attachment(s) :attachments
    */
-    public function noMailHasBeenSent($count, $to = '', $subject = '')
+    public function noMailHasBeenSent($count, $to = '', $subject = '', $attachments = '')
     {
-        $actualMail = $this->getMail(['to' => $to, 'subject' => $subject], false);
+        $actualMail = $this->getMail(['to' => $to, 'subject' => $subject], false, null, null, explode(',', $attachments));
         $count = $count === 'no' ? 0 : $count;
         $count = $count === 'a' ? null : $count;
         $count = $count === 'an' ? null : $count;
@@ -134,10 +143,13 @@ class MailContext extends RawMailContext
    * @Then :count new (e)mail(s) is/are sent to :to
    * @Then :count new (e)mail(s) is/are sent with the subject :subject
    * @Then :count new (e)mail(s) is/are sent to :to with the subject :subject
+   * @Then :count new (e)mail(s) is/are sent with the attachment(s) :attachments
+   * @Then :count new (e)mail(s) is/are sent to :to with the attachment(s) :attachments
+   * @Then :count new (e)mail(s) is/are sent to :to with the subject :subject and the attachment(s) :attachments
    */
-    public function noNewMailIsSent($count, $to = '', $subject = '')
+    public function noNewMailIsSent($count, $to = '', $subject = '', $attachments = '')
     {
-        $actualMail = $this->getMail(['to' => $to, 'subject' => $subject], true);
+        $actualMail = $this->getMail(['to' => $to, 'subject' => $subject], true, null, null, explode(',', $attachments));
         $count = $count === 'no' ? 0 : $count;
         $count = $count === 'a' ? 1 : $count;
         $count = $count === 'an' ? 1 : $count;
@@ -149,12 +161,15 @@ class MailContext extends RawMailContext
    * @When I follow the link to :urlFragment from the (e)mail to :to
    * @When I follow the link to :urlFragment from the (e)mail with the subject :subject
    * @When I follow the link to :urlFragment from the (e)mail to :to with the subject :subject
+   * @When I follow the link to :urlFragment from the (e)mail with the attachment(s) :attachments
+   * @When I follow the link to :urlFragment from the (e)mail to :to with the attachment(s) :attachments
+   * @When I follow the link to :urlFragment from the (e)mail to :to with the subject :subject and the attachment(s) :attachments
    */
-    public function followLinkInMail($urlFragment, $to = '', $subject = '')
+    public function followLinkInMail($urlFragment, $to = '', $subject = '', $attachments = '')
     {
         // Get the mail
         $matches = ['to' => $to, 'subject' => $subject];
-        $mail = $this->getMail($matches, false, -1);
+        $mail = $this->getMail($matches, false, -1, null, explode(',', $attachments));
         if (count($mail) == 0) {
             throw new \Exception('No such mail found.');
         }
