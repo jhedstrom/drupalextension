@@ -650,6 +650,27 @@ JS;
     }
 
   /**
+   * Expand a <details> element by <summary>.
+   *
+   * @Given I expand details labelled :summary
+   */
+    public function iExpandDetailsByLabel($summary)
+    {
+        $page = $this->getSession()->getPage();
+        $element = $page->find('xpath', "//details/summary[@aria-expanded='false'][text()][contains(., '$summary')]");
+        if (empty($element)) {
+            throw new \Exception("Unable to find details element containing text $summary");
+        }
+        try {
+            $element->click();
+            usleep(100000);
+        } catch (UnsupportedDriverActionException $exception) {
+          // Goutte etc only supports clicking link, submit, button;
+          // for non-JS drivers this won't impact test.
+        }
+    }
+
+  /**
    * @} End of defgroup "mink extensions"
    */
 }
