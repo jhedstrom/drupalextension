@@ -270,7 +270,7 @@ class DrupalExtension implements ExtensionInterface
             $config['drush']['alias'] = isset($config['drush']['alias']) ? $config['drush']['alias'] : false;
             $container->setParameter('drupal.driver.drush.alias', $config['drush']['alias']);
 
-            $config['drush']['binary'] = isset($config['drush']['binary']) ? $config['drush']['binary'] : 'drush';
+            $config['drush']['binary'] = isset($config['drush']['binary']) ? $config['drush']['binary'] : '';
             $container->setParameter('drupal.driver.drush.binary', $config['drush']['binary']);
 
             $config['drush']['root'] = isset($config['drush']['root']) ? $config['drush']['root'] : false;
