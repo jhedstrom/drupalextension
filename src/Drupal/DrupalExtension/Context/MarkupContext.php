@@ -110,19 +110,19 @@ class MarkupContext extends RawMinkContext
   /**
    * @Then I( should) see :text in the :tag element in the :region( region)
    */
-  public function assertRegionElementText($text, $tag, $region)
-  {
-    $regionObj = $this->getRegion($region);
-    $results = $regionObj->findAll('css', $tag);
-    if (!empty($results)) {
-      foreach ($results as $result) {
-        if ($result->getText() == $text) {
-          return;
+    public function assertRegionElementText($text, $tag, $region)
+    {
+        $regionObj = $this->getRegion($region);
+        $results = $regionObj->findAll('css', $tag);
+        if (!empty($results)) {
+            foreach ($results as $result) {
+                if ($result->getText() == $text) {
+                    return;
+                }
+            }
         }
-      }
+        throw new \Exception(sprintf('The text "%s" was not found in the "%s" element in the "%s" region on the page %s', $text, $tag, $region, $this->getSession()->getCurrentUrl()));
     }
-    throw new \Exception(sprintf('The text "%s" was not found in the "%s" element in the "%s" region on the page %s', $text, $tag, $region, $this->getSession()->getCurrentUrl()));
-  }
 
   /**
    * @Then I( should) not see :text in the :tag element in the :region( region)
