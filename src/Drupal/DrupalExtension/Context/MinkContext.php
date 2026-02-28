@@ -667,9 +667,9 @@ JS;
         $literal = $this->getSession()->getSelectorsHandler()->xpathLiteral($summary);
 
         if ($action === 'expand') {
-            $expandedState = "[@aria-expanded='false']";
+            $expandedState = "[not(@open)]";
         } elseif ($action === 'contract') {
-            $expandedState = "[@aria-expanded='true']";
+            $expandedState = "[@open]";
         } elseif ($action === 'click') {
             $expandedState = '';
         } else {
