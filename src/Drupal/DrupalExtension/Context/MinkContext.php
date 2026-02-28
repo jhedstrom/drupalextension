@@ -677,10 +677,11 @@ JS;
         }
 
         $xpath = "//details/summary{$expandedState}[normalize-space()][contains(normalize-space(.), {$literal})]";
+        $stateDescription = $action === 'click' ? '' : " in {$action}ed state";
 
         $element = $page->find('xpath', $xpath);
         if (!$element) {
-            throw new \Exception("Unable to find details summary {$expandedState} containing text {$summary} for action {$action}");
+            throw new \Exception("Unable to find details summary {$stateDescription} containing text {$summary} for action {$action}");
         }
 
         $ajax_timeout = $this->getMinkParameter('ajax_timeout');
