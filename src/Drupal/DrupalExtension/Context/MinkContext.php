@@ -650,17 +650,39 @@ JS;
     }
 
   /**
-   * Expand a <details> element by <summary>.
+   * Expand/contract/toggle a <details> element by <summary> text.
    *
-   * @Given I expand details labelled :summary
+   * Usage examples:
+   *   When I expand details labelled 'My summary'
+   *   When I contract details labelled "My summary"
+   *   When I click details labelled 'My summary'
+   *
+   * @When I :action details labelled :summary
    */
-    public function iExpandDetailsByLabel($summary)
+    public function iExpandOrContractDetailsByLabel($action, $summary)
     {
         $page = $this->getSession()->getPage();
-        $element = $page->find('xpath', "//details/summary[@aria-expanded='false'][text()][contains(., '$summary')]");
-        if (empty($element)) {
-            throw new \Exception("Unable to find details element containing text $summary");
+
+        $action = strtolower(trim($action));
+        $literal = $this->getSession()->getSelectorsHandler()->xpathLiteral($summary);
+
+        if ($action === 'expand') {
+            $expandedState = "[@aria-expanded='false']";
+        } elseif ($action === 'contract') {
+            $expandedState = "[@aria-expanded='true']";
+        } elseif ($action === 'click') {
+            $expandedState = '';
+        } else {
+            throw new \InvalidArgumentException("Unknown action '{$action}'. Expected expand, contract, or click.");
         }
+
+        $xpath = "//details/summary{$expandedState}[normalize-space()][contains(normalize-space(.), {$literal})]";
+
+        $element = $page->find('xpath', $xpath);
+        if (!$element) {
+            throw new \Exception("Unable to find details summary {$expandedState} containing text {$summary} for action {$action}");
+        }
+
         try {
             $element->click();
             usleep(100000);
