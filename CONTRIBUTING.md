@@ -51,3 +51,15 @@ docker compose exec -T php vendor/bin/behat -fprogress --profile=drupal10 --stri
 
 - Check the changes from `composer require` are not included in your submitted PR.
 - Before testing another PHP or Drupal version, revert changes to `composer.json` and remove `composer.lock`, `package-lock.json`, `drupal/`, and `vendor/`.
+
+Run PHPCS to review coding standards:
+```shell
+docker compose exec -T php phpcs --standard=./phpcs-ruleset.xml
+docker compose exec -T php phpcs --standard=./phpcs-drupal-ruleset.xml
+```
+
+Run PHPCBF to fix coding standards:
+```shell
+docker compose exec -T php phpcbf --standard=./phpcs-ruleset.xml
+docker compose exec -T php phpcbf --standard=./phpcs-drupal-ruleset.xml
+```
