@@ -76,6 +76,11 @@ Feature: Test DrupalContext
     And I should see the "div" element with the "class" attribute set to "class2" in the "left header" region
     And I should see the "div" element with the "class" attribute set to "class3" in the "left header" region
 
+  Scenario: Interact with <details> elements
+    Given I am at "irc.html"
+    When I click details labelled "Click to read more about IRC"
+    Then I should see the text "Join the Drupal community on IRC by connecting to the #drupal channel on Freenode."
+
   Scenario: Error messages
     Given I am on "user.html"
     When I press "Log in"
