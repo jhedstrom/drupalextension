@@ -683,9 +683,11 @@ JS;
             throw new \Exception("Unable to find details summary {$expandedState} containing text {$summary} for action {$action}");
         }
 
+        $ajax_timeout = $this->getMinkParameter('ajax_timeout');
         try {
             $element->click();
-            usleep(100000);
+            // Wait 1/50th of ajax_timeout for the details to expand.
+            usleep(1000000 * $ajax_timeout / 50);
         } catch (UnsupportedDriverActionException $exception) {
           // Goutte etc only supports clicking link, submit, button;
           // for non-JS drivers this won't impact test.
