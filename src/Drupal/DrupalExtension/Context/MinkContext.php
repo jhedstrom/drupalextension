@@ -650,16 +650,16 @@ JS;
     }
 
   /**
-   * Expand/contract/toggle a <details> element by <summary> text.
+   * Expand/collapse/toggle a <details> element by <summary> text.
    *
    * Usage examples:
    *   When I expand details labelled 'My summary'
-   *   When I contract details labelled "My summary"
+   *   When I collapse details labelled "My summary"
    *   When I click details labelled 'My summary'
    *
    * @When I :action details labelled :summary
    */
-    public function iExpandOrContractDetailsByLabel($action, $summary)
+    public function iExpandOrCollapseDetailsByLabel($action, $summary)
     {
         $page = $this->getSession()->getPage();
 
@@ -668,12 +668,12 @@ JS;
 
         if ($action === 'expand') {
             $expandedState = "[not(@open)]";
-        } elseif ($action === 'contract') {
+        } elseif ($action === 'collapse') {
             $expandedState = "[@open]";
         } elseif ($action === 'click') {
             $expandedState = '';
         } else {
-            throw new \InvalidArgumentException("Unknown action '{$action}'. Expected expand, contract, or click.");
+            throw new \InvalidArgumentException("Unknown action '{$action}'. Expected expand, collapse, or click.");
         }
 
         $xpath = "//details/summary{$expandedState}[normalize-space()][contains(normalize-space(.), {$literal})]";
@@ -687,8 +687,8 @@ JS;
         $ajax_timeout = $this->getMinkParameter('ajax_timeout');
         try {
             $element->click();
-            // Wait 1/50th of ajax_timeout for the details to expand.
-            usleep(1000000 * $ajax_timeout / 50);
+            // Wait 1/50th of ajax_timeout in microseconds for details to expand.
+            usleep($ajax_timeout * 20000);
         } catch (UnsupportedDriverActionException $exception) {
           // Goutte etc only supports clicking link, submit, button;
           // for non-JS drivers this won't impact test.
