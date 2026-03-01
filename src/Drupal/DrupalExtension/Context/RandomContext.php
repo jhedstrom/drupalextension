@@ -48,6 +48,20 @@ class RandomContext extends RawDrupalContext
     }
 
     /**
+     * Transform random variables in table arguments.
+     *
+     * @Transform table:*
+     */
+    public function transformTable(TableNode $table)
+    {
+        $rows = [];
+        foreach ($table->getRows() as $row) {
+            $rows[] = array_map([$this, 'transformVariables'], $row);
+        }
+        return new TableNode($rows);
+    }
+
+    /**
      * Set values for each random variable found in the current scenario.
      *
      * @BeforeScenario
