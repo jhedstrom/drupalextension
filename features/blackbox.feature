@@ -54,6 +54,10 @@ Feature: Test DrupalContext
     Given I am on the homepage
     Then I should not see the "h1" element in the "footer"
 
+  Scenario: Text in element in region
+    Given I am on the homepage
+    Then I should see "Drupal" in the "h1" element in the "left header"
+
   Scenario: Text not in element in region
     Given I am on the homepage
     Then I should not see "DotNetNuke" in the "h1" element in the "left header"
