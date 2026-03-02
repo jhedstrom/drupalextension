@@ -80,6 +80,9 @@ Feature: Test DrupalContext
     Given I am at "irc.html"
     When I click details labelled "Click to read more about IRC"
     Then I should see the text "Join the Drupal community on IRC by connecting to the #drupal channel on Freenode."
+    # Blackbox driver does not support hiding <details> content, test action but not visibility.
+    And I collapse details labelled "Click to read more about IRC"
+    And I expand details labelled "Click to read more about IRC"
 
   Scenario: Error messages
     Given I am on "user.html"
