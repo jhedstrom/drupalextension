@@ -676,12 +676,11 @@ JS;
             throw new \InvalidArgumentException("Unknown action '{$action}'. Expected expand, collapse, or click.");
         }
 
-        $xpath = "//details/summary{$expandedState}[normalize-space()][contains(normalize-space(.), {$literal})]";
-        $stateDescription = $action === 'click' ? '' : " in {$action}ed state";
+        $xpath = "//details{$expandedState}/summary[normalize-space()][contains(normalize-space(.), {$literal})]";
 
         $element = $page->find('xpath', $xpath);
         if (!$element) {
-            throw new \Exception("Unable to find details summary {$stateDescription} containing text {$summary} for action {$action}");
+            throw new \Exception("Unable to find details{$expandedState} containing text {$summary} for action {$action}");
         }
 
         $ajax_timeout = $this->getMinkParameter('ajax_timeout') || 5;
