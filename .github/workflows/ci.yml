@@ -10,7 +10,7 @@ on:
 
 jobs:
   tests:
-    name: PHP ${{ matrix.php_version }}, Drupal ${{ matrix.drupal_version }}
+    name: PHP ${{ matrix.php_version }}, Drupal ${{ matrix.drupal_version }}, Deps ${{ matrix.deps }}
     runs-on: ubuntu-latest
 
     strategy:
@@ -19,14 +19,34 @@ jobs:
         include:
           - php_version: '8.2'
             drupal_version: '10'
+            deps: 'normal'
+          - php_version: '8.2'
+            drupal_version: '10'
+            deps: 'lowest'
           - php_version: '8.3'
             drupal_version: '10'
+            deps: 'normal'
+          - php_version: '8.3'
+            drupal_version: '10'
+            deps: 'lowest'
           - php_version: '8.3'
             drupal_version: '11'
+            deps: 'normal'
+          - php_version: '8.3'
+            drupal_version: '11'
+            deps: 'lowest'
           - php_version: '8.4'
             drupal_version: '10'
+            deps: 'normal'
+          - php_version: '8.4'
+            drupal_version: '10'
+            deps: 'lowest'
           - php_version: '8.4'
             drupal_version: '11'
+            deps: 'normal'
+          - php_version: '8.4'
+            drupal_version: '11'
+            deps: 'lowest'
 
     env:
       PHP_VERSION: ${{ matrix.php_version }}
@@ -47,7 +67,12 @@ jobs:
         run: docker compose exec -u ${DOCKER_USER_ID} -T php composer require --no-interaction --dev --no-update drupal/core:^${DRUPAL_VERSION} drupal/core-composer-scaffold:^${DRUPAL_VERSION}
 
       - name: Install Composer dependencies
-        run: docker compose exec -T php composer install
+        run: |
+          if [[ "${{ matrix.deps }}" == "lowest" ]]; then
+            docker compose exec -T php composer update --prefer-lowest --prefer-stable
+          else
+            docker compose exec -T php composer install
+          fi
 
       - name: Check composer.json is normalized
         run: docker compose exec -T php composer normalize --dry-run
