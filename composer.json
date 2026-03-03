@@ -92,13 +92,51 @@
             "dev-master": "5.1.x-dev"
         },
         "drupal-scaffold": {
+            "file-mapping": {
+                "[project-root]/.editorconfig": false,
+                "[project-root]/.gitattributes": false,
+                "[web-root]/.csslintrc": false,
+                "[web-root]/.editorconfig": false,
+                "[web-root]/.eslintignore": false,
+                "[web-root]/.eslintrc.json": false,
+                "[web-root]/.gitattributes": false,
+                "[web-root]/.ht.router.php": false,
+                "[web-root]/.htaccess": false,
+                "[web-root]/INSTALL.txt": false,
+                "[web-root]/README.md": false,
+                "[web-root]/README.txt": false,
+                "[web-root]/example.gitignore": false,
+                "[web-root]/robots.txt": false,
+                "[web-root]/sites/example.settings.local.php": false,
+                "[web-root]/sites/example.sites.php": false,
+                "[web-root]/update.php": false,
+                "[web-root]/web.config": false
+            },
             "locations": {
-                "web-root": "drupal/"
+                "web-root": "build/web"
             }
         },
         "installer-paths": {
-            "drupal/core": [
+            "build/drush/Commands/contrib/{$name}": [
+                "type:drupal-drush"
+            ],
+            "build/web/core": [
                 "type:drupal-core"
+            ],
+            "build/recipes/{$name}": [
+                "type:drupal-recipe"
+            ],
+            "build/web/libraries/{$name}": [
+                "type:drupal-library"
+            ],
+            "build/web/modules/contrib/{$name}": [
+                "type:drupal-module"
+            ],
+            "build/web/profiles/contrib/{$name}": [
+                "type:drupal-profile"
+            ],
+            "build/web/themes/contrib/{$name}": [
+                "type:drupal-theme"
             ]
         }
     },

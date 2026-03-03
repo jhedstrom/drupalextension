@@ -54,7 +54,7 @@ drupal10:
     Drupal\DrupalExtension:
       api_driver: "drupal"
       drupal:
-        drupal_root: "/var/www/html/drupal"
+        drupal_root: "/var/www/html/build/web"
       region_map:
         main content: "#main"
       selectors:
@@ -80,4 +80,4 @@ drupal_https:
     Drupal\DrupalExtension:
       api_driver: "drupal"
       drupal:
-        drupal_root: "/var/www/html/drupal"
+        drupal_root: "/var/www/html/build/web"

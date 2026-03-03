@@ -25,6 +25,9 @@ jobs:
       - name: Start Docker containers
         run: docker compose up -d
 
+      - name: Configure git safe directory
+        run: docker compose exec -T php git config --global --add safe.directory /var/www/html
+
       - name: Install Composer dependencies
         run: docker compose exec -T php composer install
 
@@ -88,6 +91,9 @@ jobs:
       - name: Start Docker containers
         run: docker compose up -d
 
+      - name: Configure git safe directory
+        run: docker compose exec -T php git config --global --add safe.directory /var/www/html
+
       - name: Add Drupal core dependency
         run: docker compose exec -u ${DOCKER_USER_ID} -T php composer require --no-interaction --dev --no-update drupal/core:^${DRUPAL_VERSION} drupal/core-composer-scaffold:^${DRUPAL_VERSION}
 
@@ -103,15 +109,15 @@ jobs:
         run: docker compose exec -T php composer test-phpspec
 
       - name: Provision Drupal site
-        run: docker compose exec -T php ./vendor/bin/drush --yes --root=drupal site-install --db-url=mysql://drupal:drupal@db/drupal --debug
+        run: docker compose exec -T php ./vendor/bin/drush --yes --root=build/web site-install --db-url=mysql://drupal:drupal@db/drupal --debug
 
       - name: Copy test fixtures
-        run: docker compose exec -T php cp -r tests/behat/fixtures/drupal/modules/behat_test drupal/modules
+        run: docker compose exec -T php cp -r tests/behat/fixtures/drupal/modules/behat_test build/web/modules
 
       - name: Adjust Drupal configurations
         run: |
-          docker compose exec -T php ./vendor/bin/drush --yes --root=drupal pmu page_cache,big_pipe
-          docker compose exec -T php ./vendor/bin/drush --yes --root=drupal en behat_test
+          docker compose exec -T php ./vendor/bin/drush --yes --root=build/web pmu page_cache,big_pipe
+          docker compose exec -T php ./vendor/bin/drush --yes --root=build/web en behat_test
           docker compose exec -u ${DOCKER_USER_ID} -T php vendor/bin/drush cset core.date_format.olivero_medium pattern 'j F, Y'
           docker compose exec -u ${DOCKER_USER_ID} -T php vendor/bin/drush cset automated_cron.settings interval 0
           docker compose exec -u ${DOCKER_USER_ID} -T php vendor/bin/drush cset user.settings register visitors

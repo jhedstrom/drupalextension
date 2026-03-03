@@ -1,7 +1,6 @@
 *.phar
 *.tgz
-/.gitattributes
 /composer.lock
-/drupal*
+/build
 /recipes
 /vendor
