@@ -30,8 +30,8 @@ trait BehatCliTrait
 
         $traits = [];
 
-      // Scan scenario tags and extract trait names from tags starting with
-      // 'trait:'. For example, @trait:PathTrait or @trait:D7\\UserTrait.
+        // Scan scenario tags and extract trait names from tags starting with
+        // 'trait:'. For example, @trait:PathTrait or @trait:D7\\UserTrait.
         foreach ($scope->getScenario()->getTags() as $tag) {
             if (str_starts_with($tag, 'trait:')) {
                 $tags = trim(substr($tag, strlen('trait:')));
@@ -45,7 +45,7 @@ trait BehatCliTrait
         $traits = array_filter($traits);
         $traits = array_unique($traits);
 
-      // Only create FeatureContext.php if there is at least one '@trait:' tag.
+        // Only create FeatureContext.php if there is at least one '@trait:' tag.
         if (empty($traits)) {
             return;
         }
@@ -56,27 +56,27 @@ trait BehatCliTrait
     #[BeforeStep]
     public function behatCliBeforeStep(): void
     {
-      // Drupal Extension >= ^5 is coupled with Drupal core's DrupalTestBrowser.
-      // This requires Drupal root to be discoverable when running Behat from a
-      // random directory using Drupal Finder.
-      //
-      // Set environment variables for Drupal Finder.
-      // This requires Drupal Finder version > 1.2 at commit:
-      // @see https://github.com/webflo/drupal-finder/commit/2663b117878f4a45ca56df028460350c977f92c0
+        // Drupal Extension >= ^5 is coupled with Drupal core's DrupalTestBrowser.
+        // This requires Drupal root to be discoverable when running Behat from a
+        // random directory using Drupal Finder.
+        //
+        // Set environment variables for Drupal Finder.
+        // This requires Drupal Finder version > 1.2 at commit:
+        // @see https://github.com/webflo/drupal-finder/commit/2663b117878f4a45ca56df028460350c977f92c0
         $this->iSetEnvironmentVariable('DRUPAL_FINDER_DRUPAL_ROOT', '/var/www/html/build/web');
         $this->iSetEnvironmentVariable('DRUPAL_FINDER_COMPOSER_ROOT', '/var/www/html/build');
         $this->iSetEnvironmentVariable('DRUPAL_FINDER_VENDOR_DIR', '/var/www/html/build/vendor');
     }
 
-  /**
-   * Create FeatureContext.php file.
-   *
-   * @param array $traits
-   *   Optional array of trait classes.
-   *
-   * @return string
-   *   Path to written file.
-   */
+    /**
+     * Create FeatureContext.php file.
+     *
+     * @param array $traits
+     *   Optional array of trait classes.
+     *
+     * @return string
+     *   Path to written file.
+     */
     public function behatCliWriteFeatureContextFile(array $traits = []): string
     {
         $tokens = [
@@ -84,24 +84,24 @@ trait BehatCliTrait
             '{{USE_IN_CLASS}}' => '',
         ];
         foreach ($traits as $trait) {
-          // Check if trait contains slash to determine if it's in a subdirectory.
+            // Check if trait contains slash to determine if it's in a subdirectory.
             $traitParts = explode('\\', (string) $trait);
             $traitName = end($traitParts);
             $traitNamespace = implode('\\', array_slice($traitParts, 0, -1));
 
-          // Check if the trait is in a subdirectory (indicated by namespace parts)
+            // Check if the trait is in a subdirectory (indicated by namespace parts)
             if (!empty($traitNamespace)) {
-              // The trait name already includes namespace.
+                // The trait name already includes namespace.
                 $traitClass = '\\Drupal\\DrupalExtension\\' . $trait;
                 $tokens['{{USE_DECLARATION}}'] .= sprintf('use Drupal\\DrupalExtension\\%s;' . PHP_EOL, $trait);
             } else {
-              // First try to find the trait in the base namespace.
+                // First try to find the trait in the base namespace.
                 $traitClass = '\\Drupal\\DrupalExtension\\' . $trait;
                 $contextDir = null;
 
-              // Check if trait exists in the base namespace.
+                // Check if trait exists in the base namespace.
                 if (class_exists($traitClass)) {
-                  // Get the file path to determine if it's in a subdirectory.
+                    // Get the file path to determine if it's in a subdirectory.
                     $reflection = new \ReflectionClass($traitClass);
                     $filePath = $reflection->getFileName();
 
@@ -110,12 +110,12 @@ trait BehatCliTrait
                         $tokens['{{USE_DECLARATION}}'] .= sprintf('use Drupal\\DrupalExtension\\%s;' . PHP_EOL, $trait);
                     }
                 } else {
-                  // Not found in base namespace, let's check subdirectories
-                  // Get a list of directories under src/.
+                    // Not found in base namespace, let's check subdirectories
+                    // Get a list of directories under src/.
                     $baseDir = dirname(__DIR__, 3) . DIRECTORY_SEPARATOR . 'src';
                     $dirs = array_filter(glob($baseDir . DIRECTORY_SEPARATOR . '*'), is_dir(...));
 
-                  // Convert directory names to potential namespace parts.
+                    // Convert directory names to potential namespace parts.
                     foreach ($dirs as $dir) {
                         $contextDir = basename($dir);
                         $contextTraitClass = sprintf('\\Drupal\\DrupalExtension\\%s\\%s', $contextDir, $trait);
@@ -128,7 +128,7 @@ trait BehatCliTrait
                         }
                     }
 
-                  // If not found in any subdirectory, default to base namespace.
+                    // If not found in any subdirectory, default to base namespace.
                     if (!class_exists($traitClass)) {
                         $tokens['{{USE_DECLARATION}}'] .= sprintf('use Drupal\\DrupalExtension\\%s;' . PHP_EOL, $trait);
                     }
@@ -196,14 +196,14 @@ EOL;
         return $filename;
     }
 
-  /**
-   * @Given /^scenario steps(?: tagged with "([^"]*)")?:$/
-   */
+    /**
+     * @Given /^scenario steps(?: tagged with "([^"]*)")?:$/
+     */
     public function behatCliWriteScenarioSteps(PyStringNode $content, $tags = ''): void
     {
         $content = strtr((string) $content, ["'''" => '"""']);
 
-      // Make sure that indentation in provided content is accurate.
+        // Make sure that indentation in provided content is accurate.
         $contentLines = explode(PHP_EOL, $content);
         foreach ($contentLines as $k => $contentLine) {
             $contentLines[$k] = str_repeat(' ', 4) . trim($contentLine);
@@ -233,9 +233,9 @@ EOL;
         }
     }
 
-  /**
-   * @Given some behat configuration
-   */
+    /**
+     * @Given some behat configuration
+     */
     public function behatCliWriteBehatYml(): void
     {
         $content = <<<'EOL'
@@ -268,7 +268,7 @@ default:
 EOL;
 
         if (static::behatCliIsCoverageEnabled()) {
-          // Generate unique coverage filename for this subprocess to avoid conflicts.
+            // Generate unique coverage filename for this subprocess to avoid conflicts.
             $coverageId = md5($this->workingDir);
             $coverageContent = <<<EOL
 
@@ -295,14 +295,14 @@ EOL;
         }
     }
 
-  /**
-   * @Then it should fail with an error:
-   */
+    /**
+     * @Then it should fail with an error:
+     */
     public function behatCliAssertFailWithError(PyStringNode $message): void
     {
         $this->itShouldPassOrFailWith('fail', $message);
-      // Enforce assertion exceptions (ExpectationException, ElementNotFoundException, or generic Exception).
-      // Non-assertion exceptions should be thrown as \RuntimeException.
+        // Enforce assertion exceptions (ExpectationException, ElementNotFoundException, or generic Exception).
+        // Non-assertion exceptions should be thrown as \RuntimeException.
         $output = $this->getOutput();
         $hasValidException = str_contains((string) $output, ' (Exception)')
         || str_contains((string) $output, ' (Behat\Mink\Exception\ExpectationException)')
@@ -315,14 +315,14 @@ EOL;
         }
     }
 
-  /**
-   * @Then it should fail with an exception:
-   */
+    /**
+     * @Then it should fail with an exception:
+     */
     public function behatCliAssertFailWithException(PyStringNode $message): void
     {
         $this->itShouldPassOrFailWith('fail', $message);
-      // Enforce \RuntimeException for all non-assertion exceptions. Assertion
-      // exceptions should be thrown as \Exception.
+        // Enforce \RuntimeException for all non-assertion exceptions. Assertion
+        // exceptions should be thrown as \Exception.
         if (!str_contains($this->getOutput(), ' (RuntimeException)')) {
             throw new \RuntimeException('The output does not contain an "(RuntimeException)" string as expected.');
         }
@@ -331,27 +331,27 @@ EOL;
         }
     }
 
-  /**
-   * @Then it should fail with a :exception exception:
-   */
+    /**
+     * @Then it should fail with a :exception exception:
+     */
     public function behatCliAssertFailWithCustomException(string $exception, PyStringNode $message): void
     {
         $this->itShouldPassOrFailWith('fail', $message);
-      // Enforce \RuntimeException for all non-assertion exceptions. Assertion
-      // exceptions should be thrown as \Exception.
+        // Enforce \RuntimeException for all non-assertion exceptions. Assertion
+        // exceptions should be thrown as \Exception.
         if (!str_contains($this->getOutput(), ' (' . $exception . ')')) {
             throw new \RuntimeException(sprintf('The output does not contain an "(%s)" string as expected.', $exception));
         }
     }
 
-  /**
-   * Checks whether last command output does not contain provided string.
-   *
-   * @param \Behat\Gherkin\Node\PyStringNode $text
-   *   PyString text instance.
-   *
-   * @Then the output should not contain:
-   */
+    /**
+     * Checks whether last command output does not contain provided string.
+     *
+     * @param \Behat\Gherkin\Node\PyStringNode $text
+     *   PyString text instance.
+     *
+     * @Then the output should not contain:
+     */
     public function theOutputShouldNotContain(PyStringNode $text): void
     {
         if (str_contains($this->getOutput(), $this->getExpectedOutput($text))) {
@@ -359,9 +359,9 @@ EOL;
         }
     }
 
-  /**
-   * Helper to print file comments.
-   */
+    /**
+     * Helper to print file comments.
+     */
     protected static function behatCliPrintFileContents(string $filename, string $title = '')
     {
         if (!is_readable($filename)) {
@@ -377,36 +377,36 @@ EOL;
         print sprintf('-------------------- %s FINISH --------------------', $title) . PHP_EOL;
     }
 
-  /**
-   * Helper to check if debug mode is enabled.
-   */
+    /**
+     * Helper to check if debug mode is enabled.
+     */
     protected static function behatCliIsDebug(): bool
     {
-      // Change to TRUE to see debug messages for this trait.
+        // Change to TRUE to see debug messages for this trait.
         return false;
     }
 
-  /**
-   * Helper to check if code coverage is enabled.
-   */
+    /**
+     * Helper to check if code coverage is enabled.
+     */
     protected static function behatCliIsCoverageEnabled(): bool
     {
         return ini_get('pcov.enabled') === '1' && !empty(ini_get('pcov.directory'));
     }
 
-  /**
-   * Copy fixtures to the working directory.
-   */
+    /**
+     * Copy fixtures to the working directory.
+     */
     protected function behatCliCopyFixtures()
     {
-      // Copy fixtures to the working directory.
+        // Copy fixtures to the working directory.
         $fixturePath = 'tests/behat/fixtures';
-      // @note Hardcoded path to the fixture directory.
+        // @note Hardcoded path to the fixture directory.
         $fixturePathAbs = '/app' . DIRECTORY_SEPARATOR . $fixturePath;
         if (is_dir($fixturePathAbs)) {
             $dst = $this->workingDir . DIRECTORY_SEPARATOR . $fixturePath;
             mkdir($dst, 0777, true);
-          // Copy fixtures from the webroot to the working directory.
+            // Copy fixtures from the webroot to the working directory.
             foreach (glob($fixturePathAbs . '/*') as $file) {
                 // @note Only copy files for speed.
                 if (is_file($file)) {

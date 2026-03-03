@@ -13,26 +13,26 @@ use Behat\MinkExtension\Context\RawMinkContext;
 class BatchContext extends RawMinkContext
 {
 
-  /**
-   * Wait for the Batch API to finish.
-   *
-   * Wait until the id="updateprogress" element is gone,
-   * or timeout after 3 minutes (180,000 ms).
-   *
-   * @Given /^I wait for the batch job to finish$/
-   */
+    /**
+     * Wait for the Batch API to finish.
+     *
+     * Wait until the id="updateprogress" element is gone,
+     * or timeout after 3 minutes (180,000 ms).
+     *
+     * @Given /^I wait for the batch job to finish$/
+     */
     public function iWaitForTheBatchJobToFinish(): void
     {
         $this->getSession()->wait(180000, 'jQuery("#updateprogress").length === 0');
     }
 
-  /**
-   * Creates a queue item. Defaults inputs if none are available.
-   *
-   * Expects the `data` to be a json encoded string.
-   *
-   * @Given there is an item in the system queue:
-   */
+    /**
+     * Creates a queue item. Defaults inputs if none are available.
+     *
+     * Expects the `data` to be a json encoded string.
+     *
+     * @Given there is an item in the system queue:
+     */
     public function thereIsAnItemInTheSystemQueue(TableNode $table): void
     {
         // Gather the data.
@@ -44,7 +44,7 @@ class BatchContext extends RawMinkContext
         }
 
         // @see SystemQueue::createItem().
-      /** @var \Drupal\Core\Database\Connection $connection */
+        /** @var \Drupal\Core\Database\Connection $connection */
         $connection = \Drupal::service('database');
         $query = $connection->insert('queue')
         ->fields([

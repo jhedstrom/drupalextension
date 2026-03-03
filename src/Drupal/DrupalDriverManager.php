@@ -17,31 +17,31 @@ use Drupal\Driver\DriverInterface;
 class DrupalDriverManager implements DrupalDriverManagerInterface
 {
 
-  /**
-   * The name of the default driver.
-   *
-   * @var string
-   */
+    /**
+     * The name of the default driver.
+     *
+     * @var string
+     */
     private $defaultDriverName;
 
-  /**
-   * All registered drivers.
-   *
-   * @var \Drupal\Driver\DriverInterface[]
-   */
+    /**
+     * All registered drivers.
+     *
+     * @var \Drupal\Driver\DriverInterface[]
+     */
     private array $drivers = [];
 
-  /**
-     * Behat environment.
-     */
+    /**
+       * Behat environment.
+       */
     private ?Environment $environment = null;
 
-  /**
-   * Initialize the driver manager.
-   *
-   * @param \Drupal\Driver\DriverInterface[] $drivers
-   *   An array of drivers to register.
-   */
+    /**
+     * Initialize the driver manager.
+     *
+     * @param \Drupal\Driver\DriverInterface[] $drivers
+     *   An array of drivers to register.
+     */
     public function __construct(array $drivers = [])
     {
         foreach ($drivers as $name => $driver) {

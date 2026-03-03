@@ -16,13 +16,13 @@ class RegionSelector implements SelectorInterface
     {
     }
 
-  /**
-   * Translates provided locator into XPath.
-   *
-   * @param string $region
-   * @return string
-   * @throws \InvalidArgumentException
-   */
+    /**
+     * Translates provided locator into XPath.
+     *
+     * @param string $region
+     * @return string
+     * @throws \InvalidArgumentException
+     */
     public function translateToXPath($region)
     {
         if (!isset($this->regionMap[$region])) {

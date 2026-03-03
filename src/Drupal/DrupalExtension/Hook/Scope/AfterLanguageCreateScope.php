@@ -14,11 +14,11 @@ namespace Drupal\DrupalExtension\Hook\Scope;
 final class AfterLanguageCreateScope extends LanguageScope
 {
 
-  /**
-   * Return the scope name.
-   *
-   * @return string
-   */
+    /**
+     * Return the scope name.
+     *
+     * @return string
+     */
     public function getName()
     {
         return self::AFTER;

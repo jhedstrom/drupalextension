@@ -26,21 +26,21 @@ use RegexIterator;
 final class Reader implements EnvironmentReader
 {
 
-  /**
-   * @var ContextReader[]
-   */
+    /**
+     * @var ContextReader[]
+     */
     private array $contextReaders = [];
 
-  /**
-   * Statically cached lists of subcontexts by path.
-   *
-   * @var array
-   */
+    /**
+     * Statically cached lists of subcontexts by path.
+     *
+     * @var array
+     */
     protected static $subContexts;
 
-  /**
-   * Register the Drupal driver manager.
-   */
+    /**
+     * Register the Drupal driver manager.
+     */
     public function __construct(
         /**
          * Drupal driver manager.
@@ -53,25 +53,25 @@ final class Reader implements EnvironmentReader
     ) {
     }
 
-  /**
-     * Registers context loader.
-     */
+    /**
+       * Registers context loader.
+       */
     public function registerContextReader(ContextReader $contextReader): void
     {
         $this->contextReaders[] = $contextReader;
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function supportsEnvironment(Environment $environment)
     {
         return $environment instanceof ContextEnvironment;
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function readEnvironmentCallees(Environment $environment)
     {
 
@@ -130,10 +130,10 @@ final class Reader implements EnvironmentReader
         return $callees;
     }
 
-  /**
-     * Finds and loads available subcontext classes.
-     * @return class-string[]
-     */
+    /**
+       * Finds and loads available subcontext classes.
+       * @return class-string[]
+       */
     private function findSubContextClasses(): array
     {
         $classNames = [];
@@ -182,17 +182,17 @@ final class Reader implements EnvironmentReader
         return $classNames;
     }
 
-  /**
-   * Find Sub-contexts matching a given pattern located at the passed path.
-   *
-   * @param string $path
-   *   Absolute path to the directory to search for sub-contexts.
-   * @param string $pattern
-   *   File pattern to match. Defaults to `/^.+\.behat\.inc/i`.
-   *
-   * @return array
-   *   An array of paths.
-   */
+    /**
+     * Find Sub-contexts matching a given pattern located at the passed path.
+     *
+     * @param string $path
+     *   Absolute path to the directory to search for sub-contexts.
+     * @param string $pattern
+     *   File pattern to match. Defaults to `/^.+\.behat\.inc/i`.
+     *
+     * @return array
+     *   An array of paths.
+     */
     private function findAvailableSubContexts(string $path, string $pattern = '/^.+\.behat\.inc/i')
     {
 
@@ -216,12 +216,12 @@ final class Reader implements EnvironmentReader
         return self::$subContexts[$pattern][$path];
     }
 
-  /**
-   * Load each subcontext file.
-   *
-   * @param array $subcontexts
-   *   An array of files to include.
-   */
+    /**
+     * Load each subcontext file.
+     *
+     * @param array $subcontexts
+     *   An array of files to include.
+     */
     private function loadSubContexts($subcontexts): void
     {
         foreach ($subcontexts as $path => $subcontext) {

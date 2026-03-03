@@ -12,17 +12,17 @@ use Drupal\DrupalExtension\Hook\Scope\TermScope;
 class BeforeTermCreate extends EntityHook
 {
 
-  /**
-   * Initializes hook.
-   */
+    /**
+     * Initializes hook.
+     */
     public function __construct(string|null $filterString, callable $callable, string|null $description = null)
     {
         parent::__construct(TermScope::BEFORE, $filterString, $callable, $description);
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function getName()
     {
         return 'BeforeTermCreate';

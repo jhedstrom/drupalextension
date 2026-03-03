@@ -12,19 +12,19 @@ use Behat\MinkExtension\Context\RawMinkContext;
 class MarkupContext extends RawMinkContext
 {
 
-  /**
-   * Return a region from the current page.
-   *
-   * @throws \Exception
-   *   If region cannot be found.
-   *
-   * @param string $region
-   *   The machine name of the region to return.
-   *
-   * @return \Behat\Mink\Element\NodeElement
-   *
-   * @todo this should be a trait when PHP 5.3 support is dropped.
-   */
+    /**
+     * Return a region from the current page.
+     *
+     * @throws \Exception
+     *   If region cannot be found.
+     *
+     * @param string $region
+     *   The machine name of the region to return.
+     *
+     * @return \Behat\Mink\Element\NodeElement
+     *
+     * @todo this should be a trait when PHP 5.3 support is dropped.
+     */
     public function getRegion(string $region)
     {
         $session = $this->getSession();
@@ -36,20 +36,20 @@ class MarkupContext extends RawMinkContext
         return $regionObj;
     }
 
-  /**
-   * Checks if a button with id|name|title|alt|value exists in a region
-   *
-   * @Then I should see the button :button in the :region( region)
-   * @Then I should see the :button button in the :region( region)
-   *
-   * @param $button
-   *   string The id|name|title|alt|value of the button
-   * @param $region
-   *   string The region in which the button should be found
-   *
-   * @throws \Exception
-   *   If region or button within it cannot be found.
-   */
+    /**
+     * Checks if a button with id|name|title|alt|value exists in a region
+     *
+     * @Then I should see the button :button in the :region( region)
+     * @Then I should see the :button button in the :region( region)
+     *
+     * @param $button
+     *   string The id|name|title|alt|value of the button
+     * @param $region
+     *   string The region in which the button should be found
+     *
+     * @throws \Exception
+     *   If region or button within it cannot be found.
+     */
     public function assertRegionButton(string $button, string $region): void
     {
         $regionObj = $this->getRegion($region);
@@ -84,9 +84,9 @@ class MarkupContext extends RawMinkContext
         }
     }
 
-  /**
-   * @Then I( should) see the :tag element in the :region( region)
-   */
+    /**
+     * @Then I( should) see the :tag element in the :region( region)
+     */
     public function assertRegionElement(string $tag, string $region): void
     {
         $regionObj = $this->getRegion($region);
@@ -97,9 +97,9 @@ class MarkupContext extends RawMinkContext
         throw new \Exception(sprintf('The element "%s" was not found in the "%s" region on the page %s', $tag, $region, $this->getSession()->getCurrentUrl()));
     }
 
-  /**
-   * @Then I( should) not see the :tag element in the :region( region)
-   */
+    /**
+     * @Then I( should) not see the :tag element in the :region( region)
+     */
     public function assertNotRegionElement(string $tag, string $region): void
     {
         $regionObj = $this->getRegion($region);
@@ -109,9 +109,9 @@ class MarkupContext extends RawMinkContext
         }
     }
 
-  /**
-   * @Then I( should) see :text in the :tag element in the :region( region)
-   */
+    /**
+     * @Then I( should) see :text in the :tag element in the :region( region)
+     */
     public function assertRegionElementText(string $text, string $tag, string $region): void
     {
         $regionObj = $this->getRegion($region);
@@ -126,9 +126,9 @@ class MarkupContext extends RawMinkContext
         throw new \Exception(sprintf('The text "%s" was not found in the "%s" element in the "%s" region on the page %s', $text, $tag, $region, $this->getSession()->getCurrentUrl()));
     }
 
-  /**
-   * @Then I( should) not see :text in the :tag element in the :region( region)
-   */
+    /**
+     * @Then I( should) not see :text in the :tag element in the :region( region)
+     */
     public function assertNotRegionElementText(string $text, string $tag, string $region): void
     {
         $regionObj = $this->getRegion($region);
@@ -142,9 +142,9 @@ class MarkupContext extends RawMinkContext
         }
     }
 
-  /**
-   * @Then I( should) see the :tag element with the :attribute attribute set to :value in the :region( region)
-   */
+    /**
+     * @Then I( should) see the :tag element with the :attribute attribute set to :value in the :region( region)
+     */
     public function assertRegionElementAttribute(string $tag, string $attribute, string $value, string $region): void
     {
         $regionObj = $this->getRegion($region);
@@ -174,9 +174,9 @@ class MarkupContext extends RawMinkContext
         }
     }
 
-  /**
-   * @Then I( should) see :text in the :tag element with the :attribute attribute set to :value in the :region( region)
-   */
+    /**
+     * @Then I( should) see :text in the :tag element with the :attribute attribute set to :value in the :region( region)
+     */
     public function assertRegionElementTextAttribute(string $text, string $tag, string $attribute, string $value, string $region): void
     {
         $regionObj = $this->getRegion($region);
@@ -207,9 +207,9 @@ class MarkupContext extends RawMinkContext
         }
     }
 
-  /**
-   * @Then I( should) see :text in the :tag element with the :property CSS property set to :value in the :region( region)
-   */
+    /**
+     * @Then I( should) see :text in the :tag element with the :property CSS property set to :value in the :region( region)
+     */
     public function assertRegionElementTextCss(string $text, string $tag, string $property, string $value, string $region): void
     {
         $regionObj = $this->getRegion($region);

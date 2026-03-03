@@ -13,9 +13,9 @@ use Behat\Testwork\Suite\Suite;
 class ClassGenerator implements BehatClassGenerator
 {
 
-  /**
-   * @var string
-   */
+    /**
+     * @var string
+     */
     protected static $template = <<<'PHP'
 <?php
 
@@ -43,17 +43,17 @@ class {className} extends RawDrupalContext {
 
 PHP;
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function supportsSuiteAndClass(Suite $suite, mixed $contextClass)
     {
         return true;
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function generateClass(Suite $suite, mixed $contextClass)
     {
         $fqn = $contextClass;

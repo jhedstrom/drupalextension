@@ -13,9 +13,9 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
  */
 class EventSubscriberPass implements CompilerPassInterface
 {
-  /**
-     * Processes container.
-     */
+    /**
+       * Processes container.
+       */
     public function process(ContainerBuilder $container): void
     {
         if (!$container->hasDefinition('drupal.event_dispatcher')) {

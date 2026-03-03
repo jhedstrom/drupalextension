@@ -14,47 +14,47 @@ use Drupal\DrupalExtension\Manager\DrupalUserManagerInterface;
 interface DrupalAwareInterface extends Context
 {
 
-  /**
-   * Sets Drupal instance.
-   */
+    /**
+     * Sets Drupal instance.
+     */
     public function setDrupal(DrupalDriverManagerInterface $drupal);
 
-  /**
-   * Set event dispatcher.
-   */
+    /**
+     * Set event dispatcher.
+     */
     public function setDispatcher(HookDispatcher $dispatcher);
 
-  /**
-   * Gets Drupal instance.
-   */
+    /**
+     * Gets Drupal instance.
+     */
     public function getDrupal();
 
-  /**
-     * Sets parameters provided for Drupal.
-     */
+    /**
+       * Sets parameters provided for Drupal.
+       */
     public function setDrupalParameters(array $parameters);
 
-  /**
-     * Sets the Drupal user manager instance.
-     */
+    /**
+       * Sets the Drupal user manager instance.
+       */
     public function setUserManager(DrupalUserManagerInterface $userManager);
 
-  /**
-   * Gets the Drupal user manager instance.
-   *
-   * @return \Drupal\DrupalExtension\Manager\DrupalUserManagerInterface
-   */
+    /**
+     * Gets the Drupal user manager instance.
+     *
+     * @return \Drupal\DrupalExtension\Manager\DrupalUserManagerInterface
+     */
     public function getUserManager();
 
-  /**
-     * Sets the Drupal authentication manager instance.
-     */
+    /**
+       * Sets the Drupal authentication manager instance.
+       */
     public function setAuthenticationManager(DrupalAuthenticationManagerInterface $authenticationManager);
 
-  /**
-   * Gets the Drupal authentication manager instance.
-   *
-   * @return \Drupal\DrupalExtension\Manager\DrupalAuthenticationManagerInterface
-   */
+    /**
+     * Gets the Drupal authentication manager instance.
+     *
+     * @return \Drupal\DrupalExtension\Manager\DrupalAuthenticationManagerInterface
+     */
     public function getAuthenticationManager();
 }

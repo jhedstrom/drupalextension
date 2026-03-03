@@ -19,27 +19,27 @@ class MinkContext extends MinkExtension implements TranslatableContext
 
     use TagTrait;
 
-  /**
-   * Returns list of definition translation resources paths.
-   *
-   * @return array
-   */
+    /**
+     * Returns list of definition translation resources paths.
+     *
+     * @return array
+     */
     public static function getTranslationResources()
     {
         return self::getMinkTranslationResources() + glob(__DIR__ . '/../../../../i18n/*.xliff');
     }
 
-  /**
-   * Return a region from the current page.
-   *
-   * @throws \Exception
-   *   If region cannot be found.
-   *
-   * @param string $region
-   *   The machine name of the region to return.
-   *
-   * @return \Behat\Mink\Element\NodeElement
-   */
+    /**
+     * Return a region from the current page.
+     *
+     * @throws \Exception
+     *   If region cannot be found.
+     *
+     * @param string $region
+     *   The machine name of the region to return.
+     *
+     * @return \Behat\Mink\Element\NodeElement
+     */
     public function getRegion(string $region)
     {
         $session = $this->getSession();
@@ -51,14 +51,14 @@ class MinkContext extends MinkExtension implements TranslatableContext
         return $regionObj;
     }
 
-  /**
-   * Visit a given path, and additionally check for HTTP response code 200.
-   *
-   * @Given I am at :path
-   * @When I visit :path
-   *
-   * @throws UnsupportedDriverActionException
-   */
+    /**
+     * Visit a given path, and additionally check for HTTP response code 200.
+     *
+     * @Given I am at :path
+     * @When I visit :path
+     *
+     * @throws UnsupportedDriverActionException
+     */
     public function assertAtPath(string $path): void
     {
         $this->getSession()->visit($this->locatePath($path));
@@ -72,30 +72,30 @@ class MinkContext extends MinkExtension implements TranslatableContext
         }
     }
 
-  /**
-   * @When I click :link
-   */
+    /**
+     * @When I click :link
+     */
     public function assertClick(string $link): void
     {
         // Use the Mink Extension step definition.
         $this->clickLink($link);
     }
 
-  /**
-   * @Given for :field I enter :value
-   * @Given I enter :value for :field
-   */
+    /**
+     * @Given for :field I enter :value
+     * @Given I enter :value for :field
+     */
     public function assertEnterField(string $field, string $value): void
     {
         // Use the Mink Extension step definition.
         $this->fillField($field, $value);
     }
 
-  /**
-   * For javascript enabled scenarios, always wait for AJAX before clicking.
-   *
-   * @BeforeStep
-   */
+    /**
+     * For javascript enabled scenarios, always wait for AJAX before clicking.
+     *
+     * @BeforeStep
+     */
     public function beforeJavascriptStep(BeforeStepScope $event): void
     {
         /** @var \Behat\Behat\Hook\Scope\BeforeStepScope $event */
@@ -112,11 +112,11 @@ class MinkContext extends MinkExtension implements TranslatableContext
         }
     }
 
-  /**
-   * For javascript enabled scenarios, always wait for AJAX after clicking.
-   *
-   * @AfterStep
-   */
+    /**
+     * For javascript enabled scenarios, always wait for AJAX after clicking.
+     *
+     * @AfterStep
+     */
     public function afterJavascriptStep(AfterStepScope $event): void
     {
         if (!$this->hasTag('javascript')) {
@@ -128,13 +128,13 @@ class MinkContext extends MinkExtension implements TranslatableContext
         }
     }
 
-  /**
-   * Wait for AJAX to finish.
-   *
-   * @see \Drupal\FunctionalJavascriptTests\JSWebAssert::assertWaitOnAjaxRequest()
-   *
-   * @Given I wait for AJAX to finish
-   */
+    /**
+     * Wait for AJAX to finish.
+     *
+     * @see \Drupal\FunctionalJavascriptTests\JSWebAssert::assertWaitOnAjaxRequest()
+     *
+     * @Given I wait for AJAX to finish
+     */
     public function iWaitForAjaxToFinish(mixed $event = null): void
     {
         $condition = <<<JS
@@ -175,11 +175,11 @@ JS;
             throw new \RuntimeException('Unable to complete AJAX request.' . $eventData);
         }
     }
-  /**
-   * Presses button with specified id|name|title|alt|value.
-   *
-   * @When I press the :button button
-   */
+    /**
+     * Presses button with specified id|name|title|alt|value.
+     *
+     * @When I press the :button button
+     */
     public function pressButton(mixed $button)
     {
         // Wait for any open autocomplete boxes to finish closing.  They block
@@ -199,12 +199,12 @@ JS;
         return parent::pressButton($button);
     }
 
-  /**
-   * @Given I press the :char key in the :field field
-   *
-   * @param mixed $char could be either char ('b') or char-code (98)
-   * @throws \Exception
-   */
+    /**
+     * @Given I press the :char key in the :field field
+     *
+     * @param mixed $char could be either char ('b') or char-code (98)
+     * @throws \Exception
+     */
     public function pressKey(mixed $char, string $field): void
     {
         static $keys = [
@@ -255,9 +255,9 @@ JS;
         $driver->keyUp($element->getXpath(), $char);
     }
 
-  /**
-   * @Then I should see the link :link
-   */
+    /**
+     * @Then I should see the link :link
+     */
     public function assertLinkVisible(string $link): void
     {
         $element = $this->getSession()->getPage();
@@ -278,11 +278,11 @@ JS;
         }
     }
 
-  /**
-   * Links are not loaded on the page.
-   *
-   * @Then I should not see the link :link
-   */
+    /**
+     * Links are not loaded on the page.
+     *
+     * @Then I should not see the link :link
+     */
     public function assertNotLinkVisible(string $link): void
     {
         $element = $this->getSession()->getPage();
@@ -303,11 +303,11 @@ JS;
         }
     }
 
-  /**
-   * Links are loaded but not visually visible (e.g they have display: hidden applied).
-   *
-   * @Then I should not visibly see the link :link
-   */
+    /**
+     * Links are loaded but not visually visible (e.g they have display: hidden applied).
+     *
+     * @Then I should not visibly see the link :link
+     */
     public function assertNotLinkVisuallyVisible(string $link): void
     {
         $element = $this->getSession()->getPage();
@@ -328,9 +328,9 @@ JS;
         }
     }
 
-  /**
-   * @Then I (should )see the heading :heading
-   */
+    /**
+     * @Then I (should )see the heading :heading
+     */
     public function assertHeading(string $heading): void
     {
         $element = $this->getSession()->getPage();
@@ -345,9 +345,9 @@ JS;
         throw new \Exception(sprintf("The text '%s' was not found in any heading on the page %s", $heading, $this->getSession()->getCurrentUrl()));
     }
 
-  /**
-   * @Then I (should )not see the heading :heading
-   */
+    /**
+     * @Then I (should )not see the heading :heading
+     */
     public function assertNotHeading(string $heading): void
     {
         $element = $this->getSession()->getPage();
@@ -361,10 +361,10 @@ JS;
         }
     }
 
-  /**
-   * @Then I (should ) see the button :button
-   * @Then I (should ) see the :button button
-   */
+    /**
+     * @Then I (should ) see the button :button
+     * @Then I (should ) see the :button button
+     */
     public function assertButton(string $button): void
     {
         $element = $this->getSession()->getPage();
@@ -374,10 +374,10 @@ JS;
         }
     }
 
-  /**
-   * @Then I should not see the button :button
-   * @Then I should not see the :button button
-   */
+    /**
+     * @Then I should not see the button :button
+     * @Then I should not see the :button button
+     */
     public function assertNotButton(string $button): void
     {
         $element = $this->getSession()->getPage();
@@ -387,12 +387,12 @@ JS;
         }
     }
 
-  /**
-   * @When I follow/click :link in the :region( region)
-   *
-   * @throws \Exception
-   *   If region or link within it cannot be found.
-   */
+    /**
+     * @When I follow/click :link in the :region( region)
+     *
+     * @throws \Exception
+     *   If region or link within it cannot be found.
+     */
     public function assertRegionLinkFollow(string $link, string $region): void
     {
         $regionObj = $this->getRegion($region);
@@ -405,19 +405,19 @@ JS;
         $linkObj->click();
     }
 
-  /**
-   * Checks if a button with id|name|title|alt|value exists or not and presses the same
-   *
-   * @Given I press :button in the :region( region)
-   *
-   * @param $button
-   *   string The id|name|title|alt|value of the button to be pressed
-   * @param $region
-   *   string The region in which the button should be pressed
-   *
-   * @throws \Exception
-   *   If region or button within it cannot be found.
-   */
+    /**
+     * Checks if a button with id|name|title|alt|value exists or not and presses the same
+     *
+     * @Given I press :button in the :region( region)
+     *
+     * @param $button
+     *   string The id|name|title|alt|value of the button to be pressed
+     * @param $region
+     *   string The region in which the button should be pressed
+     *
+     * @throws \Exception
+     *   If region or button within it cannot be found.
+     */
     public function assertRegionPressButton(string $button, string $region): void
     {
         $regionObj = $this->getRegion($region);
@@ -429,15 +429,15 @@ JS;
         $regionObj->pressButton($button);
     }
 
-  /**
-   * Fills in a form field with id|name|title|alt|value in the specified region.
-   *
-   * @Given I fill in :value for :field in the :region( region)
-   * @Given I fill in :field with :value in the :region( region)
-   *
-   * @throws \Exception
-   *   If region cannot be found.
-   */
+    /**
+     * Fills in a form field with id|name|title|alt|value in the specified region.
+     *
+     * @Given I fill in :value for :field in the :region( region)
+     * @Given I fill in :field with :value in the :region( region)
+     *
+     * @throws \Exception
+     *   If region cannot be found.
+     */
     public function regionFillField(string $field, string $value, string $region): void
     {
         $field = $this->fixStepArgument($field);
@@ -446,53 +446,53 @@ JS;
         $regionObj->fillField($field, $value);
     }
 
-  /**
-   * Checks if a checkbox with id|name|title|alt|value exists or not and checks the same
-   *
-   * @Given I check :locator in the :region( region)
-   *
-   * @param $locator
-   *   string The id|name|title|alt|value of the checkbox to be checked
-   * @param $region
-   *   string The region in which the checkbox should be checked
-   *
-   * @throws \Exception
-   *   If region or checkbox within it cannot be found.
-   */
+    /**
+     * Checks if a checkbox with id|name|title|alt|value exists or not and checks the same
+     *
+     * @Given I check :locator in the :region( region)
+     *
+     * @param $locator
+     *   string The id|name|title|alt|value of the checkbox to be checked
+     * @param $region
+     *   string The region in which the checkbox should be checked
+     *
+     * @throws \Exception
+     *   If region or checkbox within it cannot be found.
+     */
     public function assertRegionCheckBox(string $locator, string $region): void
     {
         $regionObj = $this->getRegion($region);
         $regionObj->checkField($locator);
     }
 
-  /**
-   * Checks if a checkbox with id|name|title|alt|value exists or not and unchecks the same
-   *
-   * @Given I uncheck :checkbox in the :region( region)
-   *
-   * @param $locator
-   *   string The id|name|title|alt|value of the checkbox to be unchecked
-   * @param $region
-   *   string The region in which the checkbox should be unchecked
-   *
-   * @throws \Exception
-   *   If region or checkbox within it cannot be found.
-   */
+    /**
+     * Checks if a checkbox with id|name|title|alt|value exists or not and unchecks the same
+     *
+     * @Given I uncheck :checkbox in the :region( region)
+     *
+     * @param $locator
+     *   string The id|name|title|alt|value of the checkbox to be unchecked
+     * @param $region
+     *   string The region in which the checkbox should be unchecked
+     *
+     * @throws \Exception
+     *   If region or checkbox within it cannot be found.
+     */
     public function assertRegionUncheckBox(string $locator, string $region): void
     {
         $regionObj = $this->getRegion($region);
         $regionObj->uncheckField($locator);
     }
 
-  /**
-   * Find a heading in a specific region.
-   *
-   * @Then I should see the heading :heading in the :region( region)
-   * @Then I should see the :heading heading in the :region( region)
-   *
-   * @throws \Exception
-   *   If region or header within it cannot be found.
-   */
+    /**
+     * Find a heading in a specific region.
+     *
+     * @Then I should see the heading :heading in the :region( region)
+     * @Then I should see the :heading heading in the :region( region)
+     *
+     * @throws \Exception
+     *   If region or header within it cannot be found.
+     */
     public function assertRegionHeading(string $heading, string $region): void
     {
         $regionObj = $this->getRegion($region);
@@ -511,12 +511,12 @@ JS;
         throw new \Exception(sprintf('The heading "%s" was not found in the "%s" region on the page %s', $heading, $region, $this->getSession()->getCurrentUrl()));
     }
 
-  /**
-   * @Then I should see the link :link in the :region( region)
-   *
-   * @throws \Exception
-   *   If region or link within it cannot be found.
-   */
+    /**
+     * @Then I should see the link :link in the :region( region)
+     *
+     * @throws \Exception
+     *   If region or link within it cannot be found.
+     */
     public function assertLinkRegion(string $link, string $region): void
     {
         $regionObj = $this->getRegion($region);
@@ -527,12 +527,12 @@ JS;
         }
     }
 
-  /**
-   * @Then I should not see the link :link in the :region( region)
-   *
-   * @throws \Exception
-   *   If region or link within it cannot be found.
-   */
+    /**
+     * @Then I should not see the link :link in the :region( region)
+     *
+     * @throws \Exception
+     *   If region or link within it cannot be found.
+     */
     public function assertNotLinkRegion(string $link, string $region): void
     {
         $regionObj = $this->getRegion($region);
@@ -543,12 +543,12 @@ JS;
         }
     }
 
-  /**
-   * @Then I should see( the text) :text in the :region( region)
-   *
-   * @throws \Exception
-   *   If region or text within it cannot be found.
-   */
+    /**
+     * @Then I should see( the text) :text in the :region( region)
+     *
+     * @throws \Exception
+     *   If region or text within it cannot be found.
+     */
     public function assertRegionText(string $text, string $region): void
     {
         $regionObj = $this->getRegion($region);
@@ -560,12 +560,12 @@ JS;
         }
     }
 
-  /**
-   * @Then I should not see( the text) :text in the :region( region)
-   *
-   * @throws \Exception
-   *   If region or text within it cannot be found.
-   */
+    /**
+     * @Then I should not see( the text) :text in the :region( region)
+     *
+     * @throws \Exception
+     *   If region or text within it cannot be found.
+     */
     public function assertNotRegionText(string $text, string $region): void
     {
         $regionObj = $this->getRegion($region);
@@ -577,66 +577,66 @@ JS;
         }
     }
 
-  /**
-   * @Then I (should )see the text :text
-   */
+    /**
+     * @Then I (should )see the text :text
+     */
     public function assertTextVisible(string $text): void
     {
         // Use the Mink Extension step definition.
         $this->assertPageContainsText($text);
     }
 
-  /**
-   * @Then I should not see the text :text
-   */
+    /**
+     * @Then I should not see the text :text
+     */
     public function assertNotTextVisible(string $text): void
     {
         // Use the Mink Extension step definition.
         $this->assertPageNotContainsText($text);
     }
 
-  /**
-   * @Then I should get a :code HTTP response
-   */
+    /**
+     * @Then I should get a :code HTTP response
+     */
     public function assertHttpResponse(int|string $code): void
     {
         // Use the Mink Extension step definition.
         $this->assertResponseStatus($code);
     }
 
-  /**
-   * @Then I should not get a :code HTTP response
-   */
+    /**
+     * @Then I should not get a :code HTTP response
+     */
     public function assertNotHttpResponse(int|string $code): void
     {
         // Use the Mink Extension step definition.
         $this->assertResponseStatusIsNot($code);
     }
 
-  /**
-   * @Given I check the box :checkbox
-   */
+    /**
+     * @Given I check the box :checkbox
+     */
     public function assertCheckBox(string $checkbox): void
     {
         // Use the Mink Extension step definition.
         $this->checkOption($checkbox);
     }
 
-  /**
-   * @Given I uncheck the box :checkbox
-   */
+    /**
+     * @Given I uncheck the box :checkbox
+     */
     public function assertUncheckBox(string $checkbox): void
     {
         // Use the Mink Extension step definition.
         $this->uncheckOption($checkbox);
     }
 
-  /**
-   * @When I select the radio button :label with the id :id
-   * @When I select the radio button :label
-   *
-   * @TODO convert to mink extension.
-   */
+    /**
+     * @When I select the radio button :label with the id :id
+     * @When I select the radio button :label
+     *
+     * @TODO convert to mink extension.
+     */
     public function assertSelectRadioById(string $label, string $id = ''): void
     {
         $element = $this->getSession()->getPage();
@@ -653,16 +653,16 @@ JS;
         $radiobutton->selectOption($value, false);
     }
 
-  /**
-   * Expand/collapse/toggle a <details> element by <summary> text.
-   *
-   * Usage examples:
-   *   When I expand details labelled 'My summary'
-   *   When I collapse details labelled "My summary"
-   *   When I click details labelled 'My summary'
-   *
-   * @When I :action details labelled :summary
-   */
+    /**
+     * Expand/collapse/toggle a <details> element by <summary> text.
+     *
+     * Usage examples:
+     *   When I expand details labelled 'My summary'
+     *   When I collapse details labelled "My summary"
+     *   When I click details labelled 'My summary'
+     *
+     * @When I :action details labelled :summary
+     */
     public function iExpandOrCollapseDetailsByLabel(string $action, string $summary): void
     {
         $page = $this->getSession()->getPage();
@@ -694,12 +694,12 @@ JS;
             $element->click();
             usleep($animateDelay);
         } catch (UnsupportedDriverActionException) {
-          // Goutte etc only supports clicking link, submit, button;
-          // for non-JS drivers this won't impact test.
+            // Goutte etc only supports clicking link, submit, button;
+            // for non-JS drivers this won't impact test.
         }
     }
 
-  /**
-   * @} End of defgroup "mink extensions"
-   */
+    /**
+     * @} End of defgroup "mink extensions"
+     */
 }

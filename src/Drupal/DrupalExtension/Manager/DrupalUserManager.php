@@ -10,55 +10,55 @@ namespace Drupal\DrupalExtension\Manager;
 class DrupalUserManager implements DrupalUserManagerInterface
 {
 
-  /**
-   * The user object representing the currently logged in user.
-   *
-   * @var \stdClass|FALSE
-   */
+    /**
+     * The user object representing the currently logged in user.
+     *
+     * @var \stdClass|FALSE
+     */
     protected $user = false;
 
-  /**
-   * An array of user objects representing users created during the test.
-   *
-   * @var \stdClass[]
-   */
+    /**
+     * An array of user objects representing users created during the test.
+     *
+     * @var \stdClass[]
+     */
     protected $users = [];
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function getCurrentUser()
     {
         return $this->user;
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function setCurrentUser(\stdClass|bool $user): void
     {
         $this->user = $user;
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function addUser(\stdClass $user): void
     {
         $this->users[$user->name] = $user;
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function removeUser(string $userName): void
     {
         unset($this->users[$userName]);
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function getUser(string $userName)
     {
         if (!isset($this->users[$userName])) {
@@ -67,42 +67,42 @@ class DrupalUserManager implements DrupalUserManagerInterface
         return $this->users[$userName];
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function getUsers()
     {
         return $this->users;
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function clearUsers(): void
     {
         $this->user = false;
         $this->users = [];
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function hasUsers(): bool
     {
         return !empty($this->users);
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function currentUserIsAnonymous(): bool
     {
         return empty($this->user);
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function currentUserHasRole(string $role): bool
     {
         return !$this->currentUserIsAnonymous() && !empty($this->user->role) && $this->user->role == $role;

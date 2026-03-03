@@ -23,44 +23,44 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 class DrupalExtension implements ExtensionInterface
 {
 
-  /**
-   * Extension configuration ID.
-   */
+    /**
+     * Extension configuration ID.
+     */
     const DRUPAL_ID = 'drupal';
 
-  /**
-   * Selectors handler ID.
-   */
+    /**
+     * Selectors handler ID.
+     */
     const SELECTORS_HANDLER_ID = 'drupal.selectors_handler';
 
     private readonly ServiceProcessor $serviceProcessor;
 
-  /**
-     * Initializes compiler pass.
-     */
+    /**
+       * Initializes compiler pass.
+       */
     public function __construct(?ServiceProcessor $processor = null)
     {
         $this->serviceProcessor = $processor ? : new ServiceProcessor();
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function getConfigKey()
     {
         return self::DRUPAL_ID;
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function initialize(ExtensionManager $extensionManager)
     {
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function load(ContainerBuilder $container, array $config): void
     {
         // Workaround a bug in BrowserKitDriver that wrongly considers as text
@@ -90,9 +90,9 @@ class DrupalExtension implements ExtensionInterface
         $this->loadDrush($loader, $container, $config);
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function process(ContainerBuilder $container): void
     {
         $this->processDriverPass($container);
@@ -101,9 +101,9 @@ class DrupalExtension implements ExtensionInterface
         $this->processClassGenerator($container);
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function configure(ArrayNodeDefinition $builder): void
     {
         // @formatter:off
@@ -226,9 +226,9 @@ class DrupalExtension implements ExtensionInterface
         // @formatter:on
     }
 
-  /**
-   * Load test parameters.
-   */
+    /**
+     * Load test parameters.
+     */
     private function loadParameters(ContainerBuilder $container, array $config): void
     {
         // Store config in parameters array to be passed into the DrupalContext.
@@ -241,18 +241,18 @@ class DrupalExtension implements ExtensionInterface
         $container->setParameter('drupal.region_map', $config['region_map']);
     }
 
-  /**
-   * Load the blackbox driver.
-   */
+    /**
+     * Load the blackbox driver.
+     */
     private function loadBlackBox(FileLoader $loader): void
     {
         // Always include the blackbox driver.
         $loader->load('drivers/blackbox.yml');
     }
 
-  /**
-   * Load the Drupal driver.
-   */
+    /**
+     * Load the Drupal driver.
+     */
     private function loadDrupal(FileLoader $loader, ContainerBuilder $container, array $config): void
     {
         if (isset($config['drupal'])) {
@@ -261,9 +261,9 @@ class DrupalExtension implements ExtensionInterface
         }
     }
 
-  /**
-   * Load the Drush driver.
-   */
+    /**
+     * Load the Drush driver.
+     */
     private function loadDrush(FileLoader $loader, ContainerBuilder $container, array $config): void
     {
         if (isset($config['drush'])) {
@@ -285,9 +285,9 @@ class DrupalExtension implements ExtensionInterface
         }
     }
 
-  /**
-   * Set global drush arguments.
-   */
+    /**
+     * Set global drush arguments.
+     */
     private function setDrushOptions(ContainerBuilder $container, array $config): void
     {
         if (isset($config['drush']['global_options'])) {
@@ -296,27 +296,27 @@ class DrupalExtension implements ExtensionInterface
         }
     }
 
-  /**
-   * Process the Driver Pass.
-   */
+    /**
+     * Process the Driver Pass.
+     */
     private function processDriverPass(ContainerBuilder $container): void
     {
         $driverPass = new DriverPass();
         $driverPass->process($container);
     }
 
-  /**
-   * Process the Event Subscriber Pass.
-   */
+    /**
+     * Process the Event Subscriber Pass.
+     */
     private function processEventSubscriberPass(ContainerBuilder $container): void
     {
         $eventSubscriberPass = new EventSubscriberPass();
         $eventSubscriberPass->process($container);
     }
 
-  /**
-   * Process the Environment Reader pass.
-   */
+    /**
+     * Process the Environment Reader pass.
+     */
     private function processEnvironmentReaderPass(ContainerBuilder $container): void
     {
         // Register Behat context readers.
@@ -328,9 +328,9 @@ class DrupalExtension implements ExtensionInterface
         }
     }
 
-  /**
-   * Switch to custom class generator.
-   */
+    /**
+     * Switch to custom class generator.
+     */
     private function processClassGenerator(ContainerBuilder $container): void
     {
         $definition = new Definition(ClassGenerator::class);
