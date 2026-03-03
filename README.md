@@ -1,89 +1,85 @@
-# Behat Drupal Extension
+<div align="center">
+  <a href="" rel="noopener">
+  <img width=100px height=100px src="doc/_static/beehat.png" alt="Behat Drupal Extension Logo"></a>
+</div>
 
-The Drupal Extension is an integration layer between [Behat](http://behat.org),
-[Mink Extension](https://github.com/Behat/MinkExtension), and Drupal. It
-provides step definitions for common testing scenarios specific to Drupal
-sites.
+<h1 align="center">Behat Drupal Extension</h1>
 
-[![ci](https://github.com/jhedstrom/drupalextension/actions/workflows/ci.yml/badge.svg)](https://github.com/jhedstrom/drupalextension/actions/workflows/ci.yml)
-
-The Drupal Extension 5.x supports Drupal 10 and 11, utilizes Behat 3.22+ and runs
-on:
-
-- PHP 8.2, 8.3, 8.4 with Drupal 10
-- PHP 8.3, 8.4 with Drupal 11.
+<div align="center">
 
 [![Latest Stable Version](https://poser.pugx.org/drupal/drupal-extension/v/stable.svg)](https://packagist.org/packages/drupal/drupal-extension)
 [![Total Downloads](https://poser.pugx.org/drupal/drupal-extension/downloads.svg)](https://packagist.org/packages/drupal/drupal-extension)
 [![Latest Unstable Version](https://poser.pugx.org/drupal/drupal-extension/v/unstable.svg)](https://packagist.org/packages/drupal/drupal-extension)
 [![License](https://poser.pugx.org/drupal/drupal-extension/license.svg)](https://packagist.org/packages/drupal/drupal-extension)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/jhedstrom/drupalextension/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/jhedstrom/drupalextension/?branch=master)
+
+[![ci](https://github.com/jhedstrom/drupalextension/actions/workflows/ci.yml/badge.svg)](https://github.com/jhedstrom/drupalextension/actions/workflows/ci.yml)
+[![GitHub Issues](https://img.shields.io/github/issues/jhedstrom/drupalextension.svg)](https://github.com/jhedstrom/drupalextension/issues)
+[![GitHub Pull Requests](https://img.shields.io/github/issues-pr/jhedstrom/drupalextension.svg)](https://github.com/jhedstrom/drupalextension/pulls)
+[![Documentation Status](https://readthedocs.org/projects/behat-drupal-extension/badge/?version=master)](https://behat-drupal-extension.readthedocs.org)
+
+</div>
+
+The Drupal Extension is an integration layer between [Behat](http://behat.org),
+[Mink Extension](https://github.com/Behat/MinkExtension), and [Drupal](https://www.drupal.org/). It
+provides step definitions for common testing scenarios specific to Drupal
+sites.
+
 
 ## Use it for testing your Drupal site.
 
 If you're new to the Drupal Extension, we recommend starting with
 the [Full documentation](https://behat-drupal-extension.readthedocs.org)
 
-[![Documentation Status](https://readthedocs.org/projects/behat-drupal-extension/badge/?version=master)](https://behat-drupal-extension.readthedocs.org)
-
 ### Quick start
 
 1. Install using [Composer](https://getcomposer.org/):
 
-    ```bash
-    mkdir projectdir
-    cd projectdir
-    curl -sS https://getcomposer.org/installer | php
-    COMPOSER_BIN_DIR=bin php composer.phar require drupal/drupal-extension='~5.0'
+    ```shell
+    composer require --dev drupal/drupal-extension
     ```
 
-1.  In the projectdir, create a file called `behat.yml`. Below is the
-    minimal configuration. Many more options are covered in the
-    [Full documentation](https://behat-drupal-extension.readthedocs.org)
+2. Create a file called `behat.yml` with a minimal configuration.
+    For more information on configuration options, see [Full documentation](https://behat-drupal-extension.readthedocs.org)
 
-    ```yaml
+    ```yaml behat.yml
     default:
+      autoload: ['%paths.base%/tests/bootstrap']
       suites:
         default:
+          paths: ['%paths.base%/tests/features']
           contexts:
             - Drupal\DrupalExtension\Context\DrupalContext
       extensions:
         Drupal\MinkExtension:
-          # Guzzle is used as HTTP client. You can configure the Guzzle request
-          # options by setting `browserkit_http.guzzle_request_options`. For
-          # instance the following configuration will disable SSL peer verification:
-          # browserkit_http:
-          #   guzzle_request_options:
-          #     verify: false
-          # See \GuzzleHttp\RequestOptions for all built-in Guzzle request options
           browserkit_http: ~
           base_url: http://example.org/  # Replace with your site's URL
         Drupal\DrupalExtension:
           blackbox: ~
      ```
 
-1. In the projectdir, run
-
-    ``` bash
-    bin/behat --init
+3. Initialize Behat in your project:
+    ```shell
+    vendor/bin/behat --init
     ```
 
-1. Find pre-defined steps to work with using:
+4. Find pre-defined steps to work with using:
 
-    ```bash
-    bin/behat -di
+    ```shell
+    vendor/bin/behat -di
     ```
 
-1. Define your own steps in `projectdir\features\FeatureContext.php`
+5. Optionally, define your own steps in `tests/bootstrap/FeatureContext.php`
 
-1. Start adding your [feature files](http://behat.org/en/latest/user_guide/gherkin.html)
-   to the `features` directory of your repository.
+6. Start adding your [feature files](http://behat.org/en/latest/user_guide/gherkin.html)
+   to the `tests/features` directory of your repository.
 
 ## Credits
 
  * Originally developed by [Jonathan Hedstrom](https://github.com/jhedstrom) with great help from [eliza411](https://github.com/eliza411)
  * Maintainers
+   * [Alex Skrypnyk](https://github.com/AlexSkrypnyk)
    * [Pieter Frenssen](https://github.com/pfrenssen)
+   * [Ricardo Sanz](https://github.com/rsanzante)
    * [All these great contributors](https://github.com/jhedstrom/drupalextension/graphs/contributors)
 
 ## Additional resources
@@ -107,7 +103,6 @@ See [CHANGELOG](CHANGELOG.md).
 
 ## Contributing
 
-Features and bug fixes are welcome! First-time contributors can jump in with the
-issues tagged [good first issue](https://github.com/jhedstrom/drupalextension/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22).
+Features and bug fixes are welcome!
 
 See [CONTRIBUTING.md](https://github.com/jhedstrom/drupalextension/blob/master/CONTRIBUTING.md) for more information.
