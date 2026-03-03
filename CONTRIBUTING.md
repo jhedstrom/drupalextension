@@ -25,20 +25,31 @@ docker compose exec -T php ./vendor/bin/drush --yes --root=drupal pmu page_cache
 docker compose exec -T php ./vendor/bin/drush --yes --root=drupal en behat_test
 ```
 
-Execute PHP checks:
+Run linting:
 ```shell
-docker compose exec -T php composer test
+docker compose exec -T php composer lint
 ```
 
-Execute Behat tests:
+Fix linting issues:
 ```shell
-docker compose exec -T php vendor/bin/behat -fprogress --strict
-docker compose exec -T php vendor/bin/behat -fprogress --profile=drupal10 --strict
+docker compose exec -T php composer lint-fix
 ```
 
-Execute specific tests, eg just PHPUnit's Drupal7FieldHandlerTest:
+Run PHPSpec tests:
 ```shell
-docker compose exec -T php vendor/bin/behat -fprogress --profile=drupal10 --strict --tags=@random
+docker compose exec -T php composer test-phpspec
+```
+
+Run all Behat tests:
+```shell
+docker compose exec -T php composer test-bdd
+```
+
+Run specific Behat test suites:
+```shell
+docker compose exec -T php composer test-bdd-blackbox
+docker compose exec -T php composer test-bdd-drupal10
+docker compose exec -T php composer test-bdd-drupal-https
 ```
 
 ## Testing with Drupal 10
@@ -57,15 +68,5 @@ revert changes to `composer.json` and remove `composer.lock`, `drupal/`, and `ve
 
 - Check the changes from `composer require` are not included in your submitted PR.
 - Before testing another PHP or Drupal version, revert changes to `composer.json` and remove `composer.lock`, `drupal/`, and `vendor/`.
-
-Run PHPCS to review coding standards:
-```shell
-docker compose exec -T php phpcs --standard=./phpcs-ruleset.xml
-docker compose exec -T php phpcs --standard=./phpcs-drupal-ruleset.xml
-```
-
-Run PHPCBF to fix coding standards:
-```shell
-docker compose exec -T php phpcbf --standard=./phpcs-ruleset.xml
-docker compose exec -T php phpcbf --standard=./phpcs-drupal-ruleset.xml
-```
+- Run `docker compose exec -T php composer lint` to check for coding standard violations.
+- Run `docker compose exec -T php composer lint-fix` to automatically fix coding standard violations.
