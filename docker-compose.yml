@@ -49,7 +49,7 @@ services:
       NGINX_STATIC_OPEN_FILE_CACHE: "off"
       NGINX_ERROR_LOG_LEVEL: debug
       NGINX_BACKEND_HOST: php
-      NGINX_SERVER_ROOT: /var/www/html/drupal
+      NGINX_SERVER_ROOT: /var/www/html/build/web
       NGINX_VHOST_PRESET: drupal10
     volumes:
       - ./:/var/www/html

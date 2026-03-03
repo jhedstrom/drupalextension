@@ -19,10 +19,10 @@ docker compose up -d
 docker compose exec -T php composer self-update
 docker compose exec -u ${DOCKER_USER_ID} -T php composer require --no-interaction --dev --no-update drupal/core:^${DRUPAL_VERSION} drupal/core-composer-scaffold:^${DRUPAL_VERSION}
 docker compose exec -T php composer install
-docker compose exec -T php ./vendor/bin/drush --yes --root=drupal site-install --db-url=mysql://drupal:drupal@db/drupal --debug
-docker compose exec -T php cp -r tests/behat/fixtures/drupal/modules/behat_test drupal/modules
-docker compose exec -T php ./vendor/bin/drush --yes --root=drupal pmu page_cache
-docker compose exec -T php ./vendor/bin/drush --yes --root=drupal en behat_test
+docker compose exec -T php ./vendor/bin/drush --yes --root=build/web site-install --db-url=mysql://drupal:drupal@db/drupal --debug
+docker compose exec -T php cp -r tests/behat/fixtures/drupal/modules/behat_test build/web/modules
+docker compose exec -T php ./vendor/bin/drush --yes --root=build/web pmu page_cache
+docker compose exec -T php ./vendor/bin/drush --yes --root=build/web en behat_test
 ```
 
 Run linting:
@@ -62,11 +62,11 @@ export DRUPAL_VERSION=10
 ```
 
 Then follow the same steps as above. Before switching between Drupal versions,
-revert changes to `composer.json` and remove `composer.lock`, `drupal/`, and `vendor/`.
+revert changes to `composer.json` and remove `composer.lock`, `build/`, and `vendor/`.
 
 ## Before submitting a change
 
 - Check the changes from `composer require` are not included in your submitted PR.
-- Before testing another PHP or Drupal version, revert changes to `composer.json` and remove `composer.lock`, `drupal/`, and `vendor/`.
+- Before testing another PHP or Drupal version, revert changes to `composer.json` and remove `composer.lock`, `build/`, and `vendor/`.
 - Run `docker compose exec -T php composer lint` to check for coding standard violations.
 - Run `docker compose exec -T php composer lint-fix` to automatically fix coding standard violations.

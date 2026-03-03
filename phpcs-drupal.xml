@@ -9,8 +9,7 @@
     <file>./tests/behat/fixtures/drupal</file>
 
     <exclude-pattern>^/doc/*</exclude-pattern>
-    <exclude-pattern>^/drupal/*</exclude-pattern>
-    <exclude-pattern>^/drush/*</exclude-pattern>
+    <exclude-pattern>^/build/*</exclude-pattern>
     <exclude-pattern>^/reports/*</exclude-pattern>
     <exclude-pattern>^/spec/*</exclude-pattern>
     <exclude-pattern>^/vendor/*</exclude-pattern>
