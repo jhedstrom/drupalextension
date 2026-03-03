@@ -29,45 +29,47 @@ use Rector\Strict\Rector\Empty_\DisallowedEmptyRuleFixerRector;
 use Rector\TypeDeclaration\Rector\StmtsAwareInterface\DeclareStrictTypesRector;
 
 return RectorConfig::configure()
-  ->withPaths([
-    __DIR__ . '/src/**',
-  ])
-  ->withPhpSets(php82: TRUE)
-  ->withPreparedSets(
-    deadCode: TRUE,
-    codeQuality: TRUE,
-    codingStyle: TRUE,
-    typeDeclarations: TRUE,
-    naming: TRUE,
-    instanceOf: TRUE,
-    earlyReturn: TRUE,
-  )
-  ->withRules([
-    DeclareStrictTypesRector::class,
-  ])
-  ->withSkip([
-    // Rules added by Rector's rule sets.
-    CatchExceptionNameMatchingTypeRector::class,
-    ChangeSwitchToMatchRector::class,
-    CompleteDynamicPropertiesRector::class,
-    CountArrayToEmptyArrayComparisonRector::class,
-    DisallowedEmptyRuleFixerRector::class,
-    InlineArrayReturnAssignRector::class,
-    NewlineAfterStatementRector::class,
-    NewlineBeforeNewAssignSetRector::class,
-    NewlineBetweenClassLikeStmtsRector::class,
-    RemoveAlwaysTrueIfConditionRector::class,
-    RenameForeachValueVariableToMatchMethodCallReturnTypeRector::class,
-    RenameVariableToMatchMethodCallReturnTypeRector::class,
-    RenameVariableToMatchNewTypeRector::class,
-    RenameParamToMatchTypeRector::class,
-    SimplifyEmptyCheckOnEmptyArrayRector::class,
-    // Dependencies.
-    '*/vendor/*',
-    '*/node_modules/*',
-  ])
-  ->withFileExtensions([
-    'php',
-    'inc',
-  ])
-  ->withImportNames(importNames: TRUE, importDocBlockNames: FALSE, importShortClasses: FALSE);
+    ->withPaths([
+        __DIR__ . '/src/**',
+        __DIR__ . '/tests/behat/bootstrap/**',
+    ])
+    ->withPhpSets(php82: TRUE)
+    ->withPreparedSets(
+        deadCode: TRUE,
+        codeQuality: TRUE,
+        codingStyle: TRUE,
+        typeDeclarations: TRUE,
+        naming: TRUE,
+        instanceOf: TRUE,
+        earlyReturn: TRUE,
+    )
+    ->withRules([
+        DeclareStrictTypesRector::class,
+    ])
+    ->withSkip([
+        // Rules added by Rector's rule sets.
+        CatchExceptionNameMatchingTypeRector::class,
+        ChangeSwitchToMatchRector::class,
+        CompleteDynamicPropertiesRector::class,
+        CountArrayToEmptyArrayComparisonRector::class,
+        DisallowedEmptyRuleFixerRector::class,
+        InlineArrayReturnAssignRector::class,
+        NewlineAfterStatementRector::class,
+        NewlineBeforeNewAssignSetRector::class,
+        NewlineBetweenClassLikeStmtsRector::class,
+        RemoveAlwaysTrueIfConditionRector::class,
+        RenameForeachValueVariableToMatchMethodCallReturnTypeRector::class,
+        RenameVariableToMatchMethodCallReturnTypeRector::class,
+        RenameVariableToMatchNewTypeRector::class,
+        RenameParamToMatchTypeRector::class,
+        SimplifyEmptyCheckOnEmptyArrayRector::class,
+        // Dependencies.
+        '*/vendor/*',
+        '*/node_modules/*',
+        __DIR__ . '/tests/behat/bootstrap/BehatCliContext.php',
+    ])
+    ->withFileExtensions([
+        'php',
+        'inc',
+    ])
+    ->withImportNames(importNames: TRUE, importDocBlockNames: FALSE, importShortClasses: FALSE);

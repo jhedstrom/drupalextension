@@ -8,6 +8,7 @@
 
     <file>src</file>
     <file>spec</file>
+    <file>tests/behat/bootstrap</file>
 
     <rule ref="PSR2">
         <!-- @todo Fix long line length issues -->
