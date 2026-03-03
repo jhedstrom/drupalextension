@@ -104,10 +104,10 @@
     },
     "scripts": {
         "lint": [
-            "parallel-lint src spec features fixtures",
+            "parallel-lint src spec tests",
             "phpcs --standard=./phpcs-ruleset.xml -p",
             "phpcs --standard=./phpcs-drupal-ruleset.xml -p",
-            "gherkinlint lint features"
+            "gherkinlint lint tests/behat/features"
         ],
         "lint-fix": [
             "composer normalize",

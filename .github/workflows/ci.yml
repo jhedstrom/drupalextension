@@ -106,7 +106,7 @@ jobs:
         run: docker compose exec -T php ./vendor/bin/drush --yes --root=drupal site-install --db-url=mysql://drupal:drupal@db/drupal --debug
 
       - name: Copy test fixtures
-        run: docker compose exec -T php cp -r fixtures/drupal/modules/behat_test drupal/modules
+        run: docker compose exec -T php cp -r tests/behat/fixtures/drupal/modules/behat_test drupal/modules
 
       - name: Adjust Drupal configurations
         run: |

@@ -65,7 +65,7 @@ services:
     environment:
       NGINX_STATIC_OPEN_FILE_CACHE: "off"
       NGINX_ERROR_LOG_LEVEL: debug
-      NGINX_SERVER_ROOT: /var/www/html/fixtures/blackbox
+      NGINX_SERVER_ROOT: /var/www/html/tests/behat/fixtures/blackbox
       NGINX_VHOST_PRESET: html
     volumes:
       - ./:/var/www/html

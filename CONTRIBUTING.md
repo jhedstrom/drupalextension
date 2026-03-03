@@ -20,7 +20,7 @@ docker compose exec -T php composer self-update
 docker compose exec -u ${DOCKER_USER_ID} -T php composer require --no-interaction --dev --no-update drupal/core:^${DRUPAL_VERSION} drupal/core-composer-scaffold:^${DRUPAL_VERSION}
 docker compose exec -T php composer install
 docker compose exec -T php ./vendor/bin/drush --yes --root=drupal site-install --db-url=mysql://drupal:drupal@db/drupal --debug
-docker compose exec -T php cp -r fixtures/drupal/modules/behat_test drupal/modules
+docker compose exec -T php cp -r tests/behat/fixtures/drupal/modules/behat_test drupal/modules
 docker compose exec -T php ./vendor/bin/drush --yes --root=drupal pmu page_cache
 docker compose exec -T php ./vendor/bin/drush --yes --root=drupal en behat_test
 ```

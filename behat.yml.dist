@@ -1,6 +1,8 @@
 default:
+  autoload: ['%paths.base%/tests/behat/bootstrap']
   suites:
     default:
+      paths: ['%paths.base%/tests/behat/features']
       contexts:
         - FeatureContext
         - Drupal\DrupalExtension\Context\ConfigContext
@@ -30,8 +32,10 @@ default:
         warning_message_selector: '.messages.warning'
 
 drupal10:
+  autoload: ['%paths.base%/tests/behat/bootstrap']
   suites:
     default:
+      paths: ['%paths.base%/tests/behat/features']
       contexts:
         - FeatureContext
         - Drupal\DrupalExtension\Context\ConfigContext
@@ -46,7 +50,7 @@ drupal10:
   extensions:
     Drupal\MinkExtension:
       base_url: http://proxy
-      files_path: /var/www/html/fixtures/files
+      files_path: /var/www/html/tests/behat/fixtures/files
     Drupal\DrupalExtension:
       api_driver: "drupal"
       drupal:
@@ -57,8 +61,10 @@ drupal10:
         error_message_selector: '.messages--error'
 
 drupal_https:
+  autoload: ['%paths.base%/tests/behat/bootstrap']
   suites:
     default:
+      paths: ['%paths.base%/tests/behat/features']
       contexts:
         - FeatureContext
         - Drupal\DrupalExtension\Context\DrupalContext
