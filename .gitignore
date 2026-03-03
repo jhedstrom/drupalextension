@@ -1,6 +1,7 @@
 *.phar
 *.tgz
-/composer.lock
+/.logs
 /build
+/composer.lock
 /recipes
 /vendor
