@@ -8,8 +8,8 @@ Testing is performed automatically in Github Actions when a PR is submitted. To 
 
 Configure your local test environment:
 ```shell
-export PHP_VERSION=8.2
-export DRUPAL_VERSION=10
+export PHP_VERSION=8.3
+export DRUPAL_VERSION=11
 export DOCKER_USER_ID=${UID}
 ```
 
@@ -46,6 +46,19 @@ Execute specific tests, eg just PHPUnit's Drupal7FieldHandlerTest:
 ```shell
 docker compose exec -T php vendor/bin/behat -fprogress --profile=drupal10 --strict --tags=@random
 ```
+
+## Testing with Drupal 10
+
+To test against Drupal 10 instead of the default Drupal 11, use PHP 8.2, 8.3,
+or 8.4 and set the following environment variables:
+```shell
+export PHP_VERSION=8.2
+export DRUPAL_VERSION=10
+```
+
+Then follow the same steps as above. Before switching between Drupal versions,
+revert changes to `composer.json` and remove `composer.lock`, `package-lock.json`,
+`drupal/`, and `vendor/`.
 
 ## Before submitting a change
 

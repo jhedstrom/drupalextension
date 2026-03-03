@@ -7,11 +7,11 @@ sites.
 
 [![ci](https://github.com/jhedstrom/drupalextension/actions/workflows/ci.yml/badge.svg)](https://github.com/jhedstrom/drupalextension/actions/workflows/ci.yml)
 
-The Drupal Extension 5.x supports Drupal 9 and 10, utilizes Behat 3.2+ and runs
+The Drupal Extension 5.x supports Drupal 10 and 11, utilizes Behat 3.22+ and runs
 on:
 
-- PHP 7.4, 8.0, 8.1 with Drupal 9
-- PHP 8.1 with Drupal 10.
+- PHP 8.2, 8.3, 8.4 with Drupal 10
+- PHP 8.3, 8.4 with Drupal 11.
 
 [![Latest Stable Version](https://poser.pugx.org/drupal/drupal-extension/v/stable.svg)](https://packagist.org/packages/drupal/drupal-extension)
 [![Total Downloads](https://poser.pugx.org/drupal/drupal-extension/downloads.svg)](https://packagist.org/packages/drupal/drupal-extension)

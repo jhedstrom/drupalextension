@@ -40,8 +40,8 @@
     "require-dev": {
         "composer/installers": "^2.3",
         "drupal/coder": "^8.3.27",
-        "drupal/core": "^10",
-        "drupal/core-composer-scaffold": "^10",
+        "drupal/core": "^11",
+        "drupal/core-composer-scaffold": "^11",
         "drush/drush": "^12.4 || ^13.7",
         "ergebnis/composer-normalize": "^2.50",
         "grasmash/yaml-cli": "^3.2.1",
