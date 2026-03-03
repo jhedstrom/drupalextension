@@ -6,6 +6,33 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+## [5.2.0]
+### Added
+ * [#594](https://github.com/jhedstrom/drupalextension/pull/594) - Added expanding/collapsing of `<details>` element.
+ * [#636](https://github.com/jhedstrom/drupalextension/pull/636) - Added "press button in row" step.
+ * [#591](https://github.com/jhedstrom/drupalextension/pull/591) - Added checkbox manipulation in regions.
+ * [#685](https://github.com/jhedstrom/drupalextension/pull/685) - Allow adding extra entries to text and selectors in `behat.yml`.
+ * [#705](https://github.com/jhedstrom/drupalextension/pull/705) - Added `assertRegionElementText()` step.
+ * [#722](https://github.com/jhedstrom/drupalextension/pull/722) - Added screenshot taking helper.
+ * [#668](https://github.com/jhedstrom/drupalextension/pull/668) - Made it possible to override how to get the log out link.
+ * [#592](https://github.com/jhedstrom/drupalextension/pull/592) - Added AJAX wait on `attachFileToField()`.
+### Changed
+ * [#678](https://github.com/jhedstrom/drupalextension/pull/678) - Aligned package with Drupal core.
+ * [#689](https://github.com/jhedstrom/drupalextension/pull/689) - Added Symfony 7 compatibility.
+ * [#713](https://github.com/jhedstrom/drupalextension/pull/713) - Switched to use Drupal 11 by default.
+ * [#708](https://github.com/jhedstrom/drupalextension/pull/708) - Added PHP 8.4 support.
+ * [#699](https://github.com/jhedstrom/drupalextension/pull/699) - Removed PHP 7.4 and Drupal 9 support.
+ * [#723](https://github.com/jhedstrom/drupalextension/pull/723) - Added PHPStan and Rector for static analysis.
+ * [#702](https://github.com/jhedstrom/drupalextension/pull/702) - Added `ergebnis/composer-normalize`.
+ * [#717](https://github.com/jhedstrom/drupalextension/pull/717) - Moved tests under `tests` directory.
+### Fixed
+ * [#681](https://github.com/jhedstrom/drupalextension/pull/681) - Fixed `DrupalAuthenticationManager::logout()`.
+ * [#605](https://github.com/jhedstrom/drupalextension/pull/605) - Fixed `TableNode` namespace for `instanceof` check.
+ * [#666](https://github.com/jhedstrom/drupalextension/pull/666) - Fixed `iWaitForAjaxToFinish` failing.
+ * [#690](https://github.com/jhedstrom/drupalextension/pull/690) - Fixed PHP 8.4 deprecation with `str_getcsv`.
+ * [#682](https://github.com/jhedstrom/drupalextension/pull/682) - Fixed PHP 8.4 deprecation.
+ * [#707](https://github.com/jhedstrom/drupalextension/pull/707) - Fixed `RandomContext` not transforming `<?placeholder>` variables in `TableNode` arguments.
+ * [#665](https://github.com/jhedstrom/drupalextension/pull/665) - Fixed reverse term removal order.
 ## [5.1.0]
 ### Added
  * [#677](https://github.com/jhedstrom/drupalextension/pull/677) - Drupal 11 support
@@ -151,7 +178,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   * [#437](https://github.com/jhedstrom/drupalextension/pull/437): Radio button selector fix.
   * [#439](https://github.com/jhedstrom/drupalextension/pull/439): Symfony 3 compatibility follow-up fix.
 
-[Unreleased]: https://github.com/jhedstrom/drupalextension/compare/v5.1.0...HEAD
+[Unreleased]: https://github.com/jhedstrom/drupalextension/compare/v5.2.0...HEAD
+[5.2.0]: https://github.com/jhedstrom/drupalextension/compare/v5.1.0...v5.2.0
 [5.1.0]: https://github.com/jhedstrom/drupalextension/compare/v5.0.0...v5.1.0
 [5.0.0]: https://github.com/jhedstrom/drupalextension/compare/v5.0.0rc1...v5.0.0
 [5.0.0 alpha1]: https://github.com/jhedstrom/drupalextension/compare/v4.2.0...v5.0.0alpha1
