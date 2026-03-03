@@ -16,7 +16,6 @@ export DOCKER_USER_ID=${UID}
 Prepare your local environment for testing:
 ```shell
 docker compose up -d
-docker compose exec -T -u node node npm install
 docker compose exec -T php composer self-update
 docker compose exec -u ${DOCKER_USER_ID} -T php composer require --no-interaction --dev --no-update drupal/core:^${DRUPAL_VERSION} drupal/core-composer-scaffold:^${DRUPAL_VERSION}
 docker compose exec -T php composer install
@@ -24,11 +23,6 @@ docker compose exec -T php ./vendor/bin/drush --yes --root=drupal site-install -
 docker compose exec -T php cp -r fixtures/drupal/modules/behat_test drupal/modules
 docker compose exec -T php ./vendor/bin/drush --yes --root=drupal pmu page_cache
 docker compose exec -T php ./vendor/bin/drush --yes --root=drupal en behat_test
-```
-
-Execute NPM linters:
-```shell
-docker compose exec -T -u node node npm test
 ```
 
 Execute PHP checks:
@@ -57,13 +51,12 @@ export DRUPAL_VERSION=10
 ```
 
 Then follow the same steps as above. Before switching between Drupal versions,
-revert changes to `composer.json` and remove `composer.lock`, `package-lock.json`,
-`drupal/`, and `vendor/`.
+revert changes to `composer.json` and remove `composer.lock`, `drupal/`, and `vendor/`.
 
 ## Before submitting a change
 
 - Check the changes from `composer require` are not included in your submitted PR.
-- Before testing another PHP or Drupal version, revert changes to `composer.json` and remove `composer.lock`, `package-lock.json`, `drupal/`, and `vendor/`.
+- Before testing another PHP or Drupal version, revert changes to `composer.json` and remove `composer.lock`, `drupal/`, and `vendor/`.
 
 Run PHPCS to review coding standards:
 ```shell

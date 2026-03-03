@@ -17,19 +17,19 @@ Característica: DrupalContext
   Escenario: Enlaces dentro de filas de tablas  (Drupal 10)
     Dado que estoy conectado como un "administrator"
     Cuando estoy en la URL "admin/structure/types"
-      Y hago click en el enlace "Manage fields" de la fila "Article"
+    Y hago click en el enlace "Manage fields" de la fila "Article"
     Entonces debo estar en "admin/structure/types/manage/article/fields"
-      Y debo ver el enlace "Create a new field"
+    Y debo ver el enlace "Create a new field"
 
   Escenario: Cear usuarios con roles
     Dados usuarios:
-        | name     | mail             | roles          |
-        | Joe User | joe@example.com  | Administrator  |
-        | Jane Doe | jane@example.com |                |
-      Y estoy conectado como usuario con rol "administrator"
+      | name     | mail             | roles         |
+      | Joe User | joe@example.com  | Administrator |
+      | Jane Doe | jane@example.com |               |
+    Y estoy conectado como usuario con rol "administrator"
     Cuando visito "admin/people"
     Entonces debo ver el texto "Administrator" en la fila "Joe User"
-      Y no debo ver el texto "administrator" en la fila "Jane Doe"
+    Y no debo ver el texto "administrator" en la fila "Jane Doe"
 
   Escenario: Encontrar un encabezado en una zona
     Dado que no estoy conectado

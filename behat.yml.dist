@@ -42,7 +42,7 @@ drupal10:
         - Drupal\DrupalExtension\Context\MailContext
         - Drupal\DrupalExtension\Context\RandomContext
       filters:
-        tags: "~@blackbox&&~@wip"
+        tags: "~@blackbox&&~@skipped"
   extensions:
     Drupal\MinkExtension:
       base_url: http://proxy

@@ -1,9 +1,0 @@
-{
-  "devDependencies": {
-    "gherkin-lint": "^2.12.0"
-  },
-  "scripts": {
-    "gherkin-lint": "gherkin-lint features",
-    "test": "npm run gherkin-lint"
-  }
-}

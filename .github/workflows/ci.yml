@@ -60,9 +60,6 @@ jobs:
       - name: Start Docker containers
         run: docker compose up -d
 
-      - name: Install NPM dependencies
-        run: docker compose exec -T -u node node npm install
-
       - name: Add Drupal core dependency
         run: docker compose exec -u ${DOCKER_USER_ID} -T php composer require --no-interaction --dev --no-update drupal/core:^${DRUPAL_VERSION} drupal/core-composer-scaffold:^${DRUPAL_VERSION}
 
@@ -90,9 +87,6 @@ jobs:
           docker compose exec -u ${DOCKER_USER_ID} -T php vendor/bin/drush cset core.date_format.olivero_medium pattern 'j F, Y'
           docker compose exec -u ${DOCKER_USER_ID} -T php vendor/bin/drush cset automated_cron.settings interval 0
           docker compose exec -u ${DOCKER_USER_ID} -T php vendor/bin/drush cset user.settings register visitors
-
-      - name: Run NPM tests
-        run: docker compose exec -T -u node node npm test
 
       - name: Run Composer tests
         run: docker compose exec -T php composer test

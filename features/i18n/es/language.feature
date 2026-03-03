@@ -13,12 +13,12 @@ Característica: Soporte para idiomas
 
   Escenario: Habilita múltiples idiomas
     Dado que los siguientes idiomas estan disponibles:
-        | languages |
-        | en        |
-        | fr        |
-        | de        |
-      Y estoy conectado como usuario con rol 'administrator'
+      | languages |
+      | en        |
+      | fr        |
+      | de        |
+    Y estoy conectado como usuario con rol 'administrator'
     Cuando voy a "admin/config/regional/language"
     Entonces debo ver "English"
-      Y debo ver "French"
-      Y debo ver "German"
+    Y debo ver "French"
+    Y debo ver "German"
