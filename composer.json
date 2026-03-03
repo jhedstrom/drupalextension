@@ -148,7 +148,6 @@
             "gherkinlint lint tests/behat/features"
         ],
         "lint-fix": [
-            "composer normalize",
             "phpcbf --standard=./phpcs.xml -p || true",
             "phpcbf --standard=./phpcs-drupal.xml -p || true"
         ],

@@ -24,10 +24,10 @@ class RawDrupalContextSpec extends ObjectBehavior
 
     function it_can_set_and_get_drupal_parameters()
     {
-        $parameters = array(
+        $parameters = [
             'one' => '1',
             'two' => '2',
-        );
+        ];
         $this->setDrupalParameters($parameters);
         $this->getDrupalParameter('one')->shouldReturn('1');
         $this->getDrupalParameter('two')->shouldReturn('2');
@@ -35,11 +35,11 @@ class RawDrupalContextSpec extends ObjectBehavior
 
     function it_can_manage_text_values()
     {
-        $parameters = array(
-            'text' => array(
+        $parameters = [
+            'text' => [
                 'login' => 'Log in',
-            ),
-        );
+            ],
+        ];
         $this->setDrupalParameters($parameters);
         $this->getDrupalText('login')->shouldReturn('Log in');
         $this->shouldThrow('Exception')->duringGetDrupalText('No such string');
@@ -51,5 +51,4 @@ class RawDrupalContextSpec extends ObjectBehavior
         $this->setDrupal($drupal);
         $this->getDriver()->shouldBeAnInstanceOf(DriverInterface::class);
     }
-
 }

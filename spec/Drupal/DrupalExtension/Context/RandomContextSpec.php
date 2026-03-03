@@ -20,7 +20,7 @@ class RandomContextSpec extends ObjectBehavior
         $random->name(10)->willReturn('known_replacement');
         $driver->getRandom()->willReturn($random);
         $driver->getCore()->willReturn($core);
-        $drupal->getDriver(NULL)->willReturn($driver);
+        $drupal->getDriver(null)->willReturn($driver);
         $this->setDrupal($drupal);
     }
 

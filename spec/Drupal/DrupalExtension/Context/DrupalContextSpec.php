@@ -17,5 +17,4 @@ class DrupalContextSpec extends ObjectBehavior
     {
         $this->shouldHaveType(TranslatableContext::class);
     }
-
 }

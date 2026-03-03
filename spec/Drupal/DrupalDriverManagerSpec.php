@@ -35,7 +35,8 @@ class DrupalDriverManagerSpec extends ObjectBehavior
         $this->getEnvironment()->shouldBeAnInstanceOf(Environment::class);
     }
 
-    function it_gets_all_drivers(DriverInterface $driver) {
+    function it_gets_all_drivers(DriverInterface $driver)
+    {
         $this->registerDriver('one', $driver);
         $this->registerDriver('two', $driver);
         $this->getDrivers()->shouldHaveCount(2);
@@ -49,7 +50,8 @@ class DrupalDriverManagerSpec extends ObjectBehavior
         $this->getDriver('a_driver')->shouldBeAnInstanceOf(DriverInterface::class);
     }
 
-    function it_wont_bootstrap_the_driver_twice(DriverInterface $driver) {
+    function it_wont_bootstrap_the_driver_twice(DriverInterface $driver)
+    {
         $driver->isBootstrapped()->willReturn(true);
         $driver->bootstrap()->shouldNotBeCalled();
         $this->registerDriver('A_Driver', $driver);
