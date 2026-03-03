@@ -10,6 +10,7 @@ default:
         - Drupal\DrupalExtension\Context\MessageContext
         - Drupal\DrupalExtension\Context\MinkContext
         - Drupal\DrupalExtension\Context\MarkupContext
+        - DrevOps\BehatScreenshotExtension\Context\ScreenshotContext
       filters:
         tags: "@blackbox"
   extensions:
@@ -30,6 +31,17 @@ default:
         error_message_selector: '.messages.error'
         success_message_selector: '.messages.status'
         warning_message_selector: '.messages.warning'
+    DrevOps\BehatScreenshotExtension:
+      dir: '%paths.base%/.logs/screenshots'
+      on_failed: true
+      always_fullscreen: true
+      fullscreen_algorithm: resize
+      purge: false
+      info_types:
+        - url
+        - feature
+        - step
+        - datetime
 
 drupal10:
   autoload: ['%paths.base%/tests/behat/bootstrap']
@@ -45,6 +57,7 @@ drupal10:
         - Drupal\DrupalExtension\Context\MessageContext
         - Drupal\DrupalExtension\Context\MailContext
         - Drupal\DrupalExtension\Context\RandomContext
+        - DrevOps\BehatScreenshotExtension\Context\ScreenshotContext
       filters:
         tags: "~@blackbox&&~@skipped"
   extensions:
@@ -59,6 +72,17 @@ drupal10:
         main content: "#main"
       selectors:
         error_message_selector: '.messages--error'
+    DrevOps\BehatScreenshotExtension:
+      dir: '%paths.base%/.logs/screenshots'
+      on_failed: true
+      always_fullscreen: true
+      fullscreen_algorithm: resize
+      purge: false
+      info_types:
+        - url
+        - feature
+        - step
+        - datetime
 
 drupal_https:
   autoload: ['%paths.base%/tests/behat/bootstrap']
@@ -69,6 +93,7 @@ drupal_https:
         - FeatureContext
         - Drupal\DrupalExtension\Context\DrupalContext
         - Drupal\DrupalExtension\Context\MinkContext
+        - DrevOps\BehatScreenshotExtension\Context\ScreenshotContext
       filters:
         tags: "@https"
   extensions:
@@ -81,3 +106,14 @@ drupal_https:
       api_driver: "drupal"
       drupal:
         drupal_root: "/var/www/html/build/web"
+    DrevOps\BehatScreenshotExtension:
+      dir: '%paths.base%/.logs/screenshots'
+      on_failed: true
+      always_fullscreen: true
+      fullscreen_algorithm: resize
+      purge: false
+      info_types:
+        - url
+        - feature
+        - step
+        - datetime
