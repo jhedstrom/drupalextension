@@ -29,13 +29,13 @@ Feature: DrupalContext general testing
 
   Scenario: Create many nodes
     Given "page" content:
-    | title    |
-    | Page one |
-    | Page two |
+      | title    |
+      | Page one |
+      | Page two |
     And "article" content:
-    | title          |
-    | First article  |
-    | Second article |
+      | title          |
+      | First article  |
+      | Second article |
     And I am logged in as a user with the "administrator" role
     When I go to "admin/content"
     Then I should see "Page one"
@@ -45,8 +45,8 @@ Feature: DrupalContext general testing
 
   Scenario: Create nodes with fields
     Given "article" content:
-    | title                     | promote | body             |
-    | First article with fields |       1 | PLACEHOLDER BODY |
+      | title                     | promote | body             |
+      | First article with fields | 1       | PLACEHOLDER BODY |
     And I am logged in as a user with the "authenticated user" role
     When I am on the homepage
     And follow "First article with fields"
@@ -54,23 +54,23 @@ Feature: DrupalContext general testing
 
   Scenario: Create and view a node with fields
     Given I am viewing an "article":
-    | title | My article with fields! |
-    | body  | A placeholder           |
+      | title | My article with fields! |
+      | body  | A placeholder           |
     Then I should see the heading "My article with fields!"
     And I should see the text "A placeholder"
 
   Scenario: Create users
     Given users:
-    | name     | mail            | status |
-    | Joe User | joe@example.com | 1      |
+      | name     | mail            | status |
+      | Joe User | joe@example.com | 1      |
     And I am logged in as a user with the "administrator" role
     When I visit "admin/people"
     Then I should see the link "Joe User"
 
   Scenario: Login as a user created during this scenario
     Given users:
-    | name      | status |
-    | Test user |      1 |
+      | name      | status |
+      | Test user | 1      |
     When I am logged in as "Test user"
     Then I should see the link "Log out"
 
@@ -81,9 +81,9 @@ Feature: DrupalContext general testing
 
   Scenario: Create many taxonomy terms
     Given "tags" terms:
-    | name    |
-    | Tag one |
-    | Tag two |
+      | name    |
+      | Tag one |
+      | Tag two |
     And I am logged in as a user with the "administrator" role
     When I go to "admin/structure/taxonomy/manage/tags/overview"
     Then I should see "Tag one"
@@ -91,24 +91,24 @@ Feature: DrupalContext general testing
 
   Scenario: Create terms using vocabulary title rather than machine name
     Given "Tags" terms:
-    | name    |
-    | Tag one |
-    | Tag two |
+      | name    |
+      | Tag one |
+      | Tag two |
     And I am logged in as a user with the "administrator" role
     When I go to "admin/structure/taxonomy/manage/tags/overview"
     Then I should see "Tag one"
     And I should see "Tag two"
 
-  @wip
+  @skipped
   # TODO: This doesn't work on Drupal 8/9/10 yet. For nodes the 'author' field
   # is called 'uid' and only accepts numerical IDs.
   Scenario: Create nodes with specific authorship
     Given users:
-    | name     | mail            | status |
-    | Joe User | joe@example.com | 1      |
+      | name     | mail            | status |
+      | Joe User | joe@example.com | 1      |
     And "article" content:
-    | title          | author   | body             | promote |
-    | Article by Joe | Joe User | PLACEHOLDER BODY | 1       |
+      | title          | author   | body             | promote |
+      | Article by Joe | Joe User | PLACEHOLDER BODY | 1       |
     When I am logged in as a user with the "administrator" role
     And I am on the homepage
     And I follow "Article by Joe"
@@ -116,16 +116,16 @@ Feature: DrupalContext general testing
 
   Scenario: Create an article with multiple term references
     Given "tags" terms:
-    | name      |
-    | Tag one   |
-    | Tag two   |
-    | Tag,three |
-    | Tag four  |
+      | name      |
+      | Tag one   |
+      | Tag two   |
+      | Tag,three |
+      | Tag four  |
     And "article" content:
-    | title           | body             | promote | field_tags                    |
+      | title           | body             | promote | field_tags                    |
     # Field values containing commas should be escaped with double quotes.
-    | Article by Joe  | PLACEHOLDER BODY |       1 | Tag one, Tag two, "Tag,three" |
-    | Article by Mike | PLACEHOLDER BODY |       1 | Tag four                      |
+      | Article by Joe  | PLACEHOLDER BODY | 1       | Tag one, Tag two, "Tag,three" |
+      | Article by Mike | PLACEHOLDER BODY | 1       | Tag four                      |
     When I am on the homepage
     Then I should see the link "Tag one"
     And I should see the link "Tag two"
@@ -134,15 +134,15 @@ Feature: DrupalContext general testing
 
   Scenario: Readable created dates
     Given "article" content:
-    | title        | body             | created            | status | promote |
-    | Test article | PLACEHOLDER BODY | 07/27/2014 12:03am |      1 |       1 |
+      | title        | body             | created            | status | promote |
+      | Test article | PLACEHOLDER BODY | 07/27/2014 12:03am | 1      | 1       |
     When I am on the homepage
     Then I should see the text "27 July, 2014"
 
   Scenario: Node hooks are functioning
     Given "article" content:
-    | title        | body        | published on       | status | promote |
-    | Test article | PLACEHOLDER | 04/27/2013 11:11am |      1 |       1 |
+      | title        | body        | published on       | status | promote |
+      | Test article | PLACEHOLDER | 04/27/2013 11:11am | 1      | 1       |
     When I am on the homepage
     Then I should see the text "27 April, 2013"
 
@@ -152,17 +152,17 @@ Feature: DrupalContext general testing
 
   Scenario: User hooks are functioning
     Given users:
-    | First name | Last name | E-mail               |
-    | Joe        | User      | joe.user@example.com |
+      | First name | Last name | E-mail               |
+      | Joe        | User      | joe.user@example.com |
     And I am logged in as a user with the "administrator" role
     When I visit "admin/people"
     Then I should see the link "Joe User"
 
   Scenario: Term hooks are functioning
     Given "tags" terms:
-    | Label     |
-    | Tag one   |
-    | Tag two   |
+      | Label   |
+      | Tag one |
+      | Tag two |
     And I am logged in as a user with the "administrator" role
     When I go to "admin/structure/taxonomy/manage/tags/overview"
     Then I should see "Tag one"

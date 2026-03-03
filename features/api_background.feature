@@ -1,4 +1,5 @@
 @api
+# @gherkinlint-disable-rule no-background-with-single-scenario
 Feature: DrupalContext with background steps
   Test DrupalContext in combination with Backgrounds
 

@@ -39,6 +39,7 @@
     },
     "require-dev": {
         "composer/installers": "^2.3",
+        "dantleech/gherkin-lint": "^0.2.3",
         "drupal/coder": "^8.3.27",
         "drupal/core": "^11",
         "drupal/core-composer-scaffold": "^11",
@@ -107,6 +108,7 @@
             "parallel-lint src spec features fixtures",
             "phpcs --standard=./phpcs-ruleset.xml -p",
             "phpcs --standard=./phpcs-drupal-ruleset.xml -p",
+            "gherkinlint lint features",
             "phpspec run -f pretty --no-interaction"
         ]
     }

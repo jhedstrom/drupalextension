@@ -14,9 +14,9 @@ Feature: MailContext
       | subject | test             |
       | body    | test body 2      |
     Then mails have been sent:
-      | to   | subject | body        |
-      | fred |         | test body   |
-      | jane | test    | body 2      |
+      | to   | subject | body      |
+      | fred |         | test body |
+      | jane | test    | body 2    |
     When Drupal sends a mail:
       | to      | jack@example.com          |
       | subject | for jack                  |
@@ -85,6 +85,6 @@ Feature: MailContext
       | subject | test             |
       | body    | test body 2      |
     Then mails have been sent:
-      | to   | subject | body        |
-      | jane | test    | body 2      |
-      | fred |         | test body   |
+      | to   | subject | body      |
+      | jane | test    | body 2    |
+      | fred |         | test body |

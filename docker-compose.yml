@@ -82,16 +82,3 @@ services:
       MYSQL_PASSWORD: drupal
     labels:
       - "traefik.enable=false"
-
-  node:
-    image: node:latest
-    user: "node"
-    working_dir: /home/node/app
-    environment:
-      - NODE_ENV="production npm run production"
-      - SHELL=bash
-    volumes:
-      - ./:/home/node/app
-    command: "sleep infinity"
-    labels:
-      - "traefik.enable=false"

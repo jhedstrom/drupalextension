@@ -14,7 +14,7 @@ Feature: ConfigContext
 
   Scenario: Set a complex config and check it appears on the config form.
     Given I set the configuration item "system.performance" with key "css" with values:
-      |key        | value |
-      |preprocess | true  |
+      | key        | value |
+      | preprocess | true  |
     When I go to "admin/config/development/performance"
     Then the "Aggregate CSS files" checkbox should be checked

@@ -18,7 +18,7 @@ Feature: FieldHandlers
       | field_post_reference | Page one, Page two                                                               |
       | field_post_date      | 2015-02-08 17:45:00                                                              |
       | field_post_links     | Link 1 - http://example.com, Link 2 - http://example.com                         |
-      | field_post_select    | Select value one, Select value two                                                                         |
+      | field_post_select    | Select value one, Select value two                                               |
       | field_post_address   | country: BE - locality: Brussel - thoroughfare: Louisalaan 1 - postal_code: 1000 |
     Then I should see "Post title"
     And I should see "PLACEHOLDER BODY"
@@ -107,9 +107,9 @@ Feature: FieldHandlers
 
   Scenario: Test various user field handlers.
     Given "tags" terms:
-      | name      |
-      | Tag one   |
-      | Tag two   |
+      | name    |
+      | Tag one |
+      | Tag two |
     And "page" content:
       | title      |
       | Page one   |
@@ -158,8 +158,8 @@ Feature: FieldHandlers
       | title           | body             | promote | field_tags                    |
       # Field values containing commas should be escaped with double quotes.
       # The comma separator can optionally be followed by a space.
-      | Article by Joe  | PLACEHOLDER BODY |       1 | Tag one, Tag two,"Tag, three" |
-      | Article by Mike | PLACEHOLDER BODY |       1 | Tag four                      |
+      | Article by Joe  | PLACEHOLDER BODY | 1       | Tag one, Tag two,"Tag, three" |
+      | Article by Mike | PLACEHOLDER BODY | 1       | Tag four                      |
       | Article by Jane |                  |         |                               |
     And I am logged in as a user with the "administrator" role
     When I visit "admin/content"

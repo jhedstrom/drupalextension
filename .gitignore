@@ -4,6 +4,5 @@
 /behat.yml
 /composer.lock
 /drupal*
-/node_modules
-/package-lock.json
+/recipes
 /vendor
