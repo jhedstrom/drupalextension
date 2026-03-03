@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\DrupalExtension;
 
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
@@ -29,11 +31,10 @@ trait ScenarioTagTrait
     /**
      * Register the scenario.
      *
-     * @param BeforeScenarioScope $scope
      *
      * @BeforeScenario
      */
-    public function registerScenario(BeforeScenarioScope $scope)
+    public function registerScenario(BeforeScenarioScope $scope): void
     {
         $this->currentScenario = $scope->getScenario();
     }
@@ -49,10 +50,9 @@ trait ScenarioTagTrait
     /**
      * Get all tags for the current scenario.
      *
-     * @param StepScope $scope
      * @return string[]
      */
-    protected function getCurrentScenarioTags(StepScope $scope)
+    protected function getCurrentScenarioTags(StepScope $scope): array
     {
         $featureTags = $scope->getFeature()->getTags();
         $scenarioTags = $this->getScenario()->getTags();

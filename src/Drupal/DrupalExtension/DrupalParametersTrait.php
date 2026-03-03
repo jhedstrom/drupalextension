@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\DrupalExtension;
 
 /**
@@ -25,7 +27,7 @@ trait DrupalParametersTrait
      * @param array $parameters
      *   The parameters to set.
      */
-    public function setDrupalParameters(array $parameters)
+    public function setDrupalParameters(array $parameters): void
     {
         $this->drupalParameters = $parameters;
     }
@@ -37,11 +39,11 @@ trait DrupalParametersTrait
      *   Parameter name.
      *
      * @return mixed
-     *   The value.
+     *   The value, or null if the parameter does not exist.
      */
-    public function getDrupalParameter($name)
+    public function getDrupalParameter(string $name): mixed
     {
-        return isset($this->drupalParameters[$name]) ? $this->drupalParameters[$name] : null;
+        return $this->drupalParameters[$name] ?? null;
     }
 
     /**
@@ -57,7 +59,7 @@ trait DrupalParametersTrait
      * @throws \Exception
      *   Thrown when the text is not present in the list of parameters.
      */
-    public function getDrupalText($name)
+    public function getDrupalText(string $name)
     {
         $text = $this->getDrupalParameter('text');
         if (!isset($text[$name])) {
@@ -78,7 +80,7 @@ trait DrupalParametersTrait
      * @throws \Exception
      *   Thrown when the selector is not present in the list of parameters.
      */
-    public function getDrupalSelector($name)
+    public function getDrupalSelector(string $name)
     {
         $text = $this->getDrupalParameter('selectors');
         if (!isset($text[$name])) {

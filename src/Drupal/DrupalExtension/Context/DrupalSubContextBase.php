@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @file
  * Contains \Drupal\DrupalExtension\Context\DrupalSubContextBase.
  */
-
 namespace Drupal\DrupalExtension\Context;
 
 use Drupal\DrupalDriverManager;
@@ -16,21 +17,13 @@ abstract class DrupalSubContextBase extends RawDrupalContext implements DrupalSu
 {
 
   /**
-   * The Drupal Driver Manager.
-   *
-   * @var \Drupal\DrupalDriverManager $drupal
-   */
-    protected $drupal;
-
-  /**
    * Constructs a DrupalSubContextBase object.
    *
    * @param \Drupal\DrupalDriverManager $drupal
    *   The Drupal driver manager.
    */
-    public function __construct(DrupalDriverManager $drupal)
+    public function __construct(protected DrupalDriverManager $drupal)
     {
-        $this->drupal = $drupal;
     }
 
   /**

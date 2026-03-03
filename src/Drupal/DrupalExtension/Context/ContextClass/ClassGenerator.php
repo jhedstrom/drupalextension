@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\DrupalExtension\Context\ContextClass;
 
 use Behat\Behat\Context\ContextClass\ClassGenerator as BehatClassGenerator;
@@ -44,7 +46,7 @@ PHP;
   /**
    * {@inheritdoc}
    */
-    public function supportsSuiteAndClass(Suite $suite, $contextClass)
+    public function supportsSuiteAndClass(Suite $suite, mixed $contextClass)
     {
         return true;
     }
@@ -52,7 +54,7 @@ PHP;
   /**
    * {@inheritdoc}
    */
-    public function generateClass(Suite $suite, $contextClass)
+    public function generateClass(Suite $suite, mixed $contextClass)
     {
         $fqn = $contextClass;
 

@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Contains \Drupal\DrupalExtension\Context\DrupalSubContextInterface.
  */
-
 namespace Drupal\DrupalExtension\Context;
 
 use Behat\Behat\Context\Context;

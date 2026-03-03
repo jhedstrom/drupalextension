@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\DrupalExtension\Context;
 
+use Behat\Behat\Hook\Scope\ScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 
 /**
@@ -11,11 +14,11 @@ class MailContext extends RawMailContext
 {
 
     /**
-   * By default, prevent mail from being actually sent out during tests.
-   *
-   * @BeforeScenario
-   */
-    public function disableMail($event)
+    * By default, prevent mail from being actually sent out during tests.
+    *
+    * @BeforeScenario
+    */
+    public function disableMail(ScenarioScope $event): void
     {
         $tags = array_merge($event->getFeature()->getTags(), $event->getScenario()->getTags());
         if (!in_array('sendmail', $tags) && !in_array('sendemail', $tags)) {
@@ -23,16 +26,16 @@ class MailContext extends RawMailContext
             // Always reset mail count, in case the default mail manager is being used
             // which enables mail collecting automatically when mail is disabled, making
             //the use of the @mail tag optional in this case.
-            $this->mailCount = [];
+            $this->mailMessageCount = [];
         }
     }
 
-  /**
-   * Restore mail sending.
-   *
-   * @AfterScenario
-   */
-    public function enableMail($event)
+   /**
+    * Restore mail sending.
+    *
+    * @AfterScenario
+    */
+    public function enableMail(ScenarioScope $event): void
     {
         $tags = array_merge($event->getFeature()->getTags(), $event->getScenario()->getTags());
         if (!in_array('sendmail', $tags) && !in_array('sendemail', $tags)) {
@@ -46,7 +49,7 @@ class MailContext extends RawMailContext
    *
    * @BeforeScenario @mail,@email
    */
-    public function collectMail()
+    public function collectMail(): void
     {
         $this->getMailManager()->startCollectingMail();
     }
@@ -56,7 +59,7 @@ class MailContext extends RawMailContext
    *
    * @AfterScenario @mail,@email
    */
-    public function stopCollectingMail()
+    public function stopCollectingMail(): void
     {
         $this->getMailManager()->stopCollectingMail();
     }
@@ -66,7 +69,7 @@ class MailContext extends RawMailContext
    *
    * @When Drupal sends a/an (e)mail:
    */
-    public function drupalSendsMail(TableNode $fields)
+    public function drupalSendsMail(TableNode $fields): void
     {
         $mail = [
             'body' => $this->getRandom()->name(255),
@@ -74,9 +77,11 @@ class MailContext extends RawMailContext
             'to' => $this->getRandom()->name(10) . '@anonexample.com',
             'langcode' => '',
         ];
+
         foreach ($fields->getRowsHash() as $field => $value) {
             $mail[$field] = $value;
         }
+
         $this->getDriver()->sendMail($mail['body'], $mail['subject'], $mail['to'], $mail['langcode']);
     }
 
@@ -88,11 +93,11 @@ class MailContext extends RawMailContext
    * @Then (a )(an )(e)mail(s) has/have been sent with the subject :subject:
    * @Then (a )(an )(e)mail(s) has/have been sent to :to with the subject :subject:
    */
-    public function mailHasBeenSent(TableNode $expectedMailTable, $to = '', $subject = '')
+    public function mailHasBeenSent(TableNode $expectedMailTable, string $to = '', string $subject = ''): void
     {
-        $expectedMail = $expectedMailTable->getHash();
-        $actualMail = $this->getMail(['to' => $to, 'subject' => $subject], false);
-        $this->compareMail($actualMail, $expectedMail);
+        $expected = $expectedMailTable->getHash();
+        $actual = $this->getMail(['to' => $to, 'subject' => $subject]);
+        $this->compareMessages($actual, $expected);
     }
 
   /**
@@ -103,11 +108,11 @@ class MailContext extends RawMailContext
    * @Then (a )(an )new (e)mail(s) is/are sent with the subject :subject:
    * @Then (a )(an )new (e)mail(s) is/are sent to :to with the subject :subject:
    */
-    public function newMailIsSent(TableNode $expectedMailTable, $to = '', $subject = '')
+    public function newMailIsSent(TableNode $expectedMailTable, string $to = '', string $subject = ''): void
     {
-        $expectedMail = $expectedMailTable->getHash();
-        $actualMail = $this->getMail(['to' => $to, 'subject' => $subject], true);
-        $this->compareMail($actualMail, $expectedMail);
+        $expected = $expectedMailTable->getHash();
+        $actual = $this->getMail(['to' => $to, 'subject' => $subject], true);
+        $this->compareMessages($actual, $expected);
     }
 
   /**
@@ -118,13 +123,15 @@ class MailContext extends RawMailContext
    * @Then :count (e)mail(s) has/have been sent with the subject :subject
    * @Then :count (e)mail(s) has/have been sent to :to with the subject :subject
    */
-    public function noMailHasBeenSent($count, $to = '', $subject = '')
+    public function noMailHasBeenSent(string $count, string $to = '', string $subject = ''): void
     {
-        $actualMail = $this->getMail(['to' => $to, 'subject' => $subject], false);
-        $count = $count === 'no' ? 0 : $count;
-        $count = $count === 'a' ? null : $count;
-        $count = $count === 'an' ? null : $count;
-        $this->assertMailCount($actualMail, $count);
+        $actual = $this->getMail(['to' => $to, 'subject' => $subject]);
+        $expectedCount = match ($count) {
+            'no' => 0,
+            'a', 'an' => null,
+            default => (int) $count,
+        };
+        $this->assertMessageCount($actual, $expectedCount);
     }
 
   /**
@@ -135,13 +142,15 @@ class MailContext extends RawMailContext
    * @Then :count new (e)mail(s) is/are sent with the subject :subject
    * @Then :count new (e)mail(s) is/are sent to :to with the subject :subject
    */
-    public function noNewMailIsSent($count, $to = '', $subject = '')
+    public function noNewMailIsSent(string $count, string $to = '', string $subject = ''): void
     {
-        $actualMail = $this->getMail(['to' => $to, 'subject' => $subject], true);
-        $count = $count === 'no' ? 0 : $count;
-        $count = $count === 'a' ? 1 : $count;
-        $count = $count === 'an' ? 1 : $count;
-        $this->assertMailCount($actualMail, $count);
+        $actual = $this->getMail(['to' => $to, 'subject' => $subject], true);
+        $expectedCount = match ($count) {
+            'no' => 0,
+            'a', 'an' => 1,
+            default => (int) $count,
+        };
+        $this->assertMessageCount($actual, $expectedCount);
     }
 
   /**
@@ -150,30 +159,30 @@ class MailContext extends RawMailContext
    * @When I follow the link to :urlFragment from the (e)mail with the subject :subject
    * @When I follow the link to :urlFragment from the (e)mail to :to with the subject :subject
    */
-    public function followLinkInMail($urlFragment, $to = '', $subject = '')
+    public function followLinkInMail(string $urlFragment, string $to = '', string $subject = ''): void
     {
-        // Get the mail
-        $matches = ['to' => $to, 'subject' => $subject];
-        $mail = $this->getMail($matches, false, -1);
-        if (count($mail) == 0) {
+        // Get the message.
+        $filters = ['to' => $to, 'subject' => $subject];
+        $mail = $this->getMail($filters, false, -1);
+        if (count($mail) === 0) {
             throw new \Exception('No such mail found.');
         }
         $body = $mail['body'];
 
-        // Find web URLs in the mail
-        $urlPattern = '`.*?((http|https)://[\w#$&+,\/:;=?@.-]+)[^\w#$&+,\/:;=?@.-]*?`i';
-        if (preg_match_all($urlPattern, $body, $urls)) {
+        // Find web URLs in the message.
+        $pattern = '`.*?((http|https)://[\w#$&+,\/:;=?@.-]+)[^\w#$&+,\/:;=?@.-]*?`i';
+        if (preg_match_all($pattern, (string) $body, $urls)) {
             // Visit the first url that contains the desired fragment.
             foreach ($urls[1] as $url) {
-                $match = (strpos(strtolower($url), strtolower($urlFragment)) !== false);
-                if ($match) {
+                if (str_contains(strtolower($url), strtolower($urlFragment))) {
                     $this->getMinkContext()->visitPath($url);
                     return;
                 }
             }
+
             throw new \Exception(sprintf('No URL in mail body contained "%s".', $urlFragment));
-        } else {
-            throw new \Exception('No URL found in mail body.');
         }
+
+        throw new \Exception('No URL found in mail body.');
     }
 }

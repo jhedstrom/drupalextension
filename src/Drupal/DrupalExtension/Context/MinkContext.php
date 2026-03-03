@@ -1,7 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\DrupalExtension\Context;
 
+use Behat\Behat\Hook\Scope\BeforeStepScope;
+use Behat\Behat\Hook\Scope\AfterStepScope;
 use Behat\Behat\Context\TranslatableContext;
 use Behat\Mink\Exception\UnsupportedDriverActionException;
 use Behat\MinkExtension\Context\MinkContext as MinkExtension;
@@ -36,7 +40,7 @@ class MinkContext extends MinkExtension implements TranslatableContext
    *
    * @return \Behat\Mink\Element\NodeElement
    */
-    public function getRegion($region)
+    public function getRegion(string $region)
     {
         $session = $this->getSession();
         $regionObj = $session->getPage()->find('region', $region);
@@ -55,7 +59,7 @@ class MinkContext extends MinkExtension implements TranslatableContext
    *
    * @throws UnsupportedDriverActionException
    */
-    public function assertAtPath($path)
+    public function assertAtPath(string $path): void
     {
         $this->getSession()->visit($this->locatePath($path));
 
@@ -63,7 +67,7 @@ class MinkContext extends MinkExtension implements TranslatableContext
         try {
             $this->getSession()->getStatusCode();
             $this->assertHttpResponse('200');
-        } catch (UnsupportedDriverActionException $e) {
+        } catch (UnsupportedDriverActionException) {
             // Simply continue on, as this driver doesn't support HTTP response codes.
         }
     }
@@ -71,7 +75,7 @@ class MinkContext extends MinkExtension implements TranslatableContext
   /**
    * @When I click :link
    */
-    public function assertClick($link)
+    public function assertClick(string $link): void
     {
         // Use the Mink Extension step definition.
         $this->clickLink($link);
@@ -81,7 +85,7 @@ class MinkContext extends MinkExtension implements TranslatableContext
    * @Given for :field I enter :value
    * @Given I enter :value for :field
    */
-    public function assertEnterField($field, $value)
+    public function assertEnterField(string $field, string $value): void
     {
         // Use the Mink Extension step definition.
         $this->fillField($field, $value);
@@ -92,7 +96,7 @@ class MinkContext extends MinkExtension implements TranslatableContext
    *
    * @BeforeStep
    */
-    public function beforeJavascriptStep($event)
+    public function beforeJavascriptStep(BeforeStepScope $event): void
     {
         /** @var \Behat\Behat\Hook\Scope\BeforeStepScope $event */
         // Make sure the feature is registered in case this hook fires before
@@ -113,9 +117,8 @@ class MinkContext extends MinkExtension implements TranslatableContext
    *
    * @AfterStep
    */
-    public function afterJavascriptStep($event)
+    public function afterJavascriptStep(AfterStepScope $event): void
     {
-        /** @var \Behat\Behat\Hook\Scope\BeforeStepScope $event */
         if (!$this->hasTag('javascript')) {
             return;
         }
@@ -132,7 +135,7 @@ class MinkContext extends MinkExtension implements TranslatableContext
    *
    * @Given I wait for AJAX to finish
    */
-    public function iWaitForAjaxToFinish($event = null)
+    public function iWaitForAjaxToFinish(mixed $event = null): void
     {
         $condition = <<<JS
     (function() {
@@ -152,24 +155,24 @@ class MinkContext extends MinkExtension implements TranslatableContext
       );
     }());
 JS;
-        $ajax_timeout = $this->getMinkParameter('ajax_timeout');
-        $result = $this->getSession()->wait(1000 * $ajax_timeout, $condition);
+        $ajaxTimeout = $this->getMinkParameter('ajax_timeout');
+        $result = $this->getSession()->wait(1000 * $ajaxTimeout, $condition);
         if (!$result) {
-            if ($ajax_timeout === null) {
+            if ($ajaxTimeout === null) {
                 throw new \Exception('No AJAX timeout has been defined. Please verify that "Drupal\MinkExtension" is configured in behat.yml (and not "Behat\MinkExtension").');
             }
             if ($event) {
                 /** @var \Behat\Behat\Hook\Scope\BeforeStepScope $event */
-                $event_data = ' ' . json_encode([
+                $eventData = ' ' . json_encode([
                     'name' => $event->getName(),
                     'feature' => $event->getFeature()->getTitle(),
                     'step' => $event->getStep()->getText(),
                     'suite' => $event->getSuite()->getName(),
                 ]);
             } else {
-                $event_data = '';
+                $eventData = '';
             }
-            throw new \RuntimeException('Unable to complete AJAX request.' . $event_data);
+            throw new \RuntimeException('Unable to complete AJAX request.' . $eventData);
         }
     }
   /**
@@ -177,7 +180,7 @@ JS;
    *
    * @When I press the :button button
    */
-    public function pressButton($button)
+    public function pressButton(mixed $button)
     {
         // Wait for any open autocomplete boxes to finish closing.  They block
         // form-submission if they are still open.
@@ -186,7 +189,7 @@ JS;
         // autocomplete suggestion do not work.
         try {
             $this->getSession()->wait(1000, 'typeof(jQuery)=="undefined" || jQuery("#autocomplete").length === 0');
-        } catch (UnsupportedDriverActionException $e) {
+        } catch (UnsupportedDriverActionException) {
             // The jQuery probably failed because the driver does not support
             // javascript.  That is okay, because if the driver does not support
             // javascript, it does not support autocomplete boxes either.
@@ -202,7 +205,7 @@ JS;
    * @param mixed $char could be either char ('b') or char-code (98)
    * @throws \Exception
    */
-    public function pressKey($char, $field)
+    public function pressKey(mixed $char, string $field): void
     {
         static $keys = [
             'backspace' => 8,
@@ -231,7 +234,8 @@ JS;
         if (is_string($char)) {
             if (strlen($char) < 1) {
                 throw new \Exception('FeatureContext->keyPress($char, $field) was invoked but the $char parameter was empty.');
-            } elseif (strlen($char) > 1) {
+            }
+            if (strlen($char) > 1) {
                 // Support for all variations, e.g. ESC, Esc, page up, pageup.
                 $char = $keys[strtolower(str_replace(' ', '', $char))];
             }
@@ -239,7 +243,7 @@ JS;
 
         $element = $this->getSession()->getPage()->findField($field);
         if (!$element) {
-            throw new \Exception("Field '$field' not found");
+            throw new \Exception(sprintf("Field '%s' not found", $field));
         }
 
         $driver = $this->getSession()->getDriver();
@@ -254,7 +258,7 @@ JS;
   /**
    * @Then I should see the link :link
    */
-    public function assertLinkVisible($link)
+    public function assertLinkVisible(string $link): void
     {
         $element = $this->getSession()->getPage();
         $result = $element->findLink($link);
@@ -263,7 +267,7 @@ JS;
             if ($result && !$result->isVisible()) {
                 throw new \Exception(sprintf("No link to '%s' on the page %s", $link, $this->getSession()->getCurrentUrl()));
             }
-        } catch (UnsupportedDriverActionException $e) {
+        } catch (UnsupportedDriverActionException) {
             // We catch the UnsupportedDriverActionException exception in case
             // this step is not being performed by a driver that supports javascript.
             // All other exceptions are valid.
@@ -279,7 +283,7 @@ JS;
    *
    * @Then I should not see the link :link
    */
-    public function assertNotLinkVisible($link)
+    public function assertNotLinkVisible(string $link): void
     {
         $element = $this->getSession()->getPage();
         $result = $element->findLink($link);
@@ -288,7 +292,7 @@ JS;
             if ($result && $result->isVisible()) {
                 throw new \Exception(sprintf("The link '%s' was present on the page %s and was not supposed to be", $link, $this->getSession()->getCurrentUrl()));
             }
-        } catch (UnsupportedDriverActionException $e) {
+        } catch (UnsupportedDriverActionException) {
             // We catch the UnsupportedDriverActionException exception in case
             // this step is not being performed by a driver that supports javascript.
             // All other exceptions are valid.
@@ -304,7 +308,7 @@ JS;
    *
    * @Then I should not visibly see the link :link
    */
-    public function assertNotLinkVisuallyVisible($link)
+    public function assertNotLinkVisuallyVisible(string $link): void
     {
         $element = $this->getSession()->getPage();
         $result = $element->findLink($link);
@@ -313,7 +317,7 @@ JS;
             if ($result && $result->isVisible()) {
                 throw new \Exception(sprintf("The link '%s' was visually visible on the page %s and was not supposed to be", $link, $this->getSession()->getCurrentUrl()));
             }
-        } catch (UnsupportedDriverActionException $e) {
+        } catch (UnsupportedDriverActionException) {
             // We catch the UnsupportedDriverActionException exception in case
             // this step is not being performed by a driver that supports javascript.
             // All other exceptions are valid.
@@ -327,7 +331,7 @@ JS;
   /**
    * @Then I (should )see the heading :heading
    */
-    public function assertHeading($heading)
+    public function assertHeading(string $heading): void
     {
         $element = $this->getSession()->getPage();
         foreach (['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] as $tag) {
@@ -344,7 +348,7 @@ JS;
   /**
    * @Then I (should )not see the heading :heading
    */
-    public function assertNotHeading($heading)
+    public function assertNotHeading(string $heading): void
     {
         $element = $this->getSession()->getPage();
         foreach (['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] as $tag) {
@@ -361,7 +365,7 @@ JS;
    * @Then I (should ) see the button :button
    * @Then I (should ) see the :button button
    */
-    public function assertButton($button)
+    public function assertButton(string $button): void
     {
         $element = $this->getSession()->getPage();
         $buttonObj = $element->findButton($button);
@@ -374,7 +378,7 @@ JS;
    * @Then I should not see the button :button
    * @Then I should not see the :button button
    */
-    public function assertNotButton($button)
+    public function assertNotButton(string $button): void
     {
         $element = $this->getSession()->getPage();
         $buttonObj = $element->findButton($button);
@@ -389,7 +393,7 @@ JS;
    * @throws \Exception
    *   If region or link within it cannot be found.
    */
-    public function assertRegionLinkFollow($link, $region)
+    public function assertRegionLinkFollow(string $link, string $region): void
     {
         $regionObj = $this->getRegion($region);
 
@@ -414,7 +418,7 @@ JS;
    * @throws \Exception
    *   If region or button within it cannot be found.
    */
-    public function assertRegionPressButton($button, $region)
+    public function assertRegionPressButton(string $button, string $region): void
     {
         $regionObj = $this->getRegion($region);
 
@@ -434,7 +438,7 @@ JS;
    * @throws \Exception
    *   If region cannot be found.
    */
-    public function regionFillField($field, $value, $region)
+    public function regionFillField(string $field, string $value, string $region): void
     {
         $field = $this->fixStepArgument($field);
         $value = $this->fixStepArgument($value);
@@ -455,7 +459,7 @@ JS;
    * @throws \Exception
    *   If region or checkbox within it cannot be found.
    */
-    public function assertRegionCheckBox($locator, $region)
+    public function assertRegionCheckBox(string $locator, string $region): void
     {
         $regionObj = $this->getRegion($region);
         $regionObj->checkField($locator);
@@ -474,7 +478,7 @@ JS;
    * @throws \Exception
    *   If region or checkbox within it cannot be found.
    */
-    public function assertRegionUncheckBox($locator, $region)
+    public function assertRegionUncheckBox(string $locator, string $region): void
     {
         $regionObj = $this->getRegion($region);
         $regionObj->uncheckField($locator);
@@ -489,7 +493,7 @@ JS;
    * @throws \Exception
    *   If region or header within it cannot be found.
    */
-    public function assertRegionHeading($heading, $region)
+    public function assertRegionHeading(string $heading, string $region): void
     {
         $regionObj = $this->getRegion($region);
 
@@ -513,7 +517,7 @@ JS;
    * @throws \Exception
    *   If region or link within it cannot be found.
    */
-    public function assertLinkRegion($link, $region)
+    public function assertLinkRegion(string $link, string $region): void
     {
         $regionObj = $this->getRegion($region);
 
@@ -529,7 +533,7 @@ JS;
    * @throws \Exception
    *   If region or link within it cannot be found.
    */
-    public function assertNotLinkRegion($link, $region)
+    public function assertNotLinkRegion(string $link, string $region): void
     {
         $regionObj = $this->getRegion($region);
 
@@ -545,13 +549,13 @@ JS;
    * @throws \Exception
    *   If region or text within it cannot be found.
    */
-    public function assertRegionText($text, $region)
+    public function assertRegionText(string $text, string $region): void
     {
         $regionObj = $this->getRegion($region);
 
         // Find the text within the region
         $regionText = $regionObj->getText();
-        if (strpos($regionText, $text) === false) {
+        if (!str_contains($regionText, $text)) {
             throw new \Exception(sprintf("The text '%s' was not found in the region '%s' on the page %s", $text, $region, $this->getSession()->getCurrentUrl()));
         }
     }
@@ -562,13 +566,13 @@ JS;
    * @throws \Exception
    *   If region or text within it cannot be found.
    */
-    public function assertNotRegionText($text, $region)
+    public function assertNotRegionText(string $text, string $region): void
     {
         $regionObj = $this->getRegion($region);
 
         // Find the text within the region.
         $regionText = $regionObj->getText();
-        if (strpos($regionText, $text) !== false) {
+        if (str_contains($regionText, $text)) {
             throw new \Exception(sprintf('The text "%s" was found in the region "%s" on the page %s', $text, $region, $this->getSession()->getCurrentUrl()));
         }
     }
@@ -576,7 +580,7 @@ JS;
   /**
    * @Then I (should )see the text :text
    */
-    public function assertTextVisible($text)
+    public function assertTextVisible(string $text): void
     {
         // Use the Mink Extension step definition.
         $this->assertPageContainsText($text);
@@ -585,7 +589,7 @@ JS;
   /**
    * @Then I should not see the text :text
    */
-    public function assertNotTextVisible($text)
+    public function assertNotTextVisible(string $text): void
     {
         // Use the Mink Extension step definition.
         $this->assertPageNotContainsText($text);
@@ -594,7 +598,7 @@ JS;
   /**
    * @Then I should get a :code HTTP response
    */
-    public function assertHttpResponse($code)
+    public function assertHttpResponse(int|string $code): void
     {
         // Use the Mink Extension step definition.
         $this->assertResponseStatus($code);
@@ -603,7 +607,7 @@ JS;
   /**
    * @Then I should not get a :code HTTP response
    */
-    public function assertNotHttpResponse($code)
+    public function assertNotHttpResponse(int|string $code): void
     {
         // Use the Mink Extension step definition.
         $this->assertResponseStatusIsNot($code);
@@ -612,7 +616,7 @@ JS;
   /**
    * @Given I check the box :checkbox
    */
-    public function assertCheckBox($checkbox)
+    public function assertCheckBox(string $checkbox): void
     {
         // Use the Mink Extension step definition.
         $this->checkOption($checkbox);
@@ -621,7 +625,7 @@ JS;
   /**
    * @Given I uncheck the box :checkbox
    */
-    public function assertUncheckBox($checkbox)
+    public function assertUncheckBox(string $checkbox): void
     {
         // Use the Mink Extension step definition.
         $this->uncheckOption($checkbox);
@@ -633,16 +637,16 @@ JS;
    *
    * @TODO convert to mink extension.
    */
-    public function assertSelectRadioById($label, $id = '')
+    public function assertSelectRadioById(string $label, string $id = ''): void
     {
         $element = $this->getSession()->getPage();
-        $radiobutton = $id ? $element->findById($id) : $element->find('named', ['radio', $this->getSession()->getSelectorsHandler()->xpathLiteral($label)]);
+        $radiobutton = $id !== '' && $id !== '0' ? $element->findById($id) : $element->find('named', ['radio', $this->getSession()->getSelectorsHandler()->xpathLiteral($label)]);
         if ($radiobutton === null) {
-            throw new \Exception(sprintf('The radio button with "%s" was not found on the page %s', $id ? $id : $label, $this->getSession()->getCurrentUrl()));
+            throw new \Exception(sprintf('The radio button with "%s" was not found on the page %s', $id ?: $label, $this->getSession()->getCurrentUrl()));
         }
         $value = $radiobutton->getAttribute('value');
-        $radio_id = $radiobutton->getAttribute('id');
-        $labelonpage = $element->find('css', "label[for='$radio_id']")->getText();
+        $radioId = $radiobutton->getAttribute('id');
+        $labelonpage = $element->find('css', sprintf("label[for='%s']", $radioId))->getText();
         if ($label != $labelonpage) {
             throw new \Exception(sprintf("Button with id '%s' has label '%s' instead of '%s' on the page %s", $id, $labelonpage, $label, $this->getSession()->getCurrentUrl()));
         }
@@ -659,7 +663,7 @@ JS;
    *
    * @When I :action details labelled :summary
    */
-    public function iExpandOrCollapseDetailsByLabel($action, $summary)
+    public function iExpandOrCollapseDetailsByLabel(string $action, string $summary): void
     {
         $page = $this->getSession()->getPage();
 
@@ -673,23 +677,23 @@ JS;
         } elseif ($action === 'click') {
             $expandedState = '';
         } else {
-            throw new \InvalidArgumentException("Unknown action '{$action}'. Expected expand, collapse, or click.");
+            throw new \InvalidArgumentException(sprintf("Unknown action '%s'. Expected expand, collapse, or click.", $action));
         }
 
-        $xpath = "//details{$expandedState}/summary[normalize-space()][contains(normalize-space(.), {$literal})]";
+        $xpath = sprintf('//details%s/summary[normalize-space()][contains(normalize-space(.), %s)]', $expandedState, $literal);
 
         $element = $page->find('xpath', $xpath);
         if (!$element) {
-            throw new \Exception("Unable to find details{$expandedState} containing text {$summary} for action {$action}");
+            throw new \Exception(sprintf('Unable to find details%s containing text %s for action %s', $expandedState, $summary, $action));
         }
 
-        $ajax_timeout = $this->getMinkParameter('ajax_timeout') || 5;
+        $ajaxTimeout = $this->getMinkParameter('ajax_timeout') || 5;
         // 1/10th of ajax_timeout, in microseconds.
-        $animate_delay = $ajax_timeout * 100000;
+        $animateDelay = $ajaxTimeout * 100000;
         try {
             $element->click();
-            usleep($animate_delay);
-        } catch (UnsupportedDriverActionException $exception) {
+            usleep($animateDelay);
+        } catch (UnsupportedDriverActionException) {
           // Goutte etc only supports clicking link, submit, button;
           // for non-JS drivers this won't impact test.
         }

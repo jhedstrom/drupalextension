@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\DrupalExtension\Context;
 
+use Behat\Gherkin\Node\TableNode;
 use Behat\MinkExtension\Context\RawMinkContext;
 
 /**
@@ -18,7 +21,7 @@ class BatchContext extends RawMinkContext
    *
    * @Given /^I wait for the batch job to finish$/
    */
-    public function iWaitForTheBatchJobToFinish()
+    public function iWaitForTheBatchJobToFinish(): void
     {
         $this->getSession()->wait(180000, 'jQuery("#updateprogress").length === 0');
     }
@@ -30,7 +33,7 @@ class BatchContext extends RawMinkContext
    *
    * @Given there is an item in the system queue:
    */
-    public function thereIsAnItemInTheSystemQueue(TableNode $table)
+    public function thereIsAnItemInTheSystemQueue(TableNode $table): void
     {
         // Gather the data.
         $fields = $table->getRowsHash();
@@ -41,15 +44,18 @@ class BatchContext extends RawMinkContext
         }
 
         // @see SystemQueue::createItem().
-        $query = db_insert('queue')
+      /** @var \Drupal\Core\Database\Connection $connection */
+        $connection = \Drupal::service('database');
+        $query = $connection->insert('queue')
         ->fields([
-            'name' => $fields['name'] ?: user_password(),
-            'data' => serialize(json_decode($fields['data'])),
-            'created' => $fields['created'] ?: REQUEST_TIME,
+            'name' => $fields['name'] ?: \Drupal::service('password_generator')->generate(),
+            'data' => serialize(json_decode((string) $fields['data'])),
+            'created' => $fields['created'] ?: $_SERVER['REQUEST_TIME'],
             'expire' => $fields['expire'] ?: 0,
         ]);
+
         if (!$query->execute()) {
-            throw new Exception('Unable to create the queue item.');
+            throw new \Exception('Unable to create the queue item.');
         }
     }
 }

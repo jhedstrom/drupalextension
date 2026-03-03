@@ -6,15 +6,8 @@
     <arg name="colors"/>
     <arg value="sp"/>
 
-    <file>./src</file>
-    <file>./spec</file>
-
-    <exclude-pattern>^/doc/*</exclude-pattern>
-    <exclude-pattern>^/build/*</exclude-pattern>
-    <exclude-pattern>^/reports/*</exclude-pattern>
-    <exclude-pattern>^/tests/*</exclude-pattern>
-    <exclude-pattern>^/vendor/*</exclude-pattern>
-    <exclude-pattern>^/README.md</exclude-pattern>
+    <file>src</file>
+    <file>spec</file>
 
     <rule ref="PSR2">
         <!-- @todo Fix long line length issues -->
@@ -31,5 +24,23 @@
 
     <rule ref="Generic.Arrays.DisallowLongArraySyntax" />
     <rule ref="Generic.Arrays.ArrayIndent" />
+
+    <rule ref="Generic.PHP.RequireStrictTypes" >
+      <exclude-pattern>*/spec/*</exclude-pattern>
+    </rule>
+
+    <rule ref="DrevOps.NamingConventions.LocalVariableNaming">
+      <properties>
+        <property name="format" value="camelCase"/>
+      </properties>
+      <exclude-pattern>*/spec/*</exclude-pattern>
+    </rule>
+
+    <rule ref="DrevOps.NamingConventions.ParameterNaming">
+      <properties>
+        <property name="format" value="camelCase"/>
+      </properties>
+      <exclude-pattern>*/spec/*</exclude-pattern>
+    </rule>
 
 </ruleset>

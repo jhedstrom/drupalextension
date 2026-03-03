@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\DrupalExtension\Compiler;
 
 use Symfony\Component\DependencyInjection\Reference;
@@ -14,7 +16,7 @@ class DriverPass implements CompilerPassInterface
   /**
    * Register Drupal drivers.
    */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         if (!$container->hasDefinition('drupal.drupal')) {
             return;
@@ -37,8 +39,8 @@ class DriverPass implements CompilerPassInterface
                 $drupalDriverDefinition = $container->getDefinition($id);
                 $availableCores = [];
                 foreach ($container->findTaggedServiceIds('drupal.core') as $coreId => $coreAttributes) {
-                    foreach ($coreAttributes as $attribute) {
-                        if (isset($attribute['alias']) && $name = $attribute['alias']) {
+                    foreach ($coreAttributes as $coreAttribute) {
+                        if (isset($coreAttribute['alias']) && $name = $coreAttribute['alias']) {
                             $availableCores[$name] = $container->getDefinition($coreId);
                         }
                     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\DrupalExtension\Manager;
 
 /**
@@ -22,7 +24,7 @@ interface DrupalUserManagerInterface
    * @param \stdClass|bool $user
    *   The user object, or FALSE if the user has been logged out.
    */
-    public function setCurrentUser($user);
+    public function setCurrentUser(\stdClass|bool $user);
 
   /**
    * Adds a new user.
@@ -33,10 +35,10 @@ interface DrupalUserManagerInterface
    *
    * @see \Drupal\DrupalExtension\Context\RawDrupalContext::cleanUsers()
    *
-   * @param \stdClass
+   * @param \stdClass $user
    *   The user object.
    */
-    public function addUser($user);
+    public function addUser(\stdClass $user);
 
   /**
    * Removes a user from the list of users that were created in the test.
@@ -44,7 +46,7 @@ interface DrupalUserManagerInterface
    * @param $userName
    *   The name of the user to remove.
    */
-    public function removeUser($userName);
+    public function removeUser(string $userName);
 
   /**
    * Returns the list of users that were created in the test.
@@ -66,7 +68,7 @@ interface DrupalUserManagerInterface
    * @throws \InvalidArgumentException
    *   Thrown when the user with the given name does not exist.
    */
-    public function getUser($userName);
+    public function getUser(string $userName);
 
   /**
    * Clears the list of users that were created in the test.
@@ -98,5 +100,5 @@ interface DrupalUserManagerInterface
    * @return boolean
    *   Returns TRUE if the currently logged in user has this role (or roles).
    */
-    public function currentUserHasRole($role);
+    public function currentUserHasRole(string $role);
 }

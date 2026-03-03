@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\DrupalExtension\Context;
 
+use Drupal\Driver\DrupalDriver;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Behat\Testwork\Hook\HookDispatcher;
 use Behat\Behat\Context\Environment\InitializedContextEnvironment;
@@ -31,11 +34,9 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
     use DrupalParametersTrait;
 
   /**
-   * Drupal driver manager.
-   *
-   * @var \Drupal\DrupalDriverManager
-   */
-    private $drupal;
+     * Drupal driver manager.
+     */
+    private ?DrupalDriverManagerInterface $drupal = null;
 
   /**
    * Event dispatcher object.
@@ -87,25 +88,25 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
     protected $languages = [];
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
-    public function setDrupal(DrupalDriverManagerInterface $drupal)
+    public function setDrupal(DrupalDriverManagerInterface $drupal): void
     {
         $this->drupal = $drupal;
     }
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
-    public function getDrupal()
+    public function getDrupal(): ?DrupalDriverManagerInterface
     {
         return $this->drupal;
     }
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
-    public function setUserManager(DrupalUserManagerInterface $userManager)
+    public function setUserManager(DrupalUserManagerInterface $userManager): void
     {
         $this->userManager = $userManager;
     }
@@ -121,7 +122,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
   /**
    * {@inheritdoc}
    */
-    public function setAuthenticationManager(DrupalAuthenticationManagerInterface $authenticationManager)
+    public function setAuthenticationManager(DrupalAuthenticationManagerInterface $authenticationManager): void
     {
         $this->authenticationManager = $authenticationManager;
     }
@@ -137,7 +138,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
   /**
    * Magic setter.
    */
-    public function __set($name, $value)
+    public function __set(string $name, mixed $value)
     {
         switch ($name) {
             case 'user':
@@ -165,7 +166,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
   /**
    * Magic getter.
    */
-    public function __get($name)
+    public function __get(string $name): mixed
     {
         switch ($name) {
             case 'user':
@@ -180,12 +181,13 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
                 // between all contexts.
                 return $this->getUserManager()->getUsers();
         }
+        return null;
     }
 
   /**
    * {@inheritdoc}
    */
-    public function setDispatcher(HookDispatcher $dispatcher)
+    public function setDispatcher(HookDispatcher $dispatcher): void
     {
         $this->dispatcher = $dispatcher;
     }
@@ -193,9 +195,9 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
   /**
    * Get active Drupal Driver.
    *
-   * @return \Drupal\Driver\DrupalDriver
+   * @return \Drupal\Driver\DriverInterface
    */
-    public function getDriver($name = null)
+    public function getDriver(?string $name = null)
     {
         return $this->getDrupal()->getDriver($name);
     }
@@ -213,27 +215,27 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
    *
    * @beforeNodeCreate
    */
-    public static function alterNodeParameters(BeforeNodeCreateScope $scope)
+    public static function alterNodeParameters(BeforeNodeCreateScope $scope): void
     {
         $node = $scope->getEntity();
 
         // Get the Drupal API version if available. This is not available when
         // using e.g. the BlackBoxDriver or DrushDriver.
-        $api_version = null;
-        $driver = $scope->getContext()->getDrupal()->getDriver();
-        if ($driver instanceof \Drupal\Driver\DrupalDriver) {
-            $api_version = $scope->getContext()->getDrupal()->getDriver()->version;
+        $apiVersion = null;
+        $context = $scope->getContext();
+        if ($context instanceof DrupalAwareInterface) {
+            $driver = $context->getDrupal()->getDriver();
+            if ($driver instanceof DrupalDriver) {
+                $apiVersion = $context->getDrupal()->getDriver()->version;
+            }
         }
 
-        // On Drupal 8 the timestamps should be in UNIX time.
-        switch ($api_version) {
-            case 8:
-                foreach (['changed', 'created', 'revision_timestamp'] as $field) {
-                    if (!empty($node->$field) && !is_numeric($node->$field)) {
-                        $node->$field = strtotime($node->$field);
-                    }
+        if ($apiVersion === 8) {
+            foreach (['changed', 'created', 'revision_timestamp'] as $field) {
+                if (!empty($node->$field) && !is_numeric($node->$field)) {
+                    $node->$field = strtotime((string) $node->$field);
                 }
-                break;
+            }
         }
     }
 
@@ -242,7 +244,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
    *
    * @AfterScenario
    */
-    public function cleanNodes()
+    public function cleanNodes(): void
     {
         // Remove any nodes that were created.
         foreach ($this->nodes as $node) {
@@ -256,7 +258,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
    *
    * @AfterScenario
    */
-    public function cleanUsers()
+    public function cleanUsers(): void
     {
         // Remove any users that were created.
         if ($this->userManager->hasUsers()) {
@@ -279,7 +281,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
    *
    * @AfterScenario
    */
-    public function cleanTerms()
+    public function cleanTerms(): void
     {
         // Remove any terms that were created.
         foreach (array_reverse($this->terms) as $term) {
@@ -293,11 +295,11 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
    *
    * @AfterScenario
    */
-    public function cleanRoles()
+    public function cleanRoles(): void
     {
         // Remove any roles that were created.
-        foreach ($this->roles as $rid) {
-            $this->getDriver()->roleDelete($rid);
+        foreach ($this->roles as $role) {
+            $this->getDriver()->roleDelete($role);
         }
         $this->roles = [];
     }
@@ -307,11 +309,11 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
    *
    * @AfterScenario
    */
-    public function cleanLanguages()
+    public function cleanLanguages(): void
     {
         // Delete any languages that were created.
         foreach ($this->languages as $language) {
-            $this->getDriver()->languageDelete($language);
+            $this->getDriver()->languageDelete($language); // @phpstan-ignore method.notFound
             unset($this->languages[$language->langcode]);
         }
     }
@@ -321,7 +323,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
    *
    * @AfterScenario @api
    */
-    public function clearStaticCaches()
+    public function clearStaticCaches(): void
     {
         $this->getDriver()->clearStaticCaches();
     }
@@ -329,21 +331,21 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
   /**
    * Dispatch scope hooks.
    *
-   * @param string $scope
+   * @param string $scopeType
    *   The entity scope to dispatch.
    * @param \stdClass $entity
    *   The entity.
    */
-    protected function dispatchHooks($scopeType, \stdClass $entity)
+    protected function dispatchHooks(string $scopeType, \stdClass $entity)
     {
         $fullScopeClass = 'Drupal\\DrupalExtension\\Hook\\Scope\\' . $scopeType;
         $scope = new $fullScopeClass($this->getDrupal()->getEnvironment(), $this, $entity);
         $callResults = $this->dispatcher->dispatchScopeHooks($scope);
 
         // The dispatcher suppresses exceptions, throw them here if there are any.
-        foreach ($callResults as $result) {
-            if ($result->hasException()) {
-                $exception = $result->getException();
+        foreach ($callResults as $callResult) {
+            if ($callResult->hasException()) {
+                $exception = $callResult->getException();
                 throw $exception;
             }
         }
@@ -355,7 +357,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
    * @return object
    *   The created node.
    */
-    public function nodeCreate($node)
+    public function nodeCreate(\stdClass $node)
     {
         $this->dispatchHooks('BeforeNodeCreateScope', $node);
         $this->parseEntityFields('node', $node);
@@ -394,44 +396,46 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
    * @throws \Exception
    *   Thrown when a field name is invalid.
    */
-    public function parseEntityFields($entity_type, \stdClass $entity)
+    public function parseEntityFields(string $entity_type, \stdClass $entity): void
     {
-        $multicolumn_field = '';
-        $multicolumn_fields = [];
+        $multicolumnField = '';
+        $multicolumnColumn = '';
+        $multicolumnFields = [];
 
-        foreach (clone $entity as $field => $field_value) {
+        foreach ((array) (clone $entity) as $field => $fieldValue) {
             // Reset the multicolumn field if the field name does not contain a column.
-            if (strpos($field, ':') === false) {
-                $multicolumn_field = '';
-            } elseif (strpos($field, ':', 1) !== false) {
+            if (!str_contains((string) $field, ':')) {
+                $multicolumnField = '';
+                $multicolumnColumn = '';
+            } elseif (str_contains(substr((string) $field, 1), ':')) {
                 // Start tracking a new multicolumn field if the field name contains a ':'
                 // which is preceded by at least 1 character.
-                list($multicolumn_field, $multicolumn_column) = explode(':', $field);
-            } elseif (empty($multicolumn_field)) {
+                [$multicolumnField, $multicolumnColumn] = explode(':', (string) $field);
+            } elseif (empty($multicolumnField)) {
                 // If a field name starts with a ':' but we are not yet tracking a
                 // multicolumn field we don't know to which field this belongs.
                 throw new \Exception('Field name missing for ' . $field);
             } else {
                 // Update the column name if the field name starts with a ':' and we are
                 // already tracking a multicolumn field.
-                $multicolumn_column = substr($field, 1);
+                $multicolumnColumn = substr((string) $field, 1);
             }
 
-            $is_multicolumn = $multicolumn_field && $multicolumn_column;
-            $field_name = $multicolumn_field ?: $field;
-            if ($this->getDriver()->isField($entity_type, $field_name)) {
+            $isMulticolumn = $multicolumnField && $multicolumnColumn;
+            $fieldName = $multicolumnField ?: $field;
+            if ($this->getDriver()->isField($entity_type, $fieldName)) {
                 // Split up multiple values in multi-value fields.
                 $values = [];
-                foreach (str_getcsv($field_value, escape: "\\") as $key => $value) {
+                foreach (str_getcsv((string) $fieldValue, escape: "\\") as $key => $value) {
                     $value = trim((string) $value);
                     $columns = $value;
                     // Split up field columns if the ' - ' separator is present.
-                    if (strstr($value, ' - ') !== false) {
+                    if (str_contains($value, ' - ')) {
                         $columns = [];
                         foreach (explode(' - ', $value) as $column) {
                             // Check if it is an inline named column.
-                            if (!$is_multicolumn && strpos($column, ': ', 1) !== false) {
-                                list ($key, $column) = explode(': ', $column);
+                            if (!$isMulticolumn && str_contains(substr($column, 1), ': ')) {
+                                [$key, $column] = explode(': ', $column);
                                 $columns[$key] = $column;
                             } else {
                                 $columns[] = $column;
@@ -439,31 +443,29 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
                         }
                     }
                     // Use the column name if we are tracking a multicolumn field.
-                    if ($is_multicolumn) {
-                        $multicolumn_fields[$multicolumn_field][$key][$multicolumn_column] = $columns;
+                    if ($isMulticolumn) {
+                        $multicolumnFields[$multicolumnField][$key][$multicolumnColumn] = $columns;
                         unset($entity->$field);
                     } else {
                         $values[] = $columns;
                     }
                 }
                 // Replace regular fields inline in the entity after parsing.
-                if (!$is_multicolumn) {
-                    $entity->$field_name = $values;
+                if (!$isMulticolumn) {
+                    $entity->$fieldName = $values;
                     // Don't specify any value if the step author has left it blank.
-                    if ($field_value === '') {
-                        unset($entity->$field_name);
+                    if ($fieldValue === '') {
+                        unset($entity->$fieldName);
                     }
                 }
             }
         }
 
         // Add the multicolumn fields to the entity.
-        foreach ($multicolumn_fields as $field_name => $columns) {
+        foreach ($multicolumnFields as $fieldName => $columns) {
             // Don't specify any value if the step author has left it blank.
-            if (count(array_filter($columns, function ($var) {
-                return ($var !== '');
-            })) > 0) {
-                $entity->$field_name = $columns;
+            if (count(array_filter($columns, fn($var): bool => $var !== '')) > 0) {
+                $entity->$fieldName = $columns;
             }
         }
     }
@@ -471,10 +473,10 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
   /**
    * Create a user.
    *
-   * @return object
+   * @return \stdClass
    *   The created user.
    */
-    public function userCreate($user)
+    public function userCreate(\stdClass $user): \stdClass
     {
         $this->dispatchHooks('BeforeUserCreateScope', $user);
         $this->parseEntityFields('user', $user);
@@ -490,7 +492,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
    * @return object
    *   The created term.
    */
-    public function termCreate($term)
+    public function termCreate(\stdClass $term)
     {
         $this->dispatchHooks('BeforeTermCreateScope', $term);
         $this->parseEntityFields('taxonomy_term', $term);
@@ -513,7 +515,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
     public function languageCreate(\stdClass $language)
     {
         $this->dispatchHooks('BeforeLanguageCreateScope', $language);
-        $language = $this->getDriver()->languageCreate($language);
+        $language = $this->getDriver()->languageCreate($language); // @phpstan-ignore method.notFound
         if ($language) {
             $this->dispatchHooks('AfterLanguageCreateScope', $language);
             $this->languages[$language->langcode] = $language;
@@ -527,7 +529,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
    * @param \stdClass $user
    *   The user to log in.
    */
-    public function login(\stdClass $user)
+    public function login(\stdClass $user): void
     {
         $this->getAuthenticationManager()->logIn($user);
     }
@@ -538,7 +540,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
    * @param bool $fast
    *   Utilize direct logout by session if available.
    */
-    public function logout($fast = false)
+    public function logout($fast = false): void
     {
         if ($fast && $this->getAuthenticationManager() instanceof FastLogoutInterface) {
             $this->getAuthenticationManager()->fastLogout();
@@ -567,7 +569,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
    * @return boolean
    *   Returns TRUE if the current logged in user has this role (or roles).
    */
-    public function loggedInWithRole($role)
+    public function loggedInWithRole($role): bool
     {
         return $this->loggedIn() && $this->getUserManager()->currentUserHasRole($role);
     }
@@ -589,7 +591,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
    *   Thrown when the environment is not yet initialized, meaning that contexts
    *   cannot yet be retrieved.
    */
-    protected function getContext($class)
+    protected function getContext($class): object|false
     {
         /** @var InitializedContextEnvironment $environment */
         $environment = $this->drupal->getEnvironment();

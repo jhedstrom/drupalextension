@@ -25,7 +25,7 @@ class FeatureContext extends RawDrupalContext {
    *
    * @beforeNodeCreate
    */
-  public static function alterNodeParameters(BeforeNodeCreateScope $scope) {
+  public static function alterNodeParameters(BeforeNodeCreateScope $scope): void {
     parent::alterNodeParameters($scope);
     // @see `tests/behat/features/api.feature`
     // Change 'published on' to the expected 'created'.

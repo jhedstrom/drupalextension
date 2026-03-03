@@ -1,13 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\DrupalExtension\ServiceContainer;
 
 use Behat\Behat\Context\ServiceContainer\ContextExtension;
+use Behat\Mink\Element\DocumentElement;
 use Behat\Testwork\ServiceContainer\Extension as ExtensionInterface;
 use Behat\Testwork\ServiceContainer\ExtensionManager;
 use Behat\Testwork\ServiceContainer\ServiceProcessor;
 use Drupal\DrupalExtension\Compiler\DriverPass;
 use Drupal\DrupalExtension\Compiler\EventSubscriberPass;
+use Drupal\DrupalExtension\Context\ContextClass\ClassGenerator;
 use DrupalFinder\DrupalFinder;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\FileLocator;
@@ -29,23 +33,18 @@ class DrupalExtension implements ExtensionInterface
    */
     const SELECTORS_HANDLER_ID = 'drupal.selectors_handler';
 
-  /**
-   * @var ServiceProcessor
-   */
-    private $processor;
+    private readonly ServiceProcessor $serviceProcessor;
 
   /**
-   * Initializes compiler pass.
-   *
-   * @param null|ServiceProcessor $processor
-   */
+     * Initializes compiler pass.
+     */
     public function __construct(?ServiceProcessor $processor = null)
     {
-        $this->processor = $processor ? : new ServiceProcessor();
+        $this->serviceProcessor = $processor ? : new ServiceProcessor();
     }
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
     public function getConfigKey()
     {
@@ -53,16 +52,16 @@ class DrupalExtension implements ExtensionInterface
     }
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
     public function initialize(ExtensionManager $extensionManager)
     {
     }
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
-    public function load(ContainerBuilder $container, array $config)
+    public function load(ContainerBuilder $container, array $config): void
     {
         // Workaround a bug in BrowserKitDriver that wrongly considers as text
         // of the page, pieces of texts inside the <head> section.
@@ -73,8 +72,11 @@ class DrupalExtension implements ExtensionInterface
             throw new \RuntimeException('Cannot locate Drupal');
         }
         $drupalRoot = $drupalFinder->getDrupalRoot();
+        if (!$drupalRoot) {
+            throw new \RuntimeException('Cannot locate Drupal');
+        }
         require_once($drupalRoot . '/core/tests/Drupal/Tests/DocumentElement.php');
-        class_alias('\Drupal\Tests\DocumentElement', '\Behat\Mink\Element\DocumentElement', true);
+        class_alias('\Drupal\Tests\DocumentElement', DocumentElement::class, true);
 
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/config'));
         $loader->load('services.yml');
@@ -83,15 +85,15 @@ class DrupalExtension implements ExtensionInterface
         $this->loadParameters($container, $config);
 
         // Setup any drivers if requested.
-        $this->loadBlackbox($loader, $config);
+        $this->loadBlackbox($loader);
         $this->loadDrupal($loader, $container, $config);
         $this->loadDrush($loader, $container, $config);
     }
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $this->processDriverPass($container);
         $this->processEventSubscriberPass($container);
@@ -100,139 +102,141 @@ class DrupalExtension implements ExtensionInterface
     }
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
-    public function configure(ArrayNodeDefinition $builder)
+    public function configure(ArrayNodeDefinition $builder): void
     {
+        // @formatter:off
         $builder->
-        children()->
-        scalarNode('default_driver')->
-          defaultValue('blackbox')->
-          info('Use "blackbox" to test remote site. See "api_driver" for easier integration.')->
-        end()->
-        scalarNode('api_driver')->
-          defaultValue('drush')->
-          info('Bootstraps drupal through "drupal8" or "drush".')->
-        end()->
-        scalarNode('drush_driver')->
-          defaultValue('drush')->
-        end()->
-        arrayNode('region_map')->
-          info("Targeting content in specific regions can be accomplished once those regions have been defined." . PHP_EOL
-            . '  My region: "#css-selector"' . PHP_EOL
-            . '  Content: "#main .region-content"'. PHP_EOL
-            . '  Right sidebar: "#sidebar-second"'. PHP_EOL)->
-          useAttributeAsKey('key')->
-          prototype('variable')->
-          end()->
-        end()->
-        arrayNode('text')->
-          info(
-              'Text strings, such as Log out or the Username field can be altered via behat.yml if they vary from the default values.' . PHP_EOL
-              . '  login_url: "/user"' . PHP_EOL
-              . '  logout_url: "/user/logout"' . PHP_EOL
-              . '  logout_confirm_url: "/user/logout/confirm"' . PHP_EOL
-              . '  log_out: "Sign out"' . PHP_EOL
-              . '  log_in: "Sign in"' . PHP_EOL
-              . '  password_field: "Enter your password"' . PHP_EOL
-              . '  username_field: "Nickname"'
-          )->
-          ignoreExtraKeys(false)->
-          addDefaultsIfNotSet()->
-          children()->
-            scalarNode('login_url')->
-              defaultValue('/user')->
+            children()->
+                scalarNode('default_driver')->
+                    defaultValue('blackbox')->
+                    info('Use "blackbox" to test remote site. See "api_driver" for easier integration.')->
+                end()->
+                scalarNode('api_driver')->
+                    defaultValue('drush')->
+                    info('Bootstraps drupal through "drupal8" or "drush".')->
+                end()->
+                scalarNode('drush_driver')->
+                    defaultValue('drush')->
+                end()->
+                arrayNode('region_map')->
+                    info("Targeting content in specific regions can be accomplished once those regions have been defined." . PHP_EOL
+                        . '  My region: "#css-selector"' . PHP_EOL
+                        . '  Content: "#main .region-content"' . PHP_EOL
+                        . '  Right sidebar: "#sidebar-second"' . PHP_EOL)->
+                    useAttributeAsKey('key')->
+                    prototype('variable')->
+                    end()->
+                end()->
+                arrayNode('text')->
+                    info(
+                        'Text strings, such as Log out or the Username field can be altered via behat.yml if they vary from the default values.' . PHP_EOL
+                        . '  login_url: "/user"' . PHP_EOL
+                        . '  logout_url: "/user/logout"' . PHP_EOL
+                        . '  logout_confirm_url: "/user/logout/confirm"' . PHP_EOL
+                        . '  log_out: "Sign out"' . PHP_EOL
+                        . '  log_in: "Sign in"' . PHP_EOL
+                        . '  password_field: "Enter your password"' . PHP_EOL
+                        . '  username_field: "Nickname"'
+                    )->
+                    ignoreExtraKeys(false)->
+                    addDefaultsIfNotSet()->
+                    children()->
+                        scalarNode('login_url')->
+                            defaultValue('/user')->
+                        end()->
+                        scalarNode('logout_url')->
+                            defaultValue('/user/logout')->
+                        end()->
+                        scalarNode('logout_confirm_url')->
+                            defaultValue('/user/logout/confirm')->
+                        end()->
+                        scalarNode('log_in')->
+                            defaultValue('Log in')->
+                        end()->
+                        scalarNode('log_out')->
+                            defaultValue('Log out')->
+                        end()->
+                        scalarNode('password_field')->
+                            defaultValue('Password')->
+                        end()->
+                        scalarNode('username_field')->
+                            defaultValue('Username')->
+                        end()->
+                    end()->
+                end()->
+                arrayNode('selectors')->
+                    ignoreExtraKeys(false)->
+                    addDefaultsIfNotSet()->
+                    children()->
+                        scalarNode('message_selector')->end()->
+                        scalarNode('error_message_selector')->end()->
+                        scalarNode('success_message_selector')->end()->
+                        scalarNode('warning_message_selector')->end()->
+                        scalarNode('login_form_selector')->
+                            defaultValue('form#user-login,form#user-login-form')->
+                        end()->
+                        scalarNode('logged_in_selector')->
+                            defaultValue('body.logged-in,body.user-logged-in')->
+                        end()->
+                    end()->
+                end()->
+                // Drupal drivers.
+                arrayNode('blackbox')->
+                end()->
+                arrayNode('drupal')->
+                    children()->
+                        scalarNode('drupal_root')->end()->
+                    end()->
+                end()->
+                arrayNode('drush')->
+                    children()->
+                        scalarNode('alias')->end()->
+                        scalarNode('binary')->defaultValue('drush')->end()->
+                        scalarNode('root')->end()->
+                        scalarNode('global_options')->end()->
+                    end()->
+                end()->
+                // Subcontext paths.
+                arrayNode('subcontexts')->
+                    info(
+                        'The Drupal Extension is capable of discovering additional step-definitions provided by subcontexts.' . PHP_EOL
+                        . 'Module authors can provide these in files following the naming convention of foo.behat.inc. Once that module is enabled, the Drupal Extension will load these.' . PHP_EOL
+                        . PHP_EOL
+                        . 'Additional subcontexts can be loaded by either placing them in the bootstrap directory (typically features/bootstrap) or by adding them to behat.yml.'
+                    )->
+                    addDefaultsIfNotSet()->
+                    children()->
+                        arrayNode('paths')->
+                            info(
+                                '- /path/to/additional/subcontexts' . PHP_EOL
+                                . '- /another/path'
+                            )->
+                            useAttributeAsKey('key')->
+                            prototype('variable')->end()->
+                        end()->
+                        scalarNode('autoload')->
+                            defaultValue(true)->
+                        end()->
+                    end()->
+                end()->
             end()->
-            scalarNode('logout_url')->
-              defaultValue('/user/logout')->
-            end()->
-            scalarNode('logout_confirm_url')->
-              defaultValue('/user/logout/confirm')->
-            end()->
-            scalarNode('log_in')->
-              defaultValue('Log in')->
-            end()->
-            scalarNode('log_out')->
-              defaultValue('Log out')->
-            end()->
-            scalarNode('password_field')->
-              defaultValue('Password')->
-            end()->
-            scalarNode('username_field')->
-              defaultValue('Username')->
-            end()->
-          end()->
-        end()->
-        arrayNode('selectors')->
-          ignoreExtraKeys(false)->
-          addDefaultsIfNotSet()->
-          children()->
-            scalarNode('message_selector')->end()->
-            scalarNode('error_message_selector')->end()->
-            scalarNode('success_message_selector')->end()->
-            scalarNode('warning_message_selector')->end()->
-            scalarNode('login_form_selector')->
-              defaultValue('form#user-login,form#user-login-form')->
-            end()->
-            scalarNode('logged_in_selector')->
-              defaultValue('body.logged-in,body.user-logged-in')->
-            end()->
-          end()->
-        end()->
-        // Drupal drivers.
-        arrayNode('blackbox')->
-        end()->
-        arrayNode('drupal')->
-          children()->
-            scalarNode('drupal_root')->end()->
-          end()->
-        end()->
-        arrayNode('drush')->
-          children()->
-            scalarNode('alias')->end()->
-            scalarNode('binary')->defaultValue('drush')->end()->
-            scalarNode('root')->end()->
-            scalarNode('global_options')->end()->
-          end()->
-        end()->
-        // Subcontext paths.
-        arrayNode('subcontexts')->
-          info(
-              'The Drupal Extension is capable of discovering additional step-definitions provided by subcontexts.' . PHP_EOL
-              . 'Module authors can provide these in files following the naming convention of foo.behat.inc. Once that module is enabled, the Drupal Extension will load these.' . PHP_EOL
-              . PHP_EOL
-              . 'Additional subcontexts can be loaded by either placing them in the bootstrap directory (typically features/bootstrap) or by adding them to behat.yml.'
-          )->
-          addDefaultsIfNotSet()->
-          children()->
-            arrayNode('paths')->
-              info(
-                  '- /path/to/additional/subcontexts' . PHP_EOL
-                  . '- /another/path'
-              )->
-              useAttributeAsKey('key')->
-              prototype('variable')->end()->
-            end()->
-            scalarNode('autoload')->
-              defaultValue(true)->
-            end()->
-          end()->
-        end()->
-        end()->
         end();
+        // @formatter:on
     }
 
   /**
    * Load test parameters.
    */
-    private function loadParameters(ContainerBuilder $container, array $config)
+    private function loadParameters(ContainerBuilder $container, array $config): void
     {
         // Store config in parameters array to be passed into the DrupalContext.
-        $drupal_parameters = [];
+        $drupalParameters = [];
         foreach ($config as $key => $value) {
-            $drupal_parameters[$key] = $value;
+            $drupalParameters[$key] = $value;
         }
-        $container->setParameter('drupal.parameters', $drupal_parameters);
+        $container->setParameter('drupal.parameters', $drupalParameters);
 
         $container->setParameter('drupal.region_map', $config['region_map']);
     }
@@ -240,7 +244,7 @@ class DrupalExtension implements ExtensionInterface
   /**
    * Load the blackbox driver.
    */
-    private function loadBlackBox(FileLoader $loader, array $config)
+    private function loadBlackBox(FileLoader $loader): void
     {
         // Always include the blackbox driver.
         $loader->load('drivers/blackbox.yml');
@@ -249,7 +253,7 @@ class DrupalExtension implements ExtensionInterface
   /**
    * Load the Drupal driver.
    */
-    private function loadDrupal(FileLoader $loader, ContainerBuilder $container, array $config)
+    private function loadDrupal(FileLoader $loader, ContainerBuilder $container, array $config): void
     {
         if (isset($config['drupal'])) {
             $loader->load('drivers/drupal.yml');
@@ -260,20 +264,20 @@ class DrupalExtension implements ExtensionInterface
   /**
    * Load the Drush driver.
    */
-    private function loadDrush(FileLoader $loader, ContainerBuilder $container, array $config)
+    private function loadDrush(FileLoader $loader, ContainerBuilder $container, array $config): void
     {
         if (isset($config['drush'])) {
             $loader->load('drivers/drush.yml');
             if (!isset($config['drush']['alias']) && !isset($config['drush']['root'])) {
                 throw new \RuntimeException('Drush `alias` or `root` path is required for the Drush driver.');
             }
-            $config['drush']['alias'] = isset($config['drush']['alias']) ? $config['drush']['alias'] : false;
+            $config['drush']['alias'] ??= false;
             $container->setParameter('drupal.driver.drush.alias', $config['drush']['alias']);
 
-            $config['drush']['binary'] = isset($config['drush']['binary']) ? $config['drush']['binary'] : 'drush';
+            $config['drush']['binary'] ??= 'drush';
             $container->setParameter('drupal.driver.drush.binary', $config['drush']['binary']);
 
-            $config['drush']['root'] = isset($config['drush']['root']) ? $config['drush']['root'] : false;
+            $config['drush']['root'] ??= false;
             $container->setParameter('drupal.driver.drush.root', $config['drush']['root']);
 
             // Set global arguments.
@@ -284,7 +288,7 @@ class DrupalExtension implements ExtensionInterface
   /**
    * Set global drush arguments.
    */
-    private function setDrushOptions(ContainerBuilder $container, array $config)
+    private function setDrushOptions(ContainerBuilder $container, array $config): void
     {
         if (isset($config['drush']['global_options'])) {
             $definition = $container->getDefinition('drupal.driver.drush');
@@ -295,7 +299,7 @@ class DrupalExtension implements ExtensionInterface
   /**
    * Process the Driver Pass.
    */
-    private function processDriverPass(ContainerBuilder $container)
+    private function processDriverPass(ContainerBuilder $container): void
     {
         $driverPass = new DriverPass();
         $driverPass->process($container);
@@ -304,7 +308,7 @@ class DrupalExtension implements ExtensionInterface
   /**
    * Process the Event Subscriber Pass.
    */
-    private function processEventSubscriberPass(ContainerBuilder $container)
+    private function processEventSubscriberPass(ContainerBuilder $container): void
     {
         $eventSubscriberPass = new EventSubscriberPass();
         $eventSubscriberPass->process($container);
@@ -313,10 +317,10 @@ class DrupalExtension implements ExtensionInterface
   /**
    * Process the Environment Reader pass.
    */
-    private function processEnvironmentReaderPass(ContainerBuilder $container)
+    private function processEnvironmentReaderPass(ContainerBuilder $container): void
     {
         // Register Behat context readers.
-        $references = $this->processor->findAndSortTaggedServices($container, ContextExtension::READER_TAG);
+        $references = $this->serviceProcessor->findAndSortTaggedServices($container, ContextExtension::READER_TAG);
         $definition = $container->getDefinition('drupal.context.environment.reader');
 
         foreach ($references as $reference) {
@@ -327,9 +331,9 @@ class DrupalExtension implements ExtensionInterface
   /**
    * Switch to custom class generator.
    */
-    private function processClassGenerator(ContainerBuilder $container)
+    private function processClassGenerator(ContainerBuilder $container): void
     {
-        $definition = new Definition('Drupal\DrupalExtension\Context\ContextClass\ClassGenerator');
+        $definition = new Definition(ClassGenerator::class);
         $container->setDefinition(ContextExtension::CLASS_GENERATOR_TAG . '.simple', $definition);
     }
 }

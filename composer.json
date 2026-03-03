@@ -41,10 +41,11 @@
         "composer/installers": "^2.3",
         "dantleech/gherkin-lint": "^0.2.3",
         "drevops/behat-screenshot": "^2.2",
+        "drevops/phpcs-standard": "^0.6.2",
         "drupal/coder": "^8.3.27",
         "drupal/core": "^11",
         "drupal/core-composer-scaffold": "^11",
-        "drush/drush": "^12.4 || ^13.7",
+        "drush/drush": "^12.5 || ^13.7",
         "ergebnis/composer-normalize": "^2.50",
         "grasmash/yaml-cli": "^3.2.1",
         "guzzlehttp/guzzle": "^7.8.2",
@@ -55,6 +56,8 @@
         "masterminds/html5": "^2.8",
         "php-parallel-lint/php-parallel-lint": "^1.4",
         "phpspec/phpspec": "^7.0 || ^8.0",
+        "phpstan/phpstan": "^2.1",
+        "rector/rector": "^2.0",
         "symfony/browser-kit": "^6.4.3 || ^7",
         "symfony/config": "^6.4.3 || ^7",
         "symfony/console": "^6.4.3 || ^7",
@@ -147,11 +150,14 @@
             "parallel-lint src spec tests",
             "phpcs --standard=./phpcs.xml -p",
             "phpcs --standard=./phpcs-drupal.xml -p",
+            "phpstan",
+            "rector process --dry-run",
             "gherkinlint lint tests/behat/features"
         ],
         "lint-fix": [
-            "phpcbf --standard=./phpcs.xml -p || true",
-            "phpcbf --standard=./phpcs-drupal.xml -p || true"
+            "rector process",
+            "phpcbf --standard=./phpcs.xml -p",
+            "phpcbf --standard=./phpcs-drupal.xml -p"
         ],
         "test-bdd": [
             "@test-bdd-blackbox",

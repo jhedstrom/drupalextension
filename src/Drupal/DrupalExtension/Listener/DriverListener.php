@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\DrupalExtension\Listener;
 
 use Behat\Behat\EventDispatcher\Event\ExampleTested;
@@ -19,28 +21,20 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class DriverListener implements EventSubscriberInterface
 {
 
-  /**
-   * Drupal driver manager.
-   *
-   * @var \Drupal\DrupalDriverManager
-   */
-    private $drupal;
-
-  /**
-   * Test parameters.
-   *
-   * @var array
-   */
-    private $parameters;
-
-    public function __construct(DrupalDriverManager $drupal, array $parameters)
-    {
-        $this->drupal = $drupal;
-        $this->parameters = $parameters;
+    public function __construct(
+        /**
+         * Drupal driver manager.
+         */
+        private readonly DrupalDriverManager $drupalDriverManager,
+        /**
+         * Test parameters.
+         */
+        private array $parameters
+    ) {
     }
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
     public static function getSubscribedEvents()
     {
@@ -57,9 +51,9 @@ class DriverListener implements EventSubscriberInterface
    *
    * Other scenarios get the `default_driver` as the default driver.
    *
-   * @param ScenarioTested|OutlineEvent $event
+   * @param \Behat\Behat\EventDispatcher\Event\ScenarioTested|\Behat\Behat\EventDispatcher\Event\OutlineTested $event
    */
-    public function prepareDefaultDrupalDriver(LifecycleEvent $event)
+    public function prepareDefaultDrupalDriver(LifecycleEvent $event): void
     {
         $feature = $event->getFeature();
         $scenario = $event instanceof ScenarioLikeTested ? $event->getScenario() : $event->getOutline();
@@ -74,10 +68,10 @@ class DriverListener implements EventSubscriberInterface
         }
 
         // Set the default driver.
-        $this->drupal->setDefaultDriverName($driver);
+        $this->drupalDriverManager->setDefaultDriverName($driver);
 
         // Set the environment.
         $environment = $event->getEnvironment();
-        $this->drupal->setEnvironment($environment);
+        $this->drupalDriverManager->setEnvironment($environment);
     }
 }
