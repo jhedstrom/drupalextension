@@ -24,50 +24,50 @@ class DrupalMailManager implements DrupalMailManagerInterface
     ) {
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function startCollectingMail(): void
     {
         $this->driver->startCollectingMail();
         $this->clearMail();
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function stopCollectingMail(): void
     {
         $this->driver->stopCollectingMail();
     }
   
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function enableMail(): void
     {
         $this->stopCollectingMail();
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function disableMail(): void
     {
         $this->startCollectingMail();
     }
   
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function getMail($store = 'default')
     {
         return $this->driver->getMail();
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function clearMail($store = 'default'): void
     {
         $this->driver->clearMail();

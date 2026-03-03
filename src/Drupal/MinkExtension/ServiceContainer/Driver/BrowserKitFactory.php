@@ -13,9 +13,9 @@ use Symfony\Component\DependencyInjection\Definition;
 
 class BrowserKitFactory extends BrowserKitFactoryOriginal
 {
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function buildDriver(array $config): Definition
     {
         if (!class_exists(BrowserKitDriver::class)) {
@@ -50,9 +50,9 @@ class BrowserKitFactory extends BrowserKitFactoryOriginal
         ]);
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function configure(ArrayNodeDefinition $builder): void
     {
         $builder->

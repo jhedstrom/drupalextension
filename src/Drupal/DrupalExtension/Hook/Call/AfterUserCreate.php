@@ -12,17 +12,17 @@ use Drupal\DrupalExtension\Hook\Scope\UserScope;
 class AfterUserCreate extends EntityHook
 {
 
-  /**
-   * Initializes hook.
-   */
+    /**
+     * Initializes hook.
+     */
     public function __construct(string|null $filterString, callable $callable, string|null $description = null)
     {
         parent::__construct(UserScope::AFTER, $filterString, $callable, $description);
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function getName()
     {
         return 'AfterUserCreate';

@@ -15,33 +15,33 @@ use Behat\Gherkin\Node\TableNode;
 class DrupalContext extends RawDrupalContext implements TranslatableContext
 {
 
-  /**
-   * Returns list of definition translation resources paths.
-   *
-   * @return array
-   */
+    /**
+     * Returns list of definition translation resources paths.
+     *
+     * @return array
+     */
     public static function getTranslationResources()
     {
         return glob(__DIR__ . '/../../../../i18n/*.xliff');
     }
 
-  /**
-   * @Given I am an anonymous user
-   * @Given I am not logged in
-   * @Then I log out
-   */
+    /**
+     * @Given I am an anonymous user
+     * @Given I am not logged in
+     * @Then I log out
+     */
     public function assertAnonymousUser(): void
     {
         // Verify the user is logged out.
         $this->logout(true);
     }
 
-  /**
-   * Creates and authenticates a user with the given role(s).
-   *
-   * @Given I am logged in as a user with the :role role(s)
-   * @Given I am logged in as a/an :role
-   */
+    /**
+     * Creates and authenticates a user with the given role(s).
+     *
+     * @Given I am logged in as a user with the :role role(s)
+     * @Given I am logged in as a/an :role
+     */
     public function assertAuthenticatedByRole(string $role): void
     {
         // Check if a user with this role is already logged in.
@@ -70,14 +70,14 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
         }
     }
 
-  /**
-   * Creates and authenticates a user with the given role(s) and given fields.
-   * | field_user_name     | John  |
-   * | field_user_surname  | Smith |
-   * | ...                 | ...   |
-   *
-   * @Given I am logged in as a user with the :role role(s) and I have the following fields:
-   */
+    /**
+     * Creates and authenticates a user with the given role(s) and given fields.
+     * | field_user_name     | John  |
+     * | field_user_surname  | Smith |
+     * | ...                 | ...   |
+     *
+     * @Given I am logged in as a user with the :role role(s) and I have the following fields:
+     */
     public function assertAuthenticatedByRoleWithGivenFields(string $role, TableNode $fields): void
     {
         // Check if a user with this role is already logged in.
@@ -112,9 +112,9 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
     }
 
 
-  /**
-   * @Given I am logged in as :name
-   */
+    /**
+     * @Given I am logged in as :name
+     */
     public function assertLoggedInByName(string $name): void
     {
         $manager = $this->getUserManager();
@@ -126,9 +126,9 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
         $this->login($manager->getUser($name));
     }
 
-  /**
-   * @Given I am logged in as a user with the :permissions permission(s)
-   */
+    /**
+     * @Given I am logged in as a user with the :permissions permission(s)
+     */
     public function assertLoggedInWithPermissions(string $permissions): void
     {
         // Create a temporary role with given permissions.
@@ -152,18 +152,18 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
         $this->login($user);
     }
 
-  /**
-   * Retrieve a table row containing specified text from a given element.
-   *
-   * @param \Behat\Mink\Element\Element $element
-   *   The element to search within, such as a table or the page.
-   * @param string $search
-   *   The text to search for in the table row.
-   *
-   * @return \Behat\Mink\Element\NodeElement
-   *
-   * @throws \Exception
-   */
+    /**
+     * Retrieve a table row containing specified text from a given element.
+     *
+     * @param \Behat\Mink\Element\Element $element
+     *   The element to search within, such as a table or the page.
+     * @param string $search
+     *   The text to search for in the table row.
+     *
+     * @return \Behat\Mink\Element\NodeElement
+     *
+     * @throws \Exception
+     */
     public function getTableRow(Element $element, string $search)
     {
         $rows = $element->findAll('css', 'tr');
@@ -178,11 +178,11 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
         throw new \Exception(sprintf('Failed to find a row containing "%s" on the page %s', $search, $this->getSession()->getCurrentUrl()));
     }
 
-  /**
-   * Find text in a table row containing given text.
-   *
-   * @Then I should see (the text ):text in the :rowText row
-   */
+    /**
+     * Find text in a table row containing given text.
+     *
+     * @Then I should see (the text ):text in the :rowText row
+     */
     public function assertTextInTableRow(string $text, string $rowText): void
     {
         $row = $this->getTableRow($this->getSession()->getPage(), $rowText);
@@ -191,11 +191,11 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
         }
     }
 
-  /**
-   * Asset text not in a table row containing given text.
-   *
-   * @Then I should not see (the text ):text in the :rowText row
-   */
+    /**
+     * Asset text not in a table row containing given text.
+     *
+     * @Then I should not see (the text ):text in the :rowText row
+     */
     public function assertTextNotInTableRow(string $text, string $rowText): void
     {
         $row = $this->getTableRow($this->getSession()->getPage(), $rowText);
@@ -204,14 +204,14 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
         }
     }
 
-  /**
-   * Attempts to find a link in a table row containing giving text. This is for
-   * administrative pages such as the administer content types screen found at
-   * `admin/structure/types`.
-   *
-   * @Given I click :link in the :rowText row
-   * @Then I (should )see the :link in the :rowText row
-   */
+    /**
+     * Attempts to find a link in a table row containing giving text. This is for
+     * administrative pages such as the administer content types screen found at
+     * `admin/structure/types`.
+     *
+     * @Given I click :link in the :rowText row
+     * @Then I (should )see the :link in the :rowText row
+     */
     public function assertClickInTableRow(string $link, string $rowText): void
     {
         $page = $this->getSession()->getPage();
@@ -242,28 +242,28 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
         throw new \Exception(sprintf('Found a row containing "%s", but no "%s" button on the page %s', $rowText, $button, $this->getSession()->getCurrentUrl()));
     }
 
-  /**
-   * @Given the cache has been cleared
-   */
+    /**
+     * @Given the cache has been cleared
+     */
     public function assertCacheClear(): void
     {
         $this->getDriver()->clearCache();
     }
 
-  /**
-   * @Given I run cron
-   */
+    /**
+     * @Given I run cron
+     */
     public function assertCron(): void
     {
         $this->getDriver()->runCron();
     }
 
-  /**
-   * Creates content of the given type.
-   *
-   * @Given I am viewing a/an :type (content )with the title :title
-   * @Given a/an :type (content )with the title :title
-   */
+    /**
+     * Creates content of the given type.
+     *
+     * @Given I am viewing a/an :type (content )with the title :title
+     * @Given a/an :type (content )with the title :title
+     */
     public function createNode(string $type, string $title): void
     {
         // @todo make this easily extensible.
@@ -276,11 +276,11 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
         $this->getSession()->visit($this->locatePath('/node/' . $saved->nid));
     }
 
-  /**
-   * Creates content authored by the current user.
-   *
-   * @Given I am viewing my :type (content )with the title :title
-   */
+    /**
+     * Creates content authored by the current user.
+     *
+     * @Given I am viewing my :type (content )with the title :title
+     */
     public function createMyNode(string $type, string $title): void
     {
         if ($this->getUserManager()->currentUserIsAnonymous()) {
@@ -299,14 +299,14 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
         $this->getSession()->visit($this->locatePath('/node/' . $saved->nid));
     }
 
-  /**
-   * Creates content of a given type provided in the form:
-   * | title    | author     | status | created           |
-   * | My title | Joe Editor | 1      | 2014-10-17 8:00am |
-   * | ...      | ...        | ...    | ...               |
-   *
-   * @Given :type content:
-   */
+    /**
+     * Creates content of a given type provided in the form:
+     * | title    | author     | status | created           |
+     * | My title | Joe Editor | 1      | 2014-10-17 8:00am |
+     * | ...      | ...        | ...    | ...               |
+     *
+     * @Given :type content:
+     */
     public function createNodes(string $type, TableNode $nodesTable): void
     {
         foreach ($nodesTable->getHash() as $nodeHash) {
@@ -316,16 +316,16 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
         }
     }
 
-  /**
-   * Creates content of the given type, provided in the form:
-   * | title     | My node        |
-   * | Field One | My field value |
-   * | author    | Joe Editor     |
-   * | status    | 1              |
-   * | ...       | ...            |
-   *
-   * @Given I am viewing a/an :type( content):
-   */
+    /**
+     * Creates content of the given type, provided in the form:
+     * | title     | My node        |
+     * | Field One | My field value |
+     * | author    | Joe Editor     |
+     * | status    | 1              |
+     * | ...       | ...            |
+     *
+     * @Given I am viewing a/an :type( content):
+     */
     public function assertViewingNode(string $type, TableNode $fields): void
     {
         $node = (object) [
@@ -341,11 +341,11 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
         $this->getSession()->visit($this->locatePath('/node/' . $saved->nid));
     }
 
-  /**
-   * Asserts that a given content type is editable.
-   *
-   * @Then I should be able to edit a/an :type( content)
-   */
+    /**
+     * Asserts that a given content type is editable.
+     *
+     * @Then I should be able to edit a/an :type( content)
+     */
     public function assertEditNodeOfType(string $type): void
     {
         $node = (object) [
@@ -362,12 +362,12 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
     }
 
 
-  /**
-   * Creates a term on an existing vocabulary.
-   *
-   * @Given I am viewing a/an :vocabulary term with the name :name
-   * @Given a/an :vocabulary term with the name :name
-   */
+    /**
+     * Creates a term on an existing vocabulary.
+     *
+     * @Given I am viewing a/an :vocabulary term with the name :name
+     * @Given a/an :vocabulary term with the name :name
+     */
     public function createTerm(string $vocabulary, string $name): void
     {
         // @todo make this easily extensible.
@@ -382,16 +382,16 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
         $this->getSession()->visit($this->locatePath('/taxonomy/term/' . $saved->tid));
     }
 
-  /**
-   * Creates multiple users.
-   *
-   * Provide user data in the following format:
-   *
-   * | name     | mail         | roles        |
-   * | user foo | foo@bar.com  | role1, role2 |
-   *
-   * @Given users:
-   */
+    /**
+     * Creates multiple users.
+     *
+     * Provide user data in the following format:
+     *
+     * | name     | mail         | roles        |
+     * | user foo | foo@bar.com  | role1, role2 |
+     *
+     * @Given users:
+     */
     public function createUsers(TableNode $usersTable): void
     {
         foreach ($usersTable->getHash() as $userHash) {
@@ -417,19 +417,19 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
         }
     }
 
-  /**
-   * Creates one or more terms on an existing vocabulary.
-   *
-   * Provide term data in the following format:
-   *
-   * | name  | parent | description | weight | taxonomy_field_image |
-   * | Snook | Fish   | Marine fish | 10     | snook-123.jpg        |
-   * | ...   | ...    | ...         | ...    | ...                  |
-   *
-   * Only the 'name' field is required.
-   *
-   * @Given :vocabulary terms:
-   */
+    /**
+     * Creates one or more terms on an existing vocabulary.
+     *
+     * Provide term data in the following format:
+     *
+     * | name  | parent | description | weight | taxonomy_field_image |
+     * | Snook | Fish   | Marine fish | 10     | snook-123.jpg        |
+     * | ...   | ...    | ...         | ...    | ...                  |
+     *
+     * Only the 'name' field is required.
+     *
+     * @Given :vocabulary terms:
+     */
     public function createTerms(string $vocabulary, TableNode $termsTable): void
     {
         foreach ($termsTable->getHash() as $termsHash) {
@@ -439,20 +439,20 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
         }
     }
 
-  /**
-   * Creates one or more languages.
-   *
-   * @Given the/these (following )languages are available:
-   *
-   * Provide language data in the following format:
-   *
-   * | langcode |
-   * | en       |
-   * | fr       |
-   *
-   * @param TableNode $langcodesTable
-   *   The table listing languages by their ISO code.
-   */
+    /**
+     * Creates one or more languages.
+     *
+     * @Given the/these (following )languages are available:
+     *
+     * Provide language data in the following format:
+     *
+     * | langcode |
+     * | en       |
+     * | fr       |
+     *
+     * @param TableNode $langcodesTable
+     *   The table listing languages by their ISO code.
+     */
     public function createLanguages(TableNode $langcodesTable): void
     {
         foreach ($langcodesTable->getHash() as $row) {
@@ -463,11 +463,11 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
         }
     }
 
-  /**
-   * Pauses the scenario until the user presses a key. Useful when debugging a scenario.
-   *
-   * @Then (I )break
-   */
+    /**
+     * Pauses the scenario until the user presses a key. Useful when debugging a scenario.
+     *
+     * @Then (I )break
+     */
     public function iPutABreakpoint(): void
     {
         fwrite(STDOUT, "\033[s \033[93m[Breakpoint] Press \033[1;93m[RETURN]\033[0;93m to continue, or 'q' to quit...\033[0m");

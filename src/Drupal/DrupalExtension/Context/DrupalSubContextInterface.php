@@ -22,11 +22,11 @@ use Drupal\DrupalDriverManager;
 interface DrupalSubContextInterface extends Context
 {
 
-  /**
-   * Instantiates the subcontext.
-   *
-   * @param \Drupal\DrupalDriverManager $drupal
-   *   The Drupal Driver manager.
-   */
+    /**
+     * Instantiates the subcontext.
+     *
+     * @param \Drupal\DrupalDriverManager $drupal
+     *   The Drupal Driver manager.
+     */
     public function __construct(DrupalDriverManager $drupal);
 }

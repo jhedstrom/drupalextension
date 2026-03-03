@@ -19,17 +19,17 @@ interface EntityScope extends HookScope
     const BEFORE = 'entity.create.before';
     const AFTER = 'entity.create.after';
 
-  /**
-   * Returns the context.
-   *
-   * @return \Behat\Behat\Context\Context
-   */
+    /**
+     * Returns the context.
+     *
+     * @return \Behat\Behat\Context\Context
+     */
     public function getContext();
 
-  /**
-   * Returns scope entity.
-   *
-   * @return \stdClass
-   */
+    /**
+     * Returns scope entity.
+     *
+     * @return \stdClass
+     */
     public function getEntity();
 }

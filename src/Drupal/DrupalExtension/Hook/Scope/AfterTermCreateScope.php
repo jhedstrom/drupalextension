@@ -16,11 +16,11 @@ use Behat\Testwork\Hook\Scope\HookScope;
 final class AfterTermCreateScope extends TermScope
 {
 
-  /**
-   * Return the scope name.
-   *
-   * @return string
-   */
+    /**
+     * Return the scope name.
+     *
+     * @return string
+     */
     public function getName()
     {
         return self::AFTER;

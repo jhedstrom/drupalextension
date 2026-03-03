@@ -16,11 +16,11 @@ use Behat\Testwork\Hook\Scope\HookScope;
 final class BeforeNodeCreateScope extends NodeScope
 {
 
-  /**
-   * Return the scope name.
-   *
-   * @return string
-   */
+    /**
+     * Return the scope name.
+     *
+     * @return string
+     */
     public function getName()
     {
         return self::BEFORE;

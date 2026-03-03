@@ -18,9 +18,9 @@ use Behat\Testwork\Hook\Scope\HookScope;
 abstract class BaseEntityScope implements EntityScope
 {
 
-  /**
-   * Initializes the scope.
-   */
+    /**
+     * Initializes the scope.
+     */
     public function __construct(
         private readonly Environment $environment,
         /**
@@ -34,35 +34,35 @@ abstract class BaseEntityScope implements EntityScope
     ) {
     }
 
-  /**
-   * Returns the context.
-   *
-   * @return \Behat\Behat\Context\Context
-   */
+    /**
+     * Returns the context.
+     *
+     * @return \Behat\Behat\Context\Context
+     */
     public function getContext()
     {
         return $this->context;
     }
 
-  /**
-     * Returns the entity object.
-     */
+    /**
+       * Returns the entity object.
+       */
     public function getEntity(): \stdClass
     {
         return $this->entity;
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function getEnvironment()
     {
         return $this->environment;
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function getSuite()
     {
         return $this->environment->getSuite();

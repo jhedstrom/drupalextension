@@ -17,26 +17,26 @@ use Behat\Gherkin\Node\TableNode;
 class ConfigContext extends RawDrupalContext implements TranslatableContext
 {
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public static function getTranslationResources()
     {
         return glob(__DIR__ . '/../../../../i18n/*.xliff');
     }
 
-  /**
-   * Keep track of any config that was changed so they can easily be reverted.
-   *
-   * @var array
-   */
+    /**
+     * Keep track of any config that was changed so they can easily be reverted.
+     *
+     * @var array
+     */
     protected $config = [];
 
-  /**
-   * Revert any changed config.
-   *
-   * @AfterScenario
-   */
+    /**
+     * Revert any changed config.
+     *
+     * @AfterScenario
+     */
     public function cleanConfig(): void
     {
         // Revert config that was changed.
@@ -48,39 +48,39 @@ class ConfigContext extends RawDrupalContext implements TranslatableContext
         $this->config = [];
     }
 
-  /**
-   * Sets basic configuration item.
-   *
-   * @param string $name
-   *   The name of the configuration object.
-   * @param string $key
-   *   Identifier to store value in configuration.
-   * @param string $value
-   *   Value to associate with identifier.
-   *
-   * @Given I set the configuration item :name with key :key to :value
-   */
+    /**
+     * Sets basic configuration item.
+     *
+     * @param string $name
+     *   The name of the configuration object.
+     * @param string $key
+     *   Identifier to store value in configuration.
+     * @param string $value
+     *   Value to associate with identifier.
+     *
+     * @Given I set the configuration item :name with key :key to :value
+     */
     public function setBasicConfig(string $name, string $key, string $value): void
     {
         $this->setConfig($name, $key, $value);
     }
 
-  /**
-   * Sets complex configuration.
-   *
-   * @param string $name
-   *   The name of the configuration object.
-   * @param string $key
-   *   Identifier to store value in configuration.
-   * @param TableNode $config_table
-   *   The table listing configuration keys and values.
-   *
-   * @Given I set the configuration item :name with key :key with values:
-   *
-   * Provide configuration data in the following format:
-   *  | key   | value  |
-   *  | foo   | bar    |
-   */
+    /**
+     * Sets complex configuration.
+     *
+     * @param string $name
+     *   The name of the configuration object.
+     * @param string $key
+     *   Identifier to store value in configuration.
+     * @param TableNode $config_table
+     *   The table listing configuration keys and values.
+     *
+     * @Given I set the configuration item :name with key :key with values:
+     *
+     * Provide configuration data in the following format:
+     *  | key   | value  |
+     *  | foo   | bar    |
+     */
     public function setComplexConfig(string $name, string $key, TableNode $config_table): void
     {
         $value = [];
@@ -94,16 +94,16 @@ class ConfigContext extends RawDrupalContext implements TranslatableContext
         $this->setConfig($name, $key, $value);
     }
 
-  /**
-   * Sets a value in a configuration object.
-   *
-   * @param string $name
-   *   The name of the configuration object.
-   * @param string $key
-   *   Identifier to store value in configuration.
-   * @param mixed $value
-   *   Value to associate with identifier.
-   */
+    /**
+     * Sets a value in a configuration object.
+     *
+     * @param string $name
+     *   The name of the configuration object.
+     * @param string $key
+     *   Identifier to store value in configuration.
+     * @param mixed $value
+     *   Value to associate with identifier.
+     */
     public function setConfig(string $name, string $key, mixed $value): void
     {
         $backup = $this->getDriver()->configGet($name, $key);

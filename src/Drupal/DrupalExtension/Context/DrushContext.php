@@ -12,26 +12,26 @@ use Behat\Behat\Context\TranslatableContext;
 class DrushContext extends RawDrupalContext implements TranslatableContext
 {
 
-  /**
-   * Keep track of drush output.
-   *
-   * @var string|boolean
-   */
+    /**
+     * Keep track of drush output.
+     *
+     * @var string|boolean
+     */
     protected $drushOutput;
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public static function getTranslationResources()
     {
         return glob(__DIR__ . '/../../../../i18n/*.xliff');
     }
 
-  /**
-   * Return the most recent drush command output.
-   *
-   * @return string
-   */
+    /**
+     * Return the most recent drush command output.
+     *
+     * @return string
+     */
     public function readDrushOutput()
     {
         if ($this->drushOutput === null) {
@@ -40,9 +40,9 @@ class DrushContext extends RawDrupalContext implements TranslatableContext
         return $this->drushOutput;
     }
 
-  /**
-   * @Given I run drush :command
-   */
+    /**
+     * @Given I run drush :command
+     */
     public function assertDrushCommand(string $command): void
     {
         if (!$this->drushOutput = $this->getDriver('drush')->$command()) {
@@ -50,9 +50,9 @@ class DrushContext extends RawDrupalContext implements TranslatableContext
         }
     }
 
-  /**
-   * @Given I run drush :command :arguments
-   */
+    /**
+     * @Given I run drush :command :arguments
+     */
     public function assertDrushCommandWithArgument(string $command, string $arguments): void
     {
         $this->drushOutput = $this->getDriver('drush')->$command($this->fixStepArgument($arguments));
@@ -61,9 +61,9 @@ class DrushContext extends RawDrupalContext implements TranslatableContext
         }
     }
 
-  /**
-   * @Then drush output should contain :output
-   */
+    /**
+     * @Then drush output should contain :output
+     */
     public function assertDrushOutput(string $output): void
     {
         if (!str_contains((string) $this->readDrushOutput(), $this->fixStepArgument($output))) {
@@ -71,9 +71,9 @@ class DrushContext extends RawDrupalContext implements TranslatableContext
         }
     }
 
-  /**
-   * @Then drush output should match :regex
-   */
+    /**
+     * @Then drush output should match :regex
+     */
     public function assertDrushOutputMatches(string $regex): void
     {
         if (!preg_match($regex, (string) $this->readDrushOutput())) {
@@ -81,9 +81,9 @@ class DrushContext extends RawDrupalContext implements TranslatableContext
         }
     }
 
-  /**
-   * @Then drush output should not contain :output
-   */
+    /**
+     * @Then drush output should not contain :output
+     */
     public function drushOutputShouldNotContain(string $output): void
     {
         if (str_contains((string) $this->readDrushOutput(), $this->fixStepArgument($output))) {
@@ -91,17 +91,17 @@ class DrushContext extends RawDrupalContext implements TranslatableContext
         }
     }
 
-  /**
-   * @Then print last drush output
-   */
+    /**
+     * @Then print last drush output
+     */
     public function printLastDrushOutput(): void
     {
         echo $this->readDrushOutput();
     }
 
-  /**
-     * Returns fixed step argument (with \\" replaced back to ").
-     */
+    /**
+       * Returns fixed step argument (with \\" replaced back to ").
+       */
     protected function fixStepArgument(string $argument): string
     {
         return str_replace('\\"', '"', $argument);

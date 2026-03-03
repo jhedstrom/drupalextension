@@ -13,26 +13,26 @@ use Drupal\DrupalMailManager;
 class RawMailContext extends RawDrupalContext
 {
 
-  /**
-   * The mail manager.
-   *
-   * @var \Drupal\DrupalMailManagerInterface
-   */
+    /**
+     * The mail manager.
+     *
+     * @var \Drupal\DrupalMailManagerInterface
+     */
     protected $mailManager;
 
-  /**
-   * The number of mails received so far in this scenario, for each mail store.
-   *
-   * @var array
-   */
+    /**
+     * The number of mails received so far in this scenario, for each mail store.
+     *
+     * @var array
+     */
     protected $mailMessageCount = [];
 
-   /**
-    * Get the mail manager service that handles stored test mail.
-    *
-    * @return \Drupal\DrupalMailManagerInterface
-    *   The mail manager service.
-    */
+    /**
+     * Get the mail manager service that handles stored test mail.
+     *
+     * @return \Drupal\DrupalMailManagerInterface
+     *   The mail manager service.
+     */
     protected function getMailManager()
     {
         // Persist the mail manager between invocations. This is necessary for
@@ -44,23 +44,23 @@ class RawMailContext extends RawDrupalContext
         return $this->mailManager;
     }
 
-   /**
-    * Get collected mail, matching certain specifications.
-    *
-    * @param array $criteria
-    *   Associative array of mail fields and the values to filter by.
-    * @param bool $new
-    *   Whether to ignore previously seen mail.
-    * @param null|int $index
-    *   A particular mail to return, e.g. 0 for first or -1 for last.
-    * @param string $store
-    *   The name of the mail store to get mail from.
-    *
-    * @return \stdClass[]|\stdClass
-    *   An array of mail, each formatted as a Drupal 8
-    *   \Drupal\Core\Mail\MailInterface::mail $message array, or a single mail
-    *   object if $index is specified.
-    */
+    /**
+     * Get collected mail, matching certain specifications.
+     *
+     * @param array $criteria
+     *   Associative array of mail fields and the values to filter by.
+     * @param bool $new
+     *   Whether to ignore previously seen mail.
+     * @param null|int $index
+     *   A particular mail to return, e.g. 0 for first or -1 for last.
+     * @param string $store
+     *   The name of the mail store to get mail from.
+     *
+     * @return \stdClass[]|\stdClass
+     *   An array of mail, each formatted as a Drupal 8
+     *   \Drupal\Core\Mail\MailInterface::mail $message array, or a single mail
+     *   object if $index is specified.
+     */
     protected function getMail(array $criteria = [], bool $new = false, ?int $index = null, string $store = 'default')
     {
         $messages = $this->getMailManager()->getMail($store);
@@ -84,12 +84,12 @@ class RawMailContext extends RawDrupalContext
         return array_slice($messages, $index, 1)[0];
     }
 
-  /**
-   * Get the number of mails received in a particular mail store.
-   *
-   * @return int
-   *   The number of mails received during this scenario.
-   */
+    /**
+     * Get the number of mails received in a particular mail store.
+     *
+     * @return int
+     *   The number of mails received during this scenario.
+     */
     protected function getMailMessageCount(string $store)
     {
         if (array_key_exists($store, $this->mailMessageCount)) {
@@ -99,17 +99,17 @@ class RawMailContext extends RawDrupalContext
         return 0;
     }
 
-  /**
-   * Determine if a mail meets criteria.
-   *
-   * @param array $message
-   *   The mail message as an associative array of mail fields.
-   * @param array $criteria
-   *   The criteria: an associative array of mail fields and desired values.
-   *
-   * @return bool
-   *   Whether the mail message matches the criteria.
-   */
+    /**
+     * Determine if a mail meets criteria.
+     *
+     * @param array $message
+     *   The mail message as an associative array of mail fields.
+     * @param array $criteria
+     *   The criteria: an associative array of mail fields and desired values.
+     *
+     * @return bool
+     *   Whether the mail message matches the criteria.
+     */
     protected function matchMessage(array $message, array $criteria): bool
     {
         // Discard criteria that are just zero-length strings.
@@ -126,14 +126,14 @@ class RawMailContext extends RawDrupalContext
         return true;
     }
 
-  /**
-   * Compare actual mail with expected mail.
-   *
-   * @param array $actualMessages
-   *   An array of actual mail.
-   * @param array $expectedMessages
-   *   An array of expected mail.
-   */
+    /**
+     * Compare actual mail with expected mail.
+     *
+     * @param array $actualMessages
+     *   An array of actual mail.
+     * @param array $expectedMessages
+     *   An array of expected mail.
+     */
     protected function compareMessages(array $actualMessages, array $expectedMessages)
     {
         // Make sure there is the same number of actual and expected.
@@ -156,14 +156,14 @@ class RawMailContext extends RawDrupalContext
         }
     }
 
-  /**
-   * Assert there is the expected number of mail messages.
-   *
-   * @param array $actualMessages
-   *   An array of actual mail.
-   * @param int $expectedCount
-   *   Optional. The number of mails expected.
-   */
+    /**
+     * Assert there is the expected number of mail messages.
+     *
+     * @param array $actualMessages
+     *   An array of actual mail.
+     * @param int $expectedCount
+     *   Optional. The number of mails expected.
+     */
     protected function assertMessageCount(array $actualMessages, ?int $expectedCount = null)
     {
         $actualCount = count($actualMessages);
@@ -185,15 +185,15 @@ class RawMailContext extends RawDrupalContext
         }
     }
 
-  /**
-   * Sort mail by to, subject and body.
-   *
-   * @param array $messages
-   *   An array of mail messages to sort.
-   *
-   * @return array
-   *   The same mail, but sorted.
-   */
+    /**
+     * Sort mail by to, subject and body.
+     *
+     * @param array $messages
+     *   An array of mail messages to sort.
+     *
+     * @return array
+     *   The same mail, but sorted.
+     */
     protected function sortMessages(array $messages): array
     {
         // Can't sort an empty array.
@@ -241,9 +241,9 @@ class RawMailContext extends RawDrupalContext
         return $messages;
     }
 
-  /**
-   * Get the mink context, so we can visit pages using the mink session.
-   */
+    /**
+     * Get the mink context, so we can visit pages using the mink session.
+     */
     protected function getMinkContext(): object
     {
         $minkContext =  $this->getContext(RawMinkContext::class);

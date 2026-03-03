@@ -13,9 +13,9 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
  */
 class DriverPass implements CompilerPassInterface
 {
-  /**
-   * Register Drupal drivers.
-   */
+    /**
+     * Register Drupal drivers.
+     */
     public function process(ContainerBuilder $container): void
     {
         if (!$container->hasDefinition('drupal.drupal')) {

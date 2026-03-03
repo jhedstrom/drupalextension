@@ -14,22 +14,22 @@ use Behat\Mink\Exception\ExpectationException;
 class MessageContext extends RawDrupalContext implements TranslatableContext
 {
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public static function getTranslationResources()
     {
         return glob(__DIR__ . '/../../../../i18n/*.xliff');
     }
 
-  /**
-   * Checks if the current page contains the given error message
-   *
-   * @param $message
-   *   string The text to be checked
-   *
-   * @Then I should see the error message( containing) :message
-   */
+    /**
+     * Checks if the current page contains the given error message
+     *
+     * @param $message
+     *   string The text to be checked
+     *
+     * @Then I should see the error message( containing) :message
+     */
     public function assertErrorVisible(string $message): void
     {
         $this->assert(
@@ -40,15 +40,15 @@ class MessageContext extends RawDrupalContext implements TranslatableContext
         );
     }
 
-  /**
-   * Checks if the current page contains the given set of error messages
-   *
-   * @param \Behat\Gherkin\Node\TableNode $messages
-   *   An array of texts to be checked. The first row should consist of the
-   *   string "Error messages".
-   *
-   * @Then I should see the following error message(s):
-   */
+    /**
+     * Checks if the current page contains the given set of error messages
+     *
+     * @param \Behat\Gherkin\Node\TableNode $messages
+     *   An array of texts to be checked. The first row should consist of the
+     *   string "Error messages".
+     *
+     * @Then I should see the following error message(s):
+     */
     public function assertMultipleErrors(TableNode $messages): void
     {
         $this->assertValidMessageTable($messages, 'error messages');
@@ -59,14 +59,14 @@ class MessageContext extends RawDrupalContext implements TranslatableContext
         }
     }
 
-  /**
-   * Checks if the current page does not contain the given error message
-   *
-   * @param $message
-   *   string The text to be checked
-   *
-   * @Given I should not see the error message( containing) :message
-   */
+    /**
+     * Checks if the current page does not contain the given error message
+     *
+     * @param $message
+     *   string The text to be checked
+     *
+     * @Given I should not see the error message( containing) :message
+     */
     public function assertNotErrorVisible(string $message): void
     {
         $this->assertNot(
@@ -76,15 +76,15 @@ class MessageContext extends RawDrupalContext implements TranslatableContext
         );
     }
 
-  /**
-   * Checks if the current page does not contain the given set error messages
-   *
-   * @param \Behat\Gherkin\Node\TableNode $messages
-   *   An array of texts to be checked. The first row should consist of the
-   *   string "Error messages".
-   *
-   * @Then I should not see the following error messages:
-   */
+    /**
+     * Checks if the current page does not contain the given set error messages
+     *
+     * @param \Behat\Gherkin\Node\TableNode $messages
+     *   An array of texts to be checked. The first row should consist of the
+     *   string "Error messages".
+     *
+     * @Then I should not see the following error messages:
+     */
     public function assertNotMultipleErrors(TableNode $messages): void
     {
         $this->assertValidMessageTable($messages, 'error messages');
@@ -95,14 +95,14 @@ class MessageContext extends RawDrupalContext implements TranslatableContext
         }
     }
 
-  /**
-   * Checks if the current page contains the given success message
-   *
-   * @param $message
-   *   string The text to be checked
-   *
-   * @Then I should see the success message( containing) :message
-   */
+    /**
+     * Checks if the current page contains the given success message
+     *
+     * @param $message
+     *   string The text to be checked
+     *
+     * @Then I should see the success message( containing) :message
+     */
     public function assertSuccessMessage(string $message): void
     {
         $this->assert(
@@ -113,15 +113,15 @@ class MessageContext extends RawDrupalContext implements TranslatableContext
         );
     }
 
-  /**
-   * Checks if the current page contains the given set of success messages
-   *
-   * @param \Behat\Gherkin\Node\TableNode $messages
-   *   An array of texts to be checked. The first row should consist of the
-   *   string "Success messages".
-   *
-   * @Then I should see the following success messages:
-   */
+    /**
+     * Checks if the current page contains the given set of success messages
+     *
+     * @param \Behat\Gherkin\Node\TableNode $messages
+     *   An array of texts to be checked. The first row should consist of the
+     *   string "Success messages".
+     *
+     * @Then I should see the following success messages:
+     */
     public function assertMultipleSuccessMessage(TableNode $messages): void
     {
         $this->assertValidMessageTable($messages, 'success messages');
@@ -132,14 +132,14 @@ class MessageContext extends RawDrupalContext implements TranslatableContext
         }
     }
 
-  /**
-   * Checks if the current page does not contain the given set of success message
-   *
-   * @param $message
-   *   string The text to be checked
-   *
-   * @Given I should not see the success message( containing) :message
-   */
+    /**
+     * Checks if the current page does not contain the given set of success message
+     *
+     * @param $message
+     *   string The text to be checked
+     *
+     * @Given I should not see the success message( containing) :message
+     */
     public function assertNotSuccessMessage(string $message): void
     {
         $this->assertNot(
@@ -149,15 +149,15 @@ class MessageContext extends RawDrupalContext implements TranslatableContext
         );
     }
 
-  /**
-   * Checks if the current page does not contain the given set of success messages
-   *
-   * @param \Behat\Gherkin\Node\TableNode $messages
-   *   An array of texts to be checked. The first row should consist of the
-   *   string "Success messages".
-   *
-   * @Then I should not see the following success messages:
-   */
+    /**
+     * Checks if the current page does not contain the given set of success messages
+     *
+     * @param \Behat\Gherkin\Node\TableNode $messages
+     *   An array of texts to be checked. The first row should consist of the
+     *   string "Success messages".
+     *
+     * @Then I should not see the following success messages:
+     */
     public function assertNotMultipleSuccessMessage(TableNode $messages): void
     {
         $this->assertValidMessageTable($messages, 'success messages');
@@ -168,14 +168,14 @@ class MessageContext extends RawDrupalContext implements TranslatableContext
         }
     }
 
-  /**
-   * Checks if the current page contains the given warning message
-   *
-   * @param $message
-   *   string The text to be checked
-   *
-   * @Then I should see the warning message( containing) :message
-   */
+    /**
+     * Checks if the current page contains the given warning message
+     *
+     * @param $message
+     *   string The text to be checked
+     *
+     * @Then I should see the warning message( containing) :message
+     */
     public function assertWarningMessage(string $message): void
     {
         $this->assert(
@@ -186,15 +186,15 @@ class MessageContext extends RawDrupalContext implements TranslatableContext
         );
     }
 
-  /**
-   * Checks if the current page contains the given set of warning messages
-   *
-   * @param \Behat\Gherkin\Node\TableNode $messages
-   *   An array of texts to be checked. The first row should consist of the
-   *   string "Warning messages".
-   *
-   * @Then I should see the following warning messages:
-   */
+    /**
+     * Checks if the current page contains the given set of warning messages
+     *
+     * @param \Behat\Gherkin\Node\TableNode $messages
+     *   An array of texts to be checked. The first row should consist of the
+     *   string "Warning messages".
+     *
+     * @Then I should see the following warning messages:
+     */
     public function assertMultipleWarningMessage(TableNode $messages): void
     {
         $this->assertValidMessageTable($messages, 'warning messages');
@@ -205,14 +205,14 @@ class MessageContext extends RawDrupalContext implements TranslatableContext
         }
     }
 
-  /**
-   * Checks if the current page does not contain the given set of warning message
-   *
-   * @param $message
-   *   string The text to be checked
-   *
-   * @Given I should not see the warning message( containing) :message
-   */
+    /**
+     * Checks if the current page does not contain the given set of warning message
+     *
+     * @param $message
+     *   string The text to be checked
+     *
+     * @Given I should not see the warning message( containing) :message
+     */
     public function assertNotWarningMessage(string $message): void
     {
         $this->assertNot(
@@ -222,15 +222,15 @@ class MessageContext extends RawDrupalContext implements TranslatableContext
         );
     }
 
-  /**
-   * Checks if the current page does not contain the given set of warning messages
-   *
-   * @param \Behat\Gherkin\Node\TableNode $messages
-   *   An array of texts to be checked. The first row should consist of the
-   *   string "Warning messages".
-   *
-   * @Then I should not see the following warning messages:
-   */
+    /**
+     * Checks if the current page does not contain the given set of warning messages
+     *
+     * @param \Behat\Gherkin\Node\TableNode $messages
+     *   An array of texts to be checked. The first row should consist of the
+     *   string "Warning messages".
+     *
+     * @Then I should not see the following warning messages:
+     */
     public function assertNotMultipleWarningMessage(TableNode $messages): void
     {
         $this->assertValidMessageTable($messages, 'warning messages');
@@ -241,14 +241,14 @@ class MessageContext extends RawDrupalContext implements TranslatableContext
         }
     }
 
-  /**
-   * Checks if the current page contain the given message
-   *
-   * @param $message
-   *   string The message to be checked
-   *
-   * @Then I should see the message( containing) :message
-   */
+    /**
+     * Checks if the current page contain the given message
+     *
+     * @param $message
+     *   string The message to be checked
+     *
+     * @Then I should see the message( containing) :message
+     */
     public function assertMessage(string $message): void
     {
         $this->assert(
@@ -259,14 +259,14 @@ class MessageContext extends RawDrupalContext implements TranslatableContext
         );
     }
 
-  /**
-   * Checks if the current page does not contain the given message
-   *
-   * @param $message
-   *   string The message to be checked
-   *
-   * @Then I should not see the message( containing) :message
-   */
+    /**
+     * Checks if the current page does not contain the given message
+     *
+     * @param $message
+     *   string The message to be checked
+     *
+     * @Then I should not see the message( containing) :message
+     */
     public function assertNotMessage(string $message): void
     {
         $this->assertNot(
@@ -305,23 +305,23 @@ class MessageContext extends RawDrupalContext implements TranslatableContext
         }
     }
 
-  /**
-   * Internal callback to check for a specific message in a given context.
-   *
-   * @param $message
-   *   string The message to be checked
-   * @param $selectorId
-   *   string CSS selector name
-   * @param $exceptionMsgNone
-   *   string The message being thrown when no message is contained, string
-   *   should contain one '%s' as a placeholder for the current URL
-   * @param $exceptionMsgMissing
-   *   string The message being thrown when the message is not contained, string
-   *   should contain two '%s' as placeholders for the current URL and the message.
-   *
-   * @throws \Behat\Mink\Exception\ExpectationException
-   *   Thrown when the expected message is not present in the page.
-   */
+    /**
+     * Internal callback to check for a specific message in a given context.
+     *
+     * @param $message
+     *   string The message to be checked
+     * @param $selectorId
+     *   string CSS selector name
+     * @param $exceptionMsgNone
+     *   string The message being thrown when no message is contained, string
+     *   should contain one '%s' as a placeholder for the current URL
+     * @param $exceptionMsgMissing
+     *   string The message being thrown when the message is not contained, string
+     *   should contain two '%s' as placeholders for the current URL and the message.
+     *
+     * @throws \Behat\Mink\Exception\ExpectationException
+     *   Thrown when the expected message is not present in the page.
+     */
     private function assert(string $message, string $selectorId, string $exceptionMsgNone, string $exceptionMsgMissing): void
     {
         $selector = $this->getDrupalSelector($selectorId);
@@ -337,20 +337,20 @@ class MessageContext extends RawDrupalContext implements TranslatableContext
         throw new ExpectationException(sprintf($exceptionMsgMissing, $this->getSession()->getCurrentUrl(), $message), $this->getSession()->getDriver());
     }
 
-  /**
-   * Internal callback to check if the current page does not contain the given message
-   *
-   * @param $message
-   *   string The message to be checked
-   * @param $selectorId
-   *   string CSS selector name
-   * @param $exceptionMsg
-   *   string The message being thrown when the message is contained, string
-   *   should contain two '%s' as placeholders for the current URL and the message.
-   *
-   * @throws \Behat\Mink\Exception\ExpectationException
-   *   Thrown when the expected message is present in the page.
-   */
+    /**
+     * Internal callback to check if the current page does not contain the given message
+     *
+     * @param $message
+     *   string The message to be checked
+     * @param $selectorId
+     *   string CSS selector name
+     * @param $exceptionMsg
+     *   string The message being thrown when the message is contained, string
+     *   should contain two '%s' as placeholders for the current URL and the message.
+     *
+     * @throws \Behat\Mink\Exception\ExpectationException
+     *   Thrown when the expected message is present in the page.
+     */
     private function assertNot(string $message, string $selectorId, string $exceptionMsg): void
     {
         $selector = $this->getDrupalSelector($selectorId);

@@ -33,111 +33,111 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
 
     use DrupalParametersTrait;
 
-  /**
-     * Drupal driver manager.
-     */
+    /**
+       * Drupal driver manager.
+       */
     private ?DrupalDriverManagerInterface $drupal = null;
 
-  /**
-   * Event dispatcher object.
-   *
-   * @var \Behat\Testwork\Hook\HookDispatcher
-   */
+    /**
+     * Event dispatcher object.
+     *
+     * @var \Behat\Testwork\Hook\HookDispatcher
+     */
     protected $dispatcher;
 
-  /**
-   * Drupal authentication manager.
-   *
-   * @var \Drupal\DrupalExtension\Manager\DrupalAuthenticationManagerInterface
-   */
+    /**
+     * Drupal authentication manager.
+     *
+     * @var \Drupal\DrupalExtension\Manager\DrupalAuthenticationManagerInterface
+     */
     protected $authenticationManager;
 
-  /**
-   * Drupal user manager.
-   *
-   * @var \Drupal\DrupalExtension\Manager\DrupalUserManagerInterface
-   */
+    /**
+     * Drupal user manager.
+     *
+     * @var \Drupal\DrupalExtension\Manager\DrupalUserManagerInterface
+     */
     protected $userManager;
 
-  /**
-   * Keep track of nodes so they can be cleaned up.
-   *
-   * @var array
-   */
+    /**
+     * Keep track of nodes so they can be cleaned up.
+     *
+     * @var array
+     */
     protected $nodes = [];
 
-  /**
-   * Keep track of all terms that are created so they can easily be removed.
-   *
-   * @var array
-   */
+    /**
+     * Keep track of all terms that are created so they can easily be removed.
+     *
+     * @var array
+     */
     protected $terms = [];
 
-  /**
-   * Keep track of any roles that are created so they can easily be removed.
-   *
-   * @var array
-   */
+    /**
+     * Keep track of any roles that are created so they can easily be removed.
+     *
+     * @var array
+     */
     protected $roles = [];
 
-  /**
-   * Keep track of any languages that are created so they can easily be removed.
-   *
-   * @var array
-   */
+    /**
+     * Keep track of any languages that are created so they can easily be removed.
+     *
+     * @var array
+     */
     protected $languages = [];
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function setDrupal(DrupalDriverManagerInterface $drupal): void
     {
         $this->drupal = $drupal;
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function getDrupal(): ?DrupalDriverManagerInterface
     {
         return $this->drupal;
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function setUserManager(DrupalUserManagerInterface $userManager): void
     {
         $this->userManager = $userManager;
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function getUserManager()
     {
         return $this->userManager;
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function setAuthenticationManager(DrupalAuthenticationManagerInterface $authenticationManager): void
     {
         $this->authenticationManager = $authenticationManager;
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function getAuthenticationManager()
     {
         return $this->authenticationManager;
     }
 
-  /**
-   * Magic setter.
-   */
+    /**
+     * Magic setter.
+     */
     public function __set(string $name, mixed $value)
     {
         switch ($name) {
@@ -163,9 +163,9 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
         }
     }
 
-  /**
-   * Magic getter.
-   */
+    /**
+     * Magic getter.
+     */
     public function __get(string $name): mixed
     {
         switch ($name) {
@@ -184,37 +184,37 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
         return null;
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function setDispatcher(HookDispatcher $dispatcher): void
     {
         $this->dispatcher = $dispatcher;
     }
 
-  /**
-   * Get active Drupal Driver.
-   *
-   * @return \Drupal\Driver\DriverInterface
-   */
+    /**
+     * Get active Drupal Driver.
+     *
+     * @return \Drupal\Driver\DriverInterface
+     */
     public function getDriver(?string $name = null)
     {
         return $this->getDrupal()->getDriver($name);
     }
 
-  /**
-   * Get driver's random generator.
-   */
+    /**
+     * Get driver's random generator.
+     */
     public function getRandom()
     {
         return $this->getDriver()->getRandom();
     }
 
-  /**
-   * Massage node values to match the expectations on different Drupal versions.
-   *
-   * @beforeNodeCreate
-   */
+    /**
+     * Massage node values to match the expectations on different Drupal versions.
+     *
+     * @beforeNodeCreate
+     */
     public static function alterNodeParameters(BeforeNodeCreateScope $scope): void
     {
         $node = $scope->getEntity();
@@ -239,11 +239,11 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
         }
     }
 
-  /**
-   * Remove any created nodes.
-   *
-   * @AfterScenario
-   */
+    /**
+     * Remove any created nodes.
+     *
+     * @AfterScenario
+     */
     public function cleanNodes(): void
     {
         // Remove any nodes that were created.
@@ -253,11 +253,11 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
         $this->nodes = [];
     }
 
-  /**
-   * Remove any created users.
-   *
-   * @AfterScenario
-   */
+    /**
+     * Remove any created users.
+     *
+     * @AfterScenario
+     */
     public function cleanUsers(): void
     {
         // Remove any users that were created.
@@ -276,11 +276,11 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
         }
     }
 
-  /**
-   * Remove any created terms.
-   *
-   * @AfterScenario
-   */
+    /**
+     * Remove any created terms.
+     *
+     * @AfterScenario
+     */
     public function cleanTerms(): void
     {
         // Remove any terms that were created.
@@ -290,11 +290,11 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
         $this->terms = [];
     }
 
-  /**
-   * Remove any created roles.
-   *
-   * @AfterScenario
-   */
+    /**
+     * Remove any created roles.
+     *
+     * @AfterScenario
+     */
     public function cleanRoles(): void
     {
         // Remove any roles that were created.
@@ -304,11 +304,11 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
         $this->roles = [];
     }
 
-  /**
-   * Remove any created languages.
-   *
-   * @AfterScenario
-   */
+    /**
+     * Remove any created languages.
+     *
+     * @AfterScenario
+     */
     public function cleanLanguages(): void
     {
         // Delete any languages that were created.
@@ -318,24 +318,24 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
         }
     }
 
-  /**
-   * Clear static caches.
-   *
-   * @AfterScenario @api
-   */
+    /**
+     * Clear static caches.
+     *
+     * @AfterScenario @api
+     */
     public function clearStaticCaches(): void
     {
         $this->getDriver()->clearStaticCaches();
     }
 
-  /**
-   * Dispatch scope hooks.
-   *
-   * @param string $scopeType
-   *   The entity scope to dispatch.
-   * @param \stdClass $entity
-   *   The entity.
-   */
+    /**
+     * Dispatch scope hooks.
+     *
+     * @param string $scopeType
+     *   The entity scope to dispatch.
+     * @param \stdClass $entity
+     *   The entity.
+     */
     protected function dispatchHooks(string $scopeType, \stdClass $entity)
     {
         $fullScopeClass = 'Drupal\\DrupalExtension\\Hook\\Scope\\' . $scopeType;
@@ -351,12 +351,12 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
         }
     }
 
-  /**
-   * Create a node.
-   *
-   * @return object
-   *   The created node.
-   */
+    /**
+     * Create a node.
+     *
+     * @return object
+     *   The created node.
+     */
     public function nodeCreate(\stdClass $node)
     {
         $this->dispatchHooks('BeforeNodeCreateScope', $node);
@@ -367,35 +367,35 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
         return $saved;
     }
 
-  /**
-   * Parses the field values and turns them into the format expected by Drupal.
-   *
-   * Multiple values in a single field must be separated by commas. Wrap the
-   * field value in double quotes in case it should contain a comma.
-   *
-   * Compound field properties are identified using a ':' operator, either in
-   * the column heading or in the cell. If multiple properties are present in a
-   * single cell, they must be separated using ' - ', and values should not
-   * contain ':' or ' - '.
-   *
-   * Possible formats for the values:
-   *   A
-   *   A, B, "a value, containing a comma"
-   *   A - B
-   *   x: A - y: B
-   *   A - B, C - D, "E - F"
-   *   x: A - y: B,  x: C - y: D,  "x: E - y: F"
-   *
-   * See field_handlers.feature for examples of usage.
-   *
-   * @param string $entity_type
-   *   The entity type.
-   * @param \stdClass $entity
-   *   An object containing the entity properties and fields as properties.
-   *
-   * @throws \Exception
-   *   Thrown when a field name is invalid.
-   */
+    /**
+     * Parses the field values and turns them into the format expected by Drupal.
+     *
+     * Multiple values in a single field must be separated by commas. Wrap the
+     * field value in double quotes in case it should contain a comma.
+     *
+     * Compound field properties are identified using a ':' operator, either in
+     * the column heading or in the cell. If multiple properties are present in a
+     * single cell, they must be separated using ' - ', and values should not
+     * contain ':' or ' - '.
+     *
+     * Possible formats for the values:
+     *   A
+     *   A, B, "a value, containing a comma"
+     *   A - B
+     *   x: A - y: B
+     *   A - B, C - D, "E - F"
+     *   x: A - y: B,  x: C - y: D,  "x: E - y: F"
+     *
+     * See field_handlers.feature for examples of usage.
+     *
+     * @param string $entity_type
+     *   The entity type.
+     * @param \stdClass $entity
+     *   An object containing the entity properties and fields as properties.
+     *
+     * @throws \Exception
+     *   Thrown when a field name is invalid.
+     */
     public function parseEntityFields(string $entity_type, \stdClass $entity): void
     {
         $multicolumnField = '';
@@ -470,12 +470,12 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
         }
     }
 
-  /**
-   * Create a user.
-   *
-   * @return \stdClass
-   *   The created user.
-   */
+    /**
+     * Create a user.
+     *
+     * @return \stdClass
+     *   The created user.
+     */
     public function userCreate(\stdClass $user): \stdClass
     {
         $this->dispatchHooks('BeforeUserCreateScope', $user);
@@ -486,12 +486,12 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
         return $user;
     }
 
-  /**
-   * Create a term.
-   *
-   * @return object
-   *   The created term.
-   */
+    /**
+     * Create a term.
+     *
+     * @return object
+     *   The created term.
+     */
     public function termCreate(\stdClass $term)
     {
         $this->dispatchHooks('BeforeTermCreateScope', $term);
@@ -502,16 +502,16 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
         return $saved;
     }
 
-  /**
-   * Creates a language.
-   *
-   * @param \stdClass $language
-   *   An object with the following properties:
-   *   - langcode: the langcode of the language to create.
-   *
-   * @return object|FALSE
-   *   The created language, or FALSE if the language was already created.
-   */
+    /**
+     * Creates a language.
+     *
+     * @param \stdClass $language
+     *   An object with the following properties:
+     *   - langcode: the langcode of the language to create.
+     *
+     * @return object|FALSE
+     *   The created language, or FALSE if the language was already created.
+     */
     public function languageCreate(\stdClass $language)
     {
         $this->dispatchHooks('BeforeLanguageCreateScope', $language);
@@ -523,23 +523,23 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
         return $language;
     }
 
-  /**
-   * Log-in the given user.
-   *
-   * @param \stdClass $user
-   *   The user to log in.
-   */
+    /**
+     * Log-in the given user.
+     *
+     * @param \stdClass $user
+     *   The user to log in.
+     */
     public function login(\stdClass $user): void
     {
         $this->getAuthenticationManager()->logIn($user);
     }
 
-  /**
-   * Logs the current user out.
-   *
-   * @param bool $fast
-   *   Utilize direct logout by session if available.
-   */
+    /**
+     * Logs the current user out.
+     *
+     * @param bool $fast
+     *   Utilize direct logout by session if available.
+     */
     public function logout($fast = false): void
     {
         if ($fast && $this->getAuthenticationManager() instanceof FastLogoutInterface) {
@@ -549,48 +549,48 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface
         }
     }
 
-  /**
-   * Determine if the a user is already logged in.
-   *
-   * @return boolean
-   *   Returns TRUE if a user is logged in for this session.
-   */
+    /**
+     * Determine if the a user is already logged in.
+     *
+     * @return boolean
+     *   Returns TRUE if a user is logged in for this session.
+     */
     public function loggedIn()
     {
         return $this->getAuthenticationManager()->loggedIn();
     }
 
-  /**
-   * User with a given role is already logged in.
-   *
-   * @param string $role
-   *   A single role, or multiple comma-separated roles in a single string.
-   *
-   * @return boolean
-   *   Returns TRUE if the current logged in user has this role (or roles).
-   */
+    /**
+     * User with a given role is already logged in.
+     *
+     * @param string $role
+     *   A single role, or multiple comma-separated roles in a single string.
+     *
+     * @return boolean
+     *   Returns TRUE if the current logged in user has this role (or roles).
+     */
     public function loggedInWithRole($role): bool
     {
         return $this->loggedIn() && $this->getUserManager()->currentUserHasRole($role);
     }
 
-  /**
-   * Returns the Behat context that corresponds with the given class name.
-   *
-   * This is inspired by InitializedContextEnvironment::getContext() but also
-   * returns subclasses of the given class name. This allows us to retrieve for
-   * example DrupalContext even if it is overridden in a project.
-   *
-   * @param string $class
-   *   A fully namespaced class name.
-   *
-   * @return \Behat\Behat\Context\Context|false
-   *   The requested context, or FALSE if the context is not registered.
-   *
-   * @throws \Exception
-   *   Thrown when the environment is not yet initialized, meaning that contexts
-   *   cannot yet be retrieved.
-   */
+    /**
+     * Returns the Behat context that corresponds with the given class name.
+     *
+     * This is inspired by InitializedContextEnvironment::getContext() but also
+     * returns subclasses of the given class name. This allows us to retrieve for
+     * example DrupalContext even if it is overridden in a project.
+     *
+     * @param string $class
+     *   A fully namespaced class name.
+     *
+     * @return \Behat\Behat\Context\Context|false
+     *   The requested context, or FALSE if the context is not registered.
+     *
+     * @throws \Exception
+     *   Thrown when the environment is not yet initialized, meaning that contexts
+     *   cannot yet be retrieved.
+     */
     protected function getContext($class): object|false
     {
         /** @var InitializedContextEnvironment $environment */

@@ -16,24 +16,24 @@ use Drupal\DrupalDriverManager;
 abstract class DrupalSubContextBase extends RawDrupalContext implements DrupalSubContextInterface
 {
 
-  /**
-   * Constructs a DrupalSubContextBase object.
-   *
-   * @param \Drupal\DrupalDriverManager $drupal
-   *   The Drupal driver manager.
-   */
+    /**
+     * Constructs a DrupalSubContextBase object.
+     *
+     * @param \Drupal\DrupalDriverManager $drupal
+     *   The Drupal driver manager.
+     */
     public function __construct(protected DrupalDriverManager $drupal)
     {
     }
 
-  /**
-   * Get the currently logged in user from DrupalContext.
-   *
-   * @deprecated
-   *   Deprecated in 4.x, will be removed before 5.x.
-   *   The currently logged in user is now available in all context classes.
-   *   Use $this->getUserManager()->getCurrentUser() instead.
-   */
+    /**
+     * Get the currently logged in user from DrupalContext.
+     *
+     * @deprecated
+     *   Deprecated in 4.x, will be removed before 5.x.
+     *   The currently logged in user is now available in all context classes.
+     *   Use $this->getUserManager()->getCurrentUser() instead.
+     */
     protected function getUser()
     {
         trigger_error('DrupalSubContextBase::getUser() is deprecated. Use RawDrupalContext::getUserManager()->getCurrentUser() instead.', E_USER_DEPRECATED);

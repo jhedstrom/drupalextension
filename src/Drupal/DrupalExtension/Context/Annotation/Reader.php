@@ -24,9 +24,9 @@ class Reader implements AnnotationReader
 
     private static string $regex = '/^\@(beforenodecreate|afternodecreate|beforetermcreate|aftertermcreate|beforeusercreate|afterusercreate)(?:\s+(.+))?$/i';
 
-  /**
-   * @var string[]
-   */
+    /**
+     * @var string[]
+     */
     private static array $classes = [
         'afternodecreate' => AfterNodeCreate::class,
         'aftertermcreate' => AfterTermCreate::class,
@@ -36,9 +36,9 @@ class Reader implements AnnotationReader
         'beforeusercreate' => BeforeUserCreate::class,
     ];
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function readCallee(mixed $contextClass, ReflectionMethod $method, mixed $docLine, mixed $description)
     {
 

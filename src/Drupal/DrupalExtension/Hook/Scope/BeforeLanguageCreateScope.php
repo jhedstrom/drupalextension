@@ -14,11 +14,11 @@ namespace Drupal\DrupalExtension\Hook\Scope;
 final class BeforeLanguageCreateScope extends LanguageScope
 {
 
-  /**
-   * Returns the scope name.
-   *
-   * @return string
-   */
+    /**
+     * Returns the scope name.
+     *
+     * @return string
+     */
     public function getName()
     {
         return self::BEFORE;

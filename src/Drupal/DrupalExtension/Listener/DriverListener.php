@@ -33,9 +33,9 @@ class DriverListener implements EventSubscriberInterface
     ) {
     }
 
-  /**
-   * {@inheritdoc}
-   */
+    /**
+     * {@inheritdoc}
+     */
     public static function getSubscribedEvents()
     {
         return [
@@ -44,15 +44,15 @@ class DriverListener implements EventSubscriberInterface
         ];
     }
 
-  /**
-   * Configures default Drupal driver to use before each scenario or outline.
-   *
-   * `@api` tagged scenarios will get the `api_driver` as the default driver.
-   *
-   * Other scenarios get the `default_driver` as the default driver.
-   *
-   * @param \Behat\Behat\EventDispatcher\Event\ScenarioTested|\Behat\Behat\EventDispatcher\Event\OutlineTested $event
-   */
+    /**
+     * Configures default Drupal driver to use before each scenario or outline.
+     *
+     * `@api` tagged scenarios will get the `api_driver` as the default driver.
+     *
+     * Other scenarios get the `default_driver` as the default driver.
+     *
+     * @param \Behat\Behat\EventDispatcher\Event\ScenarioTested|\Behat\Behat\EventDispatcher\Event\OutlineTested $event
+     */
     public function prepareDefaultDrupalDriver(LifecycleEvent $event): void
     {
         $feature = $event->getFeature();

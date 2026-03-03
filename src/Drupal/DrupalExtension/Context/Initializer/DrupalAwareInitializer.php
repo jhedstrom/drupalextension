@@ -19,9 +19,9 @@ class DrupalAwareInitializer implements ContextInitializer
     {
     }
 
-  /**
-   * {@inheritdocs}
-   */
+    /**
+     * {@inheritdocs}
+     */
     public function initializeContext(Context $context): void
     {
 
