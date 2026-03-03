@@ -11,7 +11,7 @@ class ReaderSpec extends ObjectBehavior
 {
     function let(DrupalDriverManager $drupal)
     {
-        $parameters = array();
+        $parameters = [];
         $this->beConstructedWith($drupal, $parameters);
     }
 
@@ -19,5 +19,4 @@ class ReaderSpec extends ObjectBehavior
     {
         $this->shouldHaveType('Drupal\DrupalExtension\Context\Environment\Reader\Reader');
     }
-
 }

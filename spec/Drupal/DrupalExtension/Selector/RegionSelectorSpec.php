@@ -10,9 +10,9 @@ class RegionSelectorSpec extends ObjectBehavior
 {
     function let(CssSelector $selector)
     {
-        $regionMap = array(
+        $regionMap = [
             'Left sidebar' => '#left-sidebar',
-        );
+        ];
         $selector->translateToXPath('#left-sidebar')->willReturn('some xpath');
 
         $this->beConstructedWith($selector, $regionMap);

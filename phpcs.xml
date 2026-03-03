@@ -7,11 +7,11 @@
     <arg value="sp"/>
 
     <file>./src</file>
+    <file>./spec</file>
 
     <exclude-pattern>^/doc/*</exclude-pattern>
     <exclude-pattern>^/build/*</exclude-pattern>
     <exclude-pattern>^/reports/*</exclude-pattern>
-    <exclude-pattern>^/spec/*</exclude-pattern>
     <exclude-pattern>^/tests/*</exclude-pattern>
     <exclude-pattern>^/vendor/*</exclude-pattern>
     <exclude-pattern>^/README.md</exclude-pattern>
@@ -19,6 +19,14 @@
     <rule ref="PSR2">
         <!-- @todo Fix long line length issues -->
         <exclude name="Generic.Files.LineLength.TooLong" />
+    </rule>
+
+    <!-- PHPSpec uses snake_case methods without visibility keywords. -->
+    <rule ref="PSR1.Methods.CamelCapsMethodName.NotCamelCaps">
+        <exclude-pattern>*/spec/*</exclude-pattern>
+    </rule>
+    <rule ref="Squiz.Scope.MethodScope">
+        <exclude-pattern>*/spec/*</exclude-pattern>
     </rule>
 
     <rule ref="Generic.Arrays.DisallowLongArraySyntax" />

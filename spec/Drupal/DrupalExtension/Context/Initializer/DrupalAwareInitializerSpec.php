@@ -29,7 +29,7 @@ class DrupalAwareInitializerSpec extends ObjectBehavior
         $repository = new HookRepository($manager);
         // Cannot mock this class as it is marked as final.
         $this->dispatcher = new HookDispatcher($repository, $callCenter);
-        $this->beConstructedWith($drupal, array(), $this->dispatcher, $authenticationManager, $userManager);
+        $this->beConstructedWith($drupal, [], $this->dispatcher, $authenticationManager, $userManager);
     }
 
     function it_is_a_context_initializer()
@@ -46,7 +46,7 @@ class DrupalAwareInitializerSpec extends ObjectBehavior
     {
         $context->setDispatcher($this->dispatcher)->shouldBeCAlled();
         $context->setDrupal($drupal)->shouldBeCAlled();
-        $context->setDrupalParameters(array())->shouldBeCAlled();
+        $context->setDrupalParameters([])->shouldBeCAlled();
         $context->setAuthenticationManager($authenticationManager)->shouldBeCalled();
         $context->setUserManager($userManager)->shouldBeCalled();
         $this->initializeContext($context);
