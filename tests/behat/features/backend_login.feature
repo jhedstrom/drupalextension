@@ -1,8 +1,8 @@
 @api
 Feature: Backend login/logout
-  In order to prove that backend authentication is working
   As a developer
-  I need to utilize the backend login functionality of the authentication manager
+  I want to log in and log out via the backend driver
+  So that I can test authenticated functionality without a browser session
 
   Scenario: Log a user in on the backend
     Given I am logged in as a user with the "authenticated user" role

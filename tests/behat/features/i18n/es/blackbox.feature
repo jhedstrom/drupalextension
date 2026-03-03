@@ -1,12 +1,9 @@
 # language: es
 @blackbox
 Característica: Test DrupalContext
-  # Esta característica es copia traducida de la "feature" correspondiente
-  # para demostrar que los correspondientes pasos están bien traducidos
-  # al español
-  Para probar el adecuado funcionamiento del contexto Drupal usando el driver "blackbox"
   Como desarrollador
-  Necesito usar los pasos definidos en este contexto
+  Quiero interactuar con regiones y elementos de la página usando el driver blackbox
+  Para poder probar el comportamiento de la interfaz sin acceso directo a la API de Drupal
 
   Escenario: Prueba la capacidad de encontrar un encabezado en una zona
     Dado estoy en la página de inicio

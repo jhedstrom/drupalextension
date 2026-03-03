@@ -1,8 +1,8 @@
 @api @smoke
 Feature: Screenshot
-  In order to capture test state for debugging
   As a developer
-  I need to be able to save screenshots during tests
+  I want to capture screenshots during test execution
+  So that I can visually debug test failures
 
   Scenario: Save screenshot
     Given I am logged in as a user with the "administer site configuration" permission

@@ -1,7 +1,8 @@
 @api
 Feature: Ensure that messages are working properly on local installs
-  In order to be sure that Drupal Big Pipe enabled can be tested
-  Messages are tested against a local installation
+  As a developer
+  I want to verify Drupal status messages in tests
+  So that I can assert error and confirmation messages appear correctly
 
   Scenario: Non-JS messages
     Given I am on "/user/login"

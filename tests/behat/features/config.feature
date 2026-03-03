@@ -1,8 +1,8 @@
 @api
 Feature: ConfigContext
-  In order to prove the Config context is working properly
   As a developer
-  I need to use the step definitions of this context
+  I want to manage Drupal configuration in test scenarios
+  So that I can verify site settings changes are applied correctly
 
   Background: User is an administrator.
     Given I am logged in as a user with the "administer site configuration" permission

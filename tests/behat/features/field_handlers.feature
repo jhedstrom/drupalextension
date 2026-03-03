@@ -1,8 +1,8 @@
 @api
 Feature: FieldHandlers
-  In order to prove field handling is working properly
   As a developer
-  I need to use the step definitions of this context
+  I want to handle complex field types when creating entities
+  So that I can test content with references, dates, links, and addresses
 
   # Drupal scenarios assume a "standard" install of Drupal and require the
   # feature "fixtures/drupalN/modules/behat_test" to enabled on the site.

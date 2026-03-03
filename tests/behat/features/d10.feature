@@ -1,8 +1,8 @@
 @api
 Feature: DrupalContext
-  In order to prove the Drupal context is working properly
   As a developer
-  I need to use the step definitions of this context
+  I want to use Drupal-specific step definitions
+  So that I can test table row links, user roles, and region headings
 
   @d10
   @https

@@ -181,7 +181,7 @@ class FeatureContext extends RawDrupalContext {
    * contexts.
    *
    * See the scenario 'Logging in as a user without an e-mail address' in
-   * d8.feature.
+   * d10.feature.
    *
    * @Given I am logged in as a user with name :name and password :password
    */

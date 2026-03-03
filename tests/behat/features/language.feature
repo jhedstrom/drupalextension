@@ -1,8 +1,8 @@
 @api
 Feature: Language support
-  In order to demonstrate the language integration
-  As a developer for the Behat Extension
-  I need to provide test cases for the language support
+  As a developer
+  I want to enable and verify multiple languages
+  So that I can test multilingual site functionality
 
   # These test scenarios assume to have a clean installation of the "standard"
   # profile and that the "behat_test" module from the "fixtures/" folder is
