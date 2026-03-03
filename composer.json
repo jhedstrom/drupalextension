@@ -47,9 +47,9 @@
         "ergebnis/composer-normalize": "^2.50",
         "grasmash/yaml-cli": "^3.2.1",
         "guzzlehttp/guzzle": "^7.8.2",
-        "justinrainbow/json-schema": "^5.3",
         "guzzlehttp/promises": "^2.0.3",
         "guzzlehttp/psr7": "^2.6.3",
+        "justinrainbow/json-schema": "^5.3",
         "league/container": "^4.2",
         "masterminds/html5": "^2.8",
         "php-parallel-lint/php-parallel-lint": "^1.4",
@@ -103,12 +103,32 @@
         }
     },
     "scripts": {
-        "test": [
-            "composer validate --no-interaction",
+        "lint": [
             "parallel-lint src spec features fixtures",
             "phpcs --standard=./phpcs-ruleset.xml -p",
             "phpcs --standard=./phpcs-drupal-ruleset.xml -p",
-            "gherkinlint lint features",
+            "gherkinlint lint features"
+        ],
+        "lint-fix": [
+            "composer normalize",
+            "phpcbf --standard=./phpcs-ruleset.xml -p || true",
+            "phpcbf --standard=./phpcs-drupal-ruleset.xml -p || true"
+        ],
+        "test-bdd": [
+            "@test-bdd-blackbox",
+            "@test-bdd-drupal10",
+            "@test-bdd-drupal-https"
+        ],
+        "test-bdd-blackbox": [
+            "behat -fprogress --strict"
+        ],
+        "test-bdd-drupal-https": [
+            "behat -fprogress --profile=drupal_https --strict"
+        ],
+        "test-bdd-drupal10": [
+            "behat -fprogress --profile=drupal10 --strict"
+        ],
+        "test-phpspec": [
             "phpspec run -f pretty --no-interaction"
         ]
     }

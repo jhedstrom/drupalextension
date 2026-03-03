@@ -9,6 +9,34 @@ on:
       - main
 
 jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+
+    env:
+      PHP_VERSION: '8.4'
+      DRUPAL_VERSION: '11'
+      DOCKER_USER_ID: '1001'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Start Docker containers
+        run: docker compose up -d
+
+      - name: Install Composer dependencies
+        run: docker compose exec -T php composer install
+
+      - name: Validate composer.json
+        run: docker compose exec -T php composer validate --no-interaction
+
+      - name: Check composer.json is normalized
+        run: docker compose exec -T php composer normalize --dry-run
+
+      - name: Run linting
+        run: docker compose exec -T php composer lint
+
   tests:
     name: PHP ${{ matrix.php_version }}, Drupal ${{ matrix.drupal_version }}, Deps ${{ matrix.deps }}
     runs-on: ubuntu-latest
@@ -71,8 +99,8 @@ jobs:
             docker compose exec -T php composer install
           fi
 
-      - name: Check composer.json is normalized
-        run: docker compose exec -T php composer normalize --dry-run
+      - name: Run PHPSpec tests
+        run: docker compose exec -T php composer test-phpspec
 
       - name: Provision Drupal site
         run: docker compose exec -T php ./vendor/bin/drush --yes --root=drupal site-install --db-url=mysql://drupal:drupal@db/drupal --debug
@@ -88,14 +116,5 @@ jobs:
           docker compose exec -u ${DOCKER_USER_ID} -T php vendor/bin/drush cset automated_cron.settings interval 0
           docker compose exec -u ${DOCKER_USER_ID} -T php vendor/bin/drush cset user.settings register visitors
 
-      - name: Run Composer tests
-        run: docker compose exec -T php composer test
-
-      - name: Run Behat blackbox tests
-        run: docker compose exec -T php vendor/bin/behat -fprogress --strict
-
-      - name: Run Behat Drupal tests
-        run: docker compose exec -T php vendor/bin/behat -fprogress --profile=drupal10 --strict
-
-      - name: Run Behat HTTPS tests
-        run: docker compose exec -T php vendor/bin/behat -fprogress --profile=drupal_https --strict
+      - name: Run Behat tests
+        run: docker compose exec -T php composer test-bdd
