@@ -27,7 +27,7 @@ class FeatureContext extends RawDrupalContext {
    */
   public static function alterNodeParameters(BeforeNodeCreateScope $scope) {
     parent::alterNodeParameters($scope);
-    // @see `features/api.feature`
+    // @see `tests/behat/features/api.feature`
     // Change 'published on' to the expected 'created'.
     $node = $scope->getEntity();
     if (isset($node->{"published on"})) {
@@ -42,7 +42,7 @@ class FeatureContext extends RawDrupalContext {
    * @beforeTermCreate
    */
   public static function alterTermParameters(EntityScope $scope) {
-    // @see `features/api.feature`
+    // @see `tests/behat/features/api.feature`
     // Change 'Label' to expected 'name'.
     $term = $scope->getEntity();
     if (isset($term->{'Label'})) {
@@ -57,7 +57,7 @@ class FeatureContext extends RawDrupalContext {
    * @beforeUserCreate
    */
   public static function alterUserParameters(EntityScope $scope) {
-    // @see `features/api.feature`
+    // @see `tests/behat/features/api.feature`
     // Concatenate 'First name' and 'Last name' to form user name.
     $user = $scope->getEntity();
     if (isset($user->{"First name"}) && isset($user->{"Last name"})) {

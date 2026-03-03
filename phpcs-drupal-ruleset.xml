@@ -3,8 +3,10 @@
 <!-- See https://github.com/squizlabs/PHP_CodeSniffer/wiki/Annotated-ruleset.xml -->
 <ruleset name="drupal/drupal-extension-fixtures">
     <description>Drupal Behat Extension coding standards for packaged Drupal code</description>
+    <arg name="colors"/>
+    <arg value="sp"/>
 
-    <file>./fixtures</file>
+    <file>./tests/behat/fixtures/drupal</file>
 
     <exclude-pattern>^/doc/*</exclude-pattern>
     <exclude-pattern>^/drupal/*</exclude-pattern>
