@@ -1,7 +1,6 @@
 *.phar
 *.tgz
 /.gitattributes
-/behat.yml
 /composer.lock
 /drupal*
 /recipes
