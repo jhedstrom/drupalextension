@@ -1,8 +1,8 @@
 @api
 Feature: DrupalContext general testing
-  In order to prove the Drupal context is working properly
   As a developer
-  I need to use the step definitions of this context
+  I want to create and manage Drupal entities through the API driver
+  So that I can test content, users, and taxonomy without browser interaction
 
   # These scenarios assume a "standard" install of Drupal.
 

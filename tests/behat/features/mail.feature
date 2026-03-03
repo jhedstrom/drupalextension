@@ -1,8 +1,8 @@
 @api
 Feature: MailContext
-  In order to prove the Mail context is working properly
   As a developer
-  I need to use the step definitions of this context
+  I want to send and inspect emails in test scenarios
+  So that I can verify mail recipients, subjects, and content
 
   Scenario: Mail is sent
     When Drupal sends an email:

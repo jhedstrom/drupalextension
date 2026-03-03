@@ -1,12 +1,9 @@
 # language: es
 @api
 Característica: DrupalContext
-  # Esta característica es copia traducida de la "feature" correspondiente
-  # para demostrar que los correspondientes pasos están bien traducidos
-  # al español
-  Para demostrar que el Contexto Drupal funciona adecuadamente
   Como desarrollador
-  Necesito usar los pasos definidos para éste Contexto
+  Quiero usar definiciones de pasos específicas de Drupal
+  Para poder probar enlaces en filas de tablas, roles de usuario y encabezados de región
 
   Escenario: Crear y conectarte como usuario
     Dado que estoy conectado como usuario con rol "authenticated user"

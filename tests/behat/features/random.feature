@@ -1,9 +1,9 @@
 @api
 @random
 Feature: RandomContext functionality
-  In order to prove the RandomContext is functional at transforming variables
   As a developer
-  I need to use random variables in scenarios
+  I want to generate random values in test scenarios
+  So that I can avoid data collisions between test runs
 
   # This will fail on the second scenario if random transforms are not functional.
   Scenario: Create a first user

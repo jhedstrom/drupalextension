@@ -1,8 +1,8 @@
 @skipped
 Feature: Ability to find Drupal sub-contexts
-  In order to facilitate maintainable step-definitions
-  As a feature developer
-  I need to be able to define step-definitions within corresponding Drupal modules or projects
+  As a developer
+  I want to discover and load custom sub-contexts
+  So that I can extend Behat with project-specific step definitions
 
   Background:
     Given a file named "foo.behat.inc" with:

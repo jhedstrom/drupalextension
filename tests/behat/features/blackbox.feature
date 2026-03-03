@@ -1,8 +1,8 @@
 @blackbox
 Feature: Test DrupalContext
-  In order to prove the Drupal context using the blackbox driver is working properly
   As a developer
-  I need to use the step definitions of this context
+  I want to interact with page regions and elements using the blackbox driver
+  So that I can test UI behaviour without direct Drupal API access
 
   Scenario: Test the ability to find a heading in a region
     Given I am on the homepage
