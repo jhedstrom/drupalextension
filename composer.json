@@ -1,88 +1,88 @@
 {
-  "name": "drupal/drupal-extension",
-  "description": "Drupal extension for Behat",
-  "license": "GPL-2.0-or-later",
-  "type": "behat-extension",
-  "keywords": [
-    "drupal",
-    "web",
-    "test"
-  ],
-  "authors": [
-    {
-      "name": "Jonathan Hedstrom",
-      "email": "jhedstrom@gmail.com"
+    "name": "drupal/drupal-extension",
+    "description": "Drupal extension for Behat",
+    "license": "GPL-2.0-or-later",
+    "type": "behat-extension",
+    "keywords": [
+        "drupal",
+        "web",
+        "test"
+    ],
+    "authors": [
+        {
+            "name": "Jonathan Hedstrom",
+            "email": "jhedstrom@gmail.com"
+        },
+        {
+            "name": "Melissa Anderson",
+            "homepage": "https://github.com/eliza411"
+        },
+        {
+            "name": "Pieter Frenssen",
+            "homepage": "https://github.com/pfrenssen"
+        }
+    ],
+    "homepage": "http://drupal.org/project/drupalextension",
+    "require": {
+        "behat/behat": "^3.2",
+        "behat/mink-browserkit-driver": "^2.1.0",
+        "drupal/drupal-driver": "^2.2.1 || dev-master",
+        "friends-of-behat/mink-extension": "^2.7.1",
+        "lullabot/mink-selenium2-driver": "^1.7",
+        "symfony/http-client": "^4.4 || ^5 || ^6 || ^7",
+        "webflo/drupal-finder": "^1.2"
     },
-    {
-      "name": "Melissa Anderson",
-      "homepage": "https://github.com/eliza411"
+    "require-dev": {
+        "composer/installers": "^2",
+        "drupal/coder": "^8.3",
+        "drupal/core": "^10",
+        "drupal/core-composer-scaffold": "^10",
+        "drush/drush": "^11.6.0 || ^12.4 || ^13",
+        "ergebnis/composer-normalize": "^2.48",
+        "php-parallel-lint/php-parallel-lint": "^1.3",
+        "phpspec/phpspec": "^4.0 || ^6.0 || ^7.0 || ^8.0"
     },
-    {
-      "name": "Pieter Frenssen",
-      "homepage": "https://github.com/pfrenssen"
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "autoload": {
+        "psr-0": {
+            "Drupal\\Drupal": "src/",
+            "Drupal\\DrupalExtension": "src/",
+            "Drupal\\Exception": "src/",
+            "Drupal\\MinkExtension": "src/"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "composer/installers": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "drupal/core-composer-scaffold": true,
+            "ergebnis/composer-normalize": true
+        },
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "5.1.x-dev"
+        },
+        "drupal-scaffold": {
+            "locations": {
+                "web-root": "drupal/"
+            }
+        },
+        "installer-paths": {
+            "drupal/core": [
+                "type:drupal-core"
+            ]
+        }
+    },
+    "scripts": {
+        "test": [
+            "composer validate --no-interaction",
+            "parallel-lint src spec features fixtures",
+            "phpcs --standard=./phpcs-ruleset.xml -p",
+            "phpcs --standard=./phpcs-drupal-ruleset.xml -p",
+            "phpspec run -f pretty --no-interaction"
+        ]
     }
-  ],
-  "homepage": "http://drupal.org/project/drupalextension",
-  "require": {
-    "behat/behat": "^3.2",
-    "behat/mink-browserkit-driver": "^2.1.0",
-    "drupal/drupal-driver": "^2.2.1 || dev-master",
-    "friends-of-behat/mink-extension": "^2.7.1",
-    "lullabot/mink-selenium2-driver": "^1.7",
-    "symfony/http-client": "^4.4 || ^5 || ^6 || ^7",
-    "webflo/drupal-finder": "^1.2"
-  },
-  "require-dev": {
-    "composer/installers": "^2",
-    "drupal/coder": "^8.3",
-    "drupal/core": "^10",
-    "drupal/core-composer-scaffold": "^10",
-    "drush/drush": "^11.6.0 || ^12.4 || ^13",
-    "ergebnis/composer-normalize": "^2.48",
-    "php-parallel-lint/php-parallel-lint": "^1.3",
-    "phpspec/phpspec": "^4.0 || ^6.0 || ^7.0 || ^8.0"
-  },
-  "minimum-stability": "dev",
-  "prefer-stable": true,
-  "autoload": {
-    "psr-0": {
-      "Drupal\\Drupal": "src/",
-      "Drupal\\DrupalExtension": "src/",
-      "Drupal\\Exception": "src/",
-      "Drupal\\MinkExtension": "src/"
-    }
-  },
-  "config": {
-    "allow-plugins": {
-      "composer/installers": true,
-      "dealerdirect/phpcodesniffer-composer-installer": true,
-      "drupal/core-composer-scaffold": true,
-      "ergebnis/composer-normalize": true
-    },
-    "sort-packages": true
-  },
-  "extra": {
-    "branch-alias": {
-      "dev-master": "5.1.x-dev"
-    },
-    "drupal-scaffold": {
-      "locations": {
-        "web-root": "drupal/"
-      }
-    },
-    "installer-paths": {
-      "drupal/core": [
-        "type:drupal-core"
-      ]
-    }
-  },
-  "scripts": {
-    "test": [
-      "composer validate --no-interaction",
-      "parallel-lint src spec features fixtures",
-      "phpcs --standard=./phpcs-ruleset.xml -p",
-      "phpcs --standard=./phpcs-drupal-ruleset.xml -p",
-      "phpspec run -f pretty --no-interaction"
-    ]
-  }
 }

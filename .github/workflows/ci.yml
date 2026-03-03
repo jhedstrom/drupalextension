@@ -49,6 +49,9 @@ jobs:
       - name: Install Composer dependencies
         run: docker compose exec -T php composer install
 
+      - name: Check composer.json is normalized
+        run: docker compose exec -T php composer normalize --dry-run
+
       - name: Provision Drupal site
         run: docker compose exec -T php ./vendor/bin/drush --yes --root=drupal site-install --db-url=mysql://drupal:drupal@db/drupal --debug
 
