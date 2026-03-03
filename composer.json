@@ -105,14 +105,14 @@
     "scripts": {
         "lint": [
             "parallel-lint src spec tests",
-            "phpcs --standard=./phpcs-ruleset.xml -p",
-            "phpcs --standard=./phpcs-drupal-ruleset.xml -p",
+            "phpcs --standard=./phpcs.xml -p",
+            "phpcs --standard=./phpcs-drupal.xml -p",
             "gherkinlint lint tests/behat/features"
         ],
         "lint-fix": [
             "composer normalize",
-            "phpcbf --standard=./phpcs-ruleset.xml -p || true",
-            "phpcbf --standard=./phpcs-drupal-ruleset.xml -p || true"
+            "phpcbf --standard=./phpcs.xml -p || true",
+            "phpcbf --standard=./phpcs-drupal.xml -p || true"
         ],
         "test-bdd": [
             "@test-bdd-blackbox",
