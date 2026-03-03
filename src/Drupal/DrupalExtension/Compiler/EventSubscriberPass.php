@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\DrupalExtension\Compiler;
 
 use Symfony\Component\DependencyInjection\Reference;
@@ -12,11 +14,9 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 class EventSubscriberPass implements CompilerPassInterface
 {
   /**
-   * Processes container.
-   *
-   * @param ContainerBuilder $container
-   */
-    public function process(ContainerBuilder $container)
+     * Processes container.
+     */
+    public function process(ContainerBuilder $container): void
     {
         if (!$container->hasDefinition('drupal.event_dispatcher')) {
             return;

@@ -3,5 +3,6 @@
 /.logs
 /build
 /composer.lock
+/patches.lock.json
 /recipes
 /vendor

@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * @file
  * Entity scope.
@@ -26,7 +29,7 @@ interface EntityScope extends HookScope
   /**
    * Returns scope entity.
    *
-   * @return StepNode
+   * @return \stdClass
    */
     public function getEntity();
 }

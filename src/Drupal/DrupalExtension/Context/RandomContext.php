@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\DrupalExtension\Context;
 
 use Behat\Behat\Hook\Scope\ScenarioScope;
@@ -32,7 +34,7 @@ class RandomContext extends RawDrupalContext
      *
      * @Transform #([^<]*\<\?.*\>[^>]*)#
      */
-    public function transformVariables($message)
+    public function transformVariables(string $message): string|array|null
     {
         $patterns = [];
         $replacements = [];
@@ -42,9 +44,8 @@ class RandomContext extends RawDrupalContext
             $replacements[] = $this->values[$variable];
             $patterns[] = '#' . preg_quote($variable) . '#';
         }
-        $message = preg_replace($patterns, $replacements, $message);
 
-        return $message;
+        return preg_replace($patterns, $replacements, $message);
     }
 
     /**
@@ -52,11 +53,11 @@ class RandomContext extends RawDrupalContext
      *
      * @Transform table:*
      */
-    public function transformTable(TableNode $table)
+    public function transformTable(TableNode $table): TableNode
     {
         $rows = [];
         foreach ($table->getRows() as $row) {
-            $rows[] = array_map([$this, 'transformVariables'], $row);
+            $rows[] = array_map($this->transformVariables(...), $row);
         }
         return new TableNode($rows);
     }
@@ -66,7 +67,7 @@ class RandomContext extends RawDrupalContext
      *
      * @BeforeScenario
      */
-    public function beforeScenarioSetVariables(ScenarioScope $scope)
+    public function beforeScenarioSetVariables(ScenarioScope $scope): void
     {
         $steps = [];
         if ($scope->getFeature()->hasBackground()) {
@@ -75,18 +76,18 @@ class RandomContext extends RawDrupalContext
         $steps = array_merge($steps, $scope->getScenario()->getSteps());
         foreach ($steps as $step) {
             preg_match_all(static::VARIABLE_REGEX, $step->getText(), $matches);
-            $variables_found = $matches[0];
+            $variablesFound = $matches[0];
             // Find variables in are TableNodes or PyStringNodes.
-            $step_argument = $step->getArguments();
-            if (!empty($step_argument) && $step_argument[0] instanceof TableNode) {
-                preg_match_all(static::VARIABLE_REGEX, $step_argument[0]->getTableAsString(), $matches);
-                $variables_found = array_filter(array_merge($variables_found, $matches[0]));
+            $stepArgument = $step->getArguments();
+            if (!empty($stepArgument) && $stepArgument[0] instanceof TableNode) {
+                preg_match_all(static::VARIABLE_REGEX, $stepArgument[0]->getTableAsString(), $matches);
+                $variablesFound = array_filter(array_merge($variablesFound, $matches[0]));
             }
-            foreach ($variables_found as $variable_name) {
-                if (!isset($this->values[$variable_name])) {
+            foreach ($variablesFound as $variableFound) {
+                if (!isset($this->values[$variableFound])) {
                     $value = $this->getDriver()->getRandom()->name(10);
                     // Value forced to lowercase to ensure it is machine-readable.
-                    $this->values[$variable_name] = strtolower($value);
+                    $this->values[$variableFound] = strtolower((string) $value);
                 }
             }
         }
@@ -97,7 +98,7 @@ class RandomContext extends RawDrupalContext
      *
      * @AfterScenario
      */
-    public function afterScenarioResetVariables(ScenarioScope $scope)
+    public function afterScenarioResetVariables(ScenarioScope $scope): void
     {
         $this->values = [];
     }

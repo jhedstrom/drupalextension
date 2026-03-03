@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\MinkExtension\ServiceContainer;
 
 use Behat\MinkExtension\ServiceContainer\MinkExtension as BaseMinkExtension;
@@ -28,7 +30,7 @@ class MinkExtension extends BaseMinkExtension
     /**
      * {@inheritdoc}
      */
-    public function configure(ArrayNodeDefinition $builder)
+    public function configure(ArrayNodeDefinition $builder): void
     {
         parent::configure($builder);
 

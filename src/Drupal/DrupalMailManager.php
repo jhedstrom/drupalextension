@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal;
 
 use Drupal\Driver\DriverInterface;
@@ -14,22 +16,18 @@ use Drupal\Driver\DriverInterface;
 class DrupalMailManager implements DrupalMailManagerInterface
 {
 
-  /**
-   * The active Drupal driver.
-   *
-   * @var \Drupal\Driver\DriverInterface
-   */
-    protected $driver;
-  
-    public function __construct(DriverInterface $driver)
-    {
-        $this->driver = $driver;
+    public function __construct(
+        /**
+         * The active Drupal driver.
+         */
+        protected DriverInterface $driver
+    ) {
     }
 
   /**
    * {@inheritdoc}
    */
-    public function startCollectingMail()
+    public function startCollectingMail(): void
     {
         $this->driver->startCollectingMail();
         $this->clearMail();
@@ -38,7 +36,7 @@ class DrupalMailManager implements DrupalMailManagerInterface
   /**
    * {@inheritdoc}
    */
-    public function stopCollectingMail()
+    public function stopCollectingMail(): void
     {
         $this->driver->stopCollectingMail();
     }
@@ -46,7 +44,7 @@ class DrupalMailManager implements DrupalMailManagerInterface
   /**
    * {@inheritdoc}
    */
-    public function enableMail()
+    public function enableMail(): void
     {
         $this->stopCollectingMail();
     }
@@ -54,7 +52,7 @@ class DrupalMailManager implements DrupalMailManagerInterface
   /**
    * {@inheritdoc}
    */
-    public function disableMail()
+    public function disableMail(): void
     {
         $this->startCollectingMail();
     }
@@ -70,7 +68,7 @@ class DrupalMailManager implements DrupalMailManagerInterface
   /**
    * {@inheritdoc}
    */
-    public function clearMail($store = 'default')
+    public function clearMail($store = 'default'): void
     {
         $this->driver->clearMail();
     }

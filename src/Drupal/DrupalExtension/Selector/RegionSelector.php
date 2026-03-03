@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\DrupalExtension\Selector;
 
 use Behat\Mink\Selector\SelectorInterface;
@@ -10,14 +12,8 @@ use Behat\Mink\Selector\CssSelector;
  */
 class RegionSelector implements SelectorInterface
 {
-    private $cssSelector;
-
-    private $regionMap;
-
-    public function __construct(CssSelector $cssSelector, array $regionMap)
+    public function __construct(private readonly CssSelector $cssSelector, private array $regionMap)
     {
-        $this->cssSelector = $cssSelector;
-        $this->regionMap = $regionMap;
     }
 
   /**

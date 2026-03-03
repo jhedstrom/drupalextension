@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\DrupalExtension\Context;
 
 use Behat\MinkExtension\Context\RawMinkContext;
@@ -23,7 +25,7 @@ class MarkupContext extends RawMinkContext
    *
    * @todo this should be a trait when PHP 5.3 support is dropped.
    */
-    public function getRegion($region)
+    public function getRegion(string $region)
     {
         $session = $this->getSession();
         $regionObj = $session->getPage()->find('region', $region);
@@ -48,7 +50,7 @@ class MarkupContext extends RawMinkContext
    * @throws \Exception
    *   If region or button within it cannot be found.
    */
-    public function assertRegionButton($button, $region)
+    public function assertRegionButton(string $button, string $region): void
     {
         $regionObj = $this->getRegion($region);
 
@@ -72,7 +74,7 @@ class MarkupContext extends RawMinkContext
      * @throws \Exception
      *   If region is not found or the button is found within the region.
      */
-    public function assertNotRegionButton($button, $region)
+    public function assertNotRegionButton(string $button, string $region): void
     {
         $regionObj = $this->getRegion($region);
 
@@ -85,7 +87,7 @@ class MarkupContext extends RawMinkContext
   /**
    * @Then I( should) see the :tag element in the :region( region)
    */
-    public function assertRegionElement($tag, $region)
+    public function assertRegionElement(string $tag, string $region): void
     {
         $regionObj = $this->getRegion($region);
         $elements = $regionObj->findAll('css', $tag);
@@ -98,7 +100,7 @@ class MarkupContext extends RawMinkContext
   /**
    * @Then I( should) not see the :tag element in the :region( region)
    */
-    public function assertNotRegionElement($tag, $region)
+    public function assertNotRegionElement(string $tag, string $region): void
     {
         $regionObj = $this->getRegion($region);
         $result = $regionObj->findAll('css', $tag);
@@ -110,7 +112,7 @@ class MarkupContext extends RawMinkContext
   /**
    * @Then I( should) see :text in the :tag element in the :region( region)
    */
-    public function assertRegionElementText($text, $tag, $region)
+    public function assertRegionElementText(string $text, string $tag, string $region): void
     {
         $regionObj = $this->getRegion($region);
         $results = $regionObj->findAll('css', $tag);
@@ -127,7 +129,7 @@ class MarkupContext extends RawMinkContext
   /**
    * @Then I( should) not see :text in the :tag element in the :region( region)
    */
-    public function assertNotRegionElementText($text, $tag, $region)
+    public function assertNotRegionElementText(string $text, string $tag, string $region): void
     {
         $regionObj = $this->getRegion($region);
         $results = $regionObj->findAll('css', $tag);
@@ -143,7 +145,7 @@ class MarkupContext extends RawMinkContext
   /**
    * @Then I( should) see the :tag element with the :attribute attribute set to :value in the :region( region)
    */
-    public function assertRegionElementAttribute($tag, $attribute, $value, $region)
+    public function assertRegionElementAttribute(string $tag, string $attribute, string $value, string $region): void
     {
         $regionObj = $this->getRegion($region);
         $elements = $regionObj->findAll('css', $tag);
@@ -157,7 +159,7 @@ class MarkupContext extends RawMinkContext
                 $attr = $element->getAttribute($attribute);
                 if (!empty($attr)) {
                     $attrfound = true;
-                    if (strpos($attr, "$value") !== false) {
+                    if (str_contains($attr, $value)) {
                         $found = true;
                         break;
                     }
@@ -166,9 +168,8 @@ class MarkupContext extends RawMinkContext
             if (!$found) {
                 if (!$attrfound) {
                     throw new \Exception(sprintf('The "%s" attribute is not present on the element "%s" in the "%s" region on the page %s', $attribute, $tag, $region, $this->getSession()->getCurrentUrl()));
-                } else {
-                    throw new \Exception(sprintf('The "%s" attribute does not equal "%s" on the element "%s" in the "%s" region on the page %s', $attribute, $value, $tag, $region, $this->getSession()->getCurrentUrl()));
                 }
+                throw new \Exception(sprintf('The "%s" attribute does not equal "%s" on the element "%s" in the "%s" region on the page %s', $attribute, $value, $tag, $region, $this->getSession()->getCurrentUrl()));
             }
         }
     }
@@ -176,7 +177,7 @@ class MarkupContext extends RawMinkContext
   /**
    * @Then I( should) see :text in the :tag element with the :attribute attribute set to :value in the :region( region)
    */
-    public function assertRegionElementTextAttribute($text, $tag, $attribute, $value, $region)
+    public function assertRegionElementTextAttribute(string $text, string $tag, string $attribute, string $value, string $region): void
     {
         $regionObj = $this->getRegion($region);
         $elements = $regionObj->findAll('css', $tag);
@@ -200,7 +201,7 @@ class MarkupContext extends RawMinkContext
             if (empty($attr)) {
                 throw new \Exception(sprintf('The "%s" attribute is not present on the element "%s" in the "%s" region on the page %s', $attribute, $tag, $region, $this->getSession()->getCurrentUrl()));
             }
-            if (strpos($attr, "$value") === false) {
+            if (!str_contains($attr, $value)) {
                 throw new \Exception(sprintf('The "%s" attribute does not equal "%s" on the element "%s" in the "%s" region on the page %s', $attribute, $value, $tag, $region, $this->getSession()->getCurrentUrl()));
             }
         }
@@ -209,7 +210,7 @@ class MarkupContext extends RawMinkContext
   /**
    * @Then I( should) see :text in the :tag element with the :property CSS property set to :value in the :region( region)
    */
-    public function assertRegionElementTextCss($text, $tag, $property, $value, $region)
+    public function assertRegionElementTextCss(string $text, string $tag, string $property, string $value, string $region): void
     {
         $regionObj = $this->getRegion($region);
         $elements = $regionObj->findAll('css', $tag);
@@ -231,10 +232,10 @@ class MarkupContext extends RawMinkContext
         $found = false;
         if (!empty($property)) {
             $style = $element->getAttribute('style');
-            $rules = explode(";", $style);
+            $rules = explode(";", (string) $style);
             foreach ($rules as $rule) {
-                if (strpos($rule, $property) !== false) {
-                    if (strpos($rule, $value) === false) {
+                if (str_contains($rule, $property)) {
+                    if (!str_contains($rule, $value)) {
                         throw new \Exception(sprintf('The "%s" style property does not equal "%s" on the element "%s" in the "%s" region on the page %s', $property, $value, $tag, $region, $this->getSession()->getCurrentUrl()));
                     }
                     $found = true;

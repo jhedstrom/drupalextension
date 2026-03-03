@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\DrupalExtension\Context;
 
 use Behat\Behat\Context\TranslatableContext;
@@ -18,7 +20,7 @@ class DrushContext extends RawDrupalContext implements TranslatableContext
     protected $drushOutput;
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
     public static function getTranslationResources()
     {
@@ -32,7 +34,7 @@ class DrushContext extends RawDrupalContext implements TranslatableContext
    */
     public function readDrushOutput()
     {
-        if (!isset($this->drushOutput)) {
+        if ($this->drushOutput === null) {
             throw new \RuntimeException('No drush output was found.');
         }
         return $this->drushOutput;
@@ -41,7 +43,7 @@ class DrushContext extends RawDrupalContext implements TranslatableContext
   /**
    * @Given I run drush :command
    */
-    public function assertDrushCommand($command)
+    public function assertDrushCommand(string $command): void
     {
         if (!$this->drushOutput = $this->getDriver('drush')->$command()) {
              $this->drushOutput = true;
@@ -51,10 +53,10 @@ class DrushContext extends RawDrupalContext implements TranslatableContext
   /**
    * @Given I run drush :command :arguments
    */
-    public function assertDrushCommandWithArgument($command, $arguments)
+    public function assertDrushCommandWithArgument(string $command, string $arguments): void
     {
         $this->drushOutput = $this->getDriver('drush')->$command($this->fixStepArgument($arguments));
-        if (!isset($this->drushOutput)) {
+        if ($this->drushOutput === null) {
             $this->drushOutput = true;
         }
     }
@@ -62,9 +64,9 @@ class DrushContext extends RawDrupalContext implements TranslatableContext
   /**
    * @Then drush output should contain :output
    */
-    public function assertDrushOutput($output)
+    public function assertDrushOutput(string $output): void
     {
-        if (strpos((string) $this->readDrushOutput(), $this->fixStepArgument($output)) === false) {
+        if (!str_contains((string) $this->readDrushOutput(), $this->fixStepArgument($output))) {
             throw new \Exception(sprintf("The last drush command output did not contain '%s'.\nInstead, it was:\n\n%s'", $output, $this->drushOutput));
         }
     }
@@ -72,7 +74,7 @@ class DrushContext extends RawDrupalContext implements TranslatableContext
   /**
    * @Then drush output should match :regex
    */
-    public function assertDrushOutputMatches($regex)
+    public function assertDrushOutputMatches(string $regex): void
     {
         if (!preg_match($regex, (string) $this->readDrushOutput())) {
             throw new \Exception(sprintf("The pattern %s was not found anywhere in the drush output.\nOutput:\n\n%s", $regex, $this->drushOutput));
@@ -82,9 +84,9 @@ class DrushContext extends RawDrupalContext implements TranslatableContext
   /**
    * @Then drush output should not contain :output
    */
-    public function drushOutputShouldNotContain($output)
+    public function drushOutputShouldNotContain(string $output): void
     {
-        if (strpos((string) $this->readDrushOutput(), $this->fixStepArgument($output)) !== false) {
+        if (str_contains((string) $this->readDrushOutput(), $this->fixStepArgument($output))) {
             throw new \Exception(sprintf("The last drush command output did contain '%s' although it should not.\nOutput:\n\n%s'", $output, $this->drushOutput));
         }
     }
@@ -92,19 +94,15 @@ class DrushContext extends RawDrupalContext implements TranslatableContext
   /**
    * @Then print last drush output
    */
-    public function printLastDrushOutput()
+    public function printLastDrushOutput(): void
     {
         echo $this->readDrushOutput();
     }
 
   /**
-   * Returns fixed step argument (with \\" replaced back to ").
-   *
-   * @param string $argument
-   *
-   * @return string
-   */
-    protected function fixStepArgument($argument)
+     * Returns fixed step argument (with \\" replaced back to ").
+     */
+    protected function fixStepArgument(string $argument): string
     {
         return str_replace('\\"', '"', $argument);
     }

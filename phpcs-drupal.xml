@@ -6,7 +6,7 @@
     <arg name="colors"/>
     <arg value="sp"/>
 
-    <file>./tests/behat/fixtures/drupal</file>
+    <file>tests/behat/fixtures/drupal</file>
 
     <exclude-pattern>^/doc/*</exclude-pattern>
     <exclude-pattern>^/build/*</exclude-pattern>

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\DrupalExtension\Hook\Call;
 
 use Behat\Testwork\Hook\Call\RuntimeFilterableHook;
@@ -12,12 +14,10 @@ abstract class EntityHook extends RuntimeFilterableHook
 {
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
     public function filterMatches(HookScope $scope)
     {
-        if (null === ($filterString = $this->getFilterString())) {
-            return true;
-        }
+        return null === ($filterString = $this->getFilterString());
     }
 }

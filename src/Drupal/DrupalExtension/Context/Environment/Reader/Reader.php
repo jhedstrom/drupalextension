@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\DrupalExtension\Context\Environment\Reader;
 
 use Behat\Behat\Context\Environment\UninitializedContextEnvironment;
@@ -27,19 +29,7 @@ final class Reader implements EnvironmentReader
   /**
    * @var ContextReader[]
    */
-    private $contextReaders = [];
-
-  /**
-   * Drupal driver manager.
-   *
-   * @var \Drupal\DrupalDriverManager
-   */
-    private $drupal;
-
-  /**
-   * Configuration parameters for this suite.
-   */
-    private $parameters;
+    private array $contextReaders = [];
 
   /**
    * Statically cached lists of subcontexts by path.
@@ -51,18 +41,22 @@ final class Reader implements EnvironmentReader
   /**
    * Register the Drupal driver manager.
    */
-    public function __construct(DrupalDriverManager $drupal, array $parameters)
-    {
-        $this->drupal = $drupal;
-        $this->parameters = $parameters;
+    public function __construct(
+        /**
+         * Drupal driver manager.
+         */
+        private readonly DrupalDriverManager $drupalDriverManager,
+        /**
+         * Configuration parameters for this suite.
+         */
+        private array $parameters
+    ) {
     }
 
   /**
-   * Registers context loader.
-   *
-   * @param ContextReader $contextReader
-   */
-    public function registerContextReader(ContextReader $contextReader)
+     * Registers context loader.
+     */
+    public function registerContextReader(ContextReader $contextReader): void
     {
         $this->contextReaders[] = $contextReader;
     }
@@ -84,7 +78,7 @@ final class Reader implements EnvironmentReader
         if (!$environment instanceof ContextEnvironment) {
             throw new EnvironmentReadException(sprintf(
                 'ContextEnvironmentReader does not support `%s` environment.',
-                get_class($environment)
+                $environment::class
             ), $environment);
         }
 
@@ -111,7 +105,7 @@ final class Reader implements EnvironmentReader
                 );
 
                 // Register context.
-                $environment->registerContextClass($contextClass, [$this->drupal]);
+                $environment->registerContextClass($contextClass, [$this->drupalDriverManager]);
             }
         }
 
@@ -121,18 +115,15 @@ final class Reader implements EnvironmentReader
     /**
      * Reads callees from a specific suite's context.
      *
-     * @param ContextEnvironment $environment
-     * @param string             $contextClass
-     *
      * @return Callee[]
      */
-    private function readContextCallees(ContextEnvironment $environment, $contextClass)
+    private function readContextCallees(ContextEnvironment $environment, string $contextClass): array
     {
         $callees = [];
-        foreach ($this->contextReaders as $loader) {
+        foreach ($this->contextReaders as $contextReader) {
             $callees = array_merge(
                 $callees,
-                $loader->readContextCallees($environment, $contextClass)
+                $contextReader->readContextCallees($environment, $contextClass)
             );
         }
 
@@ -140,18 +131,19 @@ final class Reader implements EnvironmentReader
     }
 
   /**
-   * Finds and loads available subcontext classes.
-   */
-    private function findSubContextClasses()
+     * Finds and loads available subcontext classes.
+     * @return class-string[]
+     */
+    private function findSubContextClasses(): array
     {
-        $class_names = [];
+        $classNames = [];
 
         // Initialize any available sub-contexts.
         if (isset($this->parameters['subcontexts'])) {
             $paths = [];
             // Drivers may specify paths to subcontexts.
             if ($this->parameters['subcontexts']['autoload']) {
-                foreach ($this->drupal->getDrivers() as $name => $driver) {
+                foreach ($this->drupalDriverManager->getDrivers() as $driver) {
                     if ($driver instanceof SubDriverFinderInterface) {
                         $paths += $driver->getSubDriverPaths();
                     }
@@ -182,12 +174,12 @@ final class Reader implements EnvironmentReader
                 $reflect = new \ReflectionClass($class);
                 if (!$reflect->isAbstract() && $reflect->implementsInterface(DrupalSubContextInterface::class)) {
                     @trigger_error('Sub-contexts are deprecated in Drupal Behat Extension 4.0.0 and will be removed in 4.1.0. Class ' . $class . ' is a subcontext. This logic should be moved to a normal Behat context and loaded via behat.yml.', E_USER_DEPRECATED);
-                    $class_names[] = $class;
+                    $classNames[] = $class;
                 }
             }
         }
 
-        return $class_names;
+        return $classNames;
     }
 
   /**
@@ -201,14 +193,14 @@ final class Reader implements EnvironmentReader
    * @return array
    *   An array of paths.
    */
-    private function findAvailableSubContexts($path, $pattern = '/^.+\.behat\.inc/i')
+    private function findAvailableSubContexts(string $path, string $pattern = '/^.+\.behat\.inc/i')
     {
 
-        if (isset(static::$subContexts[$pattern][$path])) {
-            return static::$subContexts[$pattern][$path];
+        if (isset(self::$subContexts[$pattern][$path])) {
+            return self::$subContexts[$pattern][$path];
         }
 
-        static::$subContexts[$pattern][$path] = [];
+        self::$subContexts[$pattern][$path] = [];
 
         $fileIterator = new RegexIterator(
             new RecursiveIteratorIterator(
@@ -218,10 +210,10 @@ final class Reader implements EnvironmentReader
             RegexIterator::MATCH
         );
         foreach ($fileIterator as $found) {
-            static::$subContexts[$pattern][$path][$found->getRealPath()] = $found->getFileName();
+            self::$subContexts[$pattern][$path][$found->getRealPath()] = $found->getFileName();
         }
 
-        return static::$subContexts[$pattern][$path];
+        return self::$subContexts[$pattern][$path];
     }
 
   /**
@@ -230,7 +222,7 @@ final class Reader implements EnvironmentReader
    * @param array $subcontexts
    *   An array of files to include.
    */
-    private function loadSubContexts($subcontexts)
+    private function loadSubContexts($subcontexts): void
     {
         foreach ($subcontexts as $path => $subcontext) {
             if (!file_exists($path)) {

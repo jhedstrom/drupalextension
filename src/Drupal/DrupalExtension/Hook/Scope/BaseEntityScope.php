@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * @file
  * Entity scope.
@@ -16,30 +19,19 @@ abstract class BaseEntityScope implements EntityScope
 {
 
   /**
-   * @var Environment
-   */
-    private $environment;
-
-  /**
-   * Context object.
-   *
-   * @var \Behat\Behat\Context\Context
-   */
-    private $context;
-
-  /**
-   * Entity object.
-   */
-    private $entity;
-
-  /**
    * Initializes the scope.
    */
-    public function __construct(Environment $environment, Context $context, $entity)
-    {
-        $this->context = $context;
-        $this->entity = $entity;
-        $this->environment = $environment;
+    public function __construct(
+        private readonly Environment $environment,
+        /**
+         * Context object.
+         */
+        private readonly Context $context,
+        /**
+         * Entity object.
+         */
+        private readonly \stdClass $entity
+    ) {
     }
 
   /**
@@ -53,15 +45,15 @@ abstract class BaseEntityScope implements EntityScope
     }
 
   /**
-   * Returns the entity object.
-   */
-    public function getEntity()
+     * Returns the entity object.
+     */
+    public function getEntity(): \stdClass
     {
         return $this->entity;
     }
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
     public function getEnvironment()
     {
@@ -69,7 +61,7 @@ abstract class BaseEntityScope implements EntityScope
     }
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
     public function getSuite()
     {

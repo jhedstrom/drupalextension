@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\DrupalExtension\Hook\Call;
 
 use Drupal\DrupalExtension\Hook\Scope\NodeScope;
@@ -13,7 +15,7 @@ class AfterNodeCreate extends EntityHook
   /**
    * Initializes hook.
    */
-    public function __construct($filterString, $callable, $description = null)
+    public function __construct(string|null $filterString, callable $callable, string|null $description = null)
     {
         parent::__construct(NodeScope::AFTER, $filterString, $callable, $description);
     }

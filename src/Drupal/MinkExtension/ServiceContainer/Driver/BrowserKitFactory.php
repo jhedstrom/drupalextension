@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\MinkExtension\ServiceContainer\Driver;
 
 use Behat\MinkExtension\ServiceContainer\Driver\BrowserKitFactory as BrowserKitFactoryOriginal;
@@ -11,9 +13,9 @@ use Symfony\Component\DependencyInjection\Definition;
 
 class BrowserKitFactory extends BrowserKitFactoryOriginal
 {
-    /**
-     * {@inheritdoc}
-     */
+  /**
+   * {@inheritdoc}
+   */
     public function buildDriver(array $config): Definition
     {
         if (!class_exists(BrowserKitDriver::class)) {
@@ -25,7 +27,7 @@ class BrowserKitFactory extends BrowserKitFactoryOriginal
         $drupalFinder = new DrupalFinder();
         $drupalFinder->locateRoot(getcwd());
         $drupalRoot = $drupalFinder->getDrupalRoot();
-        require_once "$drupalRoot/core/tests/Drupal/Tests/DrupalTestBrowser.php";
+        require_once $drupalRoot . '/core/tests/Drupal/Tests/DrupalTestBrowser.php';
 
         if (!class_exists('Drupal\Tests\DrupalTestBrowser')) {
             throw new \RuntimeException(
@@ -40,7 +42,7 @@ class BrowserKitFactory extends BrowserKitFactoryOriginal
 
         $guzzleClientService = new Definition(Client::class, [$guzzleRequestOptions]);
         $testBrowserService = (new Definition('Drupal\Tests\DrupalTestBrowser'))
-          ->addMethodCall('setClient', [$guzzleClientService]);
+        ->addMethodCall('setClient', [$guzzleClientService]);
 
         return new Definition(BrowserKitDriver::class, [
             $testBrowserService,
@@ -48,17 +50,17 @@ class BrowserKitFactory extends BrowserKitFactoryOriginal
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+  /**
+   * {@inheritdoc}
+   */
     public function configure(ArrayNodeDefinition $builder): void
     {
         $builder->
-            children()->
-                arrayNode('guzzle_request_options')->
-                  prototype('variable')->end()->
-                info("Guzzle request options. See \\GuzzleHttp\\RequestOptions. Defaults to ['allow_redirects' => false, 'cookies' => true].")->
-                end()->
-            end();
+        children()->
+        arrayNode('guzzle_request_options')->
+        prototype('variable')->end()->
+        info("Guzzle request options. See \\GuzzleHttp\\RequestOptions. Defaults to ['allow_redirects' => false, 'cookies' => true].")->
+        end()->
+        end();
     }
 }

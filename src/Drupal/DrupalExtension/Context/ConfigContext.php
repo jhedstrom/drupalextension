@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @file
  * Contains \Drupal\DrupalExtension\Context\ConfigContext.
  */
-
 namespace Drupal\DrupalExtension\Context;
 
 use Behat\Behat\Context\TranslatableContext;
@@ -17,7 +18,7 @@ class ConfigContext extends RawDrupalContext implements TranslatableContext
 {
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
     public static function getTranslationResources()
     {
@@ -36,11 +37,11 @@ class ConfigContext extends RawDrupalContext implements TranslatableContext
    *
    * @AfterScenario
    */
-    public function cleanConfig()
+    public function cleanConfig(): void
     {
         // Revert config that was changed.
-        foreach ($this->config as $name => $key_value) {
-            foreach ($key_value as $key => $value) {
+        foreach ($this->config as $name => $keyValue) {
+            foreach ($keyValue as $key => $value) {
                 $this->getDriver()->configSet($name, $key, $value);
             }
         }
@@ -54,12 +55,12 @@ class ConfigContext extends RawDrupalContext implements TranslatableContext
    *   The name of the configuration object.
    * @param string $key
    *   Identifier to store value in configuration.
-   * @param mixed $value
+   * @param string $value
    *   Value to associate with identifier.
    *
    * @Given I set the configuration item :name with key :key to :value
    */
-    public function setBasicConfig($name, $key, $value)
+    public function setBasicConfig(string $name, string $key, string $value): void
     {
         $this->setConfig($name, $key, $value);
     }
@@ -80,7 +81,7 @@ class ConfigContext extends RawDrupalContext implements TranslatableContext
    *  | key   | value  |
    *  | foo   | bar    |
    */
-    public function setComplexConfig($name, $key, TableNode $config_table)
+    public function setComplexConfig(string $name, string $key, TableNode $config_table): void
     {
         $value = [];
         foreach ($config_table->getHash() as $row) {
@@ -103,7 +104,7 @@ class ConfigContext extends RawDrupalContext implements TranslatableContext
    * @param mixed $value
    *   Value to associate with identifier.
    */
-    public function setConfig($name, $key, $value)
+    public function setConfig(string $name, string $key, mixed $value): void
     {
         $backup = $this->getDriver()->configGet($name, $key);
         $this->getDriver()->configSet($name, $key, $value);

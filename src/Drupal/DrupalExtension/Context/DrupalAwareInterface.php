@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\DrupalExtension\Context;
 
 use Behat\Behat\Context\Context;
@@ -28,17 +30,13 @@ interface DrupalAwareInterface extends Context
     public function getDrupal();
 
   /**
-   * Sets parameters provided for Drupal.
-   *
-   * @param array $parameters
-   */
+     * Sets parameters provided for Drupal.
+     */
     public function setDrupalParameters(array $parameters);
 
   /**
-   * Sets the Drupal user manager instance.
-   *
-   * @param \Drupal\DrupalExtension\Manager\DrupalUserManagerInterface $userManager
-   */
+     * Sets the Drupal user manager instance.
+     */
     public function setUserManager(DrupalUserManagerInterface $userManager);
 
   /**
@@ -49,10 +47,8 @@ interface DrupalAwareInterface extends Context
     public function getUserManager();
 
   /**
-   * Sets the Drupal authentication manager instance.
-   *
-   * @param \Drupal\DrupalExtension\Manager\DrupalAuthenticationManagerInterface $authenticationManager
-   */
+     * Sets the Drupal authentication manager instance.
+     */
     public function setAuthenticationManager(DrupalAuthenticationManagerInterface $authenticationManager);
 
   /**

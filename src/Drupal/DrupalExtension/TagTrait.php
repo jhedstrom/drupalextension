@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\DrupalExtension;
 
 /**
@@ -14,7 +16,7 @@ trait TagTrait
      *
      * @return string[]
      */
-    protected function getTags()
+    protected function getTags(): array
     {
         $featureTags = $this->getFeature()->getTags();
         $scenarioTags = $this->getScenario()->getTags();
@@ -23,12 +25,8 @@ trait TagTrait
 
     /**
      * Checks whether the current scenario or feature has the given tag.
-     *
-     * @param string $tag
-     *
-     * @return bool
      */
-    protected function hasTag($tag)
+    protected function hasTag(string $tag): bool
     {
         return in_array($tag, $this->getTags());
     }

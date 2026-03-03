@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @file
  * Contains \Drupal\DrupalDriverManager.
  */
-
 namespace Drupal;
 
 use Behat\Testwork\Environment\Environment;
@@ -28,14 +29,12 @@ class DrupalDriverManager implements DrupalDriverManagerInterface
    *
    * @var \Drupal\Driver\DriverInterface[]
    */
-    private $drivers = [];
+    private array $drivers = [];
 
   /**
-   * Behat environment.
-   *
-   * @var \Behat\Testwork\Environment\Environment
-   */
-    private $environment;
+     * Behat environment.
+     */
+    private ?Environment $environment = null;
 
   /**
    * Initialize the driver manager.
@@ -53,7 +52,7 @@ class DrupalDriverManager implements DrupalDriverManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function registerDriver($name, DriverInterface $driver)
+    public function registerDriver($name, DriverInterface $driver): void
     {
         $name = strtolower($name);
         $this->drivers[$name] = $driver;
@@ -87,7 +86,7 @@ class DrupalDriverManager implements DrupalDriverManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function setDefaultDriverName($name)
+    public function setDefaultDriverName($name): void
     {
         $name = strtolower($name);
 
@@ -101,7 +100,7 @@ class DrupalDriverManager implements DrupalDriverManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function getDrivers()
+    public function getDrivers(): array
     {
         return $this->drivers;
     }
@@ -109,7 +108,7 @@ class DrupalDriverManager implements DrupalDriverManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function setEnvironment(Environment $environment)
+    public function setEnvironment(Environment $environment): void
     {
         $this->environment = $environment;
     }
@@ -117,7 +116,7 @@ class DrupalDriverManager implements DrupalDriverManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function getEnvironment()
+    public function getEnvironment(): ?Environment
     {
         return $this->environment;
     }

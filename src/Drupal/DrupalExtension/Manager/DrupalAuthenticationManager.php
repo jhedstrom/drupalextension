@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\DrupalExtension\Manager;
 
 use Behat\Mink\Element\DocumentElement;
@@ -20,35 +22,23 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
     use MinkAwareTrait;
 
     /**
-     * The Drupal user manager.
-     *
-     * @var \Drupal\DrupalExtension\Manager\DrupalUserManagerInterface
-     */
-    protected $userManager;
-
-    /**
-     * The active driver.
-     *
-     * @var \Drupal\DrupalExtension\DrupalDriverManagerInterface
-     */
-    protected $driverManager;
-
-    /**
      * Constructs a DrupalAuthenticationManager object.
      *
      * @param \Behat\Mink\Mink $mink
      *   The Mink sessions manager.
-     * @param \Drupal\DrupalExtension\Manager\DrupalUserManagerInterface $drupalUserManager
+     * @param \Drupal\DrupalExtension\Manager\DrupalUserManagerInterface $userManager
      *   The Drupal user manager.
-     * @param DrupalDriverManagerInterface $driverManager
-     * @param array $minkParameters
-     * @param array $drupalParameters
      */
-    public function __construct(Mink $mink, DrupalUserManagerInterface $drupalUserManager, DrupalDriverManagerInterface $driverManager, array $minkParameters, array $drupalParameters)
-    {
+    public function __construct(
+        Mink $mink,
+        protected DrupalUserManagerInterface $userManager, /**
+         * The active driver.
+         */
+        protected DrupalDriverManagerInterface $driverManager,
+        array $minkParameters,
+        array $drupalParameters
+    ) {
         $this->setMink($mink);
-        $this->userManager = $drupalUserManager;
-        $this->driverManager = $driverManager;
         $this->setMinkParameters($minkParameters);
         $this->setDrupalParameters($drupalParameters);
     }
@@ -72,7 +62,7 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
     /**
      * {@inheritdoc}
      */
-    public function logIn(\stdClass $user)
+    public function logIn(\stdClass $user): void
     {
         // Ensure we aren't already logged in.
         $this->fastLogout();
@@ -92,9 +82,8 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
         if (!$this->loggedIn()) {
             if (isset($user->role)) {
                 throw new \Exception(sprintf("Unable to determine if logged in because 'log_out' link cannot be found for user '%s' with role '%s'", $user->name, $user->role));
-            } else {
-                throw new \Exception(sprintf("Unable to determine if logged in because 'log_out' link cannot be found for user '%s'", $user->name));
             }
+            throw new \Exception(sprintf("Unable to determine if logged in because 'log_out' link cannot be found for user '%s'", $user->name));
         }
 
         $this->userManager->setCurrentUser($user);
@@ -108,7 +97,7 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
     /**
      * {@inheritdoc}
      */
-    public function logout()
+    public function logout(): void
     {
         $session = $this->getSession();
         $session->visit($this->locatePath($this->getDrupalText('logout_url')));
@@ -128,7 +117,7 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
     /**
      * {@inheritdoc}
      */
-    public function loggedIn()
+    public function loggedIn(): bool
     {
         $session = $this->getSession();
 
@@ -145,7 +134,7 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
             if ($page->has('css', $this->getDrupalSelector('logged_in_selector'))) {
                 return true;
             }
-        } catch (DriverException $e) {
+        } catch (DriverException) {
             // This test may fail if the driver did not load any site yet.
         }
 
@@ -183,7 +172,7 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
     /**
      * {@inheritdoc}
      */
-    public function fastLogout()
+    public function fastLogout(): void
     {
         $session = $this->getSession();
         if ($session->isStarted()) {

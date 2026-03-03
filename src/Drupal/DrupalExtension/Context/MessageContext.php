@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\DrupalExtension\Context;
 
 use Behat\Behat\Context\TranslatableContext;
@@ -13,7 +15,7 @@ class MessageContext extends RawDrupalContext implements TranslatableContext
 {
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
     public static function getTranslationResources()
     {
@@ -28,7 +30,7 @@ class MessageContext extends RawDrupalContext implements TranslatableContext
    *
    * @Then I should see the error message( containing) :message
    */
-    public function assertErrorVisible($message)
+    public function assertErrorVisible(string $message): void
     {
         $this->assert(
             $message,
@@ -41,16 +43,16 @@ class MessageContext extends RawDrupalContext implements TranslatableContext
   /**
    * Checks if the current page contains the given set of error messages
    *
-   * @param array $messages
+   * @param \Behat\Gherkin\Node\TableNode $messages
    *   An array of texts to be checked. The first row should consist of the
    *   string "Error messages".
    *
    * @Then I should see the following error message(s):
    */
-    public function assertMultipleErrors(TableNode $messages)
+    public function assertMultipleErrors(TableNode $messages): void
     {
         $this->assertValidMessageTable($messages, 'error messages');
-        foreach ($messages->getHash() as $key => $value) {
+        foreach ($messages->getHash() as $value) {
             $value = array_change_key_case($value);
             $message = trim($value['error messages']);
             $this->assertErrorVisible($message);
@@ -65,7 +67,7 @@ class MessageContext extends RawDrupalContext implements TranslatableContext
    *
    * @Given I should not see the error message( containing) :message
    */
-    public function assertNotErrorVisible($message)
+    public function assertNotErrorVisible(string $message): void
     {
         $this->assertNot(
             $message,
@@ -77,16 +79,16 @@ class MessageContext extends RawDrupalContext implements TranslatableContext
   /**
    * Checks if the current page does not contain the given set error messages
    *
-   * @param array $messages
+   * @param \Behat\Gherkin\Node\TableNode $messages
    *   An array of texts to be checked. The first row should consist of the
    *   string "Error messages".
    *
    * @Then I should not see the following error messages:
    */
-    public function assertNotMultipleErrors(TableNode $messages)
+    public function assertNotMultipleErrors(TableNode $messages): void
     {
         $this->assertValidMessageTable($messages, 'error messages');
-        foreach ($messages->getHash() as $key => $value) {
+        foreach ($messages->getHash() as $value) {
             $value = array_change_key_case($value);
             $message = trim($value['error messages']);
             $this->assertNotErrorVisible($message);
@@ -101,7 +103,7 @@ class MessageContext extends RawDrupalContext implements TranslatableContext
    *
    * @Then I should see the success message( containing) :message
    */
-    public function assertSuccessMessage($message)
+    public function assertSuccessMessage(string $message): void
     {
         $this->assert(
             $message,
@@ -114,16 +116,16 @@ class MessageContext extends RawDrupalContext implements TranslatableContext
   /**
    * Checks if the current page contains the given set of success messages
    *
-   * @param array $message
+   * @param \Behat\Gherkin\Node\TableNode $messages
    *   An array of texts to be checked. The first row should consist of the
    *   string "Success messages".
    *
    * @Then I should see the following success messages:
    */
-    public function assertMultipleSuccessMessage(TableNode $messages)
+    public function assertMultipleSuccessMessage(TableNode $messages): void
     {
         $this->assertValidMessageTable($messages, 'success messages');
-        foreach ($messages->getHash() as $key => $value) {
+        foreach ($messages->getHash() as $value) {
             $value = array_change_key_case($value);
             $message = trim($value['success messages']);
             $this->assertSuccessMessage($message);
@@ -138,7 +140,7 @@ class MessageContext extends RawDrupalContext implements TranslatableContext
    *
    * @Given I should not see the success message( containing) :message
    */
-    public function assertNotSuccessMessage($message)
+    public function assertNotSuccessMessage(string $message): void
     {
         $this->assertNot(
             $message,
@@ -150,16 +152,16 @@ class MessageContext extends RawDrupalContext implements TranslatableContext
   /**
    * Checks if the current page does not contain the given set of success messages
    *
-   * @param array $message
+   * @param \Behat\Gherkin\Node\TableNode $messages
    *   An array of texts to be checked. The first row should consist of the
    *   string "Success messages".
    *
    * @Then I should not see the following success messages:
    */
-    public function assertNotMultipleSuccessMessage(TableNode $messages)
+    public function assertNotMultipleSuccessMessage(TableNode $messages): void
     {
         $this->assertValidMessageTable($messages, 'success messages');
-        foreach ($messages->getHash() as $key => $value) {
+        foreach ($messages->getHash() as $value) {
             $value = array_change_key_case($value);
             $message = trim($value['success messages']);
             $this->assertNotSuccessMessage($message);
@@ -174,7 +176,7 @@ class MessageContext extends RawDrupalContext implements TranslatableContext
    *
    * @Then I should see the warning message( containing) :message
    */
-    public function assertWarningMessage($message)
+    public function assertWarningMessage(string $message): void
     {
         $this->assert(
             $message,
@@ -187,16 +189,16 @@ class MessageContext extends RawDrupalContext implements TranslatableContext
   /**
    * Checks if the current page contains the given set of warning messages
    *
-   * @param array $message
+   * @param \Behat\Gherkin\Node\TableNode $messages
    *   An array of texts to be checked. The first row should consist of the
    *   string "Warning messages".
    *
    * @Then I should see the following warning messages:
    */
-    public function assertMultipleWarningMessage(TableNode $messages)
+    public function assertMultipleWarningMessage(TableNode $messages): void
     {
         $this->assertValidMessageTable($messages, 'warning messages');
-        foreach ($messages->getHash() as $key => $value) {
+        foreach ($messages->getHash() as $value) {
             $value = array_change_key_case($value);
             $message = trim($value['warning messages']);
             $this->assertWarningMessage($message);
@@ -211,7 +213,7 @@ class MessageContext extends RawDrupalContext implements TranslatableContext
    *
    * @Given I should not see the warning message( containing) :message
    */
-    public function assertNotWarningMessage($message)
+    public function assertNotWarningMessage(string $message): void
     {
         $this->assertNot(
             $message,
@@ -223,16 +225,16 @@ class MessageContext extends RawDrupalContext implements TranslatableContext
   /**
    * Checks if the current page does not contain the given set of warning messages
    *
-   * @param array $message
+   * @param \Behat\Gherkin\Node\TableNode $messages
    *   An array of texts to be checked. The first row should consist of the
    *   string "Warning messages".
    *
    * @Then I should not see the following warning messages:
    */
-    public function assertNotMultipleWarningMessage(TableNode $messages)
+    public function assertNotMultipleWarningMessage(TableNode $messages): void
     {
         $this->assertValidMessageTable($messages, 'warning messages');
-        foreach ($messages->getHash() as $key => $value) {
+        foreach ($messages->getHash() as $value) {
             $value = array_change_key_case($value);
             $message = trim($value['warning messages']);
             $this->assertNotWarningMessage($message);
@@ -247,7 +249,7 @@ class MessageContext extends RawDrupalContext implements TranslatableContext
    *
    * @Then I should see the message( containing) :message
    */
-    public function assertMessage($message)
+    public function assertMessage(string $message): void
     {
         $this->assert(
             $message,
@@ -265,7 +267,7 @@ class MessageContext extends RawDrupalContext implements TranslatableContext
    *
    * @Then I should not see the message( containing) :message
    */
-    public function assertNotMessage($message)
+    public function assertNotMessage(string $message): void
     {
         $this->assertNot(
             $message,
@@ -285,21 +287,21 @@ class MessageContext extends RawDrupalContext implements TranslatableContext
      * @param string $expected_header
      *   The header that should be present in the list.
      */
-    protected function assertValidMessageTable(TableNode $messages, $expected_header)
+    protected function assertValidMessageTable(TableNode $messages, string $expected_header)
     {
         // Check that the table only contains a single column.
-        $header_row = $messages->getRow(0);
+        $headerRow = $messages->getRow(0);
 
-        $column_count = count($header_row);
-        if ($column_count != 1) {
-            throw new \RuntimeException("The list of $expected_header should only contain 1 column. It has $column_count columns.");
+        $columnCount = count($headerRow);
+        if ($columnCount !== 1) {
+            throw new \RuntimeException(sprintf('The list of %s should only contain 1 column. It has %s columns.', $expected_header, $columnCount));
         }
 
         // Check that the correct header is used.
-        $actual_header = reset($header_row);
-        if (strtolower(trim($actual_header)) !== $expected_header) {
-            $capitalized_header = ucfirst($expected_header);
-            throw new \RuntimeException("The list of $expected_header should have the header '$capitalized_header'.");
+        $actualHeader = reset($headerRow);
+        if (strtolower(trim($actualHeader)) !== $expected_header) {
+            $capitalizedHeader = ucfirst($expected_header);
+            throw new \RuntimeException(sprintf("The list of %s should have the header '%s'.", $expected_header, $capitalizedHeader));
         }
     }
 
@@ -320,7 +322,7 @@ class MessageContext extends RawDrupalContext implements TranslatableContext
    * @throws \Behat\Mink\Exception\ExpectationException
    *   Thrown when the expected message is not present in the page.
    */
-    private function assert($message, $selectorId, $exceptionMsgNone, $exceptionMsgMissing)
+    private function assert(string $message, string $selectorId, string $exceptionMsgNone, string $exceptionMsgMissing): void
     {
         $selector = $this->getDrupalSelector($selectorId);
         $selectorObjects = $this->getSession()->getPage()->findAll("css", $selector);
@@ -328,7 +330,7 @@ class MessageContext extends RawDrupalContext implements TranslatableContext
             throw new ExpectationException(sprintf($exceptionMsgNone, $this->getSession()->getCurrentUrl()), $this->getSession()->getDriver());
         }
         foreach ($selectorObjects as $selectorObject) {
-            if (strpos(trim($selectorObject->getText()), $message) !== false) {
+            if (str_contains(trim($selectorObject->getText()), $message)) {
                 return;
             }
         }
@@ -349,13 +351,13 @@ class MessageContext extends RawDrupalContext implements TranslatableContext
    * @throws \Behat\Mink\Exception\ExpectationException
    *   Thrown when the expected message is present in the page.
    */
-    private function assertNot($message, $selectorId, $exceptionMsg)
+    private function assertNot(string $message, string $selectorId, string $exceptionMsg): void
     {
         $selector = $this->getDrupalSelector($selectorId);
         $selectorObjects = $this->getSession()->getPage()->findAll("css", $selector);
         if (!empty($selectorObjects)) {
             foreach ($selectorObjects as $selectorObject) {
-                if (strpos(trim($selectorObject->getText()), $message) !== false) {
+                if (str_contains(trim($selectorObject->getText()), $message)) {
                     throw new ExpectationException(sprintf($exceptionMsg, $this->getSession()->getCurrentUrl(), $message), $this->getSession()->getDriver());
                 }
             }

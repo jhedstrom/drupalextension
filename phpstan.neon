@@ -1,0 +1,26 @@
+##
+# Configuration file for PHPStan static code checking, see https://phpstan.org .
+#
+
+parameters:
+
+  level: 3
+
+  paths:
+    - src
+
+  excludePaths:
+    - vendor/*
+    - node_modules/*
+    # The AnnotatedDefinitionProposal base class was removed in newer versions of Behat.
+    # This class is kept for backwards compatibility.
+    - src/Drupal/DrupalExtension/Definition/Proposal/AnnotatedDefinitionProposal.php
+
+  ignoreErrors:
+    -
+      # Since tests and data providers do not have to have parameter docblocks,
+      # it is not possible to specify the type of the parameter, so we ignore
+      # this error.
+      message: '#.*no value type specified in iterable type array.#'
+      path: spec/*
+      reportUnmatched: false
