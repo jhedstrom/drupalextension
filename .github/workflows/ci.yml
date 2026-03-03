@@ -23,6 +23,10 @@ jobs:
             drupal_version: '10'
           - php_version: '8.3'
             drupal_version: '11'
+          - php_version: '8.4'
+            drupal_version: '10'
+          - php_version: '8.4'
+            drupal_version: '11'
 
     env:
       PHP_VERSION: ${{ matrix.php_version }}
