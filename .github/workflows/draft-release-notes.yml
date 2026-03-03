@@ -1,0 +1,26 @@
+name: Draft release notes
+
+on:
+  push:
+    tags:
+      - '*'
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  release-drafter:
+    name: Draft release notes
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Draft release notes
+        uses: release-drafter/release-drafter@v6
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
