@@ -5,6 +5,7 @@ default:
       paths: ['%paths.base%/tests/behat/features']
       contexts:
         - FeatureContext
+        - BehatCliContext
         - Drupal\DrupalExtension\Context\ConfigContext
         - Drupal\DrupalExtension\Context\DrupalContext
         - Drupal\DrupalExtension\Context\MessageContext
@@ -43,13 +44,14 @@ default:
         - step
         - datetime
 
-drupal10:
+drupal:
   autoload: ['%paths.base%/tests/behat/bootstrap']
   suites:
     default:
       paths: ['%paths.base%/tests/behat/features']
       contexts:
         - FeatureContext
+        - BehatCliContext
         - Drupal\DrupalExtension\Context\ConfigContext
         - Drupal\DrupalExtension\Context\DrupalContext
         - Drupal\DrupalExtension\Context\MinkContext
@@ -91,6 +93,7 @@ drupal_https:
       paths: ['%paths.base%/tests/behat/features']
       contexts:
         - FeatureContext
+        - BehatCliContext
         - Drupal\DrupalExtension\Context\DrupalContext
         - Drupal\DrupalExtension\Context\MinkContext
         - DrevOps\BehatScreenshotExtension\Context\ScreenshotContext

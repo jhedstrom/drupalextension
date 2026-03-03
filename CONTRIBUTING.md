@@ -48,7 +48,7 @@ docker compose exec -T php composer test-bdd
 Run specific Behat test suites:
 ```shell
 docker compose exec -T php composer test-bdd-blackbox
-docker compose exec -T php composer test-bdd-drupal10
+docker compose exec -T php composer test-bdd-drupal
 docker compose exec -T php composer test-bdd-drupal-https
 ```
 

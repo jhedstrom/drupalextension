@@ -161,17 +161,17 @@
         ],
         "test-bdd": [
             "@test-bdd-blackbox",
-            "@test-bdd-drupal10",
+            "@test-bdd-drupal",
             "@test-bdd-drupal-https"
         ],
         "test-bdd-blackbox": [
             "behat -fprogress --strict"
         ],
+        "test-bdd-drupal": [
+            "behat -fprogress --profile=drupal --strict"
+        ],
         "test-bdd-drupal-https": [
             "behat -fprogress --profile=drupal_https --strict"
-        ],
-        "test-bdd-drupal10": [
-            "behat -fprogress --profile=drupal10 --strict"
         ],
         "test-phpspec": [
             "phpspec run -f pretty --no-interaction"
