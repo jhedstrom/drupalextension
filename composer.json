@@ -24,6 +24,7 @@
     ],
     "homepage": "http://drupal.org/project/drupalextension",
     "require": {
+        "php": ">=8.2",
         "behat/behat": "^3.2",
         "behat/mink-browserkit-driver": "^2.1.0",
         "drupal/drupal-driver": "^2.2.1 || dev-master",
