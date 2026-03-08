@@ -15,7 +15,7 @@ class AfterTermCreate extends EntityHook
     /**
      * Initializes hook.
      */
-    public function __construct(string|null $filterString, callable $callable, string|null $description = null)
+    public function __construct(string|null $filterString, array|callable $callable, string|null $description = null)
     {
         parent::__construct(TermScope::AFTER, $filterString, $callable, $description);
     }
