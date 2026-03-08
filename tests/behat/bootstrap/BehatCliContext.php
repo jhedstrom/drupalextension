@@ -590,7 +590,7 @@ EOL;
     }
 
     throw new UnexpectedValueException(
-      'Expected previous command to ' . strtoupper($success) . ' but got exit code ' . $this->getExitCode()
+      'Expected previous command to ' . strtoupper($success) . ' but got exit code ' . $this->getExitCode() . "\nOutput:\n" . $this->getOutput() . "\nError Output:\n" . $this->process->getErrorOutput()
     );
   }
 
