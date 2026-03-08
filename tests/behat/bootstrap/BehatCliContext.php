@@ -70,7 +70,7 @@ class BehatCliContext implements Context
   /**
    * @var string
    */
-  private $options = '--format-settings=\'{"timer": false}\' --no-interaction';
+  private $options = '--no-interaction';
   /**
    * @var array
    */
@@ -317,7 +317,7 @@ EOL;
 
     $this->answerString = $answerString;
 
-    $this->options = '--format-settings=\'{"timer": false}\'';
+    $this->options = '';
     $this->iRunBehat($argumentsString);
   }
 
