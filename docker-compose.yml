@@ -1,7 +1,7 @@
 services:
 
   php:
-    image: wodby/drupal-php:${PHP_VERSION}
+    image: wodby/drupal-php:${PHP_VERSION:-8.3}
     environment:
       DB_HOST: db
       DB_USER: drupal
