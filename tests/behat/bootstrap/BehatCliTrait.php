@@ -45,11 +45,6 @@ trait BehatCliTrait
         $traits = array_filter($traits);
         $traits = array_unique($traits);
 
-        // Only create FeatureContext.php if there is at least one '@trait:' tag.
-        if (empty($traits)) {
-            return;
-        }
-
         $this->behatCliWriteFeatureContextFile($traits);
     }
 
@@ -249,7 +244,23 @@ default:
   extensions:
     Drupal\MinkExtension:
       browserkit_http: ~
-      base_url: http://proxy
+      base_url: http://drupal
+      browser_name: chrome
+      javascript_session: selenium2
+      selenium2:
+        wd_host: "http://chrome:4444/wd/hub"
+        capabilities:
+          browser: chrome
+          extra_capabilities:
+            "goog:chromeOptions":
+              args:
+                - '--disable-gpu'            # Disables hardware acceleration required in containers and cloud-based instances (like CI runners) where GPU is not available.
+                - '--disable-extensions'     # Disables all installed Chrome extensions. Useful in testing environments to avoid interference from extensions.
+                - '--disable-infobars'       # Hides the infobar that Chrome displays for various notifications, like warnings when opening multiple tabs.
+                - '--disable-popup-blocking' # Disables the popup blocker, allowing all popups to appear. Useful in testing scenarios where popups are expected.
+                - '--disable-translate'      # Disables the built-in translation feature, preventing Chrome from offering to translate pages.
+                - '--no-first-run'           # Skips the initial setup screen that Chrome typically shows when running for the first time.
+                - '--test-type'              # Disables certain security features and UI components that are unnecessary for automated testing, making Chrome more suitable for test environments.
     Drupal\DrupalExtension:
       api_driver: drupal
       drupal:
@@ -276,13 +287,13 @@ EOL;
       filter:
         include:
           directories:
-            /app/src: ~
+            /var/www/html/src: ~
       reports:
         text:
           showColors: true
           showOnlySummary: true
         php:
-          target: /app/.logs/coverage/behat_cli/phpcov/{$coverageId}.php
+          target: /var/www/html/.logs/coverage/behat_cli/phpcov/{$coverageId}.php
 EOL;
             $content .= $coverageContent;
         }

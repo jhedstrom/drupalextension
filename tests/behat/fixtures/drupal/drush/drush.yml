@@ -1,0 +1,22 @@
+command:
+  sql:
+    cli:
+      options:
+        extra: '--disable-ssl'
+    query:
+      options:
+        extra: '--disable-ssl'
+    dump:
+      options:
+        extra: '--disable-ssl'
+        extra-dump: '--disable-ssl --no-tablespaces'
+    drop:
+      options:
+        extra: '--disable-ssl'
+    create:
+      options:
+        extra: '--disable-ssl'
+  site:
+    install:
+      options:
+        extra: '--disable-ssl'

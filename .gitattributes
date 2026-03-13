@@ -1,17 +1,18 @@
 # Ignore files for distribution archives.
+/.ahoy               export-ignore
+/.editorconfig       export-ignore
+/.gitattributes      export-ignore
 /.github             export-ignore
+/.gitignore          export-ignore
+/.readthedocs.yaml   export-ignore
 /build               export-ignore
+/composer.lock       export-ignore
 /doc                 export-ignore
+/docker-compose.yml  export-ignore
+/gherkinlint.json    export-ignore
+/phpcs-drupal.xml    export-ignore
+/phpcs.xml           export-ignore
 /recipes             export-ignore
 /spec                export-ignore
 /tests               export-ignore
 /vendor              export-ignore
-/.editorconfig       export-ignore
-/.gitattributes      export-ignore
-/.gitignore          export-ignore
-/.readthedocs.yaml   export-ignore
-/composer.lock       export-ignore
-/docker-compose.yml  export-ignore
-/gherkinlint.json    export-ignore
-/phpcs.xml           export-ignore
-/phpcs-drupal.xml    export-ignore
