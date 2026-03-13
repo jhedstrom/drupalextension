@@ -1,4 +1,4 @@
-@api
+@api @test-drupal
 Feature: DrupalContext general testing
   As a developer
   I want to create and manage Drupal entities through the API driver

@@ -145,7 +145,6 @@ jobs:
         run: |
           docker compose exec -T php bash -c 'rm -rf .logs/coverage/behat_cli/phpcov/*.php 2>/dev/null; mkdir -p .logs/coverage/behat_cli/phpcov || true'
           docker compose exec -T php php -d pcov.enabled=1 -d pcov.directory=src vendor/bin/behat -fprogress --strict --colors
-          docker compose exec -T php php scripts/merge-coverage.php
 
       - name: Run Behat tests
         if: ${{ !matrix.coverage }}
@@ -154,45 +153,29 @@ jobs:
           docker compose exec -T php vendor/bin/behat -fprogress --profile=drupal --strict
           docker compose exec -T php vendor/bin/behat -fprogress --profile=drupal_https --strict
 
-      - name: Extract PHPUnit coverage
+      - name: Merge all coverage
         if: ${{ matrix.coverage }}
-        run: |
-          RATE=$(grep -om1 'line-rate="[0-9.]*"' .logs/coverage/phpunit/cobertura.xml | tr -cd '0-9.')
-          PERCENT=$(awk "BEGIN {printf \"%.2f\", $RATE*100}")
-          echo "PHPUnit coverage: $PERCENT% (threshold: $CI_PHPUNIT_COVERAGE_THRESHOLD%)" | tee -a "$GITHUB_STEP_SUMMARY"
-          echo "PHPUNIT_COVERAGE_PERCENT=${PERCENT}" >> "$GITHUB_ENV"
-        env:
-          CI_PHPUNIT_COVERAGE_THRESHOLD: ${{ vars.CI_PHPUNIT_COVERAGE_THRESHOLD || '0' }}
+        run: docker compose exec -T php php scripts/merge-coverage.php
 
-      - name: Extract Behat coverage
+      - name: Extract total coverage
         if: ${{ matrix.coverage }}
         run: |
-          RATE=$(grep -om1 'line-rate="[0-9.]*"' .logs/coverage/behat_merged/cobertura.xml | tr -cd '0-9.')
+          RATE=$(grep -om1 'line-rate="[0-9.]*"' .logs/coverage/merged/cobertura.xml | tr -cd '0-9.')
           PERCENT=$(awk "BEGIN {printf \"%.2f\", $RATE*100}")
-          echo "Behat coverage: $PERCENT% (threshold: $CI_BEHAT_COVERAGE_THRESHOLD%)" | tee -a "$GITHUB_STEP_SUMMARY"
-          echo "BEHAT_COVERAGE_PERCENT=${PERCENT}" >> "$GITHUB_ENV"
+          echo "**Total coverage: $PERCENT%** (threshold: $CI_COVERAGE_THRESHOLD%)" | tee -a "$GITHUB_STEP_SUMMARY"
+          echo "TOTAL_COVERAGE_PERCENT=${PERCENT}" >> "$GITHUB_ENV"
         env:
-          CI_BEHAT_COVERAGE_THRESHOLD: ${{ vars.CI_BEHAT_COVERAGE_THRESHOLD || '0' }}
+          CI_COVERAGE_THRESHOLD: ${{ vars.CI_COVERAGE_THRESHOLD || '0' }}
 
-      - name: Check PHPUnit coverage threshold
+      - name: Check coverage threshold
         if: ${{ matrix.coverage }}
         run: |
-          if [ "${PHPUNIT_COVERAGE_PERCENT//.}" -lt "$((CI_PHPUNIT_COVERAGE_THRESHOLD*100))" ]; then
-            echo "FAIL: PHPUnit coverage ${PHPUNIT_COVERAGE_PERCENT}% is below threshold ${CI_PHPUNIT_COVERAGE_THRESHOLD}%"
+          if [ "${TOTAL_COVERAGE_PERCENT//.}" -lt "$((CI_COVERAGE_THRESHOLD*100))" ]; then
+            echo "FAIL: Total coverage ${TOTAL_COVERAGE_PERCENT}% is below threshold ${CI_COVERAGE_THRESHOLD}%"
             exit 1
           fi
         env:
-          CI_PHPUNIT_COVERAGE_THRESHOLD: ${{ vars.CI_PHPUNIT_COVERAGE_THRESHOLD || '0' }}
-
-      - name: Check Behat coverage threshold
-        if: ${{ matrix.coverage }}
-        run: |
-          if [ "${BEHAT_COVERAGE_PERCENT//.}" -lt "$((CI_BEHAT_COVERAGE_THRESHOLD*100))" ]; then
-            echo "FAIL: Behat coverage ${BEHAT_COVERAGE_PERCENT}% is below threshold ${CI_BEHAT_COVERAGE_THRESHOLD}%"
-            exit 1
-          fi
-        env:
-          CI_BEHAT_COVERAGE_THRESHOLD: ${{ vars.CI_BEHAT_COVERAGE_THRESHOLD || '0' }}
+          CI_COVERAGE_THRESHOLD: ${{ vars.CI_COVERAGE_THRESHOLD || '0' }}
 
       - name: Upload test artifacts
         uses: actions/upload-artifact@v4

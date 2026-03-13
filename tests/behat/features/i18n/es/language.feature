@@ -1,5 +1,5 @@
 # language: es
-@api
+@api @test-drupal
 Característica: Soporte para idiomas
   Como desarrollador
   Quiero habilitar y verificar múltiples idiomas

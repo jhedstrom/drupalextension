@@ -1,6 +1,6 @@
 <div align="center">
   <a href="" rel="noopener">
-  <img width=100px height=100px src="doc/_static/beehat.png" alt="Behat Drupal Extension Logo"></a>
+  <img height=100px src="doc/_static/beehat.png" alt="Behat Drupal Extension Logo"></a>
 </div>
 
 <h1 align="center">Behat Drupal Extension</h1>

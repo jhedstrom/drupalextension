@@ -1,7 +1,40 @@
-# Blackbox driver profile:
-# - Mink context tests against static HTML fixtures.
-# - Drupal context tests against static HTML fixtures (no Drupal API).
+# Test profiles for the Drupal Extension.
+#
+# Contexts in this extension fall into three categories based on what they
+# need to run:
+#
+# 1. Pure blackbox contexts (e.g. MinkContext) work against any HTML page.
+#    They have no dependency on Drupal and are tested against static HTML
+#    fixtures served by a simple web server.
+#
+# 2. Drupal-aware blackbox contexts (e.g. MessageContext, MarkupContext)
+#    also work against any HTML page — they do not call the Drupal API.
+#    However, they rely on Drupal-specific configuration from behat.yml
+#    such as region maps and message selectors. These contexts are tested
+#    in both profiles: once against static HTML fixtures (with selectors
+#    mapped to fixture markup) and once against a real Drupal site (with
+#    selectors mapped to the Drupal theme). This dual testing proves that
+#    the contexts are truly driver-agnostic.
+#
+# 3. Drupal API contexts (e.g. DrupalContext, DrushContext, BatchContext)
+#    require a running Drupal site and the API driver. They can only run
+#    in the drupal profile.
+#
+# Profile-selection tags control which profile runs a given scenario.
+# These use a "test-" prefix to distinguish them from functional tags
+# like @api (which enables the Drupal API driver):
+#   @test-blackbox  — runs in the default (blackbox) profile only
+#   @test-drupal    — runs in the drupal profile only
+#   @test-https     — runs in the drupal_https profile only
+#
+# Each scenario must be explicitly tagged. The drupal profile only picks
+# up scenarios tagged @test-drupal, not "everything that is not @test-blackbox."
+
+# Blackbox profile: tests against static HTML fixtures.
 default:
+  formatters:
+    progress:
+      colors: true
   autoload: ['%paths.base%/tests/behat/bootstrap']
   suites:
     default:
@@ -19,7 +52,7 @@ default:
         - BehatCliContext
         - DrevOps\BehatScreenshotExtension\Context\ScreenshotContext
       filters:
-        tags: "@blackbox&&~@skipped"
+        tags: "@test-blackbox&&~@skipped"
 
   extensions:
     Drupal\MinkExtension:
@@ -86,14 +119,16 @@ default:
         php:
           target: '%paths.base%/.logs/coverage/behat/phpcov.php'
 
-# Drupal API driver profile: tests against an installed Drupal site.
+# Drupal profile: tests against an installed Drupal site with the API driver.
 drupal:
   suites:
     default:
       contexts:
         # Contexts under tests - Drupal contexts.
         - Drupal\DrupalExtension\Context\ConfigContext
+        - Drupal\DrupalExtension\Context\BatchContext
         - Drupal\DrupalExtension\Context\DrupalContext
+        - Drupal\DrupalExtension\Context\DrushContext
         - Drupal\DrupalExtension\Context\MinkContext
         - Drupal\DrupalExtension\Context\MarkupContext
         - Drupal\DrupalExtension\Context\MessageContext
@@ -104,7 +139,7 @@ drupal:
         - BehatCliContext
         - DrevOps\BehatScreenshotExtension\Context\ScreenshotContext
       filters:
-        tags: "~@blackbox&&~@skipped"
+        tags: "@test-drupal&&~@skipped"
 
   extensions:
     Drupal\MinkExtension:
@@ -115,6 +150,8 @@ drupal:
       api_driver: "drupal"
       drupal:
         drupal_root: "/var/www/html/build/web"
+      drush:
+        root: "/var/www/html/build/web"
       region_map:
         main content: "#main"
       selectors:
@@ -138,7 +175,7 @@ drupal_https:
         - BehatCliContext
         - DrevOps\BehatScreenshotExtension\Context\ScreenshotContext
       filters:
-        tags: "@https&&~@skipped"
+        tags: "@test-https&&~@skipped"
 
   extensions:
     Drupal\MinkExtension:

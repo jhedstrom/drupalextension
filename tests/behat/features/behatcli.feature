@@ -1,4 +1,4 @@
-@behatcli @blackbox
+@behatcli @test-blackbox
 Feature: Behat CLI context
 
   Tests for BehatCliContext functionality that is used to test Behat Steps traits

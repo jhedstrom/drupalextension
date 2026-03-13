@@ -9,6 +9,7 @@ parameters:
   paths:
     - src
     - tests/behat/bootstrap
+    - tests/phpunit
 
   excludePaths:
     - vendor/*

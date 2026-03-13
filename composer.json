@@ -40,6 +40,7 @@
     "require-dev": {
         "composer/installers": "^2.3",
         "dantleech/gherkin-lint": "^0.2.3",
+        "dflydev/dot-access-data": "^3.0.3",
         "drevops/behat-screenshot": "^2.2",
         "drevops/phpcs-standard": "^0.6.2",
         "drupal/coder": "^8.3.27",

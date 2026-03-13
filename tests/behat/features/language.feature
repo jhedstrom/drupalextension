@@ -1,4 +1,4 @@
-@api
+@api @test-drupal
 Feature: Language support
   As a developer
   I want to enable and verify multiple languages

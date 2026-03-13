@@ -1,5 +1,5 @@
 # language: es
-@api
+@api @test-drupal
 Característica: DrupalContext
   Como desarrollador
   Quiero usar definiciones de pasos específicas de Drupal

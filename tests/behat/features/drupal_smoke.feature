@@ -1,4 +1,4 @@
-@smoke @drupal
+@smoke @test-drupal
 Feature: Drupal driver smoke test
 
   As a site administrator

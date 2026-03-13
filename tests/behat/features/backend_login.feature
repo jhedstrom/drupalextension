@@ -1,4 +1,4 @@
-@api
+@api @test-drupal
 Feature: Backend login/logout
   As a developer
   I want to log in and log out via the backend driver
