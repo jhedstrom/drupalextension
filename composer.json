@@ -31,7 +31,7 @@
         "behat/mink-browserkit-driver": "^2.1.0",
         "drupal/drupal-driver": "^2.4",
         "friends-of-behat/mink-extension": "^2.7.1",
-        "lullabot/mink-selenium2-driver": "^1.7",
+        "lullabot/mink-selenium2-driver": "^1.7.4",
         "symfony/css-selector": "^6.4.3 || ^7",
         "symfony/dom-crawler": "^6.4.3 || ^7",
         "symfony/http-client": "^6.4.3 || ^7",
@@ -46,6 +46,7 @@
         "drupal/core": "^11",
         "drupal/core-composer-scaffold": "^11",
         "drush/drush": "^12.5.2 || ^13.7",
+        "dvdoug/behat-code-coverage": "^5.3",
         "ergebnis/composer-normalize": "^2.50",
         "grasmash/yaml-cli": "^3.2.1",
         "guzzlehttp/guzzle": "^7.8.2",
@@ -57,6 +58,7 @@
         "php-parallel-lint/php-parallel-lint": "^1.4",
         "phpspec/phpspec": "^7.0 || ^8.0",
         "phpstan/phpstan": "^2.1",
+        "phpunit/phpunit": "^10.5 || ^11.0",
         "rector/rector": "^2.0",
         "symfony/browser-kit": "^6.4.3 || ^7",
         "symfony/config": "^6.4.3 || ^7",
@@ -144,37 +146,5 @@
                 "type:drupal-theme"
             ]
         }
-    },
-    "scripts": {
-        "lint": [
-            "parallel-lint src spec tests",
-            "phpcs --standard=./phpcs.xml -p",
-            "phpcs --standard=./phpcs-drupal.xml -p",
-            "phpstan",
-            "rector process --dry-run",
-            "gherkinlint lint tests/behat/features"
-        ],
-        "lint-fix": [
-            "rector process",
-            "phpcbf --standard=./phpcs.xml -p",
-            "phpcbf --standard=./phpcs-drupal.xml -p"
-        ],
-        "test-bdd": [
-            "@test-bdd-blackbox",
-            "@test-bdd-drupal",
-            "@test-bdd-drupal-https"
-        ],
-        "test-bdd-blackbox": [
-            "behat -fprogress --strict"
-        ],
-        "test-bdd-drupal": [
-            "behat -fprogress --profile=drupal --strict"
-        ],
-        "test-bdd-drupal-https": [
-            "behat -fprogress --profile=drupal_https --strict"
-        ],
-        "test-phpspec": [
-            "phpspec run -f pretty --no-interaction"
-        ]
     }
 }

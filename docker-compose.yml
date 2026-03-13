@@ -1,9 +1,11 @@
 services:
 
+  # PHP-FPM backend that runs Drupal. Behat tests execute inside this container
+  # via `docker compose exec -T php`.
   php:
     image: wodby/drupal-php:${PHP_VERSION:-8.3}
     environment:
-      DB_HOST: db
+      DB_HOST: database
       DB_USER: drupal
       DB_PASSWORD: drupal
       DB_NAME: drupal
@@ -12,9 +14,9 @@ services:
       PHP_FPM_GROUP: wodby
       PHP_FPM_CLEAR_ENV: "yes"
       PHP_OPCACHE_PRELOAD_USER: wodby
-      PHP_XDEBUG_MODE: "off"
-      PHP_XDEBUG_REMOTE_CONNECT_BACK: 1
-      PHP_XDEBUG_REMOTE_HOST: "10.254.254.254"
+      PHP_EXTENSIONS_DISABLE: "${PHP_EXTENSIONS_DISABLE:-xdebug,xhprof,spx}"
+      PHP_XDEBUG_MODE: "${PHP_XDEBUG_MODE:-off}"
+      PHP_XDEBUG_CLIENT_HOST: host.docker.internal
       PHP_XDEBUG_IDEKEY: "PHPSTORM"
       PHP_IDE_CONFIG: "serverName=drupalextension"
     volumes:
@@ -22,8 +24,29 @@ services:
     labels:
       - "traefik.enable=false"
     depends_on:
+      - database
       - proxy
 
+  # MariaDB database for the Drupal site.
+  database:
+    image: wodby/mariadb:10.6-3.28.3
+    stop_grace_period: 30s
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: drupal
+      MYSQL_USER: drupal
+      MYSQL_PASSWORD: drupal
+    ports:
+      - "3306"
+    labels:
+      - "traefik.enable=false"
+
+  # Traefik reverse proxy. Only needed for HTTPS/TLS termination, used by the
+  # drupal_https Behat profile (@https scenarios). Routes requests to the drupal
+  # nginx service based on the Host(`proxy`) rule. Used in CI (Linux) where
+  # Docker socket access works. On Docker Desktop for Mac, Traefik may not be
+  # able to access the Docker socket — the 'proxy' network alias on the drupal
+  # service provides a direct fallback for HTTP.
   proxy:
     image: traefik:v2.10
     command:
@@ -41,6 +64,9 @@ services:
     labels:
       - "traefik.enable=false"
 
+  # Nginx web server for the Drupal site. The 'proxy' network alias allows
+  # containers to reach Drupal at http://proxy without depending on Traefik.
+  # Host access: http://localhost:8888
   drupal:
     image: wodby/nginx
     depends_on:
@@ -53,6 +79,12 @@ services:
       NGINX_VHOST_PRESET: drupal10
     volumes:
       - ./:/var/www/html
+    networks:
+      default:
+        aliases:
+          - proxy
+    ports:
+      - "${DRUPAL_HOST_PORT:-8888}:80"
     labels:
       - "traefik.http.routers.drupal.rule=Host(`proxy`)"
       - "traefik.http.routers.drupal.entrypoints=http-80"
@@ -60,6 +92,9 @@ services:
       - "traefik.http.routers.drupal-secure.tls=true"
       - "traefik.http.routers.drupal-secure.entrypoints=http-443"
 
+  # Nginx web server serving static HTML fixtures for blackbox Behat tests.
+  # These tests do not require a running Drupal site.
+  # Host access: http://localhost:8889
   blackbox:
     image: wodby/nginx
     environment:
@@ -69,16 +104,31 @@ services:
       NGINX_VHOST_PRESET: html
     volumes:
       - ./:/var/www/html
+    ports:
+      - "${BLACKBOX_HOST_PORT:-8889}:80"
     labels:
       - "traefik.enable=false"
 
-  db:
-    image: wodby/mariadb:10.6-3.28.3
-    stop_grace_period: 30s
-    environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: drupal
-      MYSQL_USER: drupal
-      MYSQL_PASSWORD: drupal
+  # Selenium standalone Chromium for browser testing.
+  # Access via noVNC at http://localhost:7900/?autoconnect=1&password=secret
+  chrome:
+    image: selenium/standalone-chromium:145.0
+    ports:
+      - "7900:7900"
+    expose:
+      - "8888"
+    shm_size: '1gb'
+    volumes:
+      - ./:/var/www/html
+    depends_on:
+      - php
     labels:
       - "traefik.enable=false"
+
+  # Helper container to wait for services to become available.
+  wait_dependencies:
+    image: drevops/docker-wait-for-dependencies:26.1.0
+    depends_on:
+      - php
+      - database
+    command: database:3306

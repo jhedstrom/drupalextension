@@ -17,6 +17,7 @@ class FeatureContext extends RawDrupalContext
 {
 
     use TagTrait;
+    use FeatureContextTrait;
 
     /**
      * Hook into node creation to test `@beforeNodeCreate`

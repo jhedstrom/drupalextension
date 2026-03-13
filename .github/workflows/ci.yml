@@ -38,7 +38,13 @@ jobs:
         run: docker compose exec -T php composer normalize --dry-run
 
       - name: Run linting
-        run: docker compose exec -T php composer lint
+        run: |
+          docker compose exec -T php vendor/bin/parallel-lint src spec tests
+          docker compose exec -T php vendor/bin/phpcs --standard=./phpcs.xml -p
+          docker compose exec -T php vendor/bin/phpcs --standard=./phpcs-drupal.xml -p
+          docker compose exec -T php vendor/bin/phpstan
+          docker compose exec -T php vendor/bin/rector process --dry-run
+          docker compose exec -T php vendor/bin/gherkinlint lint tests/behat/features
 
   tests:
     name: PHP ${{ matrix.php_version }}, Drupal ${{ matrix.drupal_version }}, Deps ${{ matrix.deps }}
@@ -75,6 +81,7 @@ jobs:
           - php_version: '8.4'
             drupal_version: '11'
             deps: 'normal'
+            coverage: true
           - php_version: '8.4'
             drupal_version: '11'
             deps: 'lowest'
@@ -97,6 +104,10 @@ jobs:
       - name: Add Drupal core dependency
         run: docker compose exec -u ${DOCKER_USER_ID} -T php composer require --no-interaction --dev --no-update drupal/core:^${DRUPAL_VERSION} drupal/core-composer-scaffold:^${DRUPAL_VERSION}
 
+      - name: Remove PHPUnit 11 for Drupal 10
+        if: ${{ !matrix.coverage }}
+        run: docker compose exec -u ${DOCKER_USER_ID} -T php composer remove --no-interaction --dev --no-update phpunit/phpunit
+
       - name: Install Composer dependencies
         run: |
           if [[ "${{ matrix.deps }}" == "lowest" ]]; then
@@ -105,11 +116,18 @@ jobs:
             docker compose exec -T php composer install
           fi
 
+      - name: Copy Drush configuration
+        run: docker compose exec -T php cp -r tests/behat/fixtures/drupal/drush build/drush
+
       - name: Run PHPSpec tests
-        run: docker compose exec -T php composer test-phpspec
+        run: docker compose exec -T php vendor/bin/phpspec run -f pretty --no-interaction
+
+      - name: Run PHPUnit tests
+        if: ${{ matrix.coverage }}
+        run: docker compose exec -T php php -d pcov.enabled=1 -d pcov.directory=. vendor/bin/phpunit -c phpunit.xml
 
       - name: Provision Drupal site
-        run: docker compose exec -T php ./vendor/bin/drush --yes --root=build/web site-install --db-url=mysql://drupal:drupal@db/drupal --debug
+        run: docker compose exec -T php ./vendor/bin/drush --yes --root=build/web site-install --db-url=mysql://drupal:drupal@database/drupal --debug
 
       - name: Copy test fixtures
         run: docker compose exec -T php cp -r tests/behat/fixtures/drupal/modules/behat_test build/web/modules
@@ -122,8 +140,59 @@ jobs:
           docker compose exec -u ${DOCKER_USER_ID} -T php vendor/bin/drush cset automated_cron.settings interval 0
           docker compose exec -u ${DOCKER_USER_ID} -T php vendor/bin/drush cset user.settings register visitors
 
+      - name: Run Behat tests with coverage
+        if: ${{ matrix.coverage }}
+        run: |
+          docker compose exec -T php bash -c 'rm -rf .logs/coverage/behat_cli/phpcov/*.php 2>/dev/null; mkdir -p .logs/coverage/behat_cli/phpcov || true'
+          docker compose exec -T php php -d pcov.enabled=1 -d pcov.directory=src vendor/bin/behat -fprogress --strict --colors
+          docker compose exec -T php php scripts/merge-coverage.php
+
       - name: Run Behat tests
-        run: docker compose exec -T php composer test-bdd
+        if: ${{ !matrix.coverage }}
+        run: |
+          docker compose exec -T php vendor/bin/behat -fprogress --strict
+          docker compose exec -T php vendor/bin/behat -fprogress --profile=drupal --strict
+          docker compose exec -T php vendor/bin/behat -fprogress --profile=drupal_https --strict
+
+      - name: Extract PHPUnit coverage
+        if: ${{ matrix.coverage }}
+        run: |
+          RATE=$(grep -om1 'line-rate="[0-9.]*"' .logs/coverage/phpunit/cobertura.xml | tr -cd '0-9.')
+          PERCENT=$(awk "BEGIN {printf \"%.2f\", $RATE*100}")
+          echo "PHPUnit coverage: $PERCENT% (threshold: $CI_PHPUNIT_COVERAGE_THRESHOLD%)" | tee -a "$GITHUB_STEP_SUMMARY"
+          echo "PHPUNIT_COVERAGE_PERCENT=${PERCENT}" >> "$GITHUB_ENV"
+        env:
+          CI_PHPUNIT_COVERAGE_THRESHOLD: ${{ vars.CI_PHPUNIT_COVERAGE_THRESHOLD || '0' }}
+
+      - name: Extract Behat coverage
+        if: ${{ matrix.coverage }}
+        run: |
+          RATE=$(grep -om1 'line-rate="[0-9.]*"' .logs/coverage/behat_merged/cobertura.xml | tr -cd '0-9.')
+          PERCENT=$(awk "BEGIN {printf \"%.2f\", $RATE*100}")
+          echo "Behat coverage: $PERCENT% (threshold: $CI_BEHAT_COVERAGE_THRESHOLD%)" | tee -a "$GITHUB_STEP_SUMMARY"
+          echo "BEHAT_COVERAGE_PERCENT=${PERCENT}" >> "$GITHUB_ENV"
+        env:
+          CI_BEHAT_COVERAGE_THRESHOLD: ${{ vars.CI_BEHAT_COVERAGE_THRESHOLD || '0' }}
+
+      - name: Check PHPUnit coverage threshold
+        if: ${{ matrix.coverage }}
+        run: |
+          if [ "${PHPUNIT_COVERAGE_PERCENT//.}" -lt "$((CI_PHPUNIT_COVERAGE_THRESHOLD*100))" ]; then
+            echo "FAIL: PHPUnit coverage ${PHPUNIT_COVERAGE_PERCENT}% is below threshold ${CI_PHPUNIT_COVERAGE_THRESHOLD}%"
+            exit 1
+          fi
+        env:
+          CI_PHPUNIT_COVERAGE_THRESHOLD: ${{ vars.CI_PHPUNIT_COVERAGE_THRESHOLD || '0' }}
+
+      - name: Check Behat coverage threshold
+        if: ${{ matrix.coverage }}
+        run: |
+          if [ "${BEHAT_COVERAGE_PERCENT//.}" -lt "$((CI_BEHAT_COVERAGE_THRESHOLD*100))" ]; then
+            echo "FAIL: Behat coverage ${BEHAT_COVERAGE_PERCENT}% is below threshold ${CI_BEHAT_COVERAGE_THRESHOLD}%"
+            exit 1
+          fi
+        env:
+          CI_BEHAT_COVERAGE_THRESHOLD: ${{ vars.CI_BEHAT_COVERAGE_THRESHOLD || '0' }}
 
       - name: Upload test artifacts
         uses: actions/upload-artifact@v4
