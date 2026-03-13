@@ -23,8 +23,10 @@ use Rector\DeadCode\Rector\If_\RemoveAlwaysTrueIfConditionRector;
 use Rector\Naming\Rector\Assign\RenameVariableToMatchMethodCallReturnTypeRector;
 use Rector\Naming\Rector\ClassMethod\RenameParamToMatchTypeRector;
 use Rector\Naming\Rector\ClassMethod\RenameVariableToMatchNewTypeRector;
+use Rector\Naming\Rector\Foreach_\RenameForeachValueVariableToMatchExprVariableRector;
 use Rector\Naming\Rector\Foreach_\RenameForeachValueVariableToMatchMethodCallReturnTypeRector;
 use Rector\Php80\Rector\Switch_\ChangeSwitchToMatchRector;
+use Rector\PHPUnit\CodeQuality\Rector\Class_\YieldDataProviderRector;
 use Rector\Strict\Rector\Empty_\DisallowedEmptyRuleFixerRector;
 use Rector\TypeDeclaration\Rector\StmtsAwareInterface\DeclareStrictTypesRector;
 
@@ -32,6 +34,7 @@ return RectorConfig::configure()
     ->withPaths([
         __DIR__ . '/src/**',
         __DIR__ . '/tests/behat/bootstrap/**',
+        __DIR__ . '/tests/phpunit/**',
     ])
     ->withPhpSets(php82: TRUE)
     ->withPreparedSets(
@@ -45,6 +48,7 @@ return RectorConfig::configure()
     )
     ->withRules([
         DeclareStrictTypesRector::class,
+        YieldDataProviderRector::class,
     ])
     ->withSkip([
         // Rules added by Rector's rule sets.
@@ -58,10 +62,11 @@ return RectorConfig::configure()
         NewlineBeforeNewAssignSetRector::class,
         NewlineBetweenClassLikeStmtsRector::class,
         RemoveAlwaysTrueIfConditionRector::class,
+        RenameForeachValueVariableToMatchExprVariableRector::class,
         RenameForeachValueVariableToMatchMethodCallReturnTypeRector::class,
+        RenameParamToMatchTypeRector::class,
         RenameVariableToMatchMethodCallReturnTypeRector::class,
         RenameVariableToMatchNewTypeRector::class,
-        RenameParamToMatchTypeRector::class,
         SimplifyEmptyCheckOnEmptyArrayRector::class,
         // Dependencies.
         '*/vendor/*',

@@ -239,7 +239,13 @@ default:
     default:
       contexts:
         - FeatureContext
+        - Drupal\DrupalExtension\Context\ConfigContext
+        - Drupal\DrupalExtension\Context\DrushContext
+        - Drupal\DrupalExtension\Context\MailContext
+        - Drupal\DrupalExtension\Context\MarkupContext
+        - Drupal\DrupalExtension\Context\MessageContext
         - Drupal\DrupalExtension\Context\MinkContext
+        - Drupal\DrupalExtension\Context\RandomContext
         - DrevOps\BehatScreenshotExtension\Context\ScreenshotContext
   extensions:
     Drupal\MinkExtension:
@@ -265,6 +271,15 @@ default:
       api_driver: drupal
       drupal:
         drupal_root: /var/www/html/build/web
+      drush:
+        root: /var/www/html/build/web
+      region_map:
+        main content: "#main"
+      selectors:
+        message_selector: '.messages'
+        error_message_selector: '.messages--error'
+        success_message_selector: '.messages--status'
+        warning_message_selector: '.messages--warning'
     DrevOps\BehatScreenshotExtension:
       dir: '%paths.base%/.logs/screenshots'
       purge: false

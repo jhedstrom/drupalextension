@@ -1,4 +1,4 @@
-@api
+@api @test-drupal
 Feature: FieldHandlers
   As a developer
   I want to handle complex field types when creating entities

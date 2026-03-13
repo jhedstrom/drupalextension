@@ -1,4 +1,4 @@
-@api
+@api @test-drupal
 @random
 Feature: RandomContext functionality
   As a developer
@@ -24,3 +24,16 @@ Feature: RandomContext functionality
     Given I am viewing a page:
       | title | <?random_page> |
     Then I should see the text "<?random_page>"
+
+  Scenario: Fail when using undefined random variable
+    Given some behat configuration
+    And a file named "features/stub.feature" with:
+      """
+      @api @random
+      Feature: Stub
+        Scenario: Undefined variable
+          Given I am on "/"
+          Then I should see the text "<?undefined_var>"
+      """
+    When I run "behat --no-colors"
+    Then it should fail

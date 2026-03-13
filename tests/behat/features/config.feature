@@ -1,4 +1,4 @@
-@api
+@api @test-drupal
 Feature: ConfigContext
   As a developer
   I want to manage Drupal configuration in test scenarios
@@ -18,3 +18,12 @@ Feature: ConfigContext
       | preprocess | true  |
     When I go to "admin/config/development/performance"
     Then the "Aggregate CSS files" checkbox should be checked
+
+  Scenario: Config is restored after scenario
+    Given I set the configuration item "system.site" with key "name" to "Temporary Name"
+    When I go to "admin/config/system/site-information"
+    Then the "Site name" field should contain "Temporary Name"
+
+  Scenario: Verify config was restored by previous scenario cleanup
+    When I go to "admin/config/system/site-information"
+    Then the "Site name" field should not contain "Temporary Name"

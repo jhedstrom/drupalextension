@@ -10,7 +10,7 @@
  * Where:
  * - ClassName: The name of the class to check (e.g., "DrupalContext")
  * - coverage_file_path: Optional path to the cobertura.xml file.
- *   Defaults to '/var/www/html/.logs/coverage/behat_merged/cobertura.xml'.
+ *   Defaults to '/var/www/html/.logs/coverage/merged/cobertura.xml'.
  *
  * Examples:
  * php check-coverage.php DrupalContext
@@ -27,9 +27,9 @@ if (empty($argv[1])) {
 }
 
 $trait_name = $argv[1];
-$default_coverage_file = file_exists('/var/www/html/.logs/coverage/behat_merged/cobertura.xml')
-  ? '/var/www/html/.logs/coverage/behat_merged/cobertura.xml'
-  : __DIR__ . '/../.logs/coverage/behat_merged/cobertura.xml';
+$default_coverage_file = file_exists('/var/www/html/.logs/coverage/merged/cobertura.xml')
+  ? '/var/www/html/.logs/coverage/merged/cobertura.xml'
+  : __DIR__ . '/../.logs/coverage/merged/cobertura.xml';
 $coverage_file = $argv[2] ?? $default_coverage_file;
 
 if (!file_exists($coverage_file)) {

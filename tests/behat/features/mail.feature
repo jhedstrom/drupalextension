@@ -1,4 +1,4 @@
-@api
+@api @test-drupal
 Feature: MailContext
   As a developer
   I want to send and inspect emails in test scenarios
@@ -88,3 +88,43 @@ Feature: MailContext
       | to   | subject | body      |
       | jane | test    | body 2    |
       | fred |         | test body |
+
+  Scenario: Follow link from mail without filters
+    When Drupal sends a mail:
+      | to      | fred@example.com                             |
+      | subject | plain link                                   |
+      | body    | Click here: http://www.Google.com for search |
+    And I follow the link to "google" from the mail
+    Then the response should contain "Search"
+
+  Scenario: Follow link from mail to specific recipient
+    When Drupal sends a mail:
+      | to      | specific@example.com                      |
+      | subject | link for specific                         |
+      | body    | Visit http://www.Google.com for more info |
+    And I follow the link to "google" from the mail to "specific@example.com"
+    Then the response should contain "Search"
+
+  Scenario: Follow link from mail to recipient with subject
+    When Drupal sends a mail:
+      | to      | combo@example.com           |
+      | subject | combo test                  |
+      | body    | Link: http://www.Google.com |
+    And I follow the link to "google" from the mail to "combo@example.com" with the subject "combo test"
+    Then the response should contain "Search"
+
+  Scenario: New mail sent with subject and body filter
+    When Drupal sends a mail:
+      | to      | alice@example.com |
+      | subject | new mail test     |
+      | body    | first body        |
+    Then a mail has been sent to "alice@example.com" with the subject "new mail test":
+      | body       |
+      | first body |
+    When Drupal sends a mail:
+      | to      | alice@example.com |
+      | subject | new mail test     |
+      | body    | second body       |
+    Then new email is sent:
+      | body        |
+      | second body |

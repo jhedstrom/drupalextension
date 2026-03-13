@@ -1,4 +1,4 @@
-@smoke @blackbox
+@smoke @test-blackbox
 Feature: Blackbox driver smoke test
 
   As a visitor

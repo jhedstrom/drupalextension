@@ -81,7 +81,7 @@ The environment consists of several services:
   Behat tests that require a running Drupal installation
   (`@api` tagged tests).
 - **blackbox** — Nginx web server serving static HTML fixtures,
-  used by Behat tests that do not require Drupal (`@blackbox`
+  used by Behat tests that do not require Drupal (`@test-blackbox`
   tagged tests).
 - **chrome** — Selenium standalone Chromium for browser testing.
 - **proxy** — Traefik reverse proxy for HTTPS/TLS termination
@@ -150,17 +150,39 @@ is submitted.
 ahoy lint                   # Check coding standards
 ahoy lint-fix               # Fix coding standards
 
+ahoy test                   # Run all tests without coverage
 ahoy test-phpspec           # Run PHPSpec unit tests
-ahoy test-phpunit           # Run PHPUnit tests
-ahoy test-phpunit-coverage  # Run PHPUnit tests with coverage
-ahoy test                   # Run all unit tests with coverage
-
-ahoy test-bdd               # Run all Behat tests
-ahoy test-bdd-coverage      # Run all Behat tests with coverage
-
+ahoy test-unit              # Run PHPUnit tests
+ahoy test-bdd               # Run all Behat tests (all profiles)
 ahoy test-bdd-blackbox      # Blackbox tests only
 ahoy test-bdd-drupal        # Drupal API tests only
 ahoy test-bdd-drupal-https  # HTTPS tests only
+
+ahoy test-coverage          # Run all tests with coverage and merge
+ahoy test-unit-coverage     # Run PHPUnit tests with coverage
+ahoy test-bdd-coverage      # Run all Behat tests with coverage
+```
+
+### Behat scenario tagging
+
+Every Behat scenario must have a **profile-selection tag** to control which
+Behat profile runs it. These tags use a `test-` prefix to distinguish them
+from functional tags like `@api` (which enables the Drupal API driver):
+
+| Tag              | Profile         | Environment                    |
+|------------------|-----------------|--------------------------------|
+| `@test-blackbox` | `default`       | Static HTML fixtures           |
+| `@test-drupal`   | `drupal`        | Installed Drupal site with API |
+| `@test-https`    | `drupal_https`  | HTTPS via Traefik proxy        |
+
+Functional tags like `@api`, `@javascript`, and `@smoke` serve a different
+purpose — they enable specific Behat functionality (e.g. the Drupal API driver
+or a JavaScript browser session). A scenario can have both types:
+
+```gherkin
+@api @test-drupal
+Scenario: Create content via API
+  Given I am logged in as a user with the "administrator" role
 ```
 
 ### How code coverage works
@@ -187,9 +209,9 @@ as a subprocess (negative tests that verify error messages):
    `ini_get('pcov.enabled')`.
 3. After all tests complete, `scripts/merge-coverage.php` takes
    the main coverage and merges all subprocess coverage files
-   into a combined report at `.logs/coverage/behat_merged/`.
+   into a combined report at `.logs/coverage/merged/`.
 
-The final merged report in `.logs/coverage/behat_merged/` is what
+The final merged report in `.logs/coverage/merged/` is what
 CI uses to check coverage thresholds.
 
 ## Debugging with Xdebug

@@ -1,4 +1,4 @@
-@behatcli @blackbox
+@behatcli @test-blackbox
 Feature: Behat CLI context Javascript steps
 
   Tests that JS sessions can be correctly started and ended when running

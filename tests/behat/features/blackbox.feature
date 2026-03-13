@@ -1,4 +1,4 @@
-@blackbox
+@test-blackbox
 Feature: Test DrupalContext
   As a developer
   I want to interact with page regions and elements using the blackbox driver
@@ -98,7 +98,8 @@ Feature: Test DrupalContext
   @scenariotag
   Scenario: Check tags on feature and scenario
     Then the "scenariotag" tag should be present
-    And the "blackbox" tag should be present
+    # Tags inherited from the feature should be present on the scenario
+    And the "test-blackbox" tag should be present
     But the "nonexisting" tag should not be present
 
   Scenario: Regression test. See:

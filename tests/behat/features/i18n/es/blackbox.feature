@@ -1,5 +1,5 @@
 # language: es
-@blackbox
+@test-blackbox
 Característica: Test DrupalContext
   Como desarrollador
   Quiero interactuar con regiones y elementos de la página usando el driver blackbox

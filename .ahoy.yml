@@ -31,7 +31,6 @@ commands:
       echo "  DB port on host          : " $(docker compose port database 3306 2>/dev/null | cut -d : -f 2)
       echo "  Selenium VNC URL on host :  http://localhost:$(docker compose port chrome 7900 2>/dev/null | cut -d : -f 2)/?autoconnect=1&password=secret"
       echo "  Xdebug                   : " $(docker compose exec -T php php -v 2>/dev/null | grep -q Xdebug && echo "enabled (disable with ahoy up)" || echo "disabled (enable with ahoy debug)")
-
       if [ -n "$1" ]; then
         echo "  One-time login           : " $(ahoy login -- --no-browser)
       fi
@@ -105,9 +104,12 @@ commands:
     cmd: |
       ahoy drush sql-drop --yes
       ahoy drush --yes site-install --db-url=mysql://drupal:drupal@database/drupal --debug
+
       ahoy cli cp -r tests/behat/fixtures/drupal/modules/behat_test build/web/modules
+
       ahoy drush --yes pmu page_cache,big_pipe
       ahoy drush --yes en behat_test
+
       ahoy drush cset core.date_format.olivero_medium pattern 'j F, Y'
       ahoy drush cset automated_cron.settings interval 0
       ahoy drush cset user.settings register visitors
@@ -135,63 +137,125 @@ commands:
   lint:
     usage: Lint code.
     cmd: |
+      ahoy title "Running PHP Parallel Lint"
       ahoy cli "vendor/bin/parallel-lint src spec tests"
+
+      ahoy title "Running PHP Code Sniffer (project)"
       ahoy cli "vendor/bin/phpcs --standard=./phpcs.xml -p"
+
+      ahoy title "Running PHP Code Sniffer (Drupal)"
       ahoy cli "vendor/bin/phpcs --standard=./phpcs-drupal.xml -p"
+
+      ahoy title "Running PHPStan"
       ahoy cli vendor/bin/phpstan
+
+      ahoy title "Running Rector (dry-run)"
       ahoy cli "vendor/bin/rector process --dry-run"
+
+      ahoy title "Running Gherkin Lint"
       ahoy cli "vendor/bin/gherkinlint lint tests/behat/features"
 
   lint-fix:
     usage: Fix code.
     cmd: |
+      ahoy title "Running Rector"
       ahoy cli "vendor/bin/rector process"
+
+      ahoy title "Running PHP Code Beautifier (project)"
       ahoy cli "vendor/bin/phpcbf --standard=./phpcs.xml -p"
+
+      ahoy title "Running PHP Code Beautifier (Drupal)"
       ahoy cli "vendor/bin/phpcbf --standard=./phpcs-drupal.xml -p"
 
   test:
-    usage: Run all unit tests with coverage.
+    usage: Run all tests without coverage.
     cmd: |
-      ahoy test-phpunit-coverage
+      ahoy title "Running PHPSpec"
       ahoy test-phpspec
+
+      ahoy title "Running PHPUnit"
+      ahoy test-unit
+
+      ahoy test-bdd
 
   test-phpspec:
     usage: Run PHPSpec unit tests.
     cmd: ahoy cli "vendor/bin/phpspec run -f pretty --no-interaction"
 
-  test-phpunit:
+  test-unit:
     usage: Run PHPUnit tests.
     cmd: ahoy cli "vendor/bin/phpunit -c phpunit.xml --no-coverage $@"
-
-  test-phpunit-coverage:
-    usage: Run PHPUnit tests with coverage.
-    cmd: ahoy cli "php -d pcov.enabled=1 -d pcov.directory=. vendor/bin/phpunit -c phpunit.xml $@"
 
   test-bdd:
     usage: Run all Behat tests.
     cmd: |
-      ahoy test-bdd-blackbox
-      ahoy test-bdd-drupal
-      ahoy test-bdd-drupal-https
+      # If no arguments are passed, run in strict mode. If any arguments are passed, do not use strict mode to allow running specific tests.
+      STRICT=""; if [ -z "$1" ]; then STRICT="--strict"; fi
 
-  test-bdd-coverage:
-    usage: Run BDD tests with coverage.
-    cmd: |
-      ahoy cli "rm -rf .logs/coverage/behat_cli/phpcov/*.php 2>/dev/null; mkdir -p .logs/coverage/behat_cli/phpcov || true"
-      ahoy cli "php -d pcov.enabled=1 -d pcov.directory=src vendor/bin/behat -fprogress --strict --colors $@"
-      ahoy cli "php scripts/merge-coverage.php"
+      ahoy title "Running Behat: blackbox"
+      ahoy cli "vendor/bin/behat $STRICT --no-coverage --allow-no-tests $@"
+
+      ahoy title "Running Behat: drupal"
+      ahoy cli "vendor/bin/behat --profile=drupal $STRICT --no-coverage --allow-no-tests $@"
 
   test-bdd-blackbox:
     usage: Run blackbox Behat tests.
-    cmd: ahoy cli "vendor/bin/behat -fprogress --strict --colors $@"
+    cmd: ahoy cli "vendor/bin/behat --strict --no-coverage $@"
 
   test-bdd-drupal:
     usage: Run Drupal API Behat tests.
-    cmd: ahoy cli "vendor/bin/behat -fprogress --profile=drupal --strict --colors $@"
+    cmd: ahoy cli "vendor/bin/behat --profile=drupal --strict --no-coverage $@"
 
   test-bdd-drupal-https:
     usage: Run HTTPS Behat tests.
-    cmd: ahoy cli "vendor/bin/behat -fprogress --profile=drupal_https --strict --colors $@"
+    cmd: ahoy cli "vendor/bin/behat --profile=drupal_https --strict --no-coverage $@"
+
+  test-coverage:
+    usage: Run all tests with coverage and merge reports.
+    cmd: |
+      ahoy cli "rm -rf .logs/coverage/phpunit .logs/coverage/behat .logs/coverage/behat_cli/phpcov 2>/dev/null; mkdir -p .logs/coverage/phpunit .logs/coverage/behat .logs/coverage/behat_cli/phpcov || true"
+
+      ahoy title "Running PHPUnit with coverage"
+      ahoy cli "php -d pcov.enabled=1 -d pcov.directory=. vendor/bin/phpunit -c phpunit.xml"
+
+      ahoy title "Running Behat with coverage: blackbox"
+      ahoy cli "php -d pcov.enabled=1 -d pcov.directory=src vendor/bin/behat --strict --allow-no-tests"
+
+      ahoy title "Running Behat with coverage: drupal"
+      ahoy cli "php -d pcov.enabled=1 -d pcov.directory=src vendor/bin/behat --profile=drupal --strict --allow-no-tests"
+
+      ahoy cli "php scripts/merge-coverage.php"
+
+  test-unit-coverage:
+    usage: Run PHPUnit tests with coverage.
+    cmd: |
+      ahoy cli "rm -rf .logs/coverage/phpunit 2>/dev/null; mkdir -p .logs/coverage/phpunit || true"
+
+      ahoy title "Running PHPUnit with coverage"
+      ahoy cli "php -d pcov.enabled=1 -d pcov.directory=. vendor/bin/phpunit -c phpunit.xml $@"
+
+      ahoy cli "php scripts/merge-coverage.php"
+
+  test-bdd-coverage:
+    usage: Run all Behat tests with coverage and merge reports.
+    cmd: |
+      ahoy cli "rm -rf .logs/coverage/behat .logs/coverage/behat_cli/phpcov 2>/dev/null; mkdir -p .logs/coverage/behat .logs/coverage/behat_cli/phpcov || true"
+
+      # If no arguments are passed, run in strict mode. If any arguments are passed, do not use strict mode to allow running specific tests.
+      STRICT=""; if [ -z "$1" ]; then STRICT="--strict"; fi
+
+      ahoy title "Running Behat with coverage: blackbox"
+      ahoy cli "php -d pcov.enabled=1 -d pcov.directory=src vendor/bin/behat $STRICT --allow-no-tests $@"
+
+      ahoy title "Running Behat with coverage: drupal"
+      ahoy cli "php -d pcov.enabled=1 -d pcov.directory=src vendor/bin/behat --profile=drupal $STRICT --allow-no-tests $@"
+
+      ahoy cli "php scripts/merge-coverage.php"
+
+  title:
+    usage: Print a cyan header.
+    cmd: echo -e "\n\033[36m$@\033[0m"
+    hide: true
 
 entrypoint:
   - bash
