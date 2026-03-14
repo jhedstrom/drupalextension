@@ -79,17 +79,17 @@ default:
       blackbox: ~
       # Region map in the static HTML fixture.
       region_map:
-        content: "#content"
-        footer: "#footer"
-        navigation: "#nav-header"
-        left header: "#header-left"
-        right header: "#header-right"
-        right sidebar: "#aside-region"
+        static content: "#static-content"
+        static footer: "#static-footer"
+        static navigation: "#static-nav"
+        static left header: "#static-header-left"
+        static right header: "#static-header-right"
+        static sidebar: "#static-sidebar"
       selectors:
-        message_selector: '.messages'
-        error_message_selector: '.messages.error'
-        success_message_selector: '.messages.status'
-        warning_message_selector: '.messages.warning'
+        message_selector: '.static-messages'
+        error_message_selector: '.static-messages.static-error'
+        success_message_selector: '.static-messages.static-status'
+        warning_message_selector: '.static-messages.static-warning'
 
     DrevOps\BehatScreenshotExtension:
         dir: '%paths.base%/.logs/screenshots'
@@ -155,6 +155,7 @@ drupal:
       region_map:
         main content: "#main"
       selectors:
+        message_selector: '.messages'
         error_message_selector: '.messages--error'
         success_message_selector: '.messages--status'
         warning_message_selector: '.messages--warning'
