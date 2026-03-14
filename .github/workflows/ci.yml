@@ -8,6 +8,9 @@ on:
     branches:
       - main
 
+env:
+  CI_COVERAGE_THRESHOLD: '44'
+
 jobs:
   lint:
     name: Lint
@@ -49,6 +52,8 @@ jobs:
   tests:
     name: PHP ${{ matrix.php_version }}, Drupal ${{ matrix.drupal_version }}, Deps ${{ matrix.deps }}
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
 
     strategy:
       fail-fast: false
@@ -143,15 +148,16 @@ jobs:
       - name: Run Behat tests with coverage
         if: ${{ matrix.coverage }}
         run: |
-          docker compose exec -T php bash -c 'rm -rf .logs/coverage/behat_cli/phpcov/*.php 2>/dev/null; mkdir -p .logs/coverage/behat_cli/phpcov || true'
-          docker compose exec -T php php -d pcov.enabled=1 -d pcov.directory=src vendor/bin/behat -fprogress --strict --colors
+          docker compose exec -T php bash -c 'rm -rf .logs/coverage/behat .logs/coverage/behat_cli/phpcov 2>/dev/null; mkdir -p .logs/coverage/behat .logs/coverage/behat_cli/phpcov || true'
+          docker compose exec -T php php -d pcov.enabled=1 -d pcov.directory=src vendor/bin/behat --strict
+          docker compose exec -T php php -d pcov.enabled=1 -d pcov.directory=src vendor/bin/behat --profile=drupal --strict
 
       - name: Run Behat tests
         if: ${{ !matrix.coverage }}
         run: |
-          docker compose exec -T php vendor/bin/behat -fprogress --strict
-          docker compose exec -T php vendor/bin/behat -fprogress --profile=drupal --strict
-          docker compose exec -T php vendor/bin/behat -fprogress --profile=drupal_https --strict
+          docker compose exec -T php vendor/bin/behat --strict --no-coverage
+          docker compose exec -T php vendor/bin/behat --profile=drupal --strict --no-coverage
+          docker compose exec -T php vendor/bin/behat --profile=drupal_https --strict --no-coverage
 
       - name: Merge all coverage
         if: ${{ matrix.coverage }}
@@ -164,8 +170,27 @@ jobs:
           PERCENT=$(awk "BEGIN {printf \"%.2f\", $RATE*100}")
           echo "**Total coverage: $PERCENT%** (threshold: $CI_COVERAGE_THRESHOLD%)" | tee -a "$GITHUB_STEP_SUMMARY"
           echo "TOTAL_COVERAGE_PERCENT=${PERCENT}" >> "$GITHUB_ENV"
-        env:
-          CI_COVERAGE_THRESHOLD: ${{ vars.CI_COVERAGE_THRESHOLD || '0' }}
+          { echo "COVERAGE_SUMMARY<<EOF"; cat .logs/coverage/merged/coverage-summary.txt; echo "EOF"; } >> "$GITHUB_ENV"
+          { echo "COVERAGE_DETAILS<<EOF"; cat .logs/coverage/merged/coverage-details.txt; echo "EOF"; } >> "$GITHUB_ENV"
+
+      - name: Post coverage summary as PR comment
+        if: ${{ github.event_name == 'pull_request' && matrix.coverage }}
+        uses: marocchino/sticky-pull-request-comment@773744901bac0e8cbb5a0dc842800d45e9b2b405 # v2
+        with:
+          header: coverage
+          message: |
+            **Code coverage** (threshold: ${{ env.CI_COVERAGE_THRESHOLD }}%)
+            ```
+            ${{ env.COVERAGE_SUMMARY }}
+            ```
+            <details>
+            <summary>Per-class coverage</summary>
+
+            ```
+            ${{ env.COVERAGE_DETAILS }}
+            ```
+            </details>
+          hide_and_recreate: true
 
       - name: Check coverage threshold
         if: ${{ matrix.coverage }}
@@ -174,8 +199,6 @@ jobs:
             echo "FAIL: Total coverage ${TOTAL_COVERAGE_PERCENT}% is below threshold ${CI_COVERAGE_THRESHOLD}%"
             exit 1
           fi
-        env:
-          CI_COVERAGE_THRESHOLD: ${{ vars.CI_COVERAGE_THRESHOLD || '0' }}
 
       - name: Upload test artifacts
         uses: actions/upload-artifact@v4
