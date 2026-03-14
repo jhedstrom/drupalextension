@@ -56,6 +56,20 @@ Feature: DrupalContext coverage gaps
     When I go to "admin/content"
     Then I should not see the text "NONEXISTENT_STRING_xyz" in the "Absent text row" row
 
+  @api @test-drupal
+  Scenario: Create content without viewing it
+    Given I am logged in as a user with the "administrator" role
+    And an "article" with the title "Created not viewed"
+    When I go to "admin/content"
+    Then I should see "Created not viewed"
+
+  @api @test-drupal
+  Scenario: Create a standalone taxonomy term
+    Given I am logged in as a user with the "administrator" role
+    And a "tags" term with the name "Standalone term"
+    When I go to "admin/structure/taxonomy/manage/tags/overview"
+    Then I should see "Standalone term"
+
   @test-blackbox
   Scenario: Fail when text is present in row but should not be
     Given some behat configuration

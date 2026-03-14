@@ -185,6 +185,16 @@ Feature: MailContext
       | body        |
       | second body |
 
+  @api @test-drupal
+  Scenario: New mail sent with subject-only filter
+    When Drupal sends a mail:
+      | to      | subonly@example.com |
+      | subject | subject only test  |
+      | body    | some body text     |
+    Then new email is sent with the subject "subject only test":
+      | body           |
+      | some body text |
+
   @test-blackbox
   Scenario: Fail when expected mail body does not match
     Given some behat configuration

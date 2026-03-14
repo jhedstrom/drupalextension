@@ -490,6 +490,11 @@ Feature: MinkContext coverage gaps
     Given I am at "/behat-test/ajax"
     When I expand details labelled "Advanced settings"
 
+  @api @test-drupal
+  Scenario: See heading in region with alternate word order
+    Given I am at "/user/login"
+    Then I should see the "Log in" heading in the "main content" region
+
   @test-blackbox
   Scenario: Fail when pressing key in non-existent field
     Given some behat configuration
