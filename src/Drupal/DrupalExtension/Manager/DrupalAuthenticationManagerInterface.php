@@ -28,6 +28,8 @@ interface DrupalAuthenticationManagerInterface
      *
      * @return bool
      *   Returns TRUE if a user is logged in for this session.
+     *
+     * @todo v6: Rename to isLoggedIn().
      */
     public function loggedIn();
 }
