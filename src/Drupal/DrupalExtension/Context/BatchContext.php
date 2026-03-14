@@ -23,7 +23,7 @@ class BatchContext extends RawMinkContext
      * Given I wait for the batch job to finish
      * @endcode
      *
-     * @Given /^I wait for the batch job to finish$/
+     * @Given I wait for the batch job to finish
      */
     public function iWaitForTheBatchJobToFinish(): void
     {
