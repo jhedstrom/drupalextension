@@ -22,7 +22,7 @@
 
 
 <details>
-  <summary><code>@Given /^I wait for the batch job to finish$/</code></summary>
+  <summary><code>@Given I wait for the batch job to finish</code></summary>
 
 <br/>
 Wait for the Batch API to finish
