@@ -5,58 +5,58 @@ Feature: MinkContext coverage gaps
 
   @test-blackbox
   Scenario: Heading should not be present
-    Given I am at "mink_context.html"
+    Given I am at "form_controls.html"
     Then I should not see the heading "Nonexistent Heading"
 
   @test-blackbox
   Scenario: Button should not be present
-    Given I am at "mink_context.html"
+    Given I am at "form_controls.html"
     Then I should not see the button "Nonexistent Button"
 
   @test-blackbox
   Scenario: Check a checkbox
-    Given I am at "mink_context.html"
+    Given I am at "form_controls.html"
     When I check the box "I agree to terms"
 
   @test-blackbox
   Scenario: Uncheck a checkbox
-    Given I am at "mink_context.html"
+    Given I am at "form_controls.html"
     When I uncheck the box "Subscribe to newsletter"
 
   @test-blackbox
   Scenario: Uncheck a checkbox in a region
-    Given I am at "mink_context.html"
-    And I check "Footer checkbox" in the "footer" region
-    Then I uncheck "Footer checkbox" in the "footer" region
+    Given I am at "form_controls.html"
+    And I check "Footer checkbox" in the "static footer" region
+    Then I uncheck "Footer checkbox" in the "static footer" region
 
   @test-blackbox
   Scenario: Select a radio button by label with id
-    Given I am at "mink_context.html"
+    Given I am at "form_controls.html"
     When I select the radio button "Blue" with the id "color-blue"
 
   @test-blackbox
   Scenario: Select a radio button by label only
-    Given I am at "mink_context.html"
+    Given I am at "form_controls.html"
     When I select the radio button "Green"
 
   @test-blackbox
   Scenario: Hidden link should not be visually visible
-    Given I am at "mink_context.html"
+    Given I am at "form_controls.html"
     Then I should not visibly see the link "Hidden link"
 
   @test-blackbox
   Scenario: Should not get a specific HTTP response
-    Given I am at "mink_context.html"
+    Given I am at "form_controls.html"
     Then I should not get a "404" HTTP response
 
   @test-blackbox
   Scenario: Enter a value for a field
-    Given I am at "mink_context.html"
+    Given I am at "form_controls.html"
     When I enter "John" for "Name"
 
   @test-blackbox
   Scenario: For field enter value syntax
-    Given I am at "mink_context.html"
+    Given I am at "form_controls.html"
     When for "Name" I enter "Jane"
 
   @test-blackbox

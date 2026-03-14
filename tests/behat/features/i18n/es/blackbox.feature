@@ -7,34 +7,34 @@ Característica: Test DrupalContext
 
   Escenario: Prueba la capacidad de encontrar un encabezado en una zona
     Dado estoy en la página de inicio
-    Cuando hago click en "Download & Extend"
-    Entonces debo ver el encabezado "Download" en la zona "content"
+    Cuando hago click en "Page Two"
+    Entonces debo ver el encabezado "Download" en la zona "static content"
 
   Escenario: Hacer click en contenido de una zona
-    Dado que estoy en la URL "community.html"
-    Cuando hago click en "IRC" de la zona "content"
-    Entonces debo ver "Page status" en "right sidebar"
-    Y debo ver el enlace "Drupal News" en la zona "footer"
+    Dado que estoy en la URL "page_one.html"
+    Cuando hago click en "Page Three" de la zona "static content"
+    Entonces debo ver "Page status" en "static sidebar"
+    Y debo ver el enlace "Home" en la zona "static footer"
 
   Escenario: Ver contenido en una zona
     Dado estoy en la página de inicio
-    Entonces debo ver "Build something amazing." en "left header"
-    Y debo ver "Build something amazing." en la zona "left header"
+    Entonces debo ver "Welcome to the test site." en "static left header"
+    Y debo ver "Welcome to the test site." en la zona "static left header"
 
   Escenario: Prueba la capacidad de buscar texto que no debe aparecer en una zona
     Dado estoy en la página de inicio
-    Entonces no debo ver el texto "Proprietary software is cutting edge" en "left header"
-    Y no debo ver el texto "Proprietary software is cutting edge" en la zona "left header"
+    Entonces no debo ver el texto "Proprietary software is cutting edge" en "static left header"
+    Y no debo ver el texto "Proprietary software is cutting edge" en la zona "static left header"
 
   Escenario: Enviar un formulario de una zona
     Dado estoy en la página de inicio
-    Cuando relleno el campo "Search…" con "Views" en la zona "navigation"
-    Y pulso "Search" en la zona "navigation"
-    Entonces debo ver el texto "Search again" en la zona "right sidebar"
+    Cuando relleno el campo "Search…" con "Views" en la zona "static navigation"
+    Y pulso "Search" en la zona "static navigation"
+    Entonces debo ver el texto "Home" en la zona "static sidebar"
 
   Escenario: Prueba que enlace que existe en una zona
     Dado estoy en la página de inicio
-    Entonces no debo ver el enlace "This link should never exist in a default Drupal install" en "right header"
+    Entonces no debo ver el enlace "This link should never exist in a default Drupal install" en "static right header"
 
   Escenario: Encontrar un botón
     Dado estoy en la página de inicio
@@ -42,46 +42,46 @@ Característica: Test DrupalContext
 
   Escenario: Encontrar un botón en una zona
     Dado estoy en la página de inicio
-    Entonces debo ver el botón "Search" en "navigation"
-    Y debo ver el botón "Search" en la zona "navigation"
+    Entonces debo ver el botón "Search" en "static navigation"
+    Y debo ver el botón "Search" en la zona "static navigation"
 
   Escenario: Encontrar un elemento en una zona
     Dado estoy en la página de inicio
-    Entonces debo ver un elemento "h1" en "left header"
-    Y debo ver un elemento "h1" en la zona "left header"
+    Entonces debo ver un elemento "h1" en "static left header"
+    Y debo ver un elemento "h1" en la zona "static left header"
 
   Escenario: Comprobar que no existe un elemento en una zona
     Dado estoy en la página de inicio
-    Entonces no debo ver un elemento "h1" en "footer"
-    Y no debo ver un elemento "h1" en la zona "footer"
+    Entonces no debo ver un elemento "h1" en "static footer"
+    Y no debo ver un elemento "h1" en la zona "static footer"
 
   Escenario: Comprobar que no existe una elemento con un texto en una zona
     Dado estoy en la página de inicio
-    Entonces no debo ver "DotNetNuke" en un elemento "h1" en "left header"
-    Y no debo ver "DotNetNuke" en un elemento "h1" en la zona "left header"
+    Entonces no debo ver "DotNetNuke" en un elemento "h1" en "static left header"
+    Y no debo ver "DotNetNuke" en un elemento "h1" en la zona "static left header"
 
   Escenario: Encontrar un elemento con un atributo en una zona
     Dado estoy en la página de inicio
-    Entonces debo ver un elemento "h1" con el atributo "id" igual a "site-name" en la zona "left header"
+    Entonces debo ver un elemento "h1" con el atributo "id" igual a "static-site-name" en la zona "static left header"
 
   Escenario: Encontrar un texto en un elemento con un atributo en una zona
     Dado estoy en la página de inicio
-    Entonces debo ver "Drupal" en un elemento "h1" con atributo "id" igual a "site-name" en la zona "left header"
-    Y debo ver "Drupal" en un elemento "h1" con atributo "id" igual a "site-name" en "left header"
+    Entonces debo ver "Test Static Site" en un elemento "h1" con atributo "id" igual a "static-site-name" en la zona "static left header"
+    Y debo ver "Test Static Site" en un elemento "h1" con atributo "id" igual a "static-site-name" en "static left header"
 
   Escenario: Encontrar un elemento con una atributo determinado en una zona
-    Dado que estoy en la URL "assertRegionElementAttribute.html"
-    Entonces debo ver un elemento "div" con el atributo "class" igual a "class1" en la zona "left header"
-    Y debo ver un elemento "div" con el atributo "class" igual a "class2" en "left header"
-    Y debo ver un elemento "div" con el atributo "class" igual a "class3" en "left header"
+    Dado que estoy en la URL "element_attributes.html"
+    Entonces debo ver un elemento "div" con el atributo "class" igual a "class1" en la zona "static left header"
+    Y debo ver un elemento "div" con el atributo "class" igual a "class2" en "static left header"
+    Y debo ver un elemento "div" con el atributo "class" igual a "class3" en "static left header"
 
   Escenario: Encontrar un texto en un elemento con un determinado estilo CSS en una zona
-    Dado que estoy en la URL "assertRegionElementAttribute.html"
-    Entonces debo ver "footer" en un elemento "p" con estilo CSS "color" igual a "red" en la zona "footer"
-    Entonces debo ver "footer" en un elemento "p" con estilo CSS "color" igual a "red" en "footer"
+    Dado que estoy en la URL "element_attributes.html"
+    Entonces debo ver "footer" en un elemento "p" con estilo CSS "color" igual a "red" en la zona "static footer"
+    Entonces debo ver "footer" en un elemento "p" con estilo CSS "color" igual a "red" en "static footer"
 
   Escenario: Mensajes de error
-    Dado que estoy en la URL "user.html"
+    Dado que estoy en la URL "form_page.html"
     Cuando presiono "Log in"
     Entonces debo ver el mensaje de error "Password field is required"
     Y debo ver el mensaje de error conteniendo "Password field is required"

@@ -8,12 +8,12 @@ Feature: Blackbox driver smoke test
   Scenario: Test the ability to find a heading in a region
     Given I am at "index.html"
     And I save screenshot
-    Then I should see the text "Build something amazing."
-    And I should see the text "Download & Extend" in the "right header" region
+    Then I should see the text "Welcome to the test site."
+    And I should see the text "Page Two" in the "static right header" region
 
   @javascript
   Scenario: Test the ability to find a heading in a region using a real browser
     Given I am at "index.html"
     And I save screenshot
-    Then I should see the text "Build something amazing."
-    And I should see the text "Download & Extend" in the "right header" region
+    Then I should see the text "Welcome to the test site."
+    And I should see the text "Page Two" in the "static right header" region
