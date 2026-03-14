@@ -10,12 +10,12 @@ Feature: Backend login/logout
 
   Scenario: Logout on the backend via fast logout
     Given I am logged in as a user with the "authenticated user" role
-    And I am logged in on the backend
+    And I should be logged in on the backend
     When I log out
     Then I should be logged out on the backend
 
   Scenario: Logout on the backend via url
     Given I am logged in as a user with the "authenticated user" role
-    And I am logged in on the backend
+    And I should be logged in on the backend
     When I log out via the logout url
     Then I should be logged out on the backend
