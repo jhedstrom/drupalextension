@@ -29,10 +29,33 @@ class DrupalDriverManagerSpec extends ObjectBehavior
         $this->shouldThrow(\InvalidArgumentException::class)->duringGetDriver('non-existent');
     }
 
+    function it_registers_drivers_via_constructor(DriverInterface $driver)
+    {
+        $driver->isBootstrapped()->willReturn(true);
+        $this->beConstructedWith(['My_Driver' => $driver]);
+        $this->getDriver('my_driver')->shouldBeAnInstanceOf(DriverInterface::class);
+        $this->getDrivers()->shouldHaveCount(1);
+    }
+
+    function it_throws_when_setting_default_to_unregistered_driver()
+    {
+        $this->shouldThrow(\InvalidArgumentException::class)->duringSetDefaultDriverName('nonexistent');
+    }
+
+    function it_returns_null_environment_by_default()
+    {
+        $this->getEnvironment()->shouldReturn(null);
+    }
+
     function it_sets_behat_environments(Environment $environment)
     {
         $this->setEnvironment($environment);
         $this->getEnvironment()->shouldBeAnInstanceOf(Environment::class);
+    }
+
+    function it_returns_empty_drivers_by_default()
+    {
+        $this->getDrivers()->shouldHaveCount(0);
     }
 
     function it_gets_all_drivers(DriverInterface $driver)
