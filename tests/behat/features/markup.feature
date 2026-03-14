@@ -8,6 +8,46 @@ Feature: MarkupContext
     Given I am at "element_attributes.html"
     Then I should see "footer" in the "p" element with the "color" CSS property set to "red" in the "static footer" region
 
+  @api @test-drupal
+  Scenario: See button in region on Drupal page
+    Given I am at "/user/login"
+    Then I should see the button "Log in" in the "main content" region
+
+  @api @test-drupal
+  Scenario: Not see button in region on Drupal page
+    Given I am at "/user/login"
+    Then I should not see the button "Nonexistent" in the "main content" region
+
+  @api @test-drupal
+  Scenario: See element in region on Drupal page
+    Given I am at "/user/login"
+    Then I should see the "h1" element in the "main content" region
+
+  @api @test-drupal
+  Scenario: Not see element in region on Drupal page
+    Given I am at "/user/login"
+    Then I should not see the "h99" element in the "main content" region
+
+  @api @test-drupal
+  Scenario: See text in element in region on Drupal page
+    Given I am at "/user/login"
+    Then I should see "Log in" in the "h1" element in the "main content" region
+
+  @api @test-drupal
+  Scenario: Not see text in element in region on Drupal page
+    Given I am at "/user/login"
+    Then I should not see "NONEXISTENT" in the "h1" element in the "main content" region
+
+  @api @test-drupal
+  Scenario: See element with attribute in region on Drupal page
+    Given I am at "/user/login"
+    Then I should see the "input" element with the "name" attribute set to "name" in the "main content" region
+
+  @api @test-drupal
+  Scenario: See text in element with attribute in region on Drupal page
+    Given I am at "/user/login"
+    Then I should see "Username" in the "label" element with the "for" attribute set to "edit-name" in the "main content" region
+
   @test-blackbox
   Scenario: Fail when button missing in region
     Given some behat configuration

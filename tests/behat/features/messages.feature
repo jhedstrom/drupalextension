@@ -57,6 +57,61 @@ Feature: MessageContext
     Then I should see the message "Unrecognized username or password"
     And I should not see the message "Everything is fine"
 
+  @api @test-drupal
+  Scenario: Multiple error messages on Drupal page
+    Given I am at "/behat-test/messages"
+    Then I should see the following error messages:
+      | error messages         |
+      | Test error message     |
+      | Another error message  |
+
+  @api @test-drupal
+  Scenario: Not see error messages on Drupal page
+    Given I am at "/user/login"
+    Then I should not see the following error messages:
+      | error messages    |
+      | Access denied     |
+
+  @api @test-drupal
+  Scenario: Not see error message on Drupal page
+    Given I am at "/user/login"
+    Then I should not see the error message "Something went wrong"
+
+  @api @test-drupal
+  Scenario: Warning message on Drupal page
+    Given I am at "/behat-test/messages"
+    Then I should see the warning message "Test warning message"
+
+  @api @test-drupal
+  Scenario: Warning message containing on Drupal page
+    Given I am at "/behat-test/messages"
+    Then I should see the warning message containing "warning"
+
+  @api @test-drupal
+  Scenario: Multiple warning messages on Drupal page
+    Given I am at "/behat-test/messages"
+    Then I should see the following warning messages:
+      | warning messages         |
+      | Test warning message     |
+      | Another warning message  |
+
+  @api @test-drupal
+  Scenario: Not see warning message on Drupal page
+    Given I am at "/user/login"
+    Then I should not see the warning message "No warning here"
+
+  @api @test-drupal
+  Scenario: Not see warning messages on Drupal page
+    Given I am at "/user/login"
+    Then I should not see the following warning messages:
+      | warning messages   |
+      | No warning here    |
+
+  @api @test-drupal
+  Scenario: Not see message on Drupal page
+    Given I am at "/user/login"
+    Then I should not see the message "Something happened"
+
   @test-blackbox
   Scenario: Multiple error messages assertion
     Given I am at "messages.html"
