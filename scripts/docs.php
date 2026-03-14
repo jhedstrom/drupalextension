@@ -17,6 +17,8 @@
  * Run with --path=path/to/dir to specify a custom path for the output file.
  * Run with --warning-on-invalid to report validation errors as warnings
  * instead of failing.
+ * Run with --log-dir=path to write validation-summary.txt and
+ * validation-details.txt (plain text, no ANSI) to the specified directory.
  *
  * Step definition conventions (to be enforced in version 6):
  * - @Given steps ending with ':' must contain the word "following".
@@ -27,6 +29,7 @@
  * - @Then method names must NOT contain "Should".
  * - All steps must have an @code/@endcode example in the docblock.
  * - Each method should define only one step annotation.
+ * - Steps should use turnip syntax instead of unnecessary regex.
  *
  * @phpcs:disable PSR1.Files.SideEffects.FoundWithSymbols
  */
@@ -36,7 +39,7 @@ declare(strict_types=1);
 // Execute the main function only when the script is run directly, not when included.
 // @codeCoverageIgnoreStart
 if (basename((string) $_SERVER['SCRIPT_FILENAME']) === 'docs.php') {
-    $options = getopt('', ['fail-on-change', 'path::', 'warning-on-invalid']);
+    $options = getopt('', ['fail-on-change', 'path::', 'warning-on-invalid', 'log-dir::']);
     main($options);
 }
 // @codeCoverageIgnoreEnd
@@ -61,11 +64,18 @@ function main(array $options = []): void
     $lenient = isset($options['warning-on-invalid']);
     $results = validate($info, $base_path);
 
+    $tree_output = '';
     if (has_validation_errors($results)) {
-        echo render_validation_tree($results);
+        $tree_output = render_validation_tree($results);
+        echo $tree_output;
         if (!$lenient) {
             exit(1);
         }
+    }
+
+    $log_dir = is_string($options['log-dir'] ?? null) ? $options['log-dir'] : null;
+    if ($log_dir !== null) {
+        write_validation_logs($tree_output, $log_dir);
     }
 
     $steps_markdown = PHP_EOL . render_info($info, $base_path) . PHP_EOL;
@@ -122,7 +132,7 @@ function main(array $options = []): void
 function extract_info(string $context_dir, array $exclude = [], string $base_path = '', string $namespace = 'Drupal\\DrupalExtension\\Context'): array
 {
     if (empty($base_path)) {
-        $base_path = dirname(__DIR__);
+        $base_path = dirname(__DIR__); // @codeCoverageIgnore
     }
 
     $info = [];
@@ -154,9 +164,11 @@ function extract_info(string $context_dir, array $exclude = [], string $base_pat
 
         $reflection = new ReflectionClass($fqcn);
         // Skip interfaces and abstract classes.
+        // @codeCoverageIgnoreStart
         if ($reflection->isInterface()) {
             continue;
         }
+        // @codeCoverageIgnoreEnd
         if ($reflection->isAbstract()) {
             continue;
         }
@@ -410,7 +422,7 @@ function parse_method_comment(string $comment): ?array
 function render_info(array $info, string $base_path = '', ?string $path_for_links = null): string
 {
     if (empty($base_path)) {
-        $base_path = dirname(__DIR__);
+        $base_path = dirname(__DIR__); // @codeCoverageIgnore
     }
 
     $content_output = '';
@@ -601,7 +613,7 @@ function find_source_file(string $class_name, string $base_path): ?string
 function validate(array $info, string $base_path = ''): array
 {
     if (empty($base_path)) {
-        $base_path = dirname(__DIR__);
+        $base_path = dirname(__DIR__); // @codeCoverageIgnore
     }
 
     $results = [];
@@ -678,11 +690,21 @@ function validate(array $info, string $base_path = ''): array
                 $has_example['messages'][] = 'Missing example';
             }
 
+            // Unnecessary regex check.
+            $regex_convertible = ['pass' => true, 'messages' => []];
+            $suggested = regex_to_turnip($step);
+            if ($suggested !== null) {
+                $regex_convertible['pass'] = false;
+                $regex_convertible['messages'][] = $step;
+                $regex_convertible['messages'][] = $suggested;
+            }
+
             $class_result['methods'][$method['name']] = [
                 'step_wording' => $step_wording,
                 'method_naming' => $method_naming,
                 'single_step' => $single_step,
                 'has_example' => $has_example,
+                'regex_convertible' => $regex_convertible,
             ];
         }
 
@@ -738,13 +760,14 @@ function render_validation_tree(array $results): string
         'method_naming' => ['pass' => '▲', 'warn' => '△', 'label' => 'Method naming'],
         'single_step' => ['pass' => '●', 'warn' => '○', 'label' => 'Single step'],
         'has_example' => ['pass' => '✦', 'warn' => '✧', 'label' => 'Example'],
+        'regex_convertible' => ['pass' => '⬢', 'warn' => '⬡', 'label' => 'Regex usage'],
     ];
 
     // Count totals and violations per category.
     $total_classes = count($results);
     $total_methods = 0;
     $total_violations = 0;
-    $counts = ['step_wording' => 0, 'method_naming' => 0, 'single_step' => 0, 'has_example' => 0, 'file' => 0];
+    $counts = ['step_wording' => 0, 'method_naming' => 0, 'single_step' => 0, 'has_example' => 0, 'regex_convertible' => 0, 'file' => 0];
     foreach ($results as $class_result) {
         if (!$class_result['file']['pass']) {
             $counts['file']++;
@@ -823,14 +846,142 @@ function render_validation_tree(array $results): string
 
     // Summary.
     $output .= $yellow . 'Summary:' . $reset . PHP_EOL;
-    $output .= '  Scanned ' . $total_classes . ' classes, ' . $total_methods . ' steps' . PHP_EOL;
-    $output .= '  Found ' . $total_violations . ' violations:' . PHP_EOL;
-    $output .= '    ◇ Step wording:  ' . $counts['step_wording'] . '/' . $total_methods . PHP_EOL;
-    $output .= '    △ Method naming: ' . $counts['method_naming'] . '/' . $total_methods . PHP_EOL;
-    $output .= '    ○ Single step:   ' . $counts['single_step'] . '/' . $total_methods . PHP_EOL;
-    $output .= '    ✧ Example:       ' . $counts['has_example'] . '/' . $total_methods . PHP_EOL;
+    $output .= '  Scanned ' . $total_classes . ' classes, ' . $total_methods . ' steps.' . PHP_EOL . PHP_EOL;
 
-    return $output . ('    □ Example file:  ' . $counts['file'] . '/' . $total_classes . PHP_EOL);
+    $summary_lines = [
+        ['Step wording',  $symbols['step_wording'],  $total_methods - $counts['step_wording'], $counts['step_wording'], $total_methods],
+        ['Method naming', $symbols['method_naming'], $total_methods - $counts['method_naming'], $counts['method_naming'], $total_methods],
+        ['Single step',   $symbols['single_step'],   $total_methods - $counts['single_step'], $counts['single_step'], $total_methods],
+        ['Example',       $symbols['has_example'],   $total_methods - $counts['has_example'], $counts['has_example'], $total_methods],
+        ['Regex usage',   $symbols['regex_convertible'], $total_methods - $counts['regex_convertible'], $counts['regex_convertible'], $total_methods],
+        ['Example file',  ['pass' => '■', 'warn' => '□'], $total_classes - $counts['file'], $counts['file'], $total_classes],
+    ];
+
+    foreach ($summary_lines as [$label, $sym, $pass_count, $fail_count, $total]) {
+        $line_color = $fail_count > 0 ? $yellow : $green;
+        $check = $fail_count === 0 ? '✓' : '⚠';
+        $pass_str = str_pad((string) $pass_count, 3, ' ', STR_PAD_LEFT);
+        $fail_str = str_pad((string) $fail_count, 3, ' ', STR_PAD_LEFT);
+        $output .= $line_color . '  ' . sprintf('%-15s', $label) . $sym['pass'] . $pass_str . '  ' . $sym['warn'] . $fail_str . '  ' . $check . $reset . PHP_EOL;
+    }
+
+    return $output;
+}
+
+/**
+ * Write validation logs to a directory as plain text files.
+ *
+ * Writes two files:
+ * - validation-summary.txt: The summary block.
+ * - validation-details.txt: The per-context tree.
+ *
+ * @param string $tree_output
+ *   The rendered validation tree (with ANSI codes).
+ * @param string $log_dir
+ *   The directory to write the log files to.
+ */
+function write_validation_logs(string $tree_output, string $log_dir): void
+{
+    if (!is_dir($log_dir)) {
+        mkdir($log_dir, 0777, true);
+    }
+
+    // Strip ANSI escape codes.
+    $plain = (string) preg_replace('/\033\[[0-9;]*m/', '', $tree_output);
+
+    if (empty(trim($plain))) {
+        file_put_contents($log_dir . '/validation-summary.txt', 'No validation warnings.' . PHP_EOL);
+        file_put_contents($log_dir . '/validation-details.txt', '');
+        return;
+    }
+
+    // Split at "Summary:" line.
+    $parts = explode('Summary:', $plain, 2);
+    $details = trim($parts[0]);
+    $summary = isset($parts[1]) ? 'Summary:' . $parts[1] : $details;
+
+    file_put_contents($log_dir . '/validation-summary.txt', $summary);
+    file_put_contents($log_dir . '/validation-details.txt', $details . PHP_EOL);
+}
+
+/**
+ * Convert a regex step definition to turnip syntax if possible.
+ *
+ * Returns the turnip equivalent if the regex is unnecessary, or NULL if the
+ * regex uses features that cannot be expressed in turnip syntax.
+ *
+ * @param string $step
+ *   The step definition string (e.g. '@Given /^I visit "([^"]*)"$/').
+ *
+ * @return string|null
+ *   The turnip equivalent (e.g. '@Given I visit :arg1'), or NULL.
+ */
+function regex_to_turnip(string $step): ?string
+{
+    // Extract annotation and pattern.
+    if (!preg_match('#^(@(?:Given|When|Then))\s+/\^(.*)\$/$#', $step, $matches)) {
+        return null;
+    }
+
+    $annotation = $matches[1];
+    $pattern = $matches[2];
+
+    // Check for regex features that cannot be expressed in turnip syntax.
+    // Alternation (|), optional groups (?), lookahead/lookbehind, quantifiers
+    // on non-capture-group content, character classes other than [^"]*.
+    // We only convert if the pattern is literal text with simple capture groups.
+
+    // Replace all capture groups with a placeholder to check the rest.
+    $arg_count = 0;
+    $converted = preg_replace_callback('#\(([^)]*)\)#', function (array $m) use (&$arg_count): string {
+        $inner = $m[1];
+        // Simple quoted string capture: [^"]*  or [^']*
+        if ($inner === '[^"]*' || $inner === "[^']*") {
+            $arg_count++;
+            return ':arg' . $arg_count;
+        }
+        // Simple unquoted capture: .*  or .+
+        if ($inner === '.*' || $inner === '.+') {
+            $arg_count++;
+            return ':arg' . $arg_count;
+        }
+        // Numeric capture: \d+ or [0-9]+
+        if ($inner === '\d+' || $inner === '[0-9]+') {
+            $arg_count++;
+            return ':arg' . $arg_count;
+        }
+        // Word capture: \w+
+        if ($inner === '\w+') {
+            $arg_count++;
+            return ':arg' . $arg_count;
+        }
+
+        // Return original match to signal unconvertible pattern.
+        return $m[0];
+    }, $pattern);
+
+    // If any capture group could not be converted, bail.
+    if ($converted === null || str_contains($converted, '(')) {
+        return null;
+    }
+
+    // Check remaining literal text for regex metacharacters.
+    // Remove known-safe escaped characters first.
+    $literal_check = preg_replace('#\\\\[/"\'.]#', '', $converted);
+    // If there are remaining backslash sequences or regex metacharacters, bail.
+    if ($literal_check !== null && preg_match('#[\\\\.*+?\[\]{}|^$]#', $literal_check)) {
+        return null;
+    }
+
+    // Unescape safe characters in the converted pattern.
+    $converted = str_replace(['\\/', '\\"', "\\'", '\\.'], ['/', '"', "'", '.'], $converted);
+
+    // Remove surrounding quotes from capture group contexts.
+    // e.g., ":arg1" becomes :arg1 (Behat turnip handles quoting automatically).
+    $converted = preg_replace('#"(:arg\d+)"#', '$1', $converted);
+    $converted = preg_replace("#'(:arg\d+)'#", '$1', (string) $converted);
+
+    return $annotation . ' ' . $converted;
 }
 
 /**

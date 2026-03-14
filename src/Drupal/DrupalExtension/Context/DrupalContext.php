@@ -26,6 +26,14 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
     }
 
     /**
+     * Assert the user is anonymous or log out.
+     *
+     * @code
+     * Given I am an anonymous user
+     * Given I am not logged in
+     * Then I log out
+     * @endcode
+     *
      * @Given I am an anonymous user
      * @Given I am not logged in
      * @Then I log out
@@ -38,6 +46,12 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
 
     /**
      * Creates and authenticates a user with the given role(s).
+     *
+     * @code
+     * Given I am logged in as a user with the "editor" role
+     * Given I am logged in as a user with the "editor, admin" roles
+     * Given I am logged in as an "editor"
+     * @endcode
      *
      * @Given I am logged in as a user with the :role role(s)
      * @Given I am logged in as a/an :role
@@ -72,9 +86,12 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
 
     /**
      * Creates and authenticates a user with the given role(s) and given fields.
-     * | field_user_name     | John  |
-     * | field_user_surname  | Smith |
-     * | ...                 | ...   |
+     *
+     * @code
+     * Given I am logged in as a user with the "editor" role and I have the following fields:
+     *   | field_user_name    | John  |
+     *   | field_user_surname | Smith |
+     * @endcode
      *
      * @Given I am logged in as a user with the :role role(s) and I have the following fields:
      */
@@ -113,6 +130,12 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
 
 
     /**
+     * Log in as an existing user by name.
+     *
+     * @code
+     * Given I am logged in as "admin"
+     * @endcode
+     *
      * @Given I am logged in as :name
      */
     public function assertLoggedInByName(string $name): void
@@ -127,6 +150,13 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
     }
 
     /**
+     * Log in as a user with specific permissions.
+     *
+     * @code
+     * Given I am logged in as a user with the "administer nodes" permission
+     * Given I am logged in as a user with the "administer nodes, bypass node access" permissions
+     * @endcode
+     *
      * @Given I am logged in as a user with the :permissions permission(s)
      */
     public function assertLoggedInWithPermissions(string $permissions): void
@@ -181,6 +211,11 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
     /**
      * Find text in a table row containing given text.
      *
+     * @code
+     * Then I should see "Edit" in the "My article" row
+     * Then I should see the text "Edit" in the "My article" row
+     * @endcode
+     *
      * @Then I should see (the text ):text in the :rowText row
      */
     public function assertTextInTableRow(string $text, string $rowText): void
@@ -193,6 +228,11 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
 
     /**
      * Asset text not in a table row containing given text.
+     *
+     * @code
+     * Then I should not see "Delete" in the "My article" row
+     * Then I should not see the text "Delete" in the "My article" row
+     * @endcode
      *
      * @Then I should not see (the text ):text in the :rowText row
      */
@@ -208,6 +248,12 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
      * Attempts to find a link in a table row containing giving text. This is for
      * administrative pages such as the administer content types screen found at
      * `admin/structure/types`.
+     *
+     * @code
+     * Given I click "Edit" in the "My article" row
+     * Then I see the "Edit" in the "My article" row
+     * Then I should see the "Edit" in the "My article" row
+     * @endcode
      *
      * @Given I click :link in the :rowText row
      * @Then I (should )see the :link in the :rowText row
@@ -229,6 +275,10 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
      * where there may be multiple entities in a table, each with separate edit
      * buttons.
      *
+     * @code
+     * Given I press "Remove" in the "My article" row
+     * @endcode
+     *
      * @Given I press :button in the :rowText row
      */
     public function assertPressInTableRow(string $button, string $rowText): void
@@ -243,6 +293,12 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
     }
 
     /**
+     * Clear the Drupal cache.
+     *
+     * @code
+     * Given the cache has been cleared
+     * @endcode
+     *
      * @Given the cache has been cleared
      */
     public function assertCacheClear(): void
@@ -251,6 +307,12 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
     }
 
     /**
+     * Run Drupal cron.
+     *
+     * @code
+     * Given I run cron
+     * @endcode
+     *
      * @Given I run cron
      */
     public function assertCron(): void
@@ -260,6 +322,12 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
 
     /**
      * Creates content of the given type.
+     *
+     * @code
+     * Given I am viewing an "article" with the title "Test article"
+     * Given I am viewing an "article" content with the title "Test article"
+     * Given a "page" with the title "About us"
+     * @endcode
      *
      * @Given I am viewing a/an :type (content )with the title :title
      * @Given a/an :type (content )with the title :title
@@ -278,6 +346,11 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
 
     /**
      * Creates content authored by the current user.
+     *
+     * @code
+     * Given I am viewing my "article" with the title "My article"
+     * Given I am viewing my "article" content with the title "My article"
+     * @endcode
      *
      * @Given I am viewing my :type (content )with the title :title
      */
@@ -300,10 +373,13 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
     }
 
     /**
-     * Creates content of a given type provided in the form:
-     * | title    | author     | status | created           |
-     * | My title | Joe Editor | 1      | 2014-10-17 8:00am |
-     * | ...      | ...        | ...    | ...               |
+     * Creates content of a given type.
+     *
+     * @code
+     * Given "article" content:
+     *   | title      | status |
+     *   | My article | 1      |
+     * @endcode
      *
      * @Given :type content:
      */
@@ -317,12 +393,16 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
     }
 
     /**
-     * Creates content of the given type, provided in the form:
-     * | title     | My node        |
-     * | Field One | My field value |
-     * | author    | Joe Editor     |
-     * | status    | 1              |
-     * | ...       | ...            |
+     * Creates content of the given type and visits it.
+     *
+     * @code
+     * Given I am viewing an "article":
+     *   | title | My article     |
+     *   | body  | Lorem ipsum    |
+     * Given I am viewing an "article" content:
+     *   | title | My article     |
+     *   | body  | Lorem ipsum    |
+     * @endcode
      *
      * @Given I am viewing a/an :type( content):
      */
@@ -343,6 +423,11 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
 
     /**
      * Asserts that a given content type is editable.
+     *
+     * @code
+     * Then I should be able to edit an "article"
+     * Then I should be able to edit an "article" content
+     * @endcode
      *
      * @Then I should be able to edit a/an :type( content)
      */
@@ -365,6 +450,11 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
     /**
      * Creates a term on an existing vocabulary.
      *
+     * @code
+     * Given I am viewing a "tags" term with the name "Sports"
+     * Given an "categories" term with the name "News"
+     * @endcode
+     *
      * @Given I am viewing a/an :vocabulary term with the name :name
      * @Given a/an :vocabulary term with the name :name
      */
@@ -385,10 +475,11 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
     /**
      * Creates multiple users.
      *
-     * Provide user data in the following format:
-     *
-     * | name     | mail         | roles        |
-     * | user foo | foo@bar.com  | role1, role2 |
+     * @code
+     * Given users:
+     *   | name     | mail            | roles  |
+     *   | Joe User | joe@example.com | editor |
+     * @endcode
      *
      * @Given users:
      */
@@ -420,13 +511,12 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
     /**
      * Creates one or more terms on an existing vocabulary.
      *
-     * Provide term data in the following format:
-     *
-     * | name  | parent | description | weight | taxonomy_field_image |
-     * | Snook | Fish   | Marine fish | 10     | snook-123.jpg        |
-     * | ...   | ...    | ...         | ...    | ...                  |
-     *
-     * Only the 'name' field is required.
+     * @code
+     * Given "tags" terms:
+     *   | name   |
+     *   | Sports |
+     *   | News   |
+     * @endcode
      *
      * @Given :vocabulary terms:
      */
@@ -442,16 +532,20 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
     /**
      * Creates one or more languages.
      *
-     * @Given the/these (following )languages are available:
-     *
-     * Provide language data in the following format:
-     *
-     * | langcode |
-     * | en       |
-     * | fr       |
-     *
      * @param TableNode $langcodesTable
      *   The table listing languages by their ISO code.
+     *
+     * @code
+     * Given the following languages are available:
+     *   | languages |
+     *   | en        |
+     *   | fr        |
+     * Given these languages are available:
+     *   | languages |
+     *   | de        |
+     * @endcode
+     *
+     * @Given the/these (following )languages are available:
      */
     public function createLanguages(TableNode $langcodesTable): void
     {
@@ -465,6 +559,11 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext
 
     /**
      * Pauses the scenario until the user presses a key. Useful when debugging a scenario.
+     *
+     * @code
+     * Then break
+     * Then I break
+     * @endcode
      *
      * @Then (I )break
      */

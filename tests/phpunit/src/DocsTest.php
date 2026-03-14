@@ -24,6 +24,8 @@ use PHPUnit\Framework\TestCase;
 #[CoversFunction('extract_info')]
 #[CoversFunction('parse_class_comment')]
 #[CoversFunction('find_source_file')]
+#[CoversFunction('regex_to_turnip')]
+#[CoversFunction('write_validation_logs')]
 class DocsTest extends TestCase
 {
 
@@ -961,6 +963,114 @@ EOD,
             true,
             [],
         ];
+        yield 'unnecessary regex' => [
+            [
+                'TestContext' => [
+                    'name' => 'TestContext',
+                    'methods' => [
+                        ['name' => 'testMethod', 'steps' => ['@Given /^I wait for the batch job to finish$/'], 'description' => 'Desc', 'example' => 'Example'],
+                    ],
+                ],
+            ],
+            'testMethod',
+            'regex_convertible',
+            false,
+            ['@Given /^I wait for the batch job to finish$/', '@Given I wait for the batch job to finish'],
+        ];
+        yield 'unnecessary regex with capture group' => [
+            [
+                'TestContext' => [
+                    'name' => 'TestContext',
+                    'methods' => [
+                        ['name' => 'testMethod', 'steps' => ['@When /^I visit "([^"]*)"$/'], 'description' => 'Desc', 'example' => 'Example'],
+                    ],
+                ],
+            ],
+            'testMethod',
+            'regex_convertible',
+            false,
+            ['@When /^I visit "([^"]*)"$/', '@When I visit :arg1'],
+        ];
+        yield 'turnip step passes regex check' => [
+            [
+                'TestContext' => [
+                    'name' => 'TestContext',
+                    'methods' => [
+                        ['name' => 'testMethod', 'steps' => ['@Given I am at :path'], 'description' => 'Desc', 'example' => 'Example'],
+                    ],
+                ],
+            ],
+            'testMethod',
+            'regex_convertible',
+            true,
+            [],
+        ];
+    }
+
+    #[DataProvider('dataProviderRegexToTurnip')]
+    public function testRegexToTurnip(string $step, ?string $expected): void
+    {
+        $this->assertSame($expected, regex_to_turnip($step));
+    }
+
+    public static function dataProviderRegexToTurnip(): \Iterator
+    {
+        yield 'plain literal no args' => [
+            '@Given /^I wait for the batch job to finish$/',
+            '@Given I wait for the batch job to finish',
+        ];
+        yield 'quoted capture group' => [
+            '@When /^I visit "([^"]*)"$/',
+            '@When I visit :arg1',
+        ];
+        yield 'multiple capture groups' => [
+            '@Then /^I should see "([^"]*)" in the "([^"]*)" region$/',
+            '@Then I should see :arg1 in the :arg2 region',
+        ];
+        yield 'dot-star capture' => [
+            '@Given /^I am logged in as (.*)$/',
+            '@Given I am logged in as :arg1',
+        ];
+        yield 'dot-plus capture' => [
+            '@When /^I fill in "([^"]*)" with (.+)$/',
+            '@When I fill in :arg1 with :arg2',
+        ];
+        yield 'numeric capture \\d+' => [
+            '@Then /^I should see ([0-9]+) results$/',
+            '@Then I should see :arg1 results',
+        ];
+        yield 'numeric capture d+' => [
+            '@Then /^I should see (\d+) results$/',
+            '@Then I should see :arg1 results',
+        ];
+        yield 'word capture \\w+' => [
+            '@Given /^I am on the (\w+) page$/',
+            '@Given I am on the :arg1 page',
+        ];
+        yield 'already turnip' => [
+            '@Given I am at :path',
+            null,
+        ];
+        yield 'alternation not convertible' => [
+            '@When /^I (click|press) the button$/',
+            null,
+        ];
+        yield 'optional group not convertible' => [
+            '@Then /^I should see the (error )?message$/',
+            null,
+        ];
+        yield 'complex character class not convertible' => [
+            '@Given /^I enter ([a-z]+) in the field$/',
+            null,
+        ];
+        yield 'single quote capture' => [
+            "@When /^I click '([^']*)'$/",
+            "@When I click :arg1",
+        ];
+        yield 'escaped slash in pattern' => [
+            '@Given /^I visit the path \/admin\/config$/',
+            '@Given I visit the path /admin/config',
+        ];
     }
 
     public function testValidateFileExists(): void
@@ -1019,6 +1129,7 @@ EOD,
                             'method_naming' => ['pass' => true, 'messages' => []],
                             'single_step' => ['pass' => true, 'messages' => []],
                             'has_example' => ['pass' => true, 'messages' => []],
+                            'regex_convertible' => ['pass' => true, 'messages' => []],
                         ],
                     ],
                 ],
@@ -1035,6 +1146,7 @@ EOD,
                             'method_naming' => ['pass' => true, 'messages' => []],
                             'single_step' => ['pass' => true, 'messages' => []],
                             'has_example' => ['pass' => true, 'messages' => []],
+                            'regex_convertible' => ['pass' => true, 'messages' => []],
                         ],
                     ],
                 ],
@@ -1054,6 +1166,7 @@ EOD,
                         'method_naming' => ['pass' => true, 'messages' => []],
                         'single_step' => ['pass' => true, 'messages' => []],
                         'has_example' => ['pass' => true, 'messages' => []],
+                        'regex_convertible' => ['pass' => true, 'messages' => []],
                     ],
                 ],
             ],
@@ -1067,6 +1180,7 @@ EOD,
         $this->assertStringContainsString('▲', $output);
         $this->assertStringContainsString('●', $output);
         $this->assertStringContainsString('✦', $output);
+        $this->assertStringContainsString('⬢', $output);
         $this->assertStringContainsString('Validation warnings:', $output);
         $this->assertStringContainsString('Summary:', $output);
     }
@@ -1082,6 +1196,7 @@ EOD,
                         'method_naming' => ['pass' => false, 'messages' => ['Missing "Assert" in the method name']],
                         'single_step' => ['pass' => true, 'messages' => []],
                         'has_example' => ['pass' => false, 'messages' => ['Missing example']],
+                        'regex_convertible' => ['pass' => true, 'messages' => []],
                     ],
                 ],
             ],
@@ -1112,6 +1227,7 @@ EOD,
                         'method_naming' => ['pass' => true, 'messages' => []],
                         'single_step' => ['pass' => true, 'messages' => []],
                         'has_example' => ['pass' => true, 'messages' => []],
+                        'regex_convertible' => ['pass' => true, 'messages' => []],
                     ],
                 ],
             ],
@@ -1123,6 +1239,7 @@ EOD,
                         'method_naming' => ['pass' => true, 'messages' => []],
                         'single_step' => ['pass' => false, 'messages' => ['Multiple steps found']],
                         'has_example' => ['pass' => true, 'messages' => []],
+                        'regex_convertible' => ['pass' => true, 'messages' => []],
                     ],
                 ],
             ],
@@ -1146,6 +1263,7 @@ EOD,
                         'method_naming' => ['pass' => true, 'messages' => []],
                         'single_step' => ['pass' => true, 'messages' => []],
                         'has_example' => ['pass' => true, 'messages' => []],
+                        'regex_convertible' => ['pass' => true, 'messages' => []],
                     ],
                 ],
             ],
@@ -1167,6 +1285,7 @@ EOD,
                         'method_naming' => ['pass' => false, 'messages' => ['Missing "Assert"']],
                         'single_step' => ['pass' => true, 'messages' => []],
                         'has_example' => ['pass' => true, 'messages' => []],
+                        'regex_convertible' => ['pass' => true, 'messages' => []],
                     ],
                 ],
             ],
@@ -1192,6 +1311,7 @@ EOD,
                         'method_naming' => ['pass' => true, 'messages' => []],
                         'single_step' => ['pass' => true, 'messages' => []],
                         'has_example' => ['pass' => true, 'messages' => []],
+                        'regex_convertible' => ['pass' => true, 'messages' => []],
                     ],
                 ],
             ],
@@ -1454,6 +1574,11 @@ EOD,
             [],
             ['FirstContext', 'SecondContext'],
         ];
+        yield 'with exclude' => [
+            ['FirstContext', 'SecondContext'],
+            ['SecondContext'],
+            ['FirstContext'],
+        ];
     }
 
     /**
@@ -1579,5 +1704,164 @@ EOD,
     {
         $result = find_source_file('NonExistentContext', static::$tmp);
         $this->assertNull($result);
+    }
+
+    public function testExtractInfoSkipsInterfacesAndAbstract(): void
+    {
+        $basePath = static::$tmp;
+        $contextDir = $basePath . DIRECTORY_SEPARATOR . 'src';
+        if (!is_dir($contextDir)) {
+            mkdir($contextDir, 0777, true);
+        }
+
+        $fixturesDir = __DIR__ . '/../fixtures/docs';
+        foreach (['InterfaceContext', 'AbstractContext', 'SampleContext'] as $className) {
+            copy($fixturesDir . DIRECTORY_SEPARATOR . $className . '.php', $contextDir . DIRECTORY_SEPARATOR . $className . '.php');
+        }
+
+        $result = extract_info($contextDir, [], $basePath, 'Drupal\\DrupalExtension\\Tests\\Fixtures');
+
+        $this->assertArrayNotHasKey('InterfaceContext', $result);
+        $this->assertArrayNotHasKey('AbstractContext', $result);
+        $this->assertArrayHasKey('SampleContext', $result);
+    }
+
+    public function testExtractInfoSkipsInheritedMethods(): void
+    {
+        $basePath = static::$tmp;
+        $contextDir = $basePath . DIRECTORY_SEPARATOR . 'src';
+        if (!is_dir($contextDir)) {
+            mkdir($contextDir, 0777, true);
+        }
+
+        $fixturesDir = __DIR__ . '/../fixtures/docs';
+        copy($fixturesDir . DIRECTORY_SEPARATOR . 'InheritedContext.php', $contextDir . DIRECTORY_SEPARATOR . 'InheritedContext.php');
+
+        $result = extract_info($contextDir, [], $basePath, 'Drupal\\DrupalExtension\\Tests\\Fixtures');
+
+        $this->assertArrayHasKey('InheritedContext', $result);
+        // Should only have its own method, not the inherited one.
+        $this->assertCount(1, $result['InheritedContext']['methods']);
+        $this->assertSame('inheritedAssertOwn', $result['InheritedContext']['methods'][0]['name']);
+    }
+
+    public function testExtractInfoSkipsNonExistentClasses(): void
+    {
+        $basePath = static::$tmp;
+        $contextDir = $basePath . DIRECTORY_SEPARATOR . 'src';
+        if (!is_dir($contextDir)) {
+            mkdir($contextDir, 0777, true);
+        }
+
+        // Create a PHP file whose class doesn't match the namespace.
+        file_put_contents($contextDir . DIRECTORY_SEPARATOR . 'NonExistent.php', '<?php');
+
+        $result = extract_info($contextDir, [], $basePath, 'Drupal\\DrupalExtension\\Tests\\Fixtures');
+
+        $this->assertArrayNotHasKey('NonExistent', $result);
+    }
+
+    public function testRenderInfoWithListDescription(): void
+    {
+        $basePath = static::$tmp;
+        $srcDir = $basePath . '/src';
+        if (!is_dir($srcDir)) {
+            mkdir($srcDir, 0777, true);
+        }
+        file_put_contents($srcDir . '/ListDescContext.php', '<?php');
+
+        $featureDir = $basePath . '/tests/behat/features';
+        if (!is_dir($featureDir)) {
+            mkdir($featureDir, 0777, true);
+        }
+        file_put_contents($featureDir . '/list_desc.feature', 'Feature: Test');
+
+        $info = [
+            'ListDescContext' => [
+                'name' => 'ListDescContext',
+                'name_contextual' => 'ListDescContext',
+                'description' => 'Context with list.',
+                'description_full' => "Context with list.\n\n- First item\n- Second item",
+                'methods' => [
+                    ['steps' => ['@Then the list should be visible'], 'description' => 'Step', 'example' => 'Then the list should be visible'],
+                ],
+            ],
+        ];
+
+        $output = render_info($info, $basePath);
+
+        $this->assertStringContainsString('- First item', $output);
+        $this->assertStringContainsString('- Second item', $output);
+    }
+
+    public function testWriteValidationLogsWithWarnings(): void
+    {
+        $logDir = static::$tmp . '/logs';
+
+        $results = [
+            'TestContext' => [
+                'file' => ['pass' => true, 'path' => 'test.feature'],
+                'methods' => [
+                    'testMethod' => [
+                        'step_wording' => ['pass' => false, 'messages' => ['Missing "I "']],
+                        'method_naming' => ['pass' => true, 'messages' => []],
+                        'single_step' => ['pass' => true, 'messages' => []],
+                        'has_example' => ['pass' => true, 'messages' => []],
+                        'regex_convertible' => ['pass' => true, 'messages' => []],
+                    ],
+                ],
+            ],
+        ];
+
+        $treeOutput = render_validation_tree($results);
+        write_validation_logs($treeOutput, $logDir);
+
+        $this->assertFileExists($logDir . '/validation-summary.txt');
+        $this->assertFileExists($logDir . '/validation-details.txt');
+
+        $summary = file_get_contents($logDir . '/validation-summary.txt');
+        $details = file_get_contents($logDir . '/validation-details.txt');
+
+        // Summary should contain the summary block without ANSI.
+        $this->assertStringContainsString('Summary:', $summary);
+        $this->assertStringNotContainsString("\033[", $summary);
+
+        // Details should contain the per-context tree without ANSI.
+        $this->assertStringContainsString('TestContext', $details);
+        $this->assertStringNotContainsString("\033[", $details);
+    }
+
+    public function testWriteValidationLogsEmpty(): void
+    {
+        $logDir = static::$tmp . '/logs-empty';
+
+        write_validation_logs('', $logDir);
+
+        $this->assertFileExists($logDir . '/validation-summary.txt');
+        $this->assertFileExists($logDir . '/validation-details.txt');
+
+        $summary = file_get_contents($logDir . '/validation-summary.txt');
+        $this->assertSame('No validation warnings.' . PHP_EOL, $summary);
+
+        $details = file_get_contents($logDir . '/validation-details.txt');
+        $this->assertSame('', $details);
+    }
+
+    public function testWriteValidationLogsCreatesDirectory(): void
+    {
+        $logDir = static::$tmp . '/nested/logs/dir';
+
+        write_validation_logs('', $logDir);
+
+        $this->assertDirectoryExists($logDir);
+        $this->assertFileExists($logDir . '/validation-summary.txt');
+    }
+
+    public function testRegexToTurnipWithRemainingMetachars(): void
+    {
+        // Pattern with metachar in literal text (not in a capture group).
+        $this->assertNull(regex_to_turnip('@Given /^I match .* something$/'));
+        $this->assertNull(regex_to_turnip('@Given /^I match [abc] something$/'));
+        $this->assertNull(regex_to_turnip('@Given /^I match something+$/'));
     }
 }

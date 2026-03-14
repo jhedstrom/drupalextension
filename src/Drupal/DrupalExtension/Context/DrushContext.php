@@ -41,6 +41,12 @@ class DrushContext extends RawDrupalContext implements TranslatableContext
     }
 
     /**
+     * Run a Drush command.
+     *
+     * @code
+     * Given I run drush "status"
+     * @endcode
+     *
      * @Given I run drush :command
      */
     public function assertDrushCommand(string $command): void
@@ -51,6 +57,12 @@ class DrushContext extends RawDrupalContext implements TranslatableContext
     }
 
     /**
+     * Run a Drush command with arguments.
+     *
+     * @code
+     * Given I run drush "pm:list" "--status=enabled"
+     * @endcode
+     *
      * @Given I run drush :command :arguments
      */
     public function assertDrushCommandWithArgument(string $command, string $arguments): void
@@ -62,6 +74,12 @@ class DrushContext extends RawDrupalContext implements TranslatableContext
     }
 
     /**
+     * Assert Drush output contains a string.
+     *
+     * @code
+     * Then drush output should contain "Drupal version"
+     * @endcode
+     *
      * @Then drush output should contain :output
      */
     public function assertDrushOutput(string $output): void
@@ -72,6 +90,12 @@ class DrushContext extends RawDrupalContext implements TranslatableContext
     }
 
     /**
+     * Assert Drush output matches a regular expression.
+     *
+     * @code
+     * Then drush output should match "/Drupal [0-9]+/"
+     * @endcode
+     *
      * @Then drush output should match :regex
      */
     public function assertDrushOutputMatches(string $regex): void
@@ -82,6 +106,12 @@ class DrushContext extends RawDrupalContext implements TranslatableContext
     }
 
     /**
+     * Assert Drush output does not contain a string.
+     *
+     * @code
+     * Then drush output should not contain "error"
+     * @endcode
+     *
      * @Then drush output should not contain :output
      */
     public function drushOutputShouldNotContain(string $output): void
@@ -92,6 +122,12 @@ class DrushContext extends RawDrupalContext implements TranslatableContext
     }
 
     /**
+     * Print the last Drush output.
+     *
+     * @code
+     * Then print last drush output
+     * @endcode
+     *
      * @Then print last drush output
      */
     public function printLastDrushOutput(): void

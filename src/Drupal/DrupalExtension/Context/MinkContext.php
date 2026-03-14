@@ -54,6 +54,11 @@ class MinkContext extends MinkExtension implements TranslatableContext
     /**
      * Visit a given path, and additionally check for HTTP response code 200.
      *
+     * @code
+     * Given I am at "/node/1"
+     * When I visit "/node/1"
+     * @endcode
+     *
      * @Given I am at :path
      * @When I visit :path
      *
@@ -73,6 +78,12 @@ class MinkContext extends MinkExtension implements TranslatableContext
     }
 
     /**
+     * Click a link by its text.
+     *
+     * @code
+     * When I click "Read more"
+     * @endcode
+     *
      * @When I click :link
      */
     public function assertClick(string $link): void
@@ -82,6 +93,13 @@ class MinkContext extends MinkExtension implements TranslatableContext
     }
 
     /**
+     * Enter a value into a form field.
+     *
+     * @code
+     * Given for "Title" I enter "My article"
+     * Given I enter "My article" for "Title"
+     * @endcode
+     *
      * @Given for :field I enter :value
      * @Given I enter :value for :field
      */
@@ -133,6 +151,10 @@ class MinkContext extends MinkExtension implements TranslatableContext
      *
      * @see \Drupal\FunctionalJavascriptTests\JSWebAssert::assertWaitOnAjaxRequest()
      *
+     * @code
+     * Given I wait for AJAX to finish
+     * @endcode
+     *
      * @Given I wait for AJAX to finish
      */
     public function iWaitForAjaxToFinish(mixed $event = null): void
@@ -178,6 +200,10 @@ JS;
     /**
      * Presses button with specified id|name|title|alt|value.
      *
+     * @code
+     * When I press the "Save" button
+     * @endcode
+     *
      * @When I press the :button button
      */
     public function pressButton(mixed $button)
@@ -200,10 +226,16 @@ JS;
     }
 
     /**
-     * @Given I press the :char key in the :field field
+     * Press a key in a form field.
      *
      * @param mixed $char could be either char ('b') or char-code (98)
      * @throws \Exception
+     *
+     * @code
+     * Given I press the "enter" key in the "Search" field
+     * @endcode
+     *
+     * @Given I press the :char key in the :field field
      */
     public function pressKey(mixed $char, string $field): void
     {
@@ -256,6 +288,12 @@ JS;
     }
 
     /**
+     * Assert a link is visible on the page.
+     *
+     * @code
+     * Then I should see the link "Log out"
+     * @endcode
+     *
      * @Then I should see the link :link
      */
     public function assertLinkVisible(string $link): void
@@ -280,6 +318,10 @@ JS;
 
     /**
      * Links are not loaded on the page.
+     *
+     * @code
+     * Then I should not see the link "Log out"
+     * @endcode
      *
      * @Then I should not see the link :link
      */
@@ -306,6 +348,10 @@ JS;
     /**
      * Links are loaded but not visually visible (e.g they have display: hidden applied).
      *
+     * @code
+     * Then I should not visibly see the link "Skip to main content"
+     * @endcode
+     *
      * @Then I should not visibly see the link :link
      */
     public function assertNotLinkVisuallyVisible(string $link): void
@@ -329,6 +375,13 @@ JS;
     }
 
     /**
+     * Assert a heading is visible on the page.
+     *
+     * @code
+     * Then I see the heading "Welcome"
+     * Then I should see the heading "Welcome"
+     * @endcode
+     *
      * @Then I (should )see the heading :heading
      */
     public function assertHeading(string $heading): void
@@ -346,6 +399,13 @@ JS;
     }
 
     /**
+     * Assert a heading is not on the page.
+     *
+     * @code
+     * Then I not see the heading "Error"
+     * Then I should not see the heading "Error"
+     * @endcode
+     *
      * @Then I (should )not see the heading :heading
      */
     public function assertNotHeading(string $heading): void
@@ -362,6 +422,14 @@ JS;
     }
 
     /**
+     * Assert a button is visible on the page.
+     *
+     * @code
+     * Then I see the button "Save"
+     * Then I should see the button "Save"
+     * Then I should see the "Save" button
+     * @endcode
+     *
      * @Then I (should ) see the button :button
      * @Then I (should ) see the :button button
      */
@@ -375,6 +443,13 @@ JS;
     }
 
     /**
+     * Assert a button is not on the page.
+     *
+     * @code
+     * Then I should not see the button "Delete"
+     * Then I should not see the "Delete" button
+     * @endcode
+     *
      * @Then I should not see the button :button
      * @Then I should not see the :button button
      */
@@ -388,10 +463,18 @@ JS;
     }
 
     /**
-     * @When I follow/click :link in the :region( region)
+     * Follow a link in a specific region.
      *
      * @throws \Exception
      *   If region or link within it cannot be found.
+     *
+     * @code
+     * When I follow "Read more" in the "content"
+     * When I follow "Read more" in the "content" region
+     * When I click "Read more" in the "content" region
+     * @endcode
+     *
+     * @When I follow/click :link in the :region( region)
      */
     public function assertRegionLinkFollow(string $link, string $region): void
     {
@@ -408,8 +491,6 @@ JS;
     /**
      * Checks if a button with id|name|title|alt|value exists or not and presses the same
      *
-     * @Given I press :button in the :region( region)
-     *
      * @param $button
      *   string The id|name|title|alt|value of the button to be pressed
      * @param $region
@@ -417,6 +498,13 @@ JS;
      *
      * @throws \Exception
      *   If region or button within it cannot be found.
+     *
+     * @code
+     * Given I press "Submit" in the "sidebar"
+     * Given I press "Submit" in the "sidebar" region
+     * @endcode
+     *
+     * @Given I press :button in the :region( region)
      */
     public function assertRegionPressButton(string $button, string $region): void
     {
@@ -432,11 +520,17 @@ JS;
     /**
      * Fills in a form field with id|name|title|alt|value in the specified region.
      *
-     * @Given I fill in :value for :field in the :region( region)
-     * @Given I fill in :field with :value in the :region( region)
-     *
      * @throws \Exception
      *   If region cannot be found.
+     *
+     * @code
+     * Given I fill in "test" for "Search" in the "header"
+     * Given I fill in "test" for "Search" in the "header" region
+     * Given I fill in "Search" with "test" in the "header" region
+     * @endcode
+     *
+     * @Given I fill in :value for :field in the :region( region)
+     * @Given I fill in :field with :value in the :region( region)
      */
     public function regionFillField(string $field, string $value, string $region): void
     {
@@ -449,8 +543,6 @@ JS;
     /**
      * Checks if a checkbox with id|name|title|alt|value exists or not and checks the same
      *
-     * @Given I check :locator in the :region( region)
-     *
      * @param $locator
      *   string The id|name|title|alt|value of the checkbox to be checked
      * @param $region
@@ -458,6 +550,13 @@ JS;
      *
      * @throws \Exception
      *   If region or checkbox within it cannot be found.
+     *
+     * @code
+     * Given I check "Published" in the "content"
+     * Given I check "Published" in the "content" region
+     * @endcode
+     *
+     * @Given I check :locator in the :region( region)
      */
     public function assertRegionCheckBox(string $locator, string $region): void
     {
@@ -468,8 +567,6 @@ JS;
     /**
      * Checks if a checkbox with id|name|title|alt|value exists or not and unchecks the same
      *
-     * @Given I uncheck :checkbox in the :region( region)
-     *
      * @param $locator
      *   string The id|name|title|alt|value of the checkbox to be unchecked
      * @param $region
@@ -477,6 +574,13 @@ JS;
      *
      * @throws \Exception
      *   If region or checkbox within it cannot be found.
+     *
+     * @code
+     * Given I uncheck "Promoted" in the "content"
+     * Given I uncheck "Promoted" in the "content" region
+     * @endcode
+     *
+     * @Given I uncheck :checkbox in the :region( region)
      */
     public function assertRegionUncheckBox(string $locator, string $region): void
     {
@@ -487,11 +591,17 @@ JS;
     /**
      * Find a heading in a specific region.
      *
-     * @Then I should see the heading :heading in the :region( region)
-     * @Then I should see the :heading heading in the :region( region)
-     *
      * @throws \Exception
      *   If region or header within it cannot be found.
+     *
+     * @code
+     * Then I should see the heading "Latest news" in the "sidebar"
+     * Then I should see the heading "Latest news" in the "sidebar" region
+     * Then I should see the "Latest news" heading in the "sidebar" region
+     * @endcode
+     *
+     * @Then I should see the heading :heading in the :region( region)
+     * @Then I should see the :heading heading in the :region( region)
      */
     public function assertRegionHeading(string $heading, string $region): void
     {
@@ -512,10 +622,17 @@ JS;
     }
 
     /**
-     * @Then I should see the link :link in the :region( region)
+     * Assert a link exists in a region.
      *
      * @throws \Exception
      *   If region or link within it cannot be found.
+     *
+     * @code
+     * Then I should see the link "About us" in the "footer"
+     * Then I should see the link "About us" in the "footer" region
+     * @endcode
+     *
+     * @Then I should see the link :link in the :region( region)
      */
     public function assertLinkRegion(string $link, string $region): void
     {
@@ -528,10 +645,17 @@ JS;
     }
 
     /**
-     * @Then I should not see the link :link in the :region( region)
+     * Assert a link does not exist in a region.
      *
      * @throws \Exception
      *   If region or link within it cannot be found.
+     *
+     * @code
+     * Then I should not see the link "Admin" in the "footer"
+     * Then I should not see the link "Admin" in the "footer" region
+     * @endcode
+     *
+     * @Then I should not see the link :link in the :region( region)
      */
     public function assertNotLinkRegion(string $link, string $region): void
     {
@@ -544,10 +668,18 @@ JS;
     }
 
     /**
-     * @Then I should see( the text) :text in the :region( region)
+     * Assert text is visible in a region.
      *
      * @throws \Exception
      *   If region or text within it cannot be found.
+     *
+     * @code
+     * Then I should see "Welcome" in the "content"
+     * Then I should see "Welcome" in the "content" region
+     * Then I should see the text "Welcome" in the "content" region
+     * @endcode
+     *
+     * @Then I should see( the text) :text in the :region( region)
      */
     public function assertRegionText(string $text, string $region): void
     {
@@ -561,10 +693,18 @@ JS;
     }
 
     /**
-     * @Then I should not see( the text) :text in the :region( region)
+     * Assert text is not visible in a region.
      *
      * @throws \Exception
      *   If region or text within it cannot be found.
+     *
+     * @code
+     * Then I should not see "Error" in the "content"
+     * Then I should not see "Error" in the "content" region
+     * Then I should not see the text "Error" in the "content" region
+     * @endcode
+     *
+     * @Then I should not see( the text) :text in the :region( region)
      */
     public function assertNotRegionText(string $text, string $region): void
     {
@@ -578,6 +718,13 @@ JS;
     }
 
     /**
+     * Assert text is visible on the page.
+     *
+     * @code
+     * Then I see the text "Welcome to Drupal"
+     * Then I should see the text "Welcome to Drupal"
+     * @endcode
+     *
      * @Then I (should )see the text :text
      */
     public function assertTextVisible(string $text): void
@@ -587,6 +734,12 @@ JS;
     }
 
     /**
+     * Assert text is not visible on the page.
+     *
+     * @code
+     * Then I should not see the text "Access denied"
+     * @endcode
+     *
      * @Then I should not see the text :text
      */
     public function assertNotTextVisible(string $text): void
@@ -596,6 +749,12 @@ JS;
     }
 
     /**
+     * Assert the HTTP response code.
+     *
+     * @code
+     * Then I should get a 200 HTTP response
+     * @endcode
+     *
      * @Then I should get a :code HTTP response
      */
     public function assertHttpResponse(int|string $code): void
@@ -605,6 +764,12 @@ JS;
     }
 
     /**
+     * Assert the HTTP response code is not a specific value.
+     *
+     * @code
+     * Then I should not get a 403 HTTP response
+     * @endcode
+     *
      * @Then I should not get a :code HTTP response
      */
     public function assertNotHttpResponse(int|string $code): void
@@ -614,6 +779,12 @@ JS;
     }
 
     /**
+     * Check a checkbox.
+     *
+     * @code
+     * Given I check the box "Published"
+     * @endcode
+     *
      * @Given I check the box :checkbox
      */
     public function assertCheckBox(string $checkbox): void
@@ -623,6 +794,12 @@ JS;
     }
 
     /**
+     * Uncheck a checkbox.
+     *
+     * @code
+     * Given I uncheck the box "Promoted to front page"
+     * @endcode
+     *
      * @Given I uncheck the box :checkbox
      */
     public function assertUncheckBox(string $checkbox): void
@@ -632,10 +809,17 @@ JS;
     }
 
     /**
-     * @When I select the radio button :label with the id :id
-     * @When I select the radio button :label
+     * Select a radio button.
      *
      * @TODO convert to mink extension.
+     *
+     * @code
+     * When I select the radio button "Full HTML"
+     * When I select the radio button "Full HTML" with the id "edit-format-full-html"
+     * @endcode
+     *
+     * @When I select the radio button :label with the id :id
+     * @When I select the radio button :label
      */
     public function assertSelectRadioById(string $label, string $id = ''): void
     {
@@ -656,10 +840,11 @@ JS;
     /**
      * Expand/collapse/toggle a <details> element by <summary> text.
      *
-     * Usage examples:
-     *   When I expand details labelled 'My summary'
-     *   When I collapse details labelled "My summary"
-     *   When I click details labelled 'My summary'
+     * @code
+     * When I expand details labelled "Advanced settings"
+     * When I collapse details labelled "Advanced settings"
+     * When I click details labelled "Advanced settings"
+     * @endcode
      *
      * @When I :action details labelled :summary
      */

@@ -67,6 +67,17 @@ class MailContext extends RawMailContext
     /**
      * This is mainly useful for testing this context.
      *
+     * @code
+     * When Drupal sends a mail:
+     *   | to      | user@example.com |
+     *   | subject | Test mail        |
+     *   | body    | Hello world      |
+     * When Drupal sends an email:
+     *   | to      | user@example.com |
+     *   | subject | Test email       |
+     *   | body    | Hello world      |
+     * @endcode
+     *
      * @When Drupal sends a/an (e)mail:
      */
     public function drupalSendsMail(TableNode $fields): void
@@ -88,6 +99,18 @@ class MailContext extends RawMailContext
     /**
      * Check all mail sent during the scenario.
      *
+     * @code
+     * Then mail has been sent:
+     *   | to               | body                |
+     *   | user@example.com | Welcome to the site |
+     * Then an email has been sent with the subject "Welcome":
+     *   | to               | body                |
+     *   | user@example.com | Welcome to the site |
+     * Then emails have been sent to "user@example.com" with the subject "Welcome":
+     *   | body                |
+     *   | Welcome to the site |
+     * @endcode
+     *
      * @Then (a )(an )(e)mail(s) has/have been sent:
      * @Then (a )(an )(e)mail(s) has/have been sent to :to:
      * @Then (a )(an )(e)mail(s) has/have been sent with the subject :subject:
@@ -103,6 +126,15 @@ class MailContext extends RawMailContext
     /**
      * Check mail sent since the last step that checked mail.
      *
+     * @code
+     * Then new mail is sent:
+     *   | subject   |
+     *   | Greetings |
+     * Then a new email is sent to "user@example.com":
+     *   | subject   |
+     *   | Greetings |
+     * @endcode
+     *
      * @Then (a )(an )new (e)mail(s) is/are sent:
      * @Then (a )(an )new (e)mail(s) is/are sent to :to:
      * @Then (a )(an )new (e)mail(s) is/are sent with the subject :subject:
@@ -117,6 +149,12 @@ class MailContext extends RawMailContext
 
     /**
      * Check all mail sent during the scenario.
+     *
+     * @code
+     * Then 0 emails have been sent
+     * Then 2 mails have been sent to "user@example.com"
+     * Then 1 email has been sent with the subject "Welcome"
+     * @endcode
      *
      * @Then :count (e)mail(s) has/have been sent
      * @Then :count (e)mail(s) has/have been sent to :to
@@ -137,6 +175,11 @@ class MailContext extends RawMailContext
     /**
      * Check mail sent since the last step that checked mail.
      *
+     * @code
+     * Then 0 new emails are sent
+     * Then 1 new mail is sent to "user@example.com"
+     * @endcode
+     *
      * @Then :count new (e)mail(s) is/are sent
      * @Then :count new (e)mail(s) is/are sent to :to
      * @Then :count new (e)mail(s) is/are sent with the subject :subject
@@ -154,6 +197,15 @@ class MailContext extends RawMailContext
     }
 
     /**
+     * Follow a link from an email body.
+     *
+     * @code
+     * When I follow the link to "user/reset" from the mail
+     * When I follow the link to "user/reset" from the email
+     * When I follow the link to "user/reset" from the email to "user@example.com"
+     * When I follow the link to "user/reset" from the email with the subject "Welcome"
+     * @endcode
+     *
      * @When I follow the link to :urlFragment from the (e)mail
      * @When I follow the link to :urlFragment from the (e)mail to :to
      * @When I follow the link to :urlFragment from the (e)mail with the subject :subject

@@ -58,6 +58,10 @@ class ConfigContext extends RawDrupalContext implements TranslatableContext
      * @param string $value
      *   Value to associate with identifier.
      *
+     * @code
+     * Given I set the configuration item "system.site" with key "name" to "My Site"
+     * @endcode
+     *
      * @Given I set the configuration item :name with key :key to :value
      */
     public function setBasicConfig(string $name, string $key, string $value): void
@@ -75,11 +79,14 @@ class ConfigContext extends RawDrupalContext implements TranslatableContext
      * @param TableNode $config_table
      *   The table listing configuration keys and values.
      *
-     * @Given I set the configuration item :name with key :key with values:
+     * @code
+     * Given I set the configuration item "system.site" with key "page" with values:
+     *   | key   | value  |
+     *   | front | /node  |
+     *   | 403   | /error |
+     * @endcode
      *
-     * Provide configuration data in the following format:
-     *  | key   | value  |
-     *  | foo   | bar    |
+     * @Given I set the configuration item :name with key :key with values:
      */
     public function setComplexConfig(string $name, string $key, TableNode $config_table): void
     {
