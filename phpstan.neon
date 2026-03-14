@@ -8,6 +8,7 @@ parameters:
 
   paths:
     - src
+    - scripts
     - tests/behat/bootstrap
     - tests/phpunit
 

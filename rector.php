@@ -33,6 +33,7 @@ use Rector\TypeDeclaration\Rector\StmtsAwareInterface\DeclareStrictTypesRector;
 return RectorConfig::configure()
     ->withPaths([
         __DIR__ . '/src/**',
+        __DIR__ . '/scripts/**',
         __DIR__ . '/tests/behat/bootstrap/**',
         __DIR__ . '/tests/phpunit/**',
     ])

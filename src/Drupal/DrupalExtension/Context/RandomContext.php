@@ -8,9 +8,6 @@ use Behat\Behat\Hook\Scope\ScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 
 /**
- * Class RandomContext
- * @package Drupal\DrupalExtension\Context
- *
  * Transform tokens into random variables.
  */
 class RandomContext extends RawDrupalContext

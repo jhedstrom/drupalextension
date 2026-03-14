@@ -24,6 +24,7 @@
             ignoreIndirectDeprecations="true">
         <include>
             <directory>src</directory>
+            <file>scripts/docs.php</file>
         </include>
         <exclude>
             <directory>tests/phpunit/src</directory>

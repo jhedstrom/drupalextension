@@ -8,12 +8,13 @@
 
     <file>src</file>
     <file>spec</file>
+    <file>scripts</file>
     <file>tests/behat/bootstrap</file>
     <file>tests/phpunit</file>
 
     <rule ref="PSR2">
         <!-- @todo Fix long line length issues -->
-        <exclude name="Generic.Files.LineLength.TooLong" />
+        <exclude name="Generic.Files.LineLength.TooLong"/>
     </rule>
 
     <!-- PHPSpec uses snake_case methods without visibility keywords. -->
@@ -30,25 +31,27 @@
         </properties>
     </rule>
 
-    <rule ref="Generic.Arrays.DisallowLongArraySyntax" />
-    <rule ref="Generic.Arrays.ArrayIndent" />
+    <rule ref="Generic.Arrays.DisallowLongArraySyntax"/>
+    <rule ref="Generic.Arrays.ArrayIndent"/>
 
-    <rule ref="Generic.PHP.RequireStrictTypes" >
-      <exclude-pattern>*/spec/*</exclude-pattern>
+    <rule ref="Generic.PHP.RequireStrictTypes">
+        <exclude-pattern>*/spec/*</exclude-pattern>
     </rule>
 
     <rule ref="DrevOps.NamingConventions.LocalVariableNaming">
-      <properties>
-        <property name="format" value="camelCase"/>
-      </properties>
-      <exclude-pattern>*/spec/*</exclude-pattern>
+        <properties>
+            <property name="format" value="camelCase"/>
+        </properties>
+        <exclude-pattern>*/spec/*</exclude-pattern>
+        <exclude-pattern>*/scripts/*</exclude-pattern>
     </rule>
 
     <rule ref="DrevOps.NamingConventions.ParameterNaming">
-      <properties>
-        <property name="format" value="camelCase"/>
-      </properties>
-      <exclude-pattern>*/spec/*</exclude-pattern>
+        <properties>
+            <property name="format" value="camelCase"/>
+        </properties>
+        <exclude-pattern>*/spec/*</exclude-pattern>
+        <exclude-pattern>*/scripts/*</exclude-pattern>
     </rule>
 
 </ruleset>

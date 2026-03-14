@@ -13,6 +13,7 @@
 /phpcs-drupal.xml    export-ignore
 /phpcs.xml           export-ignore
 /recipes             export-ignore
+/scripts             export-ignore
 /spec                export-ignore
 /tests               export-ignore
 /vendor              export-ignore
