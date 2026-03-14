@@ -398,6 +398,30 @@ Feature: MinkContext coverage gaps
     Given I am at "/behat-test/ajax"
     And I press the "enter" key in the "Name" field
 
+  @api @javascript @test-drupal
+  Scenario: Visible link is visible with real browser
+    Given I am at "/behat-test/ajax"
+    Then I should see the link "Log in"
+
+  @api @javascript @test-drupal
+  Scenario: Hidden link not visibly visible with real browser
+    Given I am at "/behat-test/ajax"
+    Then I should not see the link "Nonexistent link"
+
+  @test-blackbox
+  Scenario: Fail when pressing key in non-existent field
+    Given some behat configuration
+    And scenario steps:
+      """
+      Given I am on "/user/login"
+      When I press the "enter" key in the "Nonexistent field" field
+      """
+    When I run "behat --no-colors"
+    Then it should fail with an error:
+      """
+      Field 'Nonexistent field' not found
+      """
+
   @test-blackbox
   Scenario: Fail when filling non-existent field in region
     Given some behat configuration
