@@ -19,6 +19,10 @@ class BatchContext extends RawMinkContext
      * Wait until the id="updateprogress" element is gone,
      * or timeout after 3 minutes (180,000 ms).
      *
+     * @code
+     * Given I wait for the batch job to finish
+     * @endcode
+     *
      * @Given /^I wait for the batch job to finish$/
      */
     public function iWaitForTheBatchJobToFinish(): void
@@ -30,6 +34,14 @@ class BatchContext extends RawMinkContext
      * Creates a queue item. Defaults inputs if none are available.
      *
      * Expects the `data` to be a json encoded string.
+     *
+     * @code
+     * Given there is an item in the system queue:
+     *   | name    | my_queue              |
+     *   | data    | {"key":"value"}       |
+     *   | created | 1700000000            |
+     *   | expire  | 0                     |
+     * @endcode
      *
      * @Given there is an item in the system queue:
      */

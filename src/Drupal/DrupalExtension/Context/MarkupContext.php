@@ -39,9 +39,6 @@ class MarkupContext extends RawMinkContext
     /**
      * Checks if a button with id|name|title|alt|value exists in a region
      *
-     * @Then I should see the button :button in the :region( region)
-     * @Then I should see the :button button in the :region( region)
-     *
      * @param $button
      *   string The id|name|title|alt|value of the button
      * @param $region
@@ -49,6 +46,15 @@ class MarkupContext extends RawMinkContext
      *
      * @throws \Exception
      *   If region or button within it cannot be found.
+     *
+     * @code
+     * Then I should see the button "Submit" in the "content"
+     * Then I should see the button "Submit" in the "content" region
+     * Then I should see the "Submit" button in the "content" region
+     * @endcode
+     *
+     * @Then I should see the button :button in the :region( region)
+     * @Then I should see the :button button in the :region( region)
      */
     public function assertRegionButton(string $button, string $region): void
     {
@@ -63,9 +69,6 @@ class MarkupContext extends RawMinkContext
     /**
      * Asserts that a button does not exists in a region.
      *
-     * @Then I should not see the button :button in the :region( region)
-     * @Then I should not see the :button button in the :region( region)
-     *
      * @param $button
      *   string The id|name|title|alt|value of the button
      * @param $region
@@ -73,6 +76,15 @@ class MarkupContext extends RawMinkContext
      *
      * @throws \Exception
      *   If region is not found or the button is found within the region.
+     *
+     * @code
+     * Then I should not see the button "Delete" in the "sidebar"
+     * Then I should not see the button "Delete" in the "sidebar" region
+     * Then I should not see the "Delete" button in the "sidebar" region
+     * @endcode
+     *
+     * @Then I should not see the button :button in the :region( region)
+     * @Then I should not see the :button button in the :region( region)
      */
     public function assertNotRegionButton(string $button, string $region): void
     {
@@ -85,6 +97,13 @@ class MarkupContext extends RawMinkContext
     }
 
     /**
+     * Assert an element exists in a region.
+     *
+     * @code
+     * Then I see the "h2" element in the "content"
+     * Then I should see the "h2" element in the "content" region
+     * @endcode
+     *
      * @Then I( should) see the :tag element in the :region( region)
      */
     public function assertRegionElement(string $tag, string $region): void
@@ -98,6 +117,13 @@ class MarkupContext extends RawMinkContext
     }
 
     /**
+     * Assert an element does not exist in a region.
+     *
+     * @code
+     * Then I not see the "h2" element in the "sidebar"
+     * Then I should not see the "h2" element in the "sidebar" region
+     * @endcode
+     *
      * @Then I( should) not see the :tag element in the :region( region)
      */
     public function assertNotRegionElement(string $tag, string $region): void
@@ -110,6 +136,13 @@ class MarkupContext extends RawMinkContext
     }
 
     /**
+     * Assert text in an element within a region.
+     *
+     * @code
+     * Then I see "Welcome" in the "h2" element in the "content"
+     * Then I should see "Welcome" in the "h2" element in the "content" region
+     * @endcode
+     *
      * @Then I( should) see :text in the :tag element in the :region( region)
      */
     public function assertRegionElementText(string $text, string $tag, string $region): void
@@ -127,6 +160,13 @@ class MarkupContext extends RawMinkContext
     }
 
     /**
+     * Assert text is not in an element within a region.
+     *
+     * @code
+     * Then I not see "Error" in the "div" element in the "content"
+     * Then I should not see "Error" in the "div" element in the "content" region
+     * @endcode
+     *
      * @Then I( should) not see :text in the :tag element in the :region( region)
      */
     public function assertNotRegionElementText(string $text, string $tag, string $region): void
@@ -143,6 +183,13 @@ class MarkupContext extends RawMinkContext
     }
 
     /**
+     * Assert an element with a specific attribute value exists in a region.
+     *
+     * @code
+     * Then I see the "a" element with the "href" attribute set to "/about" in the "footer"
+     * Then I should see the "a" element with the "href" attribute set to "/about" in the "footer" region
+     * @endcode
+     *
      * @Then I( should) see the :tag element with the :attribute attribute set to :value in the :region( region)
      */
     public function assertRegionElementAttribute(string $tag, string $attribute, string $value, string $region): void
@@ -175,6 +222,13 @@ class MarkupContext extends RawMinkContext
     }
 
     /**
+     * Assert text in an element with a specific attribute value in a region.
+     *
+     * @code
+     * Then I see "About" in the "a" element with the "href" attribute set to "/about" in the "footer"
+     * Then I should see "About" in the "a" element with the "href" attribute set to "/about" in the "footer" region
+     * @endcode
+     *
      * @Then I( should) see :text in the :tag element with the :attribute attribute set to :value in the :region( region)
      */
     public function assertRegionElementTextAttribute(string $text, string $tag, string $attribute, string $value, string $region): void
@@ -208,6 +262,13 @@ class MarkupContext extends RawMinkContext
     }
 
     /**
+     * Assert text in an element with a specific CSS property value in a region.
+     *
+     * @code
+     * Then I see "Notice" in the "div" element with the "color" CSS property set to "red" in the "content"
+     * Then I should see "Notice" in the "div" element with the "color" CSS property set to "red" in the "content" region
+     * @endcode
+     *
      * @Then I( should) see :text in the :tag element with the :property CSS property set to :value in the :region( region)
      */
     public function assertRegionElementTextCss(string $text, string $tag, string $property, string $value, string $region): void
