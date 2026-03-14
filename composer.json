@@ -54,7 +54,7 @@
         "guzzlehttp/promises": "^2.0.3",
         "guzzlehttp/psr7": "^2.6.3",
         "justinrainbow/json-schema": "^5.3",
-        "league/container": "^4.2",
+        "league/container": "^4.2.3",
         "masterminds/html5": "^2.8",
         "php-parallel-lint/php-parallel-lint": "^1.4",
         "phpspec/phpspec": "^7.0 || ^8.0",
