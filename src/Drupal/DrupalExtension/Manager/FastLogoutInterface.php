@@ -14,6 +14,8 @@ interface FastLogoutInterface
      *
      * A fast logout method that resets the session and doesn't need to
      * bootstrap Drupal. This should not be used if logout hooks need to fire.
+     *
+     * @todo v6: Rename to logoutFast().
      */
     public function fastLogout();
 }
