@@ -38,6 +38,109 @@ Feature: DrupalContext coverage gaps
     And I visit "/user/login"
     Then I should see the text "Log in"
 
+  @api @test-drupal
+  Scenario: Press button in a table row
+    Given I am logged in as a user with the "administrator" role
+    And "article" content:
+      | title          | status |
+      | Button row test | 1     |
+    When I go to "admin/content"
+    Then I should see the "Edit" in the "Button row test" row
+
+  @api @test-drupal
+  Scenario: Not see text in a table row that is present should pass
+    Given I am logged in as a user with the "administrator" role
+    And "article" content:
+      | title          | status |
+      | Absent text row | 1     |
+    When I go to "admin/content"
+    Then I should not see the text "NONEXISTENT_STRING_xyz" in the "Absent text row" row
+
+  @test-blackbox
+  Scenario: Fail when text is present in row but should not be
+    Given some behat configuration
+    And scenario steps:
+      """
+      Given I am logged in as a user with the "administrator" role
+      And "article" content:
+        | title           | status |
+        | Text present row | 1     |
+      When I go to "admin/content"
+      Then I should not see the text "Article" in the "Text present row" row
+      """
+    When I run "behat --no-colors"
+    Then it should fail
+
+  @test-blackbox
+  Scenario: Fail when link not visible in table row
+    Given some behat configuration
+    And scenario steps:
+      """
+      Given I am logged in as a user with the "administrator" role
+      And "article" content:
+        | title           | status |
+        | Link visible row | 1     |
+      When I go to "admin/content"
+      Then I should see the "Nonexistent link" in the "Link visible row" row
+      """
+    When I run "behat --no-colors"
+    Then it should fail with an error:
+      """
+      no "Nonexistent link" link
+      """
+
+  @test-blackbox
+  Scenario: Fail when pressing nonexistent button in table row
+    Given some behat configuration
+    And scenario steps:
+      """
+      Given I am logged in as a user with the "administrator" role
+      And "article" content:
+        | title              | status |
+        | Button missing row | 1      |
+      When I go to "admin/content"
+      Then I press "Nonexistent button" in the "Button missing row" row
+      """
+    When I run "behat --no-colors"
+    Then it should fail with an error:
+      """
+      no "Nonexistent button" button
+      """
+
+  @test-blackbox
+  Scenario: Fail when creating content with non-existent type
+    Given some behat configuration
+    And scenario steps:
+      """
+      Given I am viewing a "nonexistent_type" with the title "Bad type"
+      """
+    When I run "behat --no-colors"
+    Then it should fail
+
+  @test-blackbox
+  Scenario: Fail when viewing own content as anonymous
+    Given some behat configuration
+    And scenario steps:
+      """
+      Given I am viewing my "article" content with the title "Anon viewing"
+      """
+    When I run "behat --no-colors"
+    Then it should fail with an error:
+      """
+      There is no current logged in user to create a node for.
+      """
+
+  @test-blackbox
+  Scenario: Fail when editing content without access
+    Given some behat configuration
+    And scenario steps:
+      """
+      Given I am logged in as a user with the "authenticated user" role
+      Then I should be able to edit an "article"
+      """
+    When I run "behat --no-colors"
+    Then it should fail
+
   @test-blackbox
   Scenario: Fail when creating content for anonymous user
     Given some behat configuration
