@@ -175,3 +175,45 @@ Feature: MarkupContext
       """
       The text "NONEXISTENT_TEXT" was not found in the "h1" element in the "main content" region
       """
+
+  @test-blackbox
+  Scenario: Fail when attribute is not present on element in region
+    Given some behat configuration
+    And scenario steps:
+      """
+      Given I am on "/user/login"
+      Then I should see the "h1" element with the "data-nonexistent" attribute set to "value" in the "main content" region
+      """
+    When I run "behat --no-colors"
+    Then it should fail with an error:
+      """
+      The "data-nonexistent" attribute is not present on the element "h1"
+      """
+
+  @test-blackbox
+  Scenario: Fail when attribute is not present on element with text in region
+    Given some behat configuration
+    And scenario steps:
+      """
+      Given I am on "/user/login"
+      Then I should see "Log in" in the "h1" element with the "data-nonexistent" attribute set to "value" in the "main content" region
+      """
+    When I run "behat --no-colors"
+    Then it should fail with an error:
+      """
+      The "data-nonexistent" attribute is not present on the element "h1"
+      """
+
+  @test-blackbox
+  Scenario: Fail when CSS style property is not found on element in region
+    Given some behat configuration
+    And scenario steps:
+      """
+      Given I am on "/behat-test/messages"
+      Then I should see "This page displays test messages." in the "p" element with the "font-weight" CSS property set to "bold" in the "main content" region
+      """
+    When I run "behat --no-colors"
+    Then it should fail with an error:
+      """
+      The "font-weight" style property was not found in the "p" element
+      """

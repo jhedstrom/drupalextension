@@ -536,3 +536,17 @@ Feature: MinkContext coverage gaps
       """
     When I run "behat --no-colors"
     Then it should fail
+
+  @test-blackbox
+  Scenario: Fail when clicking non-existent link in region
+    Given some behat configuration
+    And scenario steps:
+      """
+      Given I am on "/user/login"
+      When I follow "Nonexistent link" in the "main content" region
+      """
+    When I run "behat --no-colors"
+    Then it should fail with an error:
+      """
+      The link "Nonexistent link" was not found in the region "main content"
+      """

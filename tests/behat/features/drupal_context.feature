@@ -202,3 +202,39 @@ Feature: DrupalContext coverage gaps
       """
       no "Nonexistent link" link
       """
+
+  @test-blackbox
+  Scenario: Fail when creating terms with invalid vocabulary
+    Given some behat configuration
+    And scenario steps:
+      """
+      Given "nonexistent_vocabulary_xyz" terms:
+        | name       |
+        | Test term  |
+      """
+    When I run "behat --no-colors"
+    Then it should fail
+
+  @test-blackbox
+  Scenario: Fail when creating content with multiple rows of invalid type
+    Given some behat configuration
+    And scenario steps:
+      """
+      Given "nonexistent_type_xyz" content:
+        | title      |
+        | Bad content |
+      """
+    When I run "behat --no-colors"
+    Then it should fail
+
+  @test-blackbox
+  Scenario: Fail when creating language with invalid langcode
+    Given some behat configuration
+    And scenario steps:
+      """
+      Given the following languages are available:
+        | languages  |
+        | zz_INVALID |
+      """
+    When I run "behat --no-colors"
+    Then it should fail

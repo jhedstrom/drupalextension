@@ -389,3 +389,49 @@ Feature: MessageContext
       """
       contains the warning message 'Test warning message'
       """
+
+  @test-blackbox
+  Scenario: Fail when message table has wrong number of columns
+    Given some behat configuration
+    And scenario steps:
+      """
+      Given I am on "/behat-test/messages"
+      Then I should see the following error messages:
+        | error messages  | extra column |
+        | Test error      | extra        |
+      """
+    When I run "behat --no-colors"
+    Then it should fail with an error:
+      """
+      should only contain 1 column
+      """
+
+  @test-blackbox
+  Scenario: Fail when message table has wrong header
+    Given some behat configuration
+    And scenario steps:
+      """
+      Given I am on "/behat-test/messages"
+      Then I should see the following error messages:
+        | wrong header |
+        | Test error   |
+      """
+    When I run "behat --no-colors"
+    Then it should fail with an error:
+      """
+      should have the header 'Error messages'
+      """
+
+  @test-blackbox
+  Scenario: Fail when error message text not found but container exists
+    Given some behat configuration
+    And scenario steps:
+      """
+      Given I am on "/behat-test/messages"
+      Then I should see the error message "This specific text does not exist"
+      """
+    When I run "behat --no-colors"
+    Then it should fail with an error:
+      """
+      does not contain the error message 'This specific text does not exist'
+      """

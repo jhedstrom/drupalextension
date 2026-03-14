@@ -298,3 +298,40 @@ Feature: MailContext
       """
     When I run "behat --no-colors"
     Then it should fail
+
+  @test-blackbox
+  Scenario: Fail when following link that exists but does not match fragment
+    Given some behat configuration
+    And scenario steps:
+      """
+      When Drupal sends a mail:
+        | to      | frag@example.com                    |
+        | subject | fragment test                       |
+        | body    | Visit http://www.example.com/page1  |
+      And I follow the link to "nonexistent-fragment" from the mail
+      """
+    When I run "behat --no-colors"
+    Then it should fail
+
+  @test-blackbox
+  Scenario: Fail when no mail sent but expected
+    Given some behat configuration
+    And scenario steps:
+      """
+      Then a mail has been sent to "nobody@example.com"
+      """
+    When I run "behat --no-colors"
+    Then it should fail
+
+  @test-blackbox
+  Scenario: Fail when mail has been sent but should not have been
+    Given some behat configuration
+    And scenario steps:
+      """
+      When Drupal sends a mail:
+        | to      | exists@example.com |
+        | subject | exists test        |
+      Then no mail has been sent
+      """
+    When I run "behat --no-colors"
+    Then it should fail
