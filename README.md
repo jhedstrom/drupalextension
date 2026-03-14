@@ -91,6 +91,26 @@ the [Full documentation](https://behat-drupal-extension.readthedocs.org)
 
 [//]: # (END)
 
+## Writing tests with AI assistants
+
+Copy and paste below into your project's `CLAUDE.md` or `AGENTS.md` file.
+
+```
+## Writing Behat Tests
+
+Available step definitions are listed in `STEPS.md`.
+Read this file before writing or modifying Behat tests.
+Use only step patterns from this file. Do not invent steps.
+
+If `STEPS.md` does not exist or is outdated, regenerate it:
+
+    vendor/bin/behat -di > STEPS.md
+
+Regenerate after adding new Context classes or updating dependencies.
+
+For detailed step documentation, see: vendor/drupal/drupal-extension/STEPS.md
+```
+
 ## Credits
 
  * Originally developed by [Jonathan Hedstrom](https://github.com/jhedstrom) with great help from [eliza411](https://github.com/eliza411)

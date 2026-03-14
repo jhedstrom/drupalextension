@@ -1,10 +1,12 @@
 # Ignore files for distribution archives.
-/.ahoy               export-ignore
+/.ahoy.yml           export-ignore
 /.editorconfig       export-ignore
 /.gitattributes      export-ignore
 /.github             export-ignore
 /.gitignore          export-ignore
 /.readthedocs.yaml   export-ignore
+/CONTRIBUTING.md     export-ignore
+/behat.yml           export-ignore
 /build               export-ignore
 /composer.lock       export-ignore
 /doc                 export-ignore
@@ -12,7 +14,10 @@
 /gherkinlint.json    export-ignore
 /phpcs-drupal.xml    export-ignore
 /phpcs.xml           export-ignore
+/phpstan.neon        export-ignore
+/phpunit.xml         export-ignore
 /recipes             export-ignore
+/rector.php          export-ignore
 /scripts             export-ignore
 /spec                export-ignore
 /tests               export-ignore
