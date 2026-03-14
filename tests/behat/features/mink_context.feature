@@ -408,6 +408,88 @@ Feature: MinkContext coverage gaps
     Given I am at "/behat-test/ajax"
     Then I should not see the link "Nonexistent link"
 
+  @api @test-drupal
+  Scenario: Not see heading on Drupal page
+    Given I am at "/user/login"
+    Then I should not see the heading "Nonexistent Heading"
+
+  @api @test-drupal
+  Scenario: See button on Drupal page
+    Given I am at "/user/login"
+    Then I should see the button "Log in"
+
+  @api @test-drupal
+  Scenario: Not see button on Drupal page
+    Given I am at "/user/login"
+    Then I should not see the button "Nonexistent Button"
+
+  @api @test-drupal
+  Scenario: Click link in region on Drupal page
+    Given I am at "/user/login"
+    When I click "Log in" in the "main content" region
+
+  @api @test-drupal
+  Scenario: Press button in region on Drupal page
+    Given I am at "/user/login"
+    When I press "Log in" in the "main content" region
+
+  @api @test-drupal
+  Scenario: Fill in field in region on Drupal page
+    Given I am at "/user/login"
+    When I fill in "testuser" for "Username" in the "main content" region
+
+  @api @test-drupal
+  Scenario: Check and uncheck box in region on Drupal page
+    Given I am at "/behat-test/ajax"
+    When I check "I agree" in the "main content" region
+    And I uncheck "I agree" in the "main content" region
+
+  @api @test-drupal
+  Scenario: See link in region on Drupal page
+    Given I am at "/user/login"
+    Then I should see the link "Log in" in the "main content" region
+
+  @api @test-drupal
+  Scenario: Not see link in region on Drupal page
+    Given I am at "/user/login"
+    Then I should not see the link "Nonexistent link" in the "main content" region
+
+  @api @test-drupal
+  Scenario: See text in region on Drupal page
+    Given I am at "/user/login"
+    Then I should see "Username" in the "main content" region
+
+  @api @test-drupal
+  Scenario: Not see text in region on Drupal page
+    Given I am at "/user/login"
+    Then I should not see "NONEXISTENT" in the "main content" region
+
+  @api @test-drupal
+  Scenario: Not see text on Drupal page
+    Given I am at "/user/login"
+    Then I should not see the text "NONEXISTENT_TEXT"
+
+  @api @test-drupal
+  Scenario: Not get HTTP response on Drupal page
+    Given I am at "/user/login"
+    Then I should not get a "404" HTTP response
+
+  @api @test-drupal
+  Scenario: Check and uncheck box on Drupal page
+    Given I am at "/behat-test/ajax"
+    When I check the box "I agree"
+    And I uncheck the box "I agree"
+
+  @api @test-drupal
+  Scenario: Select radio button on Drupal page
+    Given I am at "/behat-test/ajax"
+    When I select the radio button "Blue"
+
+  @api @test-drupal
+  Scenario: Expand details on Drupal page
+    Given I am at "/behat-test/ajax"
+    When I expand details labelled "Advanced settings"
+
   @test-blackbox
   Scenario: Fail when pressing key in non-existent field
     Given some behat configuration

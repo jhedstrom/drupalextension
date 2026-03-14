@@ -29,6 +29,31 @@ class AjaxTestForm extends FormBase {
       '#required' => FALSE,
     ];
 
+    $form['agree'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('I agree'),
+    ];
+
+    $form['color'] = [
+      '#type' => 'radios',
+      '#title' => $this->t('Color'),
+      '#options' => [
+        'red' => $this->t('Red'),
+        'blue' => $this->t('Blue'),
+      ],
+    ];
+
+    $form['advanced'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Advanced settings'),
+      '#open' => FALSE,
+    ];
+
+    $form['advanced']['extra'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Extra'),
+    ];
+
     $form['ajax_button'] = [
       '#type' => 'button',
       '#value' => $this->t('Load greeting'),
