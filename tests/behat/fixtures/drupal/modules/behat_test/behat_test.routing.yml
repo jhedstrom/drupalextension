@@ -1,0 +1,7 @@
+behat_test.messages:
+  path: '/behat-test/messages'
+  defaults:
+    _controller: '\Drupal\behat_test\Controller\MessagesController::page'
+    _title: 'Test Messages'
+  requirements:
+    _access: 'TRUE'
