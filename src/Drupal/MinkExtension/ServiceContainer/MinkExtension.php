@@ -35,11 +35,14 @@ class MinkExtension extends BaseMinkExtension
         parent::configure($builder);
 
         // Add extended options.
+        // @formatter:off
         $builder->
-        children()->
-        scalarNode('ajax_timeout')->
-            defaultValue(static::AJAX_TIMEOUT)->
-            info(sprintf('Change the maximum time to wait for AJAX calls to complete. Defaults to %s seconds.', static::AJAX_TIMEOUT))->
-        end();
+            children()->
+                scalarNode('ajax_timeout')->
+                    defaultValue(static::AJAX_TIMEOUT)->
+                    info(sprintf('Change the maximum time to wait for AJAX calls to complete. Defaults to %s seconds.', static::AJAX_TIMEOUT))->
+                end()->
+            end();
+        // @formatter:on
     }
 }

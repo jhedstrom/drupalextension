@@ -19,20 +19,24 @@ class BrowserKitFactory extends BrowserKitFactoryOriginal
     public function buildDriver(array $config): Definition
     {
         if (!class_exists(BrowserKitDriver::class)) {
+            // @codeCoverageIgnoreStart
             throw new \RuntimeException(
                 'Install behat/mink-browserkit-driver in order to use the browserkit_http driver.'
             );
+            // @codeCoverageIgnoreEnd
         }
 
         $drupalFinder = new DrupalFinder();
-        $drupalFinder->locateRoot(getcwd());
+        $drupalFinder->locateRoot($this->getCwd());
         $drupalRoot = $drupalFinder->getDrupalRoot();
         require_once $drupalRoot . '/core/tests/Drupal/Tests/DrupalTestBrowser.php';
 
         if (!class_exists('Drupal\Tests\DrupalTestBrowser')) {
+            // @codeCoverageIgnoreStart
             throw new \RuntimeException(
                 'Class Drupal\Tests\DrupalTestBrowser not found'
             );
+            // @codeCoverageIgnoreEnd
         }
 
         $guzzleRequestOptions = $config['guzzle_request_options'] ?? [
@@ -51,16 +55,28 @@ class BrowserKitFactory extends BrowserKitFactoryOriginal
     }
 
     /**
+     * Returns the current working directory.
+     */
+    // @codeCoverageIgnoreStart
+    protected function getCwd(): string
+    {
+        return getcwd();
+    }
+    // @codeCoverageIgnoreEnd
+
+    /**
      * {@inheritdoc}
      */
     public function configure(ArrayNodeDefinition $builder): void
     {
+        // @formatter:off
         $builder->
-        children()->
-        arrayNode('guzzle_request_options')->
-        prototype('variable')->end()->
-        info("Guzzle request options. See \\GuzzleHttp\\RequestOptions. Defaults to ['allow_redirects' => false, 'cookies' => true].")->
-        end()->
-        end();
+            children()->
+                arrayNode('guzzle_request_options')->
+                    prototype('variable')->end()->
+                    info("Guzzle request options. See \\GuzzleHttp\\RequestOptions. Defaults to ['allow_redirects' => false, 'cookies' => true].")->
+                end()->
+            end();
+        // @formatter:on
     }
 }
