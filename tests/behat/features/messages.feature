@@ -401,7 +401,7 @@ Feature: MessageContext
         | Test error      | extra        |
       """
     When I run "behat --no-colors"
-    Then it should fail with an error:
+    Then it should fail with an exception:
       """
       should only contain 1 column
       """
@@ -417,7 +417,7 @@ Feature: MessageContext
         | Test error   |
       """
     When I run "behat --no-colors"
-    Then it should fail with an error:
+    Then it should fail with an exception:
       """
       should have the header 'Error messages'
       """

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\behat_test\Form;
 
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 
@@ -70,7 +71,7 @@ class AjaxTestForm extends FormBase {
 
     if ($form_state->getValue('name')) {
       $form['result']['message'] = [
-        '#markup' => '<p>Hello, ' . $form_state->getValue('name') . '!</p>',
+        '#markup' => '<p>Hello, ' . Html::escape($form_state->getValue('name')) . '!</p>',
       ];
     }
 

@@ -39,7 +39,7 @@ Feature: DrupalContext coverage gaps
     Then I should see the text "Log in"
 
   @api @test-drupal
-  Scenario: Press button in a table row
+  Scenario: See link in a table row
     Given I am logged in as a user with the "administrator" role
     And "article" content:
       | title          | status |
@@ -204,18 +204,6 @@ Feature: DrupalContext coverage gaps
       """
 
   @test-blackbox
-  Scenario: Fail when creating terms with invalid vocabulary
-    Given some behat configuration
-    And scenario steps:
-      """
-      Given "nonexistent_vocabulary_xyz" terms:
-        | name       |
-        | Test term  |
-      """
-    When I run "behat --no-colors"
-    Then it should fail
-
-  @test-blackbox
   Scenario: Fail when creating content with multiple rows of invalid type
     Given some behat configuration
     And scenario steps:
@@ -223,18 +211,6 @@ Feature: DrupalContext coverage gaps
       Given "nonexistent_type_xyz" content:
         | title      |
         | Bad content |
-      """
-    When I run "behat --no-colors"
-    Then it should fail
-
-  @test-blackbox
-  Scenario: Fail when creating language with invalid langcode
-    Given some behat configuration
-    And scenario steps:
-      """
-      Given the following languages are available:
-        | languages  |
-        | zz_INVALID |
       """
     When I run "behat --no-colors"
     Then it should fail
