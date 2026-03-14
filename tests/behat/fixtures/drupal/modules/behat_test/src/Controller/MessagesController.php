@@ -26,6 +26,7 @@ class MessagesController extends ControllerBase {
 <html>
 <head><title>Test Messages</title></head>
 <body>
+<div id="main">
 <div class="messages messages--error">
   <ul>
     <li>Test error message.</li>
@@ -43,7 +44,8 @@ class MessagesController extends ControllerBase {
     <li>Another warning message.</li>
   </ul>
 </div>
-<p>This page displays test messages.</p>
+<p style="color: green;">This page displays test messages.</p>
+</div>
 </body>
 </html>
 HTML;

@@ -48,6 +48,11 @@ Feature: MarkupContext
     Given I am at "/user/login"
     Then I should see "Username" in the "label" element with the "for" attribute set to "edit-name" in the "main content" region
 
+  @api @test-drupal
+  Scenario: CSS property assertion on Drupal page
+    Given I am at "/behat-test/messages"
+    Then I should see "This page displays test messages." in the "p" element with the "color" CSS property set to "green" in the "main content" region
+
   @test-blackbox
   Scenario: Fail when button missing in region
     Given some behat configuration
