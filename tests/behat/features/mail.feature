@@ -1,9 +1,9 @@
-@api @test-drupal
 Feature: MailContext
   As a developer
   I want to send and inspect emails in test scenarios
   So that I can verify mail recipients, subjects, and content
 
+  @api @test-drupal
   Scenario: Mail is sent
     When Drupal sends an email:
       | to      | fred@example.com |
@@ -38,6 +38,7 @@ Feature: MailContext
       | body      |
       | test body |
 
+  @api @test-drupal
   Scenario: New mail is sent to someone
     When Drupal sends a mail:
       | to      | fred@example.com |
@@ -49,9 +50,11 @@ Feature: MailContext
       | subject |
       | test 1  |
 
+  @api @test-drupal
   Scenario: No mail is sent
     Then no mail has been sent
 
+  @api @test-drupal
   Scenario: Count sent mail
     When Drupal sends an email:
       | to      | fred@example.com |
@@ -67,6 +70,7 @@ Feature: MailContext
     And no new emails are sent
     And no mail has been sent to "hans"
 
+  @api @test-drupal
   Scenario: I follow link in mail
     When Drupal sends a mail:
       | to      | fred@example.com                        |
@@ -75,6 +79,7 @@ Feature: MailContext
     And I follow the link to "google" from the mail with the subject "test link"
     Then the response should contain "Search"
 
+  @api @test-drupal
   Scenario: We try to be order insensitive
     When Drupal sends an email:
       | to      | fred@example.com |
@@ -89,6 +94,7 @@ Feature: MailContext
       | jane | test    | body 2    |
       | fred |         | test body |
 
+  @api @test-drupal
   Scenario: Follow link from mail without filters
     When Drupal sends a mail:
       | to      | fred@example.com                             |
@@ -97,6 +103,7 @@ Feature: MailContext
     And I follow the link to "google" from the mail
     Then the response should contain "Search"
 
+  @api @test-drupal
   Scenario: Follow link from mail to specific recipient
     When Drupal sends a mail:
       | to      | specific@example.com                      |
@@ -105,6 +112,7 @@ Feature: MailContext
     And I follow the link to "google" from the mail to "specific@example.com"
     Then the response should contain "Search"
 
+  @api @test-drupal
   Scenario: Follow link from mail to recipient with subject
     When Drupal sends a mail:
       | to      | combo@example.com           |
@@ -113,6 +121,54 @@ Feature: MailContext
     And I follow the link to "google" from the mail to "combo@example.com" with the subject "combo test"
     Then the response should contain "Search"
 
+  @api @test-drupal
+  Scenario: New mail sent to recipient with subject filter
+    When Drupal sends a mail:
+      | to      | bob@example.com  |
+      | subject | filtered test    |
+      | body    | filtered body    |
+    Then new mail is sent to "bob@example.com" with the subject "filtered test":
+      | body          |
+      | filtered body |
+
+  @api @test-drupal
+  Scenario: Count mails sent with subject
+    When Drupal sends a mail:
+      | to      | count1@example.com |
+      | subject | counted subject    |
+    And Drupal sends a mail:
+      | to      | count2@example.com |
+      | subject | counted subject    |
+    And Drupal sends a mail:
+      | to      | count3@example.com |
+      | subject | other subject      |
+    Then 2 mails have been sent with the subject "counted subject"
+    And 1 mail has been sent with the subject "other subject"
+
+  @api @test-drupal
+  Scenario: Count new mails sent to recipient
+    When Drupal sends a mail:
+      | to      | newcount@example.com |
+      | subject | first               |
+    And Drupal sends a mail:
+      | to      | newcount@example.com |
+      | subject | second              |
+    Then 2 new emails are sent to "newcount@example.com"
+
+  @api @test-drupal
+  Scenario: Count new mails sent to recipient with subject
+    When Drupal sends a mail:
+      | to      | ncsubj@example.com |
+      | subject | target subject     |
+    And Drupal sends a mail:
+      | to      | ncsubj@example.com |
+      | subject | target subject     |
+    And Drupal sends a mail:
+      | to      | ncsubj@example.com |
+      | subject | other              |
+    Then 2 new emails are sent to "ncsubj@example.com" with the subject "target subject"
+
+  @api @test-drupal
   Scenario: New mail sent with subject and body filter
     When Drupal sends a mail:
       | to      | alice@example.com |
@@ -128,3 +184,117 @@ Feature: MailContext
     Then new email is sent:
       | body        |
       | second body |
+
+  @test-blackbox
+  Scenario: Fail when expected mail body does not match
+    Given some behat configuration
+    And scenario steps:
+      """
+      When Drupal sends a mail:
+        | to      | neg@example.com |
+        | subject | neg test        |
+        | body    | actual body     |
+      Then mails have been sent:
+        | body          |
+        | wrong body    |
+      """
+    When I run "behat --no-colors"
+    Then it should fail
+
+  @test-blackbox
+  Scenario: Fail when expected mail recipient does not match
+    Given some behat configuration
+    And scenario steps:
+      """
+      When Drupal sends a mail:
+        | to      | real@example.com |
+        | subject | neg test         |
+      Then a mail has been sent to "wrong@example.com"
+      """
+    When I run "behat --no-colors"
+    Then it should fail
+
+  @test-blackbox
+  Scenario: Fail when expected new mail is not sent
+    Given some behat configuration
+    And scenario steps:
+      """
+      When Drupal sends a mail:
+        | to      | sent@example.com |
+        | subject | sent subject     |
+      Then new email is sent:
+        | to   | subject | body |
+        | sent | sent    | sent |
+      Then new email is sent:
+        | to            |
+        | not-sent      |
+      """
+    When I run "behat --no-colors"
+    Then it should fail
+
+  @test-blackbox
+  Scenario: Fail when mail count does not match
+    Given some behat configuration
+    And scenario steps:
+      """
+      When Drupal sends a mail:
+        | to      | cnt@example.com |
+        | subject | cnt test        |
+      Then 5 mails have been sent
+      """
+    When I run "behat --no-colors"
+    Then it should fail
+
+  @test-blackbox
+  Scenario: Fail when following link that does not exist in mail
+    Given some behat configuration
+    And scenario steps:
+      """
+      When Drupal sends a mail:
+        | to      | link@example.com |
+        | subject | link test        |
+        | body    | No links here    |
+      And I follow the link to "nonexistent" from the mail
+      """
+    When I run "behat --no-colors"
+    Then it should fail
+
+  @test-blackbox
+  Scenario: Fail when following link from wrong recipient
+    Given some behat configuration
+    And scenario steps:
+      """
+      When Drupal sends a mail:
+        | to      | right@example.com          |
+        | subject | link test                  |
+        | body    | Link: http://www.Google.com |
+      And I follow the link to "google" from the mail to "wrong@example.com"
+      """
+    When I run "behat --no-colors"
+    Then it should fail
+
+  @test-blackbox
+  Scenario: Fail when new mail count to recipient does not match
+    Given some behat configuration
+    And scenario steps:
+      """
+      When Drupal sends a mail:
+        | to      | cntr@example.com |
+        | subject | cntr test        |
+      Then 3 new emails are sent to "cntr@example.com"
+      """
+    When I run "behat --no-colors"
+    Then it should fail
+
+  @test-blackbox
+  Scenario: Fail when mail count with subject does not match
+    Given some behat configuration
+    And scenario steps:
+      """
+      When Drupal sends a mail:
+        | to      | subj@example.com  |
+        | subject | specific subject  |
+      Then 5 mails have been sent with the subject "specific subject"
+      """
+    When I run "behat --no-colors"
+    Then it should fail
