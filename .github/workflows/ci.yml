@@ -157,6 +157,10 @@ jobs:
       - name: Run PHPSpec tests
         run: docker compose exec -T php vendor/bin/phpspec run -f pretty --no-interaction
 
+      - name: Clean coverage directory
+        if: ${{ matrix.coverage }}
+        run: docker compose exec -T php bash -c 'rm -rf .logs/coverage && mkdir -p .logs/coverage/phpunit .logs/coverage/behat .logs/coverage/behat_cli/phpcov'
+
       - name: Run PHPUnit tests
         if: ${{ matrix.coverage }}
         run: docker compose exec -T php php -d pcov.enabled=1 -d pcov.directory=. vendor/bin/phpunit -c phpunit.xml
@@ -178,7 +182,6 @@ jobs:
       - name: Run Behat tests with coverage
         if: ${{ matrix.coverage }}
         run: |
-          docker compose exec -T php bash -c 'rm -rf .logs/coverage/behat .logs/coverage/behat_cli/phpcov 2>/dev/null; mkdir -p .logs/coverage/behat .logs/coverage/behat_cli/phpcov || true'
           docker compose exec -T php php -d pcov.enabled=1 -d pcov.directory=src vendor/bin/behat --strict
           docker compose exec -T php php -d pcov.enabled=1 -d pcov.directory=src vendor/bin/behat --profile=drupal --strict
 
