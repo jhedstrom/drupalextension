@@ -86,6 +86,14 @@ class DrupalDriverManager implements DrupalDriverManagerInterface
     /**
      * {@inheritdoc}
      */
+    public function getDrivers(): array
+    {
+        return $this->drivers;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function setDefaultDriverName($name): void
     {
         $name = strtolower($name);
@@ -100,9 +108,9 @@ class DrupalDriverManager implements DrupalDriverManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function getDrivers(): array
+    public function getEnvironment(): ?Environment
     {
-        return $this->drivers;
+        return $this->environment;
     }
 
     /**
@@ -111,13 +119,5 @@ class DrupalDriverManager implements DrupalDriverManagerInterface
     public function setEnvironment(Environment $environment): void
     {
         $this->environment = $environment;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getEnvironment(): ?Environment
-    {
-        return $this->environment;
     }
 }

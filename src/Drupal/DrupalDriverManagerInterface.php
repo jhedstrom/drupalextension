@@ -35,6 +35,14 @@ interface DrupalDriverManagerInterface
     public function getDriver($name = null);
 
     /**
+     * Returns all registered drivers.
+     *
+     * @return \Drupal\Driver\DriverInterface[]
+     *   An array of drivers.
+     */
+    public function getDrivers();
+
+    /**
      * Set the default driver name.
      *
      * @param string $name
@@ -46,12 +54,12 @@ interface DrupalDriverManagerInterface
     public function setDefaultDriverName($name);
 
     /**
-     * Returns all registered drivers.
+     * Returns the Behat Environment.
      *
-     * @return \Drupal\Driver\DriverInterface[]
-     *   An array of drivers.
+     * @return \Behat\Testwork\Environment\Environment
+     *   The Behat Environment.
      */
-    public function getDrivers();
+    public function getEnvironment();
 
     /**
      * Sets the Behat Environment.
@@ -60,12 +68,4 @@ interface DrupalDriverManagerInterface
      *   The Behat Environment to set.
      */
     public function setEnvironment(Environment $environment);
-
-    /**
-     * Returns the Behat Environment.
-     *
-     * @return \Behat\Testwork\Environment\Environment
-     *   The Behat Environment.
-     */
-    public function getEnvironment();
 }
