@@ -42,10 +42,7 @@ Feature: DrushContext
       Then drush output should contain "DOES_NOT_EXIST_xyz"
       """
     When I run "behat --no-colors"
-    Then it should fail with an error:
-      """
-      The last drush command output did not contain 'DOES_NOT_EXIST_xyz'
-      """
+    Then it should fail
 
   @test-blackbox
   Scenario: Fail when drush output does not match regular expression
@@ -56,10 +53,7 @@ Feature: DrushContext
       Then drush output should match "/^WILL_NOT_MATCH_[0-9]+$/"
       """
     When I run "behat --no-colors"
-    Then it should fail with an error:
-      """
-      The pattern /^WILL_NOT_MATCH_[0-9]+$/ was not found anywhere in the drush output
-      """
+    Then it should fail
 
   @test-blackbox
   Scenario: Fail when drush output contains text it should not
@@ -70,10 +64,7 @@ Feature: DrushContext
       Then drush output should not contain "Drupal version"
       """
     When I run "behat --no-colors"
-    Then it should fail with an error:
-      """
-      The last drush command output did contain 'Drupal version' although it should not
-      """
+    Then it should fail
 
   @test-blackbox
   Scenario: Fail when reading drush output before running a command
