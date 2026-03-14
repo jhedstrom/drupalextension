@@ -73,6 +73,24 @@ the [Full documentation](https://behat-drupal-extension.readthedocs.org)
 6. Start adding your [feature files](http://behat.org/en/latest/user_guide/gherkin.html)
    to the `tests/features` directory of your repository.
 
+## Available steps
+
+| Class | Description |
+| --- | --- |
+| [BatchContext](STEPS.md#batchcontext) | Extensions to the Mink Extension. |
+| [ConfigContext](STEPS.md#configcontext) | Provides pre-built step definitions for interacting with Drupal config. |
+| [DrupalContext](STEPS.md#drupalcontext) | Provides pre-built step definitions for interacting with Drupal. |
+| [DrushContext](STEPS.md#drushcontext) | Provides step definitions for interacting directly with Drush commands. |
+| [MailContext](STEPS.md#mailcontext) | Provides pre-built step definitions for interacting with mail. |
+| [MarkupContext](STEPS.md#markupcontext) | Extensions to the Mink Extension. |
+| [MessageContext](STEPS.md#messagecontext) | Provides step-definitions for interacting with Drupal messages. |
+| [MinkContext](STEPS.md#minkcontext) | Extensions to the Mink Extension. |
+
+
+
+
+[//]: # (END)
+
 ## Credits
 
  * Originally developed by [Jonathan Hedstrom](https://github.com/jhedstrom) with great help from [eliza411](https://github.com/eliza411)

@@ -131,6 +131,19 @@ commands:
     cmd: ahoy clean && rm -rf ./.logs ./composer.lock ./patches.lock.json
 
   # ----------------------------------------------------------------------------
+  # Documentation commands.
+  # ----------------------------------------------------------------------------
+
+  docs:
+    usage: Generate STEPS.md and README.md documentation.
+    cmd: php scripts/docs.php --warning-on-invalid
+
+  docs-lint:
+    usage: Check that generated documentation is up to date.
+    aliases: [lint-docs]
+    cmd: php scripts/docs.php --fail-on-change --warning-on-invalid
+
+  # ----------------------------------------------------------------------------
   # Test commands.
   # ----------------------------------------------------------------------------
 
@@ -138,7 +151,7 @@ commands:
     usage: Lint code.
     cmd: |
       ahoy title "Running PHP Parallel Lint"
-      ahoy cli "vendor/bin/parallel-lint src spec tests"
+      ahoy cli "vendor/bin/parallel-lint src spec scripts tests"
 
       ahoy title "Running PHP Code Sniffer (project)"
       ahoy cli "vendor/bin/phpcs --standard=./phpcs.xml -p"
@@ -154,6 +167,9 @@ commands:
 
       ahoy title "Running Gherkin Lint"
       ahoy cli "vendor/bin/gherkinlint lint tests/behat/features"
+
+      ahoy title "Running Docs Lint"
+      ahoy docs-lint
 
   lint-fix:
     usage: Fix code.
