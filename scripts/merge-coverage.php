@@ -23,6 +23,8 @@ declare(strict_types=1);
 use SebastianBergmann\CodeCoverage\CodeCoverage;
 use SebastianBergmann\CodeCoverage\Report\Cobertura;
 use SebastianBergmann\CodeCoverage\Report\Html\Facade;
+use SebastianBergmann\CodeCoverage\Report\Text;
+use SebastianBergmann\CodeCoverage\Report\Thresholds;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -134,6 +136,31 @@ $html_report = new Facade();
 $html_report->process($merged, OUTPUT_HTML_REPORT_DIR);
 echo sprintf("  \033[2m✦ HTML report generated: %s\033[0m%s", OUTPUT_HTML_REPORT_DIR, PHP_EOL);
 
+// Generate text report and split into summary and details.
+$text_report = new Text(Thresholds::default(), TRUE);
+$coverage_text = $text_report->process($merged, FALSE);
+file_put_contents(COVERAGE_ROOT_PATH . '/merged/coverage.txt', $coverage_text);
+
+$lines = explode("\n", $coverage_text);
+$summary_lines = [];
+$details_lines = [];
+$in_details = FALSE;
+foreach ($lines as $line) {
+  if (!$in_details && preg_match('/^\S+\\\\\S+/', $line)) {
+    $in_details = TRUE;
+  }
+  if ($in_details) {
+    $details_lines[] = $line;
+  }
+  elseif (preg_match('/^\s+(Classes|Methods|Lines):/', $line, $matches)) {
+    $summary_lines[$matches[1]] = $line;
+  }
+}
+$summary_order = ['Lines', 'Methods', 'Classes'];
+$ordered_summary = array_filter(array_map(fn($key) => $summary_lines[$key] ?? NULL, $summary_order));
+file_put_contents(COVERAGE_ROOT_PATH . '/merged/coverage-summary.txt', implode("\n", $ordered_summary) . "\n");
+file_put_contents(COVERAGE_ROOT_PATH . '/merged/coverage-details.txt', implode("\n", $details_lines));
+echo sprintf("  \033[2m✦ Text report generated: %s/merged/coverage.txt\033[0m%s", COVERAGE_ROOT_PATH, PHP_EOL);
 
 echo "\033[32mCoverage merge finished\033[0m" . PHP_EOL;
 echo '  Report: .logs/coverage/merged/.coverage-html/index.html' . PHP_EOL;
