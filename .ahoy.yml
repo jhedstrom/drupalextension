@@ -229,7 +229,7 @@ commands:
   test-coverage:
     usage: Run all tests with coverage and merge reports.
     cmd: |
-      ahoy cli "rm -rf .logs/coverage/phpunit .logs/coverage/behat .logs/coverage/behat_cli/phpcov 2>/dev/null; mkdir -p .logs/coverage/phpunit .logs/coverage/behat .logs/coverage/behat_cli/phpcov || true"
+      ahoy cli "rm -rf .logs/coverage && mkdir -p .logs/coverage/phpunit .logs/coverage/behat .logs/coverage/behat_cli/phpcov"
 
       ahoy title "Running PHPUnit with coverage"
       ahoy cli "php -d pcov.enabled=1 -d pcov.directory=. vendor/bin/phpunit -c phpunit.xml"
@@ -245,7 +245,7 @@ commands:
   test-unit-coverage:
     usage: Run PHPUnit tests with coverage.
     cmd: |
-      ahoy cli "rm -rf .logs/coverage/phpunit 2>/dev/null; mkdir -p .logs/coverage/phpunit || true"
+      ahoy cli "rm -rf .logs/coverage && mkdir -p .logs/coverage/phpunit"
 
       ahoy title "Running PHPUnit with coverage"
       ahoy cli "php -d pcov.enabled=1 -d pcov.directory=. vendor/bin/phpunit -c phpunit.xml $@"
@@ -255,7 +255,7 @@ commands:
   test-bdd-coverage:
     usage: Run all Behat tests with coverage and merge reports.
     cmd: |
-      ahoy cli "rm -rf .logs/coverage/behat .logs/coverage/behat_cli/phpcov 2>/dev/null; mkdir -p .logs/coverage/behat .logs/coverage/behat_cli/phpcov || true"
+      ahoy cli "rm -rf .logs/coverage && mkdir -p .logs/coverage/behat .logs/coverage/behat_cli/phpcov"
 
       # If no arguments are passed, run in strict mode. If any arguments are passed, do not use strict mode to allow running specific tests.
       STRICT=""; if [ -z "$1" ]; then STRICT="--strict"; fi
