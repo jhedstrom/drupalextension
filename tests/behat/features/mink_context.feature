@@ -384,3 +384,49 @@ Feature: MinkContext coverage gaps
       """
       No link to "Missing" in the "main content" region
       """
+
+  @api @javascript @test-drupal
+  Scenario: Wait for AJAX to finish
+    Given I am at "/behat-test/ajax"
+    When I enter "World" for "Name"
+    And I press "Load greeting"
+    And I wait for AJAX to finish
+    Then I should see "Hello, World!"
+
+  @api @javascript @test-drupal
+  Scenario: Press a key in a field
+    Given I am at "/behat-test/ajax"
+    And I press the "enter" key in the "Name" field
+
+  @test-blackbox
+  Scenario: Fail when filling non-existent field in region
+    Given some behat configuration
+    And scenario steps:
+      """
+      Given I am on "/user/login"
+      When I fill in "value" for "Nonexistent field" in the "main content" region
+      """
+    When I run "behat --no-colors"
+    Then it should fail
+
+  @test-blackbox
+  Scenario: Fail when checking non-existent checkbox in region
+    Given some behat configuration
+    And scenario steps:
+      """
+      Given I am on "/user/login"
+      When I check "Nonexistent checkbox" in the "main content" region
+      """
+    When I run "behat --no-colors"
+    Then it should fail
+
+  @test-blackbox
+  Scenario: Fail when unchecking non-existent checkbox in region
+    Given some behat configuration
+    And scenario steps:
+      """
+      Given I am on "/user/login"
+      When I uncheck "Nonexistent checkbox" in the "main content" region
+      """
+    When I run "behat --no-colors"
+    Then it should fail

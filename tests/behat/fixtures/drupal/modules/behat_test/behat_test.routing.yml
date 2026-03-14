@@ -5,3 +5,19 @@ behat_test.messages:
     _title: 'Test Messages'
   requirements:
     _access: 'TRUE'
+
+behat_test.ajax:
+  path: '/behat-test/ajax'
+  defaults:
+    _form: '\Drupal\behat_test\Form\AjaxTestForm'
+    _title: 'AJAX Test'
+  requirements:
+    _access: 'TRUE'
+
+behat_test.batch:
+  path: '/behat-test/batch'
+  defaults:
+    _form: '\Drupal\behat_test\Form\BatchTestForm'
+    _title: 'Batch Test'
+  requirements:
+    _access: 'TRUE'
