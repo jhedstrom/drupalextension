@@ -2,7 +2,12 @@
 
 declare(strict_types=1);
 
+use Behat\Behat\Hook\Scope\AfterFeatureScope;
+use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
+use Behat\Hook\AfterFeature;
+use Behat\Hook\BeforeScenario;
+use Drupal\Core\Database\Database;
 use Drupal\DrupalExtension\Context\RawDrupalContext;
 use Drupal\DrupalExtension\Hook\Scope\BeforeNodeCreateScope;
 use Drupal\DrupalExtension\Hook\Scope\EntityScope;
@@ -17,14 +22,74 @@ class FeatureContext extends RawDrupalContext
 {
 
     use TagTrait;
-    use FeatureContextTrait;
+
+    /**
+     * Stop Mink sessions before scenarios that will spawn sub-processes.
+     *
+     * When a @javascript scenario runs in the parent process, Mink keeps the
+     * Selenium2/Chrome connection open (via resetSessions()). This causes
+     * child processes to hang when they try to establish their own connection.
+     * This hook ensures all sessions are properly stopped before sub-process
+     * scenarios run.
+     */
+    #[BeforeScenario]
+    public function testStopSessionsBeforeSubProcess(BeforeScenarioScope $scope): void
+    {
+        $hasTraitTag = (bool) array_filter($scope->getScenario()->getTags(), fn(string $tag): bool => str_starts_with($tag, 'javascript'));
+
+        // Stop all Mink sessions before sub-process scenarios to prevent
+        // connection interference between parent and child processes.
+        // @see \Behat\MinkExtension\Listener\SessionsListener::prepareDefaultMinkSession().
+        if ($hasTraitTag) {
+            $this->getMink()->stopSessions();
+        }
+    }
+
+    /**
+     * Sleep for the given number of seconds.
+     *
+     * @code
+     * When sleep for 5 seconds
+     * @endcode
+     *
+     * @When sleep for :seconds second(s)
+     */
+    public function testSleepForSeconds(int|string $seconds): void
+    {
+        sleep((int) $seconds);
+    }
+
+    /**
+     * Clean watchdog after feature with an error.
+     */
+    #[AfterFeature('@errorcleanup')]
+    public static function testClearWatchdog(AfterFeatureScope $scope): void
+    {
+        $database = Database::getConnection();
+        if ($database->schema()->tableExists('watchdog')) {
+            $database->truncate('watchdog')->execute();
+        }
+    }
+
+    /**
+     * Clear watchdog table.
+     *
+     * @Given the watchdog is cleared
+     */
+    public function testClearWatchdogTable(): void
+    {
+        $database = Database::getConnection();
+        if ($database->schema()->tableExists('watchdog')) {
+            $database->truncate('watchdog')->execute();
+        }
+    }
 
     /**
      * Hook into node creation to test `@beforeNodeCreate`
      *
      * @beforeNodeCreate
      */
-    public static function alterNodeParameters(BeforeNodeCreateScope $scope): void
+    public static function testAlterNodeParameters(BeforeNodeCreateScope $scope): void
     {
         parent::alterNodeParameters($scope);
         // @see `tests/behat/features/api.feature`
@@ -41,7 +106,7 @@ class FeatureContext extends RawDrupalContext
      *
      * @beforeTermCreate
      */
-    public static function alterTermParameters(EntityScope $scope): void
+    public static function testAlterTermParameters(EntityScope $scope): void
     {
         // @see `tests/behat/features/api.feature`
         // Change 'Label' to expected 'name'.
@@ -57,7 +122,7 @@ class FeatureContext extends RawDrupalContext
      *
      * @beforeUserCreate
      */
-    public static function alterUserParameters(EntityScope $scope): void
+    public static function testAlterUserParameters(EntityScope $scope): void
     {
         // @see `tests/behat/features/api.feature`
         // Concatenate 'First name' and 'Last name' to form user name.
@@ -78,7 +143,7 @@ class FeatureContext extends RawDrupalContext
      *
      * @afterNodeCreate
      */
-    public static function afterNodeCreate(EntityScope $scope): void
+    public static function testAfterNodeCreate(EntityScope $scope): void
     {
         if (!$node = $scope->getEntity()) {
             throw new \Exception('Failed to find a node in @afterNodeCreate hook.');
@@ -90,7 +155,7 @@ class FeatureContext extends RawDrupalContext
      *
      * @afterTermCreate
      */
-    public static function afterTermCreate(EntityScope $scope): void
+    public static function testAfterTermCreate(EntityScope $scope): void
     {
         if (!$term = $scope->getEntity()) {
             throw new \Exception('Failed to find a term in @afterTermCreate hook.');
@@ -102,7 +167,7 @@ class FeatureContext extends RawDrupalContext
      *
      * @afterUserCreate
      */
-    public static function afterUserCreate(EntityScope $scope): void
+    public static function testAfterUserCreate(EntityScope $scope): void
     {
         if (!$user = $scope->getEntity()) {
             throw new \Exception('Failed to find a user in @afterUserCreate hook.');
@@ -117,7 +182,7 @@ class FeatureContext extends RawDrupalContext
      *
      * @Transform table:name,mail,street,city,postcode,country
      */
-    public function castUsersTable(TableNode $user_table): TableNode
+    public function testTransformUsersTable(TableNode $user_table): TableNode
     {
         $aliases = [
             'country' => 'field_post_address:country',
@@ -154,7 +219,7 @@ class FeatureContext extends RawDrupalContext
      *
      * @Transform rowtable:title,body,reference,date,links,select,address
      */
-    public function transformPostContentTable(TableNode $post_table): TableNode
+    public function testTransformPostContentTable(TableNode $post_table): TableNode
     {
         $aliases = [
             'reference' => 'field_post_reference',
@@ -191,7 +256,7 @@ class FeatureContext extends RawDrupalContext
      *
      * @Given I am logged in as a user with name :name and password :password
      */
-    public function assertAuthenticatedByUsernameAndPassword($name, $password): void
+    public function testAssertAuthenticatedByUsernameAndPassword($name, $password): void
     {
         $user = (object) [
             'name' => $name,
@@ -205,9 +270,8 @@ class FeatureContext extends RawDrupalContext
      * Verifies a user is logged in on the backend.
      *
      * @Then I should be logged in on the backend
-     * @Then I am logged in on the backend
      */
-    public function assertBackendLogin(): void
+    public function testAssertBackendLogin(): void
     {
         if (!$user = $this->getUserManager()->getCurrentUser()) {
             throw new \LogicException('No current user in the user manager.');
@@ -228,7 +292,7 @@ class FeatureContext extends RawDrupalContext
      *
      * @Then I should be logged out on the backend
      */
-    public function assertBackendLoggedOut(): void
+    public function testAssertBackendLoggedOut(): void
     {
         if ($this->getUserManager()->getCurrentUser()) {
             throw new \LogicException('User is still logged in in the manager.');
@@ -245,9 +309,9 @@ class FeatureContext extends RawDrupalContext
     /**
      * Logs out via the logout url rather than fast logout.
      *
-     * @Then I log out via the logout url
+     * @When I log out via the logout url
      */
-    public function logoutViaUrl(): void
+    public function testLogoutViaUrl(): void
     {
         $this->logout(false);
     }
@@ -260,7 +324,7 @@ class FeatureContext extends RawDrupalContext
      * @param string $tag
      *   The tag to check.
      */
-    public function shouldHaveTag($tag): void
+    public function testAssertTagPresent($tag): void
     {
         if (!$this->hasTag($tag)) {
             throw new \Exception(sprintf('Expected tag %s was not found in the scenario or feature.', $tag));
@@ -275,7 +339,7 @@ class FeatureContext extends RawDrupalContext
      * @param string $tag
      *   The tag to check.
      */
-    public function shouldNotHaveTag($tag): void
+    public function testAssertTagNotPresent($tag): void
     {
         if ($this->hasTag($tag)) {
             throw new \Exception(sprintf('Expected tag %s was found in the scenario or feature.', $tag));
