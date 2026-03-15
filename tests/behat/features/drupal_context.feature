@@ -70,6 +70,11 @@ Feature: DrupalContext coverage gaps
     When I go to "admin/structure/taxonomy/manage/tags/overview"
     Then I should see "Standalone term"
 
+  @api @test-drupal
+  Scenario: Press button in a table row
+    Given I am at "/behat-test/table-button"
+    Then I press "Edit" in the "First row" row
+
   @test-blackbox
   Scenario: Fail when text is present in row but should not be
     Given some behat configuration

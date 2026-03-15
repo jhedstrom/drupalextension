@@ -14,6 +14,14 @@ behat_test.ajax:
   requirements:
     _access: 'TRUE'
 
+behat_test.table_button:
+  path: '/behat-test/table-button'
+  defaults:
+    _controller: '\Drupal\behat_test\Controller\TableButtonController::page'
+    _title: 'Table Button Test'
+  requirements:
+    _access: 'TRUE'
+
 behat_test.batch:
   path: '/behat-test/batch'
   defaults:
