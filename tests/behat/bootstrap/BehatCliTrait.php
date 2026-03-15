@@ -148,28 +148,34 @@ EOL;
             unset($yaml['drupal']['suites']['default']['contexts'][$index]);
         }
 
-        // Update the code coverage configuration to use an alternative
-        // coverage report target. This report is merged into a single report
-        // with scripts/merge-coverage.php.
-        $coverageId = md5($this->workingDir);
-        $yaml['default']['extensions'][Extension::class] = [
-            'filter' => [
-                'include' => [
-                    'directories' => [
-                        '/var/www/html/src' => null,
+        if (static::behatCliIsCoverageEnabled()) {
+            // Update the code coverage configuration to use an alternative
+            // coverage report target. This report is merged into a single report
+            // with scripts/merge-coverage.php.
+            $coverageId = md5($this->workingDir);
+            $yaml['default']['extensions'][Extension::class] = [
+                'filter' => [
+                    'include' => [
+                        'directories' => [
+                            '/var/www/html/src' => null,
+                        ],
                     ],
                 ],
-            ],
-            'reports' => [
-                'text' => [
-                    'showColors' => true,
-                    'showOnlySummary' => true,
+                'reports' => [
+                    'text' => [
+                        'showColors' => true,
+                        'showOnlySummary' => true,
+                    ],
+                    'php' => [
+                        'target' => '/var/www/html/.logs/coverage/behat_cli/phpcov/' . $coverageId . '.php',
+                    ],
                 ],
-                'php' => [
-                    'target' => '/var/www/html/.logs/coverage/behat_cli/phpcov/'.$coverageId.'.php',
-                ],
-            ],
-        ];
+            ];
+        } else {
+            // Remove code coverage configuration if we are not running
+            // with code coverage.
+            unset($yaml['default']['extensions'][Extension::class]);
+        }
 
         $content= Yaml::dump($yaml, 4, 2);
 

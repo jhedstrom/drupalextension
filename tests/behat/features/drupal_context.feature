@@ -4,42 +4,13 @@ Feature: DrupalContext coverage gaps
   So that I can verify user, node, and term operations work correctly
 
   @test-drupal @api
-  Scenario: Create and view own content
+  Scenario: Assert "Given I am viewing my :type with the title :title" passes
     Given I am logged in as a user with the "administrator" role
     When I am viewing my "article" content with the title "My own article"
     Then I should see the heading "My own article"
 
   @test-drupal @api
-  Scenario: Login with role and custom fields
-    Given I am logged in as a user with the "authenticated user" role and I have the following fields:
-      | name | TestFieldUser |
-    Then I should see the link "My account"
-
-  @test-drupal @api
-  Scenario: See and not see text in a table row
-    Given I am logged in as a user with the "administrator" role
-    And "article" content:
-      | title         | status |
-      | Row text test | 1      |
-    When I go to "admin/content"
-    Then I should see "Article" in the "Row text test" row
-    And I should not see the text "Nonexistent Type" in the "Row text test" row
-
-  @test-drupal @api
-  Scenario: Verify anonymous user state
-    Given I am an anonymous user
-    When I visit "/user/login"
-    Then I should see the text "Log in"
-
-  @test-drupal @api
-  Scenario: Log out resets authentication
-    Given I am logged in as a user with the "authenticated user" role
-    When I log out
-    And I visit "/user/login"
-    Then I should see the text "Log in"
-
-  @test-drupal @api
-  Scenario: Fail when creating content for anonymous user
+  Scenario: Assert "Given I am viewing my :type with the title :title" fails for anonymous user
     Given some behat configuration
     And scenario steps tagged with "@test-drupal @api":
       """
@@ -52,7 +23,26 @@ Feature: DrupalContext coverage gaps
       """
 
   @test-drupal @api
-  Scenario: Fail when logging in as nonexistent user
+  Scenario: Assert "Given I am logged in as a user with the :role role and I have the following fields:" passes
+    Given I am logged in as a user with the "authenticated user" role and I have the following fields:
+      | name | TestFieldUser |
+    Then I should see the link "My account"
+
+  @test-drupal @api
+  Scenario: Assert "Given I am an anonymous user" passes
+    Given I am an anonymous user
+    When I visit "/user/login"
+    Then I should see the text "Log in"
+
+  @test-drupal @api
+  Scenario: Assert "Then I log out" passes
+    Given I am logged in as a user with the "authenticated user" role
+    When I log out
+    And I visit "/user/login"
+    Then I should see the text "Log in"
+
+  @test-drupal @api
+  Scenario: Assert "Given I am logged in as :name" fails for nonexistent user
     Given some behat configuration
     And scenario steps tagged with "@test-drupal @api":
       """
@@ -68,7 +58,17 @@ Feature: DrupalContext coverage gaps
       """
 
   @test-drupal @api
-  Scenario: Fail when finding text in nonexistent table row
+  Scenario: Assert "Then I should see :text in the :rowText row" passes
+    Given I am logged in as a user with the "administrator" role
+    And "article" content:
+      | title         | status |
+      | Row text test | 1      |
+    When I go to "admin/content"
+    Then I should see "Article" in the "Row text test" row
+    And I should not see the text "Nonexistent Type" in the "Row text test" row
+
+  @test-drupal @api
+  Scenario: Assert "Then I should see :text in the :rowText row" fails when row not found
     Given some behat configuration
     And scenario steps tagged with "@test-drupal @api":
       """
@@ -83,7 +83,43 @@ Feature: DrupalContext coverage gaps
       """
 
   @test-drupal @api
-  Scenario: Fail when clicking nonexistent link in table row
+  Scenario: Assert "Then I should see :text in the :rowText row" fails when text not in row
+    Given some behat configuration
+    And scenario steps tagged with "@test-drupal @api":
+      """
+      Given I am logged in as a user with the "administrator" role
+      And "article" content:
+        | title         | status |
+        | Row text test | 1      |
+      When I go to "admin/content"
+      Then I should see "NONEXISTENT_xyz" in the "Row text test" row
+      """
+    When I run behat with drupal profile
+    Then it should fail with an error:
+      """
+      Found a row containing "Row text test", but it did not contain the text "NONEXISTENT_xyz".
+      """
+
+  @test-drupal @api
+  Scenario: Assert "Then I should not see :text in the :rowText row" fails when text is in row
+    Given some behat configuration
+    And scenario steps tagged with "@test-drupal @api":
+      """
+      Given I am logged in as a user with the "administrator" role
+      And "article" content:
+        | title         | status |
+        | Row text test | 1      |
+      When I go to "admin/content"
+      Then I should not see "Article" in the "Row text test" row
+      """
+    When I run behat with drupal profile
+    Then it should fail with an error:
+      """
+      Found a row containing "Row text test", but it contained the text "Article".
+      """
+
+  @test-drupal @api
+  Scenario: Assert "Given I click :link in the :rowText row" fails when link not in row
     Given some behat configuration
     And scenario steps tagged with "@test-drupal @api":
       """
@@ -98,4 +134,22 @@ Feature: DrupalContext coverage gaps
     Then it should fail with an error:
       """
       no "Nonexistent link" link
+      """
+
+  @test-drupal @api
+  Scenario: Assert "Given I press :button in the :rowText row" fails when button not in row
+    Given some behat configuration
+    And scenario steps tagged with "@test-drupal @api":
+      """
+      Given I am logged in as a user with the "administrator" role
+      And "article" content:
+        | title         |
+        | Button target |
+      When I go to "admin/content"
+      Then I press "Nonexistent button" in the "Button target" row
+      """
+    When I run behat with drupal profile
+    Then it should fail with an error:
+      """
+      no "Nonexistent button" button
       """
