@@ -27,7 +27,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
   /**
    * Drupal driver manager.
    */
-  private ?DrupalDriverManagerInterface $drupal = NULL;
+  private ?DrupalDriverManagerInterface $drupalDriverManager = NULL;
 
   /**
    * Event dispatcher object.
@@ -82,14 +82,14 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    * {@inheritdoc}
    */
   public function setDrupal(DrupalDriverManagerInterface $drupal): void {
-    $this->drupal = $drupal;
+    $this->drupalDriverManager = $drupal;
   }
 
   /**
    * {@inheritdoc}
    */
   public function getDrupal(): ?DrupalDriverManagerInterface {
-    return $this->drupal;
+    return $this->drupalDriverManager;
   }
 
   /**
@@ -118,54 +118,6 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    */
   public function getAuthenticationManager() {
     return $this->authenticationManager;
-  }
-
-  /**
-   * Magic setter.
-   */
-  public function __set(string $name, mixed $value) {
-    switch ($name) {
-      case 'user':
-        @trigger_error('Interacting directly with the RawDrupalContext::$user property has been deprecated. Use RawDrupalContext::getUserManager->setCurrentUser() instead.', E_USER_DEPRECATED);
-        // Set the user on the user manager service, so it is shared between all
-        // contexts.
-        $this->getUserManager()->setCurrentUser($value);
-        break;
-
-      case 'users':
-        @trigger_error('Interacting directly with the RawDrupalContext::$users property has been deprecated. Use RawDrupalContext::getUserManager->addUser() instead.', E_USER_DEPRECATED);
-        // Set the user on the user manager service, so it is shared between all
-        // contexts.
-        if (empty($value)) {
-          $this->getUserManager()->clearUsers();
-        }
-        else {
-          foreach ($value as $user) {
-            $this->getUserManager()->addUser($user);
-          }
-        }
-        break;
-    }
-  }
-
-  /**
-   * Magic getter.
-   */
-  public function __get(string $name): mixed {
-    switch ($name) {
-      case 'user':
-        @trigger_error('Interacting directly with the RawDrupalContext::$user property has been deprecated. Use RawDrupalContext::getUserManager->getCurrentUser() instead.', E_USER_DEPRECATED);
-        // Returns the current user from the user manager service. This is shared
-        // between all contexts.
-        return $this->getUserManager()->getCurrentUser();
-
-      case 'users':
-        @trigger_error('Interacting directly with the RawDrupalContext::$users property has been deprecated. Use RawDrupalContext::getUserManager->getUsers() instead.', E_USER_DEPRECATED);
-        // Returns the current user from the user manager service. This is shared
-        // between all contexts.
-        return $this->getUserManager()->getUsers();
-    }
-    return NULL;
   }
 
   /**
@@ -568,7 +520,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    */
   protected function getContext($class): object|false {
     /** @var \Behat\Behat\Context\Environment\InitializedContextEnvironment $environment */
-    $environment = $this->drupal->getEnvironment();
+    $environment = $this->drupalDriverManager->getEnvironment();
     // Throw an exception if the environment is not yet initialized. To make
     // sure state doesn't leak between test scenarios, the environment is
     // reinitialized at the start of every scenario. If this code is executed
