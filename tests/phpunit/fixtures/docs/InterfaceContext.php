@@ -7,6 +7,6 @@ namespace Drupal\DrupalExtension\Tests\Fixtures;
 /**
  * Interface context for testing.
  */
-interface InterfaceContext
-{
+// phpcs:ignore Drupal.Classes.InterfaceName.InterfaceSuffix
+interface InterfaceContext {
 }

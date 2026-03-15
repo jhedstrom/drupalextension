@@ -13,23 +13,26 @@ use Behat\Testwork\Hook\Scope\HookScope;
 /**
  * Represents an Entity hook scope.
  */
-interface EntityScope extends HookScope
-{
+// phpcs:ignore Drupal.Classes.InterfaceName.InterfaceSuffix
+interface EntityScope extends HookScope {
 
-    const BEFORE = 'entity.create.before';
-    const AFTER = 'entity.create.after';
+  const BEFORE = 'entity.create.before';
+  const AFTER = 'entity.create.after';
 
-    /**
-     * Returns the context.
-     *
-     * @return \Behat\Behat\Context\Context
-     */
-    public function getContext();
+  /**
+   * Returns the context.
+   *
+   * @return \Behat\Behat\Context\Context
+   *   The context object.
+   */
+  public function getContext();
 
-    /**
-     * Returns scope entity.
-     *
-     * @return \stdClass
-     */
-    public function getEntity();
+  /**
+   * Returns scope entity.
+   *
+   * @return \stdClass
+   *   The entity object.
+   */
+  public function getEntity();
+
 }

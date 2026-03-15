@@ -154,11 +154,8 @@ commands:
       ahoy title "Running PHP Parallel Lint"
       ahoy cli "vendor/bin/parallel-lint src spec scripts tests"
 
-      ahoy title "Running PHP Code Sniffer (project)"
-      ahoy cli "vendor/bin/phpcs --standard=./phpcs.xml -p"
-
-      ahoy title "Running PHP Code Sniffer (Drupal)"
-      ahoy cli "vendor/bin/phpcs --standard=./phpcs-drupal.xml -p"
+      ahoy title "Running PHP Code Sniffer"
+      ahoy cli "vendor/bin/phpcs"
 
       ahoy title "Running PHPStan"
       ahoy cli vendor/bin/phpstan
@@ -178,11 +175,8 @@ commands:
       ahoy title "Running Rector"
       ahoy cli "vendor/bin/rector process"
 
-      ahoy title "Running PHP Code Beautifier (project)"
-      ahoy cli "vendor/bin/phpcbf --standard=./phpcs.xml -p"
-
-      ahoy title "Running PHP Code Beautifier (Drupal)"
-      ahoy cli "vendor/bin/phpcbf --standard=./phpcs-drupal.xml -p"
+      ahoy title "Running PHP Code Beautifier"
+      ahoy cli "vendor/bin/phpcbf"
 
   test:
     usage: Run all tests without coverage.

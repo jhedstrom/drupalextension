@@ -18,60 +18,59 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  *
  * Determines which Drupal driver to use for a given scenario or outline.
  */
-class DriverListener implements EventSubscriberInterface
-{
+class DriverListener implements EventSubscriberInterface {
 
-    public function __construct(
-        /**
-         * Drupal driver manager.
-         */
-        private readonly DrupalDriverManager $drupalDriverManager,
-        /**
-         * Test parameters.
-         */
-        private array $parameters
-    ) {
-    }
-
+  public function __construct(
     /**
-     * {@inheritdoc}
+     * Drupal driver manager.
      */
-    public static function getSubscribedEvents()
-    {
-        return [
-            ScenarioTested::BEFORE => ['prepareDefaultDrupalDriver', 11],
-            ExampleTested::BEFORE => ['prepareDefaultDrupalDriver', 11],
-        ];
-    }
-
+    private readonly DrupalDriverManager $drupalDriverManager,
     /**
-     * Configures default Drupal driver to use before each scenario or outline.
-     *
-     * `@api` tagged scenarios will get the `api_driver` as the default driver.
-     *
-     * Other scenarios get the `default_driver` as the default driver.
-     *
-     * @param \Behat\Behat\EventDispatcher\Event\ScenarioTested|\Behat\Behat\EventDispatcher\Event\OutlineTested $event
+     * Test parameters.
      */
-    public function prepareDefaultDrupalDriver(LifecycleEvent $event): void
-    {
-        $feature = $event->getFeature();
-        $scenario = $event instanceof ScenarioLikeTested ? $event->getScenario() : $event->getOutline();
+    private array $parameters,
+  ) {
+  }
 
-        // Get the default driver.
-        $driver = $this->parameters['default_driver'];
+  /**
+   * {@inheritdoc}
+   */
+  public static function getSubscribedEvents() {
+    return [
+      ScenarioTested::BEFORE => ['prepareDefaultDrupalDriver', 11],
+      ExampleTested::BEFORE => ['prepareDefaultDrupalDriver', 11],
+    ];
+  }
 
-        foreach (array_merge($feature->getTags(), $scenario->getTags()) as $tag) {
-            if (!empty($this->parameters[$tag . '_driver'])) {
-                $driver = $this->parameters[$tag . '_driver'];
-            }
-        }
+  /**
+   * Configures default Drupal driver to use before each scenario or outline.
+   *
+   * `@api` tagged scenarios will get the `api_driver` as the default driver.
+   *
+   * Other scenarios get the `default_driver` as the default driver.
+   *
+   * @param \Behat\Behat\EventDispatcher\Event\ScenarioTested|\Behat\Behat\EventDispatcher\Event\OutlineTested $event
+   *   The lifecycle event.
+   */
+  public function prepareDefaultDrupalDriver(LifecycleEvent $event): void {
+    $feature = $event->getFeature();
+    $scenario = $event instanceof ScenarioLikeTested ? $event->getScenario() : $event->getOutline();
 
-        // Set the default driver.
-        $this->drupalDriverManager->setDefaultDriverName($driver);
+    // Get the default driver.
+    $driver = $this->parameters['default_driver'];
 
-        // Set the environment.
-        $environment = $event->getEnvironment();
-        $this->drupalDriverManager->setEnvironment($environment);
+    foreach (array_merge($feature->getTags(), $scenario->getTags()) as $tag) {
+      if (!empty($this->parameters[$tag . '_driver'])) {
+        $driver = $this->parameters[$tag . '_driver'];
+      }
     }
+
+    // Set the default driver.
+    $this->drupalDriverManager->setDefaultDriverName($driver);
+
+    // Set the environment.
+    $environment = $event->getEnvironment();
+    $this->drupalDriverManager->setEnvironment($environment);
+  }
+
 }

@@ -9,22 +9,20 @@ use Drupal\DrupalExtension\Hook\Scope\TermScope;
 /**
  * AfterTermCreate hook class.
  */
-class AfterTermCreate extends EntityHook
-{
+class AfterTermCreate extends EntityHook {
 
-    /**
-     * Initializes hook.
-     */
-    public function __construct(string|null $filterString, array|callable $callable, string|null $description = null)
-    {
-        parent::__construct(TermScope::AFTER, $filterString, $callable, $description);
-    }
+  /**
+   * Initializes hook.
+   */
+  public function __construct(string|null $filterString, array|callable $callable, string|null $description = NULL) {
+    parent::__construct(TermScope::AFTER, $filterString, $callable, $description);
+  }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return 'AfterTermCreate';
-    }
+  /**
+   * {@inheritdoc}
+   */
+  public function getName() {
+    return 'AfterTermCreate';
+  }
+
 }

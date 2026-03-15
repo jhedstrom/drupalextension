@@ -10,29 +10,33 @@
     <file>spec</file>
     <file>scripts</file>
     <file>tests/behat/bootstrap</file>
+    <file>tests/behat/fixtures/drupal</file>
     <file>tests/phpunit</file>
 
-    <rule ref="PSR2">
-        <!-- @todo Fix long line length issues -->
-        <exclude name="Generic.Files.LineLength.TooLong"/>
+    <rule ref="Drupal">
+        <exclude name="Drupal.Files.LineLength.TooLong"/>
+        <exclude name="Drupal.Semantics.FunctionTriggerError"/>
+        <exclude name="Drupal.Commenting.Deprecated"/>
     </rule>
 
-    <!-- PHPSpec uses snake_case methods without visibility keywords. -->
-    <rule ref="PSR1.Methods.CamelCapsMethodName.NotCamelCaps">
+    <!-- PHPSpec uses snake_case methods without visibility keywords and does
+         not follow Drupal commenting conventions. -->
+    <rule ref="Drupal.NamingConventions.ValidFunctionName.ScopeNotCamelCaps">
         <exclude-pattern>*/spec/*</exclude-pattern>
     </rule>
     <rule ref="Squiz.Scope.MethodScope">
         <exclude-pattern>*/spec/*</exclude-pattern>
     </rule>
 
-    <rule ref="Generic.WhiteSpace.ScopeIndent">
-        <properties>
-            <property name="ignoreIndentationTokens" type="array"/>
-        </properties>
+    <rule ref="Drupal.Commenting.FunctionComment">
+        <exclude-pattern>*/spec/*</exclude-pattern>
     </rule>
-
-    <rule ref="Generic.Arrays.DisallowLongArraySyntax"/>
-    <rule ref="Generic.Arrays.ArrayIndent"/>
+    <rule ref="Drupal.Commenting.DocComment">
+        <exclude-pattern>*/spec/*</exclude-pattern>
+    </rule>
+    <rule ref="Drupal.Commenting.VariableComment">
+        <exclude-pattern>*/spec/*</exclude-pattern>
+    </rule>
 
     <rule ref="Generic.PHP.RequireStrictTypes">
         <exclude-pattern>*/spec/*</exclude-pattern>
@@ -43,7 +47,7 @@
             <property name="format" value="camelCase"/>
         </properties>
         <exclude-pattern>*/spec/*</exclude-pattern>
-        <exclude-pattern>*/scripts/*</exclude-pattern>
+        <exclude-pattern>*/tests/behat/fixtures/*</exclude-pattern>
     </rule>
 
     <rule ref="DrevOps.NamingConventions.ParameterNaming">
@@ -51,7 +55,7 @@
             <property name="format" value="camelCase"/>
         </properties>
         <exclude-pattern>*/spec/*</exclude-pattern>
-        <exclude-pattern>*/scripts/*</exclude-pattern>
+        <exclude-pattern>*/tests/behat/fixtures/*</exclude-pattern>
     </rule>
 
 </ruleset>

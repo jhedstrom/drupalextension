@@ -10,13 +10,14 @@ use Behat\Testwork\Suite\Suite;
 /**
  * Generates a starting class that extends the RawDrupalContext.
  */
-class ClassGenerator implements BehatClassGenerator
-{
+class ClassGenerator implements BehatClassGenerator {
 
-    /**
-     * @var string
-     */
-    protected static $template = <<<'PHP'
+  /**
+   * Template for generated context class files.
+   *
+   * @var string
+   */
+  protected static $template = <<<'PHP'
 <?php
 
 {namespace}use Drupal\DrupalExtension\Context\RawDrupalContext;
@@ -43,33 +44,32 @@ class {className} extends RawDrupalContext {
 
 PHP;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function supportsSuiteAndClass(Suite $suite, mixed $contextClass)
-    {
-        return true;
+  /**
+   * {@inheritdoc}
+   */
+  public function supportsSuiteAndClass(Suite $suite, mixed $contextClass) {
+    return TRUE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function generateClass(Suite $suite, mixed $contextClass) {
+    $fqn = $contextClass;
+
+    $namespace = '';
+    if (FALSE !== $pos = strrpos($fqn, '\\')) {
+      $namespace = 'namespace ' . substr($fqn, 0, $pos) . ";\n\n";
+      $contextClass = substr($fqn, $pos + 1);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function generateClass(Suite $suite, mixed $contextClass)
-    {
-        $fqn = $contextClass;
+    return strtr(
+          static::$template,
+          [
+            '{namespace}' => $namespace,
+            '{className}' => $contextClass,
+          ]
+      );
+  }
 
-        $namespace = '';
-        if (false !== $pos = strrpos($fqn, '\\')) {
-            $namespace = 'namespace ' . substr($fqn, 0, $pos) . ";\n\n";
-            $contextClass = substr($fqn, $pos + 1);
-        }
-
-        return strtr(
-            static::$template,
-            [
-                '{namespace}' => $namespace,
-                '{className}' => $contextClass,
-            ]
-        );
-    }
 }

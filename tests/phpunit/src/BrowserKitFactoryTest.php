@@ -13,89 +13,104 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\Definition;
 
+/**
+ * Tests the BrowserKitFactory class.
+ */
 #[CoversClass(BrowserKitFactory::class)]
-class BrowserKitFactoryTest extends TestCase
-{
+class BrowserKitFactoryTest extends TestCase {
 
-    public function testDriverName(): void
-    {
-        $factory = new BrowserKitFactory();
-        $this->assertSame('browserkit_http', $factory->getDriverName());
-    }
+  /**
+   * Tests the driver name.
+   */
+  public function testDriverName(): void {
+    $factory = new BrowserKitFactory();
+    $this->assertSame('browserkit_http', $factory->getDriverName());
+  }
 
-    #[DataProvider('dataProviderConfigure')]
-    public function testConfigure(array $input, mixed $expected): void
-    {
-        $builder = new ArrayNodeDefinition('test');
-        $factory = new BrowserKitFactory();
-        $factory->configure($builder);
+  /**
+   * Tests the configure method.
+   */
+  #[DataProvider('dataProviderConfigure')]
+  public function testConfigure(array $input, mixed $expected): void {
+    $builder = new ArrayNodeDefinition('test');
+    $factory = new BrowserKitFactory();
+    $factory->configure($builder);
 
-        $tree = $builder->getNode(true);
-        $config = $tree->finalize($tree->normalize($input));
+    $tree = $builder->getNode(TRUE);
+    $config = $tree->finalize($tree->normalize($input));
 
-        $this->assertSame($expected, $config['guzzle_request_options']);
-    }
+    $this->assertSame($expected, $config['guzzle_request_options']);
+  }
 
-    public static function dataProviderConfigure(): \Iterator
-    {
-        yield 'default is empty' => [[], []];
-        yield 'single option' => [
-            ['guzzle_request_options' => ['verify' => false]],
-            ['verify' => false],
-        ];
-        yield 'multiple options' => [
-            ['guzzle_request_options' => ['allow_redirects' => false, 'cookies' => true, 'timeout' => 30]],
-            ['allow_redirects' => false, 'cookies' => true, 'timeout' => 30],
-        ];
-    }
+  /**
+   * Provides data for testConfigure().
+   */
+  public static function dataProviderConfigure(): \Iterator {
+    yield 'default is empty' => [[], []];
+    yield 'single option' => [
+          ['guzzle_request_options' => ['verify' => FALSE]],
+          ['verify' => FALSE],
+    ];
+    yield 'multiple options' => [
+          ['guzzle_request_options' => ['allow_redirects' => FALSE, 'cookies' => TRUE, 'timeout' => 30]],
+          ['allow_redirects' => FALSE, 'cookies' => TRUE, 'timeout' => 30],
+    ];
+  }
 
-    #[DataProvider('dataProviderBuildDriver')]
-    public function testBuildDriver(array $config, array $expected_guzzle_options): void
-    {
-        $factory = $this->createFactoryWithCwd();
-        $definition = $factory->buildDriver($config);
+  /**
+   * Tests the buildDriver method.
+   */
+  #[DataProvider('dataProviderBuildDriver')]
+  public function testBuildDriver(array $config, array $expected_guzzle_options): void {
+    $factory = $this->createFactoryWithCwd();
+    $definition = $factory->buildDriver($config);
 
-        $this->assertInstanceOf(Definition::class, $definition);
-        $this->assertSame(BrowserKitDriver::class, $definition->getClass());
+    $this->assertInstanceOf(Definition::class, $definition);
+    $this->assertSame(BrowserKitDriver::class, $definition->getClass());
 
-        $args = $definition->getArguments();
-        $this->assertCount(2, $args);
-        $this->assertSame('%mink.base_url%', $args[1]);
+    $args = $definition->getArguments();
+    $this->assertCount(2, $args);
+    $this->assertSame('%mink.base_url%', $args[1]);
 
-        // Verify the test browser service definition.
-        $testBrowser = $args[0];
-        $this->assertInstanceOf(Definition::class, $testBrowser);
-        $this->assertSame('Drupal\Tests\DrupalTestBrowser', $testBrowser->getClass());
+    // Verify the test browser service definition.
+    $testBrowser = $args[0];
+    $this->assertInstanceOf(Definition::class, $testBrowser);
+    $this->assertSame('Drupal\Tests\DrupalTestBrowser', $testBrowser->getClass());
 
-        // Verify the Guzzle client service definition.
-        $methodCalls = $testBrowser->getMethodCalls();
-        $this->assertCount(1, $methodCalls);
-        $this->assertSame('setClient', $methodCalls[0][0]);
+    // Verify the Guzzle client service definition.
+    $methodCalls = $testBrowser->getMethodCalls();
+    $this->assertCount(1, $methodCalls);
+    $this->assertSame('setClient', $methodCalls[0][0]);
 
-        $guzzleDefinition = $methodCalls[0][1][0];
-        $this->assertInstanceOf(Definition::class, $guzzleDefinition);
-        $this->assertSame(Client::class, $guzzleDefinition->getClass());
-        $this->assertSame($expected_guzzle_options, $guzzleDefinition->getArguments()[0]);
-    }
+    $guzzleDefinition = $methodCalls[0][1][0];
+    $this->assertInstanceOf(Definition::class, $guzzleDefinition);
+    $this->assertSame(Client::class, $guzzleDefinition->getClass());
+    $this->assertSame($expected_guzzle_options, $guzzleDefinition->getArguments()[0]);
+  }
 
-    public static function dataProviderBuildDriver(): \Iterator
-    {
-        yield 'default guzzle options' => [
-            [],
-            ['allow_redirects' => false, 'cookies' => true],
-        ];
-        yield 'custom guzzle options' => [
-            ['guzzle_request_options' => ['verify' => false, 'timeout' => 30]],
-            ['verify' => false, 'timeout' => 30],
-        ];
-    }
+  /**
+   * Provides data for testBuildDriver().
+   */
+  public static function dataProviderBuildDriver(): \Iterator {
+    yield 'default guzzle options' => [
+          [],
+          ['allow_redirects' => FALSE, 'cookies' => TRUE],
+    ];
+    yield 'custom guzzle options' => [
+          ['guzzle_request_options' => ['verify' => FALSE, 'timeout' => 30]],
+          ['verify' => FALSE, 'timeout' => 30],
+    ];
+  }
 
-    private function createFactoryWithCwd(): BrowserKitFactory
-    {
-        $factory = $this->getMockBuilder(BrowserKitFactory::class)
-            ->onlyMethods(['getCwd'])
-            ->getMock();
-        $factory->method('getCwd')->willReturn('/var/www/html/build');
-        return $factory;
-    }
+  /**
+   * Creates a factory with a mocked working directory.
+   */
+  private function createFactoryWithCwd(): BrowserKitFactory {
+    $factory = $this->getMockBuilder(BrowserKitFactory::class)
+      ->onlyMethods(['getCwd'])
+      ->getMock();
+    $factory->method('getCwd')->willReturn('/var/www/html/build');
+    return $factory;
+  }
+
 }

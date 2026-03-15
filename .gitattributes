@@ -12,7 +12,6 @@
 /doc                 export-ignore
 /docker-compose.yml  export-ignore
 /gherkinlint.json    export-ignore
-/phpcs-drupal.xml    export-ignore
 /phpcs.xml           export-ignore
 /phpstan.neon        export-ignore
 /phpunit.xml         export-ignore

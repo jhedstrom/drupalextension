@@ -8,21 +8,19 @@ declare(strict_types=1);
  */
 namespace Drupal\DrupalExtension\Hook\Scope;
 
-use Behat\Testwork\Hook\Scope\HookScope;
-
 /**
  * Represents an Entity hook scope.
  */
-final class AfterNodeCreateScope extends NodeScope
-{
+final class AfterNodeCreateScope extends NodeScope {
 
-    /**
-     * Return the scope name.
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return self::AFTER;
-    }
+  /**
+   * Return the scope name.
+   *
+   * @return string
+   *   The hook scope name.
+   */
+  public function getName() {
+    return self::AFTER;
+  }
+
 }
