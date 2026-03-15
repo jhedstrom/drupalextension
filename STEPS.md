@@ -179,17 +179,14 @@ Given I am logged in as a user with the "administer nodes, bypass node access" p
 </details>
 
 <details>
-  <summary><code>@Given I click :link in the :rowText row
-@Then I (should )see the :link in the :rowText row</code></summary>
+  <summary><code>@Given I click :link in the :rowText row</code></summary>
 
 <br/>
-Attempts to find a link in a table row containing giving text
+Clicks a link in a table row containing given text
 <br/><br/>
 
 ```gherkin
 Given I click "Edit" in the "My article" row
-Then I see the "Edit" in the "My article" row
-Then I should see the "Edit" in the "My article" row
 
 ```
 
@@ -398,6 +395,21 @@ Asset text not in a table row containing given text
 ```gherkin
 Then I should not see "Delete" in the "My article" row
 Then I should not see the text "Delete" in the "My article" row
+
+```
+
+</details>
+
+<details>
+  <summary><code>@Then I (should )see the :link in the :rowText row</code></summary>
+
+<br/>
+Asserts a link exists in a table row containing given text
+<br/><br/>
+
+```gherkin
+Then I see the "Edit" in the "My article" row
+Then I should see the "Edit" in the "My article" row
 
 ```
 

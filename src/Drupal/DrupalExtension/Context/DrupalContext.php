@@ -236,19 +236,37 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
   }
 
   /**
-   * Attempts to find a link in a table row containing giving text.
+   * Asserts a link exists in a table row containing given text.
+   *
+   * This is for administrative pages such as the administer content types
+   * screen found at `admin/structure/types`.
+   *
+   * @code
+   * Then I see the "Edit" in the "My article" row
+   * Then I should see the "Edit" in the "My article" row
+   * @endcode
+   *
+   * @Then I (should )see the :link in the :rowText row
+   */
+  public function assertLinkInTableRow(string $link, string $rowText): void {
+    $page = $this->getSession()->getPage();
+    if ($this->getTableRow($page, $rowText)->findLink($link)) {
+      return;
+    }
+    throw new \Exception(sprintf('Found a row containing "%s", but no "%s" link on the page %s', $rowText, $link, $this->getSession()->getCurrentUrl()));
+  }
+
+  /**
+   * Clicks a link in a table row containing given text.
    *
    * This is for administrative pages such as the administer content types
    * screen found at `admin/structure/types`.
    *
    * @code
    * Given I click "Edit" in the "My article" row
-   * Then I see the "Edit" in the "My article" row
-   * Then I should see the "Edit" in the "My article" row
    * @endcode
    *
    * @Given I click :link in the :rowText row
-   * @Then I (should )see the :link in the :rowText row
    */
   public function assertClickInTableRow(string $link, string $rowText): void {
     $page = $this->getSession()->getPage();
