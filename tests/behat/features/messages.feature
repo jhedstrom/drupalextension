@@ -1,9 +1,10 @@
 Feature: MessageContext
+
   As a developer
   I want to verify Drupal status messages in tests
   So that I can assert error, success, warning, and generic messages appear correctly
 
-  @api @test-drupal
+  @test-drupal @api
   Scenario: Error messages on failed login
     Given I am on "/user/login"
     When I fill in "a fake user" for "Username"
@@ -13,7 +14,7 @@ Feature: MessageContext
     And I should not see the success message "logged in"
     And I should not see the warning message "logged in"
 
-  @api @test-drupal
+  @test-drupal @api
   Scenario: Success message after creating content
     Given I am logged in as a user with the "administrator" role
     And I am viewing an "article" with the title "Success message test"
@@ -22,7 +23,7 @@ Feature: MessageContext
     Then I should see the success message "has been updated"
     And I should not see the error message "has been updated"
 
-  @api @test-drupal
+  @test-drupal @api
   Scenario: Success message containing partial text
     Given I am logged in as a user with the "administrator" role
     When I am viewing an "article" with the title "Partial message test"
@@ -30,7 +31,7 @@ Feature: MessageContext
     And I press "Save"
     Then I should see the success message containing "updated"
 
-  @api @test-drupal
+  @test-drupal @api
   Scenario: Multiple success messages assertion
     Given I am logged in as a user with the "administrator" role
     When I am viewing an "article" with the title "Multiple messages test"
@@ -40,7 +41,7 @@ Feature: MessageContext
       | success messages |
       | has been updated |
 
-  @api @test-drupal
+  @test-drupal @api
   Scenario: Should not see success messages that are absent
     Given I am logged in as a user with the "administrator" role
     When I am viewing an "article" with the title "No success test"
@@ -48,7 +49,7 @@ Feature: MessageContext
       | success messages        |
       | This should not be here |
 
-  @api @test-drupal
+  @test-drupal @api
   Scenario: Generic message assertion matches any message type
     Given I am on "/user/login"
     When I fill in "a fake user" for "Username"
@@ -57,24 +58,24 @@ Feature: MessageContext
     Then I should see the message "Unrecognized username or password"
     And I should not see the message "Everything is fine"
 
-  @test-blackbox
+  @test-drupal @api
   Scenario: Fail when expected error message is not present
     Given some behat configuration
-    And scenario steps:
+    And scenario steps tagged with "@test-drupal @api":
       """
       Given I am on "/user/login"
       Then I should see the error message "This error does not exist"
       """
-    When I run "behat --no-colors"
+    When I run behat with drupal profile
     Then it should fail with an error:
       """
       does not contain any error messages
       """
 
-  @test-blackbox
+  @test-drupal @api
   Scenario: Fail when error message is present but should not be
     Given some behat configuration
-    And scenario steps:
+    And scenario steps tagged with "@test-drupal @api":
       """
       Given I am on "/user/login"
       When I fill in "a fake user" for "Username"
@@ -82,35 +83,35 @@ Feature: MessageContext
       And I press "Log in"
       Then I should not see the error message "Unrecognized username or password"
       """
-    When I run "behat --no-colors"
+    When I run behat with drupal profile
     Then it should fail with an error:
       """
       contains the error message 'Unrecognized username or password'
       """
 
-  @test-blackbox
+  @test-drupal @api
   Scenario: Fail when expected success message is not present
     Given some behat configuration
-    And scenario steps:
+    And scenario steps tagged with "@test-drupal @api":
       """
       Given I am on "/user/login"
       Then I should see the success message "This success does not exist"
       """
-    When I run "behat --no-colors"
+    When I run behat with drupal profile
     Then it should fail with an error:
       """
       does not contain any success messages
       """
 
-  @test-blackbox
+  @test-drupal @api
   Scenario: Fail when expected generic message is not present
     Given some behat configuration
-    And scenario steps:
+    And scenario steps tagged with "@test-drupal @api":
       """
       Given I am on "/user/login"
       Then I should see the message "Nonexistent message"
       """
-    When I run "behat --no-colors"
+    When I run behat with drupal profile
     Then it should fail with an error:
       """
       does not contain any messages

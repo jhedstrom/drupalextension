@@ -178,8 +178,8 @@ jobs:
       - name: Run Behat tests with coverage
         if: ${{ matrix.coverage }}
         run: |
-          docker compose exec -T php php -d pcov.enabled=1 -d pcov.directory=src vendor/bin/behat --strict
-          docker compose exec -T php php -d pcov.enabled=1 -d pcov.directory=src vendor/bin/behat --profile=drupal --strict
+          docker compose exec -T php php -d pcov.enabled=1 -d pcov.directory=/var/www/html/src vendor/bin/behat --strict
+          docker compose exec -T php php -d pcov.enabled=1 -d pcov.directory=/var/www/html/src vendor/bin/behat --profile=drupal --strict
 
       - name: Run Behat tests
         if: ${{ !matrix.coverage }}

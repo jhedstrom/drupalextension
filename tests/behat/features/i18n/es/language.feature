@@ -1,5 +1,4 @@
 # language: es
-@api @test-drupal
 Característica: Soporte para idiomas
   Como desarrollador
   Quiero habilitar y verificar múltiples idiomas
@@ -8,6 +7,7 @@ Característica: Soporte para idiomas
   # Este escenario asume que existe una instalación limpia del perfil "standard"
   # y que el módulo "behat_test" del directorio "fixtures/" esta activo
 
+  @test-drupal @api
   Escenario: Habilita múltiples idiomas
     Dado que los siguientes idiomas estan disponibles:
       | languages |

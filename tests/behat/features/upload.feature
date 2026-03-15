@@ -1,9 +1,9 @@
-@api @test-drupal
 Feature: Upload test
   As a developer
   I want to upload files to entity fields in test scenarios
   So that I can test image and file attachment workflows
 
+  @test-drupal @api
   Scenario: Upload an image.
     Given I am logged in as a user with the "administrator" role
 

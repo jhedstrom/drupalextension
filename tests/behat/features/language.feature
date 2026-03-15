@@ -1,4 +1,3 @@
-@api @test-drupal
 Feature: Language support
   As a developer
   I want to enable and verify multiple languages
@@ -8,6 +7,7 @@ Feature: Language support
   # profile and that the "behat_test" module from the "fixtures/" folder is
   # enabled on the site.
 
+  @test-drupal @api
   Scenario: Enable multiple languages
     Given the following languages are available:
       | languages |
