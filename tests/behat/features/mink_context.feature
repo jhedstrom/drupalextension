@@ -62,40 +62,40 @@ Feature: MinkContext coverage gaps
   @test-blackbox
   Scenario: Fail when heading is present but should not be
     Given some behat configuration
-    And scenario steps:
+    And scenario steps tagged with "@test-blackbox":
       """
-      Given I am on "/user/login"
-      Then I should not see the heading "Log in"
+      Given I am at "form_controls.html"
+      Then I should not see the heading "Content Heading"
       """
-    When I run "behat --no-colors"
+    When I run behat
     Then it should fail with an error:
       """
-      The text 'Log in' was found in a heading
+      The text 'Content Heading' was found in a heading
       """
 
   @test-blackbox
   Scenario: Fail when button is present but should not be
     Given some behat configuration
-    And scenario steps:
+    And scenario steps tagged with "@test-blackbox":
       """
-      Given I am on "/user/login"
-      Then I should not see the button "Log in"
+      Given I am at "form_controls.html"
+      Then I should not see the button "Submit"
       """
-    When I run "behat --no-colors"
+    When I run behat
     Then it should fail with an error:
       """
-      The button 'Log in' was found on the page
+      The button 'Submit' was found on the page
       """
 
   @test-blackbox
   Scenario: Fail when link not found
     Given some behat configuration
-    And scenario steps:
+    And scenario steps tagged with "@test-blackbox":
       """
-      Given I am on "/user/login"
+      Given I am at "form_controls.html"
       Then I should see the link "Nonexistent link"
       """
-    When I run "behat --no-colors"
+    When I run behat
     Then it should fail with an error:
       """
       No link to 'Nonexistent link'
@@ -104,12 +104,12 @@ Feature: MinkContext coverage gaps
   @test-blackbox
   Scenario: Fail when heading not found
     Given some behat configuration
-    And scenario steps:
+    And scenario steps tagged with "@test-blackbox":
       """
-      Given I am on "/user/login"
+      Given I am at "form_controls.html"
       Then I should see the heading "Does Not Exist"
       """
-    When I run "behat --no-colors"
+    When I run behat
     Then it should fail with an error:
       """
       The text 'Does Not Exist' was not found in any heading
@@ -118,12 +118,12 @@ Feature: MinkContext coverage gaps
   @test-blackbox
   Scenario: Fail when button not found
     Given some behat configuration
-    And scenario steps:
+    And scenario steps tagged with "@test-blackbox":
       """
-      Given I am on "/user/login"
+      Given I am at "form_controls.html"
       Then I should see the button "Missing Button"
       """
-    When I run "behat --no-colors"
+    When I run behat
     Then it should fail with an error:
       """
       The button 'Missing Button' was not found on the page
@@ -132,26 +132,26 @@ Feature: MinkContext coverage gaps
   @test-blackbox
   Scenario: Fail when text not found in region
     Given some behat configuration
-    And scenario steps:
+    And scenario steps tagged with "@test-blackbox":
       """
-      Given I am on "/user/login"
-      Then I should see "NONEXISTENT_TEXT_xyz" in the "main content" region
+      Given I am at "form_controls.html"
+      Then I should see "NONEXISTENT_TEXT_xyz" in the "static content" region
       """
-    When I run "behat --no-colors"
+    When I run behat
     Then it should fail with an error:
       """
-      The text 'NONEXISTENT_TEXT_xyz' was not found in the region 'main content'
+      The text 'NONEXISTENT_TEXT_xyz' was not found in the region 'static content'
       """
 
   @test-blackbox
   Scenario: Fail when region not found
     Given some behat configuration
-    And scenario steps:
+    And scenario steps tagged with "@test-blackbox":
       """
-      Given I am on "/user/login"
+      Given I am at "form_controls.html"
       Then I should see "something" in the "nonexistent_region" region
       """
-    When I run "behat --no-colors"
+    When I run behat
     Then it should fail with a "InvalidArgumentException" exception:
       """
       The "nonexistent_region" region isn't configured!
@@ -160,13 +160,13 @@ Feature: MinkContext coverage gaps
   @test-blackbox
   Scenario: Fail when link not found in region
     Given some behat configuration
-    And scenario steps:
+    And scenario steps tagged with "@test-blackbox":
       """
-      Given I am on "/user/login"
-      Then I should see the link "Missing" in the "main content" region
+      Given I am at "form_controls.html"
+      Then I should see the link "Missing" in the "static content" region
       """
-    When I run "behat --no-colors"
+    When I run behat
     Then it should fail with an error:
       """
-      No link to "Missing" in the "main content" region
+      No link to "Missing" in the "static content" region
       """

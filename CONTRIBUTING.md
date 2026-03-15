@@ -247,6 +247,133 @@ ahoy cli "php -d xdebug.mode=debug -d xdebug.start_with_request=yes ./vendor/bin
 Make sure your IDE is listening for incoming Xdebug connections
 before running the command.
 
+## Writing tests
+
+Every step definition must have both **positive** and **negative** tests.
+A positive test verifies the step works when conditions are met. A negative
+test verifies the step produces a clear error when conditions are not met.
+
+### Positive tests
+
+Positive tests are straightforward Behat scenarios that exercise the step
+directly. Tag them with the appropriate profile-selection tag and any
+functional tags the step requires.
+
+Blackbox example (from `blackbox_smoke.feature`):
+
+```gherkin
+@test-blackbox
+Scenario: Assert "Then I should see( the text) :text in the :region( region)"
+  Given I am at "index.html"
+  Then I should see the text "Welcome to the test site."
+  And I should see the text "Page Two" in the "static right header" region
+```
+
+Drupal example (from `drupal_smoke.feature`):
+
+```gherkin
+@test-drupal @api
+Scenario: Assert that Drupal driver can log in as an administrator user
+  Given I am logged in as a user with the "administer site configuration" permissions
+  When I go to "admin"
+  And I save screenshot
+```
+
+### Negative tests
+
+Negative tests verify that a step fails with the correct error message.
+Because Behat cannot assert on its own failures within the same process,
+negative tests run Behat **as a subprocess** using the BehatCli system
+(see `tests/behat/features/behatcli/README.md` for details).
+
+The subprocess uses a **copy of the real `behat.yml`** from the project
+root, so it has access to all profiles, regions, selectors, and
+contexts. This means negative tests run against the same configuration
+as normal tests.
+
+**Important:** Negative test scenarios need two layers of tags:
+
+1. The **outer scenario** tag — controls which profile runs the test
+   itself.
+2. The **inner scenario steps** tag — controls which profile the
+   subprocess uses.
+
+#### Blackbox negative test
+
+The outer scenario is tagged `@test-blackbox`. The inner steps are
+tagged `@test-blackbox` so the subprocess runs with the default
+(blackbox) profile. Use `When I run behat` to run with the default
+profile.
+
+From `blackbox_smoke.feature`:
+
+```gherkin
+@test-blackbox
+Scenario: Negative: Assert "Then I should see the text" fails for non-existent text
+  Given some copied behat configuration
+  And scenario steps tagged with "@test-blackbox":
+    """
+    Given I am at "index.html"
+    Then I should see the text "This text does not exist anywhere"
+    """
+  When I run behat
+  Then it should fail with an error:
+    """
+    The text "This text does not exist anywhere" was not found anywhere in the text of the current page.
+    """
+```
+
+#### Drupal negative test
+
+The outer scenario is tagged `@test-drupal @api`. The inner steps are
+tagged `@test-drupal @api` so the subprocess runs with the drupal
+profile. Use `When I run behat with drupal profile` to run with the
+drupal profile.
+
+From `drupal_smoke.feature`:
+
+```gherkin
+@test-drupal @api
+Scenario: Negative: Assert that Drupal driver fails when text is not found
+  Given some copied behat configuration
+  And scenario steps tagged with "@test-drupal @api":
+    """
+    Given I am logged in as a user with the "administer site configuration" permissions
+    Then I should see the text "Non-existing text" in the "Non-exiting row" row
+    """
+  When I run behat with drupal profile
+  Then it should fail with an error:
+    """
+    No rows found on the page
+    """
+```
+
+### Negative test structure
+
+Every negative test follows the same four-step pattern:
+
+1. `Given some copied behat configuration` — copies the real
+   `behat.yml` into the subprocess working directory.
+2. `And scenario steps tagged with "<tags>":` — writes a stub
+   feature file with the steps to test. The tags must match the
+   profile the subprocess will use.
+3. `When I run behat` or `When I run behat with <profile> profile`
+   — runs Behat as a subprocess.
+4. `Then it should fail with an error:` — asserts the subprocess
+   failed with the expected error message. Use `it should fail with
+   an exception:` for `RuntimeException` errors, or
+   `it should fail with a "<ExceptionClass>" exception:` for other
+   exception types.
+
+### Assertion steps for negative tests
+
+| Step | Use when |
+|------|----------|
+| `Then it should fail with an error:` | Step threw an assertion error (`Exception` or `Behat\Mink\Exception\*`). Rejects `RuntimeException`. |
+| `Then it should fail with an exception:` | Step threw a `RuntimeException` (unexpected runtime error, not an assertion). |
+| `Then it should fail with a "<Class>" exception:` | Step threw a specific exception class (e.g., `InvalidArgumentException`). |
+| `Then it should fail` | Step failed (any reason, no message check). |
+
 ## Before submitting a change
 
 - Check the changes from `composer require` are not included in

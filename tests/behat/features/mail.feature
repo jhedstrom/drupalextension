@@ -1,9 +1,9 @@
-@api @test-drupal
 Feature: MailContext
   As a developer
   I want to send and inspect emails in test scenarios
   So that I can verify mail recipients, subjects, and content
 
+  @test-drupal @api
   Scenario: Mail is sent
     When Drupal sends an email:
       | to      | fred@example.com |
@@ -38,6 +38,7 @@ Feature: MailContext
       | body      |
       | test body |
 
+  @test-drupal @api
   Scenario: New mail is sent to someone
     When Drupal sends a mail:
       | to      | fred@example.com |
@@ -49,9 +50,11 @@ Feature: MailContext
       | subject |
       | test 1  |
 
+  @test-drupal @api
   Scenario: No mail is sent
     Then no mail has been sent
 
+  @test-drupal @api
   Scenario: Count sent mail
     When Drupal sends an email:
       | to      | fred@example.com |
@@ -67,6 +70,7 @@ Feature: MailContext
     And no new emails are sent
     And no mail has been sent to "hans"
 
+  @test-drupal @api
   Scenario: I follow link in mail
     When Drupal sends a mail:
       | to      | fred@example.com                        |
@@ -75,6 +79,7 @@ Feature: MailContext
     And I follow the link to "google" from the mail with the subject "test link"
     Then the response should contain "Search"
 
+  @test-drupal @api
   Scenario: We try to be order insensitive
     When Drupal sends an email:
       | to      | fred@example.com |
@@ -89,6 +94,7 @@ Feature: MailContext
       | jane | test    | body 2    |
       | fred |         | test body |
 
+  @test-drupal @api
   Scenario: Follow link from mail without filters
     When Drupal sends a mail:
       | to      | fred@example.com                             |
@@ -97,6 +103,7 @@ Feature: MailContext
     And I follow the link to "google" from the mail
     Then the response should contain "Search"
 
+  @test-drupal @api
   Scenario: Follow link from mail to specific recipient
     When Drupal sends a mail:
       | to      | specific@example.com                      |
@@ -105,6 +112,7 @@ Feature: MailContext
     And I follow the link to "google" from the mail to "specific@example.com"
     Then the response should contain "Search"
 
+  @test-drupal @api
   Scenario: Follow link from mail to recipient with subject
     When Drupal sends a mail:
       | to      | combo@example.com           |
@@ -113,6 +121,7 @@ Feature: MailContext
     And I follow the link to "google" from the mail to "combo@example.com" with the subject "combo test"
     Then the response should contain "Search"
 
+  @test-drupal @api
   Scenario: New mail sent with subject and body filter
     When Drupal sends a mail:
       | to      | alice@example.com |

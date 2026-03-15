@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 use Behat\Behat\Hook\Scope\AfterFeatureScope;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
+use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Hook\AfterFeature;
 use Behat\Hook\BeforeScenario;
+use Behat\Mink\Exception\ExpectationException;
 use Drupal\Core\Database\Database;
 use Drupal\DrupalExtension\Context\RawDrupalContext;
 use Drupal\DrupalExtension\Hook\Scope\BeforeNodeCreateScope;
@@ -127,10 +129,12 @@ class FeatureContext extends RawDrupalContext
         // @see `tests/behat/features/api.feature`
         // Concatenate 'First name' and 'Last name' to form user name.
         $user = $scope->getEntity();
+
         if (isset($user->{"First name"}) && isset($user->{"Last name"})) {
             $user->name = $user->{"First name"} . ' ' . $user->{"Last name"};
             unset($user->{"First name"}, $user->{"Last name"});
         }
+
         // Transform custom 'E-mail' to 'mail'.
         if (isset($user->{"E-mail"})) {
             $user->mail = $user->{"E-mail"};
@@ -297,9 +301,11 @@ class FeatureContext extends RawDrupalContext
         if ($this->getUserManager()->getCurrentUser()) {
             throw new \LogicException('User is still logged in in the manager.');
         }
+
         if (!\Drupal::currentUser()->isAnonymous()) {
             throw new \LogicException('User is still logged in on the backend.');
         }
+
         // Visit login page and ensure login form is present.
         $this->getSession()->visit($this->locatePath($this->getDrupalText('login_url')));
         $element = $this->getSession()->getPage();
@@ -314,6 +320,22 @@ class FeatureContext extends RawDrupalContext
     public function testLogoutViaUrl(): void
     {
         $this->logout(false);
+    }
+
+    /**
+     * @When I use a test passing assertion step
+     */
+    public function testPassingAssertionStep(): void
+    {
+        // Noop.
+    }
+
+    /**
+     * @When I use a test failing assertion step
+     */
+    public function testFailingAssertionStep(): void
+    {
+        throw new ExpectationException('This is a test failing assertion.', $this->getSession()->getDriver());
     }
 
     /**
@@ -344,5 +366,25 @@ class FeatureContext extends RawDrupalContext
         if ($this->hasTag($tag)) {
             throw new \Exception(sprintf('Expected tag %s was found in the scenario or feature.', $tag));
         }
+    }
+
+    /**
+     * @Given I throw a test assertion exception :calss with message :message
+     */
+    public function throwTestErrorException(string $name, string $message): void
+    {
+        if (!class_exists($name)) {
+            throw new \RuntimeException(sprintf("Assertion exception class '%s' does not exist.", $name));
+        }
+
+        throw new $name($message);
+    }
+
+    /**
+     * @Given I throw a test runtime exception with message :message
+     */
+    public function throwTestRuntimeException(string $message): never
+    {
+        throw new \RuntimeException($message);
     }
 }

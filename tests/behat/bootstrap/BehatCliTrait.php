@@ -10,6 +10,8 @@
 
 declare(strict_types=1);
 
+use Symfony\Component\Yaml\Yaml;
+use DVDoug\Behat\CodeCoverage\Extension;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Hook\BeforeScenario;
@@ -48,43 +50,30 @@ trait BehatCliTrait
     /**
      * Copy FeatureContext.php file to the working directory.
      *
+     * We re-use tests/behat/bootstrap/FeatureContext.php in Behat CLI
+     * subprocesses to provide access to the same step definitions.
+     *
      * @return string
      *   Path to written file.
      */
     public function behatCliWriteFeatureContextFile(): string
     {
         $source = __DIR__ . '/FeatureContext.php';
+        // Relative destination path in the destination working directory.
+        $dst = 'features/bootstrap/FeatureContext.php';
+
         $content = file_get_contents($source);
         if ($content === false) {
             throw new \RuntimeException(sprintf('Unable to access file "%s"', $source));
         }
 
-        // Subprocess FeatureContext must extend DrupalContext (which provides
-        // step definitions like "Given I am logged in as a user with the
-        // :role role") instead of RawDrupalContext (which does not).
-        // We cannot add DrupalContext to the subprocess behat.yml contexts
-        // list because some tests (e.g., behatcli.feature) write their own
-        // FeatureContext extending DrupalContext, which would cause duplicate
-        // step definition errors.
-        $content = str_replace(
-            'use Drupal\DrupalExtension\Context\RawDrupalContext;',
-            'use Drupal\DrupalExtension\Context\DrupalContext;',
-            $content
-        );
-        $content = str_replace(
-            'class FeatureContext extends RawDrupalContext',
-            'class FeatureContext extends DrupalContext',
-            $content
-        );
-
-        $filename = 'features/bootstrap/FeatureContext.php';
-        $this->createFileInWorkingDir($filename, $content);
+        $this->createFileInWorkingDir($dst, $content);
 
         if (static::behatCliIsDebug()) {
-            static::behatCliPrintFileContents($filename, 'FeatureContext.php');
+            static::behatCliPrintFileContents($this->workingDir . DIRECTORY_SEPARATOR. $dst, 'FeatureContext.php');
         }
 
-        return $filename;
+        return $dst;
     }
 
     /**
@@ -108,7 +97,7 @@ trait BehatCliTrait
 
         $content = <<<'EOL'
 Feature: Stub feature';
-  @api {{ADDITIONAL_TAGS}}
+  {{ADDITIONAL_TAGS}}
   Scenario: Stub scenario title
 {{SCENARIO_CONTENT}}
 EOL;
@@ -120,7 +109,7 @@ EOL;
         $this->createFileInWorkingDir($filename, $content);
 
         if (static::behatCliIsDebug()) {
-            static::behatCliPrintFileContents($filename, 'Feature Stub');
+            static::behatCliPrintFileContents($this->workingDir . DIRECTORY_SEPARATOR. $filename, 'Feature Stub');
         }
     }
 
@@ -129,91 +118,66 @@ EOL;
      */
     public function behatCliWriteBehatYml(): void
     {
-        $content = <<<'EOL'
-default:
-  suites:
-    default:
-      contexts:
-        - FeatureContext
-        - Drupal\DrupalExtension\Context\ConfigContext
-        - Drupal\DrupalExtension\Context\DrushContext
-        - Drupal\DrupalExtension\Context\MailContext
-        - Drupal\DrupalExtension\Context\MarkupContext
-        - Drupal\DrupalExtension\Context\MessageContext
-        - Drupal\DrupalExtension\Context\MinkContext
-        - Drupal\DrupalExtension\Context\RandomContext
-        - DrevOps\BehatScreenshotExtension\Context\ScreenshotContext
-  extensions:
-    Drupal\MinkExtension:
-      browserkit_http: ~
-      base_url: http://drupal
-      browser_name: chrome
-      javascript_session: selenium2
-      selenium2:
-        wd_host: "http://chrome:4444/wd/hub"
-        capabilities:
-          browser: chrome
-          extra_capabilities:
-            "goog:chromeOptions":
-              args:
-                - '--disable-gpu'            # Disables hardware acceleration required in containers and cloud-based instances (like CI runners) where GPU is not available.
-                - '--disable-extensions'     # Disables all installed Chrome extensions. Useful in testing environments to avoid interference from extensions.
-                - '--disable-infobars'       # Hides the infobar that Chrome displays for various notifications, like warnings when opening multiple tabs.
-                - '--disable-popup-blocking' # Disables the popup blocker, allowing all popups to appear. Useful in testing scenarios where popups are expected.
-                - '--disable-translate'      # Disables the built-in translation feature, preventing Chrome from offering to translate pages.
-                - '--no-first-run'           # Skips the initial setup screen that Chrome typically shows when running for the first time.
-                - '--test-type'              # Disables certain security features and UI components that are unnecessary for automated testing, making Chrome more suitable for test environments.
-    Drupal\DrupalExtension:
-      api_driver: drupal
-      drupal:
-        drupal_root: /var/www/html/build/web
-      drush:
-        root: /var/www/html/build/web
-      region_map:
-        main content: "#main"
-      selectors:
-        message_selector: '.messages'
-        error_message_selector: '.messages--error'
-        success_message_selector: '.messages--status'
-        warning_message_selector: '.messages--warning'
-    DrevOps\BehatScreenshotExtension:
-      dir: '%paths.base%/.logs/screenshots'
-      purge: false
-      on_failed: true
-      always_fullscreen: true
-      fullscreen_algorithm: resize
-      info_types:
-        - url
-        - feature
-        - step
-        - datetime
-EOL;
+        // @note Hardcoded path to the project root.
+        $source = '/var/www/html/behat.yml';
 
-        if (static::behatCliIsCoverageEnabled()) {
-            // Generate unique coverage filename for this subprocess to avoid conflicts.
-            $coverageId = md5($this->workingDir);
-            $coverageContent = <<<EOL
-
-    DVDoug\Behat\CodeCoverage\Extension:
-      filter:
-        include:
-          directories:
-            /var/www/html/src: ~
-      reports:
-        text:
-          showColors: true
-          showOnlySummary: true
-        php:
-          target: /var/www/html/.logs/coverage/behat_cli/phpcov/{$coverageId}.php
-EOL;
-            $content .= $coverageContent;
+        $content = file_get_contents($source);
+        if ($content === false) {
+            throw new \RuntimeException(sprintf('Unable to access file "%s"', $source));
         }
+
+        $yaml = Yaml::parse($content);
+
+        // Remove autoload and paths configuration to avoid conflicts with
+        // the default Behat configuration in the working directory.
+        unset($yaml['default']['autoload']);
+
+        // Remove paths configuration to avoid conflicts with the default Behat
+        // configuration in the working directory.
+        unset($yaml['default']['suites']['default']['paths']);
+
+        // Find the BehatCliContext and remove it from the contexts list.
+        $index= array_search('BehatCliContext', $yaml['default']['suites']['default']['contexts'], true);
+        if ($index !== false) {
+            unset($yaml['default']['suites']['default']['contexts'][$index]);
+        }
+
+        // Find the BehatCliContext and remove it from the contexts list.
+        $index= array_search('BehatCliContext', $yaml['drupal']['suites']['default']['contexts'], true);
+        if ($index !== false) {
+            unset($yaml['drupal']['suites']['default']['contexts'][$index]);
+        }
+
+        // Update the code coverage configuration to use an alternative
+        // coverage report target. This report is merged into a single report
+        // with scripts/merge-coverage.php.
+        $coverageId = md5($this->workingDir);
+        $yaml['default']['extensions'][Extension::class] = [
+            'filter' => [
+                'include' => [
+                    'directories' => [
+                        '/var/www/html/src' => null,
+                    ],
+                ],
+            ],
+            'reports' => [
+                'text' => [
+                    'showColors' => true,
+                    'showOnlySummary' => true,
+                ],
+                'php' => [
+                    'target' => '/var/www/html/.logs/coverage/behat_cli/phpcov/'.$coverageId.'.php',
+                ],
+            ],
+        ];
+
+        $content= Yaml::dump($yaml, 4, 2);
 
         $filename = 'behat.yml';
         $this->createFileInWorkingDir($filename, $content);
 
         if (static::behatCliIsDebug()) {
-            static::behatCliPrintFileContents($filename, 'Behat Config');
+            static::behatCliPrintFileContents($this->workingDir . DIRECTORY_SEPARATOR . $filename, 'Behat Config (copied)');
         }
     }
 
@@ -223,18 +187,35 @@ EOL;
     public function behatCliAssertFailWithError(PyStringNode $message): void
     {
         $this->itShouldPassOrFailWith('fail', $message);
-        // Enforce assertion exceptions (ExpectationException, ElementNotFoundException, or generic Exception).
-        // Non-assertion exceptions should be thrown as \RuntimeException.
+
         $output = $this->getOutput();
-        $hasValidException = str_contains((string) $output, ' (Exception)')
-        || str_contains((string) $output, ' (Behat\Mink\Exception\ExpectationException)')
-        || str_contains((string) $output, ' (Behat\Mink\Exception\ElementNotFoundException)');
+
+        $hasValidException = str_contains((string) $output, ' (Exception)') || str_contains((string) $output, ' (Behat\Mink\Exception');
+
         if (!$hasValidException) {
             throw new \RuntimeException('The output does not contain an assertion exception string as expected.');
         }
-        if (str_contains((string) $output, ' (RuntimeException)')) {
-            throw new \RuntimeException('The output contains "(RuntimeException)" string but it should not.');
+
+        // RuntimeException is used for unexpected exceptions, not assertions.
+        if (str_contains((string) $output, 'RuntimeException')) {
+            throw new \RuntimeException('The output contains "RuntimeException" string but it should not.');
         }
+    }
+
+    /**
+     * @When I run behat
+     */
+    public function behatCliRun(string $profile = 'default'):void
+    {
+         $this->behatCliRunWithProfile($profile);
+    }
+
+    /**
+     * @When I run behat with :profile profile
+     */
+    public function behatCliRunWithProfile(string $profile):void
+    {
+        $this->iRunBehat('--profile=' . $profile . ' --no-colors');
     }
 
     /**
@@ -242,14 +223,10 @@ EOL;
      */
     public function behatCliAssertFailWithException(PyStringNode $message): void
     {
-        $this->itShouldPassOrFailWith('fail', $message);
-        // Enforce \RuntimeException for all non-assertion exceptions. Assertion
-        // exceptions should be thrown as \Exception.
-        if (!str_contains($this->getOutput(), ' (RuntimeException)')) {
-            throw new \RuntimeException('The output does not contain an "(RuntimeException)" string as expected.');
-        }
-        if (str_contains($this->getOutput(), ' (Exception)')) {
-            throw new \RuntimeException('The output contains "(Exception)" string but it should not.');
+        $this->behatCliAssertFailWithCustomException('RuntimeException', $message);
+
+        if (str_contains($this->getOutput(), 'Exception') && !str_contains($this->getOutput(), 'RuntimeException')) {
+            throw new \RuntimeException('The output contains "Exception" string but it should not.');
         }
     }
 
@@ -259,10 +236,15 @@ EOL;
     public function behatCliAssertFailWithCustomException(string $exception, PyStringNode $message): void
     {
         $this->itShouldPassOrFailWith('fail', $message);
+
+        $actual = $this->getOutput();
+        $expected = ' (' . $exception . ')';
+
         // Enforce \RuntimeException for all non-assertion exceptions. Assertion
-        // exceptions should be thrown as \Exception.
-        if (!str_contains($this->getOutput(), ' (' . $exception . ')')) {
-            throw new \RuntimeException(sprintf('The output does not contain an "(%s)" string as expected.', $exception));
+        // exceptions should be thrown as \Exception or specific exception class
+        // if provided.
+        if (!str_contains((string) $actual, $expected)) {
+            throw new \RuntimeException(sprintf('The output does not contain an "%s" string as expected: %s', $expected, $actual));
         }
     }
 
@@ -274,10 +256,13 @@ EOL;
      *
      * @Then the output should not contain:
      */
-    public function theOutputShouldNotContain(PyStringNode $text): void
+    public function behatCliAssertOutputNotContains(PyStringNode $text): void
     {
-        if (str_contains($this->getOutput(), $this->getExpectedOutput($text))) {
-            throw new \RuntimeException(sprintf('Output contains "%s" but should not.', $this->getExpectedOutput($text)));
+        $expected = $this->getExpectedOutput($text);
+        $actual = $this->getOutput();
+
+        if (str_contains((string) $actual, (string) $expected)) {
+            throw new \RuntimeException(sprintf('Output contains "%s" but should not: %s', $expected, $actual));
         }
     }
 
@@ -292,11 +277,17 @@ EOL;
 
         $content = file_get_contents($filename);
 
-        print sprintf('-------------------- %s START --------------------', $title) . PHP_EOL;
-        print $filename . PHP_EOL;
-        print_r($content);
-        print PHP_EOL;
-        print sprintf('-------------------- %s FINISH --------------------', $title) . PHP_EOL;
+        $header = sprintf('-------------------- %s START --------------------', $title);
+        fwrite(STDERR, PHP_EOL);
+        fwrite(STDERR, $header . PHP_EOL);
+        fwrite(STDERR, $filename . PHP_EOL);
+        fwrite(STDERR, str_repeat('-', strlen($header)) . PHP_EOL);
+        fwrite(STDERR, PHP_EOL);
+        fwrite(STDERR, PHP_EOL);
+        fwrite(STDERR, $content);
+        fwrite(STDERR, PHP_EOL);
+        fwrite(STDERR, sprintf('-------------------- %s FINISH --------------------', $title) . PHP_EOL);
+        fwrite(STDERR, PHP_EOL);
     }
 
     /**
@@ -304,8 +295,7 @@ EOL;
      */
     protected static function behatCliIsDebug(): bool
     {
-        // Change to TRUE to see debug messages for this trait.
-        return false;
+        return (bool) getenv('BEHAT_CLI_DEBUG');
     }
 
     /**
@@ -321,14 +311,15 @@ EOL;
      */
     protected function behatCliCopyFixtures()
     {
-        // Copy fixtures to the working directory.
-        $fixturePath = 'tests/behat/fixtures';
+        $fixturePathRel = 'tests/behat/fixtures';
+
         // @note Hardcoded path to the fixture directory.
-        $fixturePathAbs = '/app' . DIRECTORY_SEPARATOR . $fixturePath;
+        $fixturePathAbs = '/var/www/html/' . DIRECTORY_SEPARATOR . $fixturePathRel;
+
         if (is_dir($fixturePathAbs)) {
-            $dst = $this->workingDir . DIRECTORY_SEPARATOR . $fixturePath;
+            $dst = $this->workingDir . DIRECTORY_SEPARATOR . $fixturePathRel;
             mkdir($dst, 0777, true);
-            // Copy fixtures from the webroot to the working directory.
+
             foreach (glob($fixturePathAbs . '/*') as $file) {
                 // @note Only copy files for speed.
                 if (is_file($file)) {

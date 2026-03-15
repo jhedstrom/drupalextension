@@ -1,4 +1,3 @@
-@api @test-drupal
 # @gherkinlint-disable-rule no-background-with-single-scenario
 Feature: DrupalContext with background steps
   As a developer
@@ -21,6 +20,7 @@ Feature: DrupalContext with background steps
       | Node one |
       | Node two |
 
+  @test-drupal @api
   Scenario Outline:
     Given I am not logged in
 

@@ -1,4 +1,3 @@
-@api @test-drupal
 Feature: FieldHandlers
   As a developer
   I want to handle complex field types when creating entities
@@ -6,6 +5,7 @@ Feature: FieldHandlers
 
   # Drupal scenarios assume a "standard" install of Drupal and require the
   # feature "fixtures/drupalN/modules/behat_test" to enabled on the site.
+  @test-drupal @api
   Scenario: Test various node field handlers
     Given "page" content:
       | title      |
@@ -39,6 +39,7 @@ Feature: FieldHandlers
   # the field names. This is better from a BDD standpoint. Please have a look at
   # FeatureContext::transformPostContentTable() to see how the mapping between
   # the machine names and human readable names is defined.
+  @test-drupal @api
   Scenario: Test using human readable names for fields using @Transform
     Given "page" content:
       | title      |
@@ -65,6 +66,7 @@ Feature: FieldHandlers
     And I should see "1000"
     And I should see "Louisalaan 1"
 
+  @test-drupal @api
   Scenario: Test alternative syntax for named field columns on node content
     When I am viewing a "post" content:
       | title                           | Post title                  |
@@ -77,6 +79,7 @@ Feature: FieldHandlers
     And I should see "1 Avenue des Champs Elysées"
     And I should see "75008"
 
+  @test-drupal @api
   Scenario: Test shorthand syntax for named field columns on node content
     When I am viewing a "post" content:
       | title                      | Post title      |
@@ -89,6 +92,7 @@ Feature: FieldHandlers
     And I should see "1 Oxford Street"
     And I should see "W1D 1AN"
 
+  @test-drupal @api
   Scenario: Test multivalue fields with named field columns on node content
     When I am viewing a "post" content:
       | title                      | Post title                             |
@@ -105,6 +109,7 @@ Feature: FieldHandlers
     And I should see "Shibuya Crossing"
     And I should see "150-0040"
 
+  @test-drupal @api
   Scenario: Test various user field handlers.
     Given "tags" terms:
       | name    |
@@ -135,6 +140,7 @@ Feature: FieldHandlers
     And I should see "1000"
     And I should see "Louisalaan 1"
 
+  @test-drupal @api
   Scenario: Test using @Transform to provide human friendly aliases for named field columns
     Given users:
       | name     | mail             | street        | city     | postcode | country |
@@ -147,6 +153,7 @@ Feature: FieldHandlers
     And I should see "Pioneer Place"
     And I should see "OR 97204"
 
+  @test-drupal @api
   Scenario: Test taxonomy term reference field handler
     Given "tags" terms:
       | name       |
