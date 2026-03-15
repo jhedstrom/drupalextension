@@ -6,7 +6,6 @@ namespace Drupal\DrupalExtension;
 
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Behat\Hook\Scope\StepScope;
-use Behat\Gherkin\Node\ScenarioInterface;
 
 /**
  * A workaround to discover the current scenario.
@@ -16,46 +15,48 @@ use Behat\Gherkin\Node\ScenarioInterface;
  *
  * The solution is documented in this issue: https://github.com/Behat/Behat/issues/703#issuecomment-86687563
  *
- * @deprecated Use \Drupal\DrupalExtension\TagTrait instead.
+ * @deprecated in drupal:5.x and is removed from drupal:6.x. Use \Drupal\DrupalExtension\TagTrait instead.
+ *
+ * @see \Drupal\DrupalExtension\TagTrait
  */
-trait ScenarioTagTrait
-{
+trait ScenarioTagTrait {
 
-    /**
-     * The registered scenario.
-     *
-     * @var ScenarioInterface
-     */
-    protected $currentScenario;
+  /**
+   * The registered scenario.
+   *
+   * @var \Behat\Gherkin\Node\ScenarioInterface
+   */
+  protected $currentScenario;
 
-    /**
-     * Register the scenario.
-     *
-     *
-     * @BeforeScenario
-     */
-    public function registerScenario(BeforeScenarioScope $scope): void
-    {
-        $this->currentScenario = $scope->getScenario();
-    }
+  /**
+   * Register the scenario.
+   *
+   * @BeforeScenario
+   */
+  public function registerScenario(BeforeScenarioScope $scope): void {
+    $this->currentScenario = $scope->getScenario();
+  }
 
-    /**
-     * @return ScenarioInterface
-     */
-    protected function getScenario()
-    {
-        return $this->currentScenario;
-    }
+  /**
+   * Returns the current scenario.
+   *
+   * @return \Behat\Gherkin\Node\ScenarioInterface
+   *   The current scenario.
+   */
+  protected function getScenario() {
+    return $this->currentScenario;
+  }
 
-    /**
-     * Get all tags for the current scenario.
-     *
-     * @return string[]
-     */
-    protected function getCurrentScenarioTags(StepScope $scope): array
-    {
-        $featureTags = $scope->getFeature()->getTags();
-        $scenarioTags = $this->getScenario()->getTags();
-        return array_merge($featureTags, $scenarioTags);
-    }
+  /**
+   * Get all tags for the current scenario.
+   *
+   * @return string[]
+   *   An array of tag strings.
+   */
+  protected function getCurrentScenarioTags(StepScope $scope): array {
+    $featureTags = $scope->getFeature()->getTags();
+    $scenarioTags = $this->getScenario()->getTags();
+    return array_merge($featureTags, $scenarioTags);
+  }
+
 }

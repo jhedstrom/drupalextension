@@ -183,7 +183,7 @@ Given I am logged in as a user with the "administer nodes, bypass node access" p
 @Then I (should )see the :link in the :rowText row</code></summary>
 
 <br/>
-Attempts to find a link in a table row containing giving text. This is for
+Attempts to find a link in a table row containing giving text
 <br/><br/>
 
 ```gherkin
@@ -199,7 +199,7 @@ Then I should see the "Edit" in the "My article" row
   <summary><code>@Given I press :button in the :rowText row</code></summary>
 
 <br/>
-Attempts to find a button in a table row containing giving text. This is
+Attempts to find a button in a table row containing giving text
 <br/><br/>
 
 ```gherkin

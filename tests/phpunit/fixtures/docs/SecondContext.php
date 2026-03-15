@@ -7,19 +7,18 @@ namespace Drupal\DrupalExtension\Tests\Fixtures;
 /**
  * Second context for testing.
  */
-class SecondContext
-{
+class SecondContext {
 
-    /**
-     * Second method.
-     *
-     * @Then the second should pass
-     *
-     * @code
-     * Then the second should pass
-     * @endcode
-     */
-    public function secondAssertSecond(): void
-    {
-    }
+  /**
+   * Second method.
+   *
+   * @Then the second should pass
+   *
+   * @code
+   * Then the second should pass
+   * @endcode
+   */
+  public function secondAssertSecond(): void {
+  }
+
 }

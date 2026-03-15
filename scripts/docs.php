@@ -39,8 +39,8 @@ declare(strict_types=1);
 // Execute the main function only when the script is run directly, not when included.
 // @codeCoverageIgnoreStart
 if (basename((string) $_SERVER['SCRIPT_FILENAME']) === 'docs.php') {
-    $options = getopt('', ['fail-on-change', 'path::', 'warning-on-invalid', 'log-dir::']);
-    main($options);
+  $options = getopt('', ['fail-on-change', 'path::', 'warning-on-invalid', 'log-dir::']);
+  main($options);
 }
 // @codeCoverageIgnoreEnd
 
@@ -52,64 +52,63 @@ if (basename((string) $_SERVER['SCRIPT_FILENAME']) === 'docs.php') {
  *
  * @codeCoverageIgnoreStart
  */
-function main(array $options = []): void
-{
-    $base_path = is_string($options['path'] ?? null) ? $options['path'] : dirname(__DIR__);
+function main(array $options = []): void {
+  $basePath = is_string($options['path'] ?? NULL) ? $options['path'] : dirname(__DIR__);
 
-    require_once $base_path . '/vendor/autoload.php';
+  require_once $basePath . '/vendor/autoload.php';
 
-    $context_dir = $base_path . '/src/Drupal/DrupalExtension/Context';
-    $info = extract_info($context_dir, [], $base_path);
+  $contextDir = $basePath . '/src/Drupal/DrupalExtension/Context';
+  $info = extract_info($contextDir, [], $basePath);
 
-    $lenient = isset($options['warning-on-invalid']);
-    $results = validate($info, $base_path);
+  $lenient = isset($options['warning-on-invalid']);
+  $results = validate($info, $basePath);
 
-    $tree_output = '';
-    if (has_validation_errors($results)) {
-        $tree_output = render_validation_tree($results);
-        echo $tree_output;
-        if (!$lenient) {
-            exit(1);
-        }
+  $treeOutput = '';
+  if (has_validation_errors($results)) {
+    $treeOutput = render_validation_tree($results);
+    echo $treeOutput;
+    if (!$lenient) {
+      exit(1);
     }
+  }
 
-    $log_dir = is_string($options['log-dir'] ?? null) ? $options['log-dir'] : null;
-    if ($log_dir !== null) {
-        write_validation_logs($tree_output, $log_dir);
-    }
+  $logDir = is_string($options['log-dir'] ?? NULL) ? $options['log-dir'] : NULL;
+  if ($logDir !== NULL) {
+    write_validation_logs($treeOutput, $logDir);
+  }
 
-    $steps_markdown = PHP_EOL . render_info($info, $base_path) . PHP_EOL;
-    $readme_markdown = PHP_EOL . render_info($info, $base_path, 'STEPS.md') . PHP_EOL;
+  $stepsMarkdown = PHP_EOL . render_info($info, $basePath) . PHP_EOL;
+  $readmeMarkdown = PHP_EOL . render_info($info, $basePath, 'STEPS.md') . PHP_EOL;
 
-    $steps_file = 'STEPS.md';
-    $steps_contents = file_get_contents($base_path . DIRECTORY_SEPARATOR . $steps_file);
-    if ($steps_contents === false) {
-        printf('Failed to read %s.' . PHP_EOL, $steps_file);
-        exit(1);
-    }
-    $steps_replaced = replace_content($steps_contents, '# Available steps', '[//]: # (END)', $steps_markdown);
+  $stepsFile = 'STEPS.md';
+  $stepsContents = file_get_contents($basePath . DIRECTORY_SEPARATOR . $stepsFile);
+  if ($stepsContents === FALSE) {
+    printf('Failed to read %s.' . PHP_EOL, $stepsFile);
+    exit(1);
+  }
+  $stepsReplaced = replace_content($stepsContents, '# Available steps', '[//]: # (END)', $stepsMarkdown);
 
-    $readme_file = 'README.md';
-    $readme_contents = file_get_contents($base_path . DIRECTORY_SEPARATOR . $readme_file);
-    if ($readme_contents === false) {
-        printf('Failed to read %s.' . PHP_EOL, $readme_file);
-        exit(1);
-    }
-    $readme_replaced = replace_content($readme_contents, '## Available steps', '[//]: # (END)', $readme_markdown);
+  $readmeFile = 'README.md';
+  $readmeContents = file_get_contents($basePath . DIRECTORY_SEPARATOR . $readmeFile);
+  if ($readmeContents === FALSE) {
+    printf('Failed to read %s.' . PHP_EOL, $readmeFile);
+    exit(1);
+  }
+  $readmeReplaced = replace_content($readmeContents, '## Available steps', '[//]: # (END)', $readmeMarkdown);
 
-    if ($steps_replaced === $steps_contents && $readme_replaced === $readme_contents) {
-        echo PHP_EOL . "\033[32mDocumentation is up to date. No changes were made.\033[0m" . PHP_EOL;
-        exit(0);
-    }
+  if ($stepsReplaced === $stepsContents && $readmeReplaced === $readmeContents) {
+    echo PHP_EOL . "\033[32mDocumentation is up to date. No changes were made.\033[0m" . PHP_EOL;
+    exit(0);
+  }
 
-    $fail_on_change = isset($options['fail-on-change']);
-    if ($fail_on_change && ($steps_replaced !== $steps_contents || $readme_replaced !== $readme_contents)) {
-        echo PHP_EOL . "\033[31mDocumentation is outdated. Please regenerate documentation.\033[0m" . PHP_EOL;
-        exit(1);
-    }
-    file_put_contents($base_path . DIRECTORY_SEPARATOR . $steps_file, $steps_replaced);
-    file_put_contents($base_path . DIRECTORY_SEPARATOR . $readme_file, $readme_replaced);
-    echo 'Documentation updated.' . PHP_EOL;
+  $failOnChange = isset($options['fail-on-change']);
+  if ($failOnChange && ($stepsReplaced !== $stepsContents || $readmeReplaced !== $readmeContents)) {
+    echo PHP_EOL . "\033[31mDocumentation is outdated. Please regenerate documentation.\033[0m" . PHP_EOL;
+    exit(1);
+  }
+  file_put_contents($basePath . DIRECTORY_SEPARATOR . $stepsFile, $stepsReplaced);
+  file_put_contents($basePath . DIRECTORY_SEPARATOR . $readmeFile, $readmeReplaced);
+  echo 'Documentation updated.' . PHP_EOL;
 }
 
 // @codeCoverageIgnoreEnd
@@ -117,11 +116,11 @@ function main(array $options = []): void
 /**
  * Parse info from the Context classes in a directory.
  *
- * @param string $context_dir
+ * @param string $contextDir
  *   The directory containing Context classes.
  * @param array<int, string> $exclude
  *   Array of class names to exclude.
- * @param string $base_path
+ * @param string $basePath
  *   Base path for the repository.
  *
  * @return array<string,array<string, array<int, array<string, array<int,string>|string>>|string>>
@@ -129,112 +128,112 @@ function main(array $options = []): void
  *
  * @throws \ReflectionException
  */
-function extract_info(string $context_dir, array $exclude = [], string $base_path = '', string $namespace = 'Drupal\\DrupalExtension\\Context'): array
-{
-    if (empty($base_path)) {
-        $base_path = dirname(__DIR__); // @codeCoverageIgnore
+function extract_info(string $contextDir, array $exclude = [], string $basePath = '', string $namespace = 'Drupal\\DrupalExtension\\Context'): array {
+  if (empty($basePath)) {
+    // @codeCoverageIgnore
+    $basePath = dirname(__DIR__);
+  }
+
+  $info = [];
+
+  if (!is_dir($contextDir)) {
+    throw new \Exception(sprintf('Context directory %s does not exist', $contextDir));
+  }
+
+  // Collect all PHP files in the context directory.
+  $files = scandir($contextDir) ?: [];
+  $classFiles = [];
+  foreach ($files as $file) {
+    if (is_file($contextDir . DIRECTORY_SEPARATOR . $file) && str_ends_with($file, '.php')) {
+      $classFiles[] = basename($file, '.php');
+    }
+  }
+  sort($classFiles);
+
+  foreach ($classFiles as $className) {
+    if (in_array($className, $exclude, TRUE)) {
+      continue;
     }
 
-    $info = [];
+    $fqcn = $namespace . '\\' . $className;
 
-    if (!is_dir($context_dir)) {
-        throw new \Exception(sprintf('Context directory %s does not exist', $context_dir));
+    if (!class_exists($fqcn)) {
+      continue;
     }
 
-    // Collect all PHP files in the context directory.
-    $files = scandir($context_dir) ?: [];
-    $class_files = [];
-    foreach ($files as $file) {
-        if (is_file($context_dir . DIRECTORY_SEPARATOR . $file) && str_ends_with($file, '.php')) {
-            $class_files[] = basename($file, '.php');
-        }
+    $reflection = new ReflectionClass($fqcn);
+    // Skip interfaces and abstract classes.
+    // @codeCoverageIgnoreStart
+    if ($reflection->isInterface()) {
+      continue;
     }
-    sort($class_files);
+    // @codeCoverageIgnoreEnd
+    if ($reflection->isAbstract()) {
+      continue;
+    }
 
-    foreach ($class_files as $class_name) {
-        if (in_array($class_name, $exclude, true)) {
-            continue;
-        }
+    $classInfo = [
+      'name' => $className,
+      'name_contextual' => $className,
+      'context' => $className,
+      'methods' => [],
+    ];
+    $classInfo += parse_class_comment($className, (string) $reflection->getDocComment());
 
-        $fqcn = $namespace . '\\' . $class_name;
+    // Get all public methods declared in this class (not inherited).
+    $methods = $reflection->getMethods(ReflectionMethod::IS_PUBLIC);
+    foreach ($methods as $method) {
+      // Only include methods declared in this class.
+      if ($method->getDeclaringClass()->getName() !== $fqcn) {
+        continue;
+      }
 
-        if (!class_exists($fqcn)) {
-            continue;
-        }
+      $parsedComment = parse_method_comment((string) $method->getDocComment());
+      if ($parsedComment) {
+        $classInfo['methods'][] = $parsedComment + ['name' => $method->getName()];
+      }
+    }
 
-        $reflection = new ReflectionClass($fqcn);
-        // Skip interfaces and abstract classes.
-        // @codeCoverageIgnoreStart
-        if ($reflection->isInterface()) {
-            continue;
-        }
-        // @codeCoverageIgnoreEnd
-        if ($reflection->isAbstract()) {
-            continue;
-        }
+    if (!empty($classInfo['methods'])) {
+      // Sort info by Given, When, Then.
+      usort($classInfo['methods'], static function (array $a, array $b): int {
+          $order = ['@Given', '@When', '@Then'];
 
-        $class_info = [
-            'name' => $class_name,
-            'name_contextual' => $class_name,
-            'context' => $class_name,
-            'methods' => [],
-        ];
-        $class_info += parse_class_comment($class_name, (string) $reflection->getDocComment());
-
-        // Get all public methods declared in this class (not inherited).
-        $methods = $reflection->getMethods(ReflectionMethod::IS_PUBLIC);
-        foreach ($methods as $method) {
-            // Only include methods declared in this class.
-            if ($method->getDeclaringClass()->getName() !== $fqcn) {
-                continue;
+          $getOrderIndex = function ($step) use ($order): int {
+            foreach ($order as $index => $prefix) {
+              if (str_starts_with($step, $prefix)) {
+                return $index;
+              }
             }
 
-            $parsed_comment = parse_method_comment((string) $method->getDocComment());
-            if ($parsed_comment) {
-                $class_info['methods'][] = $parsed_comment + ['name' => $method->getName()];
-            }
-        }
+              // @codeCoverageIgnoreStart
+              return PHP_INT_MAX;
+              // @codeCoverageIgnoreEnd
+          };
 
-        if (!empty($class_info['methods'])) {
-            // Sort info by Given, When, Then.
-            usort($class_info['methods'], static function (array $a, array $b): int {
-                $order = ['@Given', '@When', '@Then'];
+          $aStep = $a['steps'][0] ?? '';
+          $bStep = $b['steps'][0] ?? '';
 
-                $get_order_index = function ($step) use ($order): int {
-                    foreach ($order as $index => $prefix) {
-                        if (str_starts_with($step, $prefix)) {
-                            return $index;
-                        }
-                    }
+          $aIndex = $getOrderIndex($aStep);
+          $bIndex = $getOrderIndex($bStep);
 
-                    // @codeCoverageIgnoreStart
-                    return PHP_INT_MAX;
-                    // @codeCoverageIgnoreEnd
-                };
-
-                $a_step = $a['steps'][0] ?? '';
-                $b_step = $b['steps'][0] ?? '';
-
-                $a_index = $get_order_index($a_step);
-                $b_index = $get_order_index($b_step);
-
-                return $a_index <=> $b_index;
-            });
-        }
-
-        // Only include classes that have step definitions.
-        if (!empty($class_info['methods'])) {
-            $info[$class_name] = $class_info;
-        }
+          return $aIndex <=> $bIndex;
+      });
     }
 
-    return $info;
+    // Only include classes that have step definitions.
+    if (!empty($classInfo['methods'])) {
+      $info[$className] = $classInfo;
+    }
+  }
+
+  return $info;
 }
 
 /**
  * Parse class comment.
  *
- * @param string $class_name
+ * @param string $className
  *   The class name.
  * @param string $comment
  *   The comment.
@@ -242,67 +241,66 @@ function extract_info(string $context_dir, array $exclude = [], string $base_pat
  * @return array<string, string>
  *   Array of 'description' and 'description_full' keys.
  */
-function parse_class_comment(string $class_name, string $comment): array
-{
-    if (empty($comment)) {
-        throw new \Exception(sprintf('Class comment for %s is empty', $class_name));
-    }
+function parse_class_comment(string $className, string $comment): array {
+  if (empty($comment)) {
+    throw new \Exception(sprintf('Class comment for %s is empty', $className));
+  }
 
-    $comment = preg_replace('#^/\*\*|^\s*\*\/$#m', '', $comment);
-    $lines = explode(PHP_EOL, (string) $comment);
-    // Remove docblock asterisk and up to one space, but preserve remaining indentation.
-    $lines = array_map(static fn(string $l): string => preg_replace('/^\s*\* ?/', '', $l), $lines);
+  $comment = preg_replace('#^/\*\*|^\s*\*\/$#m', '', $comment);
+  $lines = explode(PHP_EOL, (string) $comment);
+  // Remove docblock asterisk and up to one space, but preserve remaining indentation.
+  $lines = array_map(static fn(string $l): string => preg_replace('/^\s*\* ?/', '', $l), $lines);
 
-    // Remove first and last empty lines.
-    if (count($lines) > 1 && empty($lines[0])) {
-        array_shift($lines);
-    }
-    if (count($lines) > 1 && empty($lines[count($lines) - 1])) {
-        array_pop($lines);
-    }
+  // Remove first and last empty lines.
+  if (count($lines) > 1 && empty($lines[0])) {
+    array_shift($lines);
+  }
+  if (count($lines) > 1 && empty($lines[count($lines) - 1])) {
+    array_pop($lines);
+  }
 
-    // Trim lines, but preserve indentation within @code blocks.
-    $in_code_block = false;
-    $lines = array_map(static function (string $l) use (&$in_code_block): string {
-        if (str_starts_with(trim($l), '@code')) {
-            $in_code_block = true;
-            return trim($l);
-        }
-        if (str_starts_with(trim($l), '@endcode')) {
-            $in_code_block = false;
-            return trim($l);
-        }
-        if ($in_code_block) {
-            // Preserve indentation within code blocks.
-            return rtrim($l);
-        }
+  // Trim lines, but preserve indentation within @code blocks.
+  $inCodeBlock = FALSE;
+  $lines = array_map(static function (string $l) use (&$inCodeBlock): string {
+    if (str_starts_with(trim($l), '@code')) {
+        $inCodeBlock = TRUE;
         return trim($l);
-    }, $lines);
-
-    // @codeCoverageIgnoreStart
-    if (empty($lines)) {
-        throw new \Exception(sprintf('Class comment for %s is empty', $class_name));
     }
-    // @codeCoverageIgnoreEnd
-    $description = $lines[0];
-    if (empty($description)) {
-        throw new \Exception(sprintf('Class comment for %s is empty', $class_name));
+    if (str_starts_with(trim($l), '@endcode')) {
+        $inCodeBlock = FALSE;
+        return trim($l);
     }
-
-    if (str_starts_with($description, 'Class ')) {
-        throw new \Exception(sprintf('Class comment should have a descriptive content for %s', $class_name));
+    if ($inCodeBlock) {
+        // Preserve indentation within code blocks.
+        return rtrim($l);
     }
+      return trim($l);
+  }, $lines);
 
-    $full_description = implode(PHP_EOL, $lines);
+  // @codeCoverageIgnoreStart
+  if (empty($lines)) {
+    throw new \Exception(sprintf('Class comment for %s is empty', $className));
+  }
+  // @codeCoverageIgnoreEnd
+  $description = $lines[0];
+  if (empty($description)) {
+    throw new \Exception(sprintf('Class comment for %s is empty', $className));
+  }
 
-    if (substr_count($full_description, '`') % 2 !== 0) {
-        throw new \Exception(sprintf('Class inline code block is not closed for %s', $class_name));
-    }
+  if (str_starts_with($description, 'Class ')) {
+    throw new \Exception(sprintf('Class comment should have a descriptive content for %s', $className));
+  }
 
-    return [
-        'description' => $description,
-        'description_full' => $full_description,
-    ];
+  $fullDescription = implode(PHP_EOL, $lines);
+
+  if (substr_count($fullDescription, '`') % 2 !== 0) {
+    throw new \Exception(sprintf('Class inline code block is not closed for %s', $className));
+  }
+
+  return [
+    'description' => $description,
+    'description_full' => $fullDescription,
+  ];
 }
 
 /**
@@ -315,95 +313,97 @@ function parse_class_comment(string $class_name, string $comment): array
  *   Array of 'steps', 'description', and 'example' keys or NULL if steps were
  *   not found in the comment.
  */
-function parse_method_comment(string $comment): ?array
-{
-    if (empty($comment)) {
-        return null;
+function parse_method_comment(string $comment): ?array {
+  if (empty($comment)) {
+    return NULL;
+  }
+
+  $return = [
+    'steps' => [],
+    'description' => '',
+    'example' => '',
+  ];
+
+  $lines = explode(PHP_EOL, $comment);
+
+  $exampleStart = FALSE;
+  foreach ($lines as $line) {
+    $line = str_replace('/*', '', $line);
+    $line = str_replace('/**', '', $line);
+    $line = str_replace('*/', '', $line);
+    $line = preg_replace('/^\s*\*/', '', $line);
+    $line = rtrim((string) $line, " \t\n\r\0\x0B");
+    // All docblock lines start with a space.
+    $line = substr($line, 1);
+
+    if (str_starts_with($line, '@code')) {
+      $exampleStart = TRUE;
     }
+    elseif (str_starts_with($line, '@endcode')) {
+      $exampleStart = FALSE;
+    }
+    elseif (str_starts_with($line, '@Given') || str_starts_with($line, '@When') || str_starts_with($line, '@Then')) {
+      $line = trim($line, " \t\n\r\0\x0B");
+      $return['steps'][] = $line;
+    }
+    else {
+      if (!$exampleStart && empty($line)) {
+        continue;
+      }
 
-    $return = [
-        'steps' => [],
-        'description' => '',
-        'example' => '',
-    ];
+      if ($exampleStart) {
+        $line = rtrim($line, "\t\n\r\0\x0B");
+        $return['example'] .= $line . PHP_EOL;
+      }
 
-    $lines = explode(PHP_EOL, $comment);
+      if (empty($return['description'])) {
+        $line = trim($line);
+        $return['description'] .= $line . ' ';
+      }
+    }
+  }
 
-    $example_start = false;
-    foreach ($lines as $line) {
-        $line = str_replace('/*', '', $line);
-        $line = str_replace('/**', '', $line);
-        $line = str_replace('*/', '', $line);
-        $line = preg_replace('/^\s*\*/', '', $line);
-        $line = rtrim((string) $line, " \t\n\r\0\x0B");
-        // All docblock lines start with a space.
-        $line = substr($line, 1);
+  if ($exampleStart) {
+    throw new \Exception('Example not closed');
+  }
 
-        if (str_starts_with($line, '@code')) {
-            $example_start = true;
-        } elseif (str_starts_with($line, '@endcode')) {
-            $example_start = false;
-        } elseif (str_starts_with($line, '@Given') || str_starts_with($line, '@When') || str_starts_with($line, '@Then')) {
-            $line = trim($line, " \t\n\r\0\x0B");
-            $return['steps'][] = $line;
-        } else {
-            if (!$example_start && empty($line)) {
-                continue;
-            }
-
-            if ($example_start) {
-                $line = rtrim($line, "\t\n\r\0\x0B");
-                $return['example'] .= $line . PHP_EOL;
-            }
-
-            if (empty($return['description'])) {
-                $line = trim($line);
-                $return['description'] .= $line . ' ';
-            }
+  if (!empty($return['steps'])) {
+    // Sort the steps by Given, When, Then.
+    $sorted = [];
+    foreach (['@Given', '@When', '@Then'] as $step) {
+      foreach ($return['steps'] as $stepItem) {
+        if (str_starts_with($stepItem, $step)) {
+          $sorted[] = $stepItem;
         }
+      }
     }
+    $return['steps'] = $sorted;
 
-    if ($example_start) {
-        throw new \Exception('Example not closed');
-    }
+    $return['description'] = trim($return['description']);
 
-    if (!empty($return['steps'])) {
-        // Sort the steps by Given, When, Then.
-        $sorted = [];
-        foreach (['@Given', '@When', '@Then'] as $step) {
-            foreach ($return['steps'] as $step_item) {
-                if (str_starts_with($step_item, $step)) {
-                    $sorted[] = $step_item;
-                }
-            }
+    if (!empty($return['example'])) {
+      // Remove indentation from the example, using the first line as a
+      // reference.
+      $lines = explode(PHP_EOL, $return['example']);
+      $firstLine = '';
+      foreach ($lines as $l) {
+        if ($l !== '') {
+          $firstLine = $l;
+          break;
         }
-        $return['steps'] = $sorted;
-
-        $return['description'] = trim($return['description']);
-
-        if (!empty($return['example'])) {
-            // Remove indentation from the example, using the first line as a
-            // reference.
-            $lines = explode(PHP_EOL, $return['example']);
-            $first_line = '';
-            foreach ($lines as $l) {
-                if ($l !== '') {
-                    $first_line = $l;
-                    break;
-                }
-            }
-            $indentation = strspn($first_line, ' ');
-            foreach ($lines as $key => $line) {
-                $line = rtrim($line);
-                if (strlen($line) > $indentation) {
-                    $lines[$key] = substr($line, $indentation);
-                }
-            }
-            $return['example'] = implode(PHP_EOL, $lines);
+      }
+      $indentation = strspn($firstLine, ' ');
+      foreach ($lines as $key => $line) {
+        $line = rtrim($line);
+        if (strlen($line) > $indentation) {
+          $lines[$key] = substr($line, $indentation);
         }
+      }
+      $return['example'] = implode(PHP_EOL, $lines);
     }
+  }
 
-    return empty($return['steps']) ? null : $return;
+  return empty($return['steps']) ? NULL : $return;
 }
 
 /**
@@ -411,118 +411,120 @@ function parse_method_comment(string $comment): ?array
  *
  * @param array<string,array<string, array<int, array<string, array<int,string>|string>>|string>> $info
  *   Array of info items with 'name', 'from', and 'to' keys.
- * @param string $base_path
+ * @param string $basePath
  *   Base path for the repository.
- * @param string|null $path_for_links
+ * @param string|null $pathForLinks
  *   Path prefix for links in the index (e.g. 'STEPS.md').
  *
  * @return string
  *   Markdown table.
  */
-function render_info(array $info, string $base_path = '', ?string $path_for_links = null): string
-{
-    if (empty($base_path)) {
-        $base_path = dirname(__DIR__); // @codeCoverageIgnore
+function render_info(array $info, string $basePath = '', ?string $pathForLinks = NULL): string {
+  if (empty($basePath)) {
+    // @codeCoverageIgnore
+    $basePath = dirname(__DIR__);
+  }
+
+  $contentOutput = '';
+  $indexRows = [];
+
+  foreach ($info as $class => $classInfo) {
+    // Find the source file.
+    $srcFile = find_source_file($class, $basePath);
+    if (!$srcFile) {
+      throw new \Exception(sprintf('Source file for %s does not exist', $class));
     }
 
-    $content_output = '';
-    $index_rows = [];
+    // Find the example feature file.
+    $exampleName = camel_to_snake(str_replace('Context', '', $class));
+    $exampleFile = sprintf('tests/behat/features/%s.feature', $exampleName);
+    $exampleFilePath = $basePath . DIRECTORY_SEPARATOR . $exampleFile;
 
-    foreach ($info as $class => $class_info) {
-        // Find the source file.
-        $src_file = find_source_file($class, $base_path);
-        if (!$src_file) {
-            throw new \Exception(sprintf('Source file for %s does not exist', $class));
+    $exampleLink = '';
+    if (file_exists($exampleFilePath)) {
+      $exampleLink = sprintf(', [Example](%s)', $exampleFile);
+    }
+
+    $contentOutput .= sprintf('## %s', $classInfo['name_contextual']) . PHP_EOL . PHP_EOL;
+    $contentOutput .= sprintf('[Source](%s)%s', $srcFile, $exampleLink) . PHP_EOL . PHP_EOL;
+
+    // Add description as markdown-safe accommodating for lists.
+    $descriptionFull = '';
+    $lines = explode(PHP_EOL, $classInfo['description_full']);
+    $wasList = FALSE;
+    $inCodeBlock = FALSE;
+    $codeBlock = '';
+    foreach ($lines as $line) {
+      $trimmedLine = trim($line);
+
+      // Handle @code tag - start collecting code block.
+      if (str_starts_with($trimmedLine, '@code')) {
+        $inCodeBlock = TRUE;
+        $codeBlock = '';
+        continue;
+      }
+
+      // Handle @endcode tag - wrap collected code in markdown code block.
+      if (str_starts_with($trimmedLine, '@endcode')) {
+        $inCodeBlock = FALSE;
+        $descriptionFull .= '```' . PHP_EOL;
+        $descriptionFull .= rtrim($codeBlock) . PHP_EOL;
+        $descriptionFull .= '```' . PHP_EOL;
+        $codeBlock = '';
+        continue;
+      }
+
+      // If inside code block, collect lines without processing.
+      if ($inCodeBlock) {
+        $codeBlock .= $line . PHP_EOL;
+        continue;
+      }
+
+      $isList = str_starts_with($trimmedLine, '-');
+
+      if (!$isList) {
+        if (empty($line) && !$wasList) {
+          $descriptionFull .= $line . '<br/><br/>' . PHP_EOL;
+        }
+        else {
+          $descriptionFull .= $line . PHP_EOL;
+        }
+        $wasList = FALSE;
+      }
+      else {
+        if (str_ends_with($descriptionFull, '<br/><br/>' . PHP_EOL)) {
+          $descriptionFull = rtrim($descriptionFull, '<br/><br/>' . PHP_EOL) . PHP_EOL;
         }
 
-        // Find the example feature file.
-        $example_name = camel_to_snake(str_replace('Context', '', $class));
-        $example_file = sprintf('tests/behat/features/%s.feature', $example_name);
-        $example_file_path = $base_path . DIRECTORY_SEPARATOR . $example_file;
+        $descriptionFull .= $line . PHP_EOL;
+        $wasList = TRUE;
+      }
+    }
 
-        $example_link = '';
-        if (file_exists($example_file_path)) {
-            $example_link = sprintf(', [Example](%s)', $example_file);
-        }
+    $descriptionFull = preg_replace('/^/m', '>  ', $descriptionFull);
+    $contentOutput .= $descriptionFull . PHP_EOL . PHP_EOL;
 
-        $content_output .= sprintf('## %s', $class_info['name_contextual']) . PHP_EOL . PHP_EOL;
-        $content_output .= sprintf('[Source](%s)%s', $src_file, $example_link) . PHP_EOL . PHP_EOL;
+    // Add to index.
+    $indexRowsPath = '#' . preg_replace('/[^A-Za-z0-9_\-]/', '', strtolower((string) $classInfo['name_contextual']));
+    if ($pathForLinks) {
+      $indexRowsPath = $pathForLinks . $indexRowsPath;
+    }
+    $indexRows[] = [
+      sprintf('[%s](%s)', $classInfo['name_contextual'], $indexRowsPath),
+      $classInfo['description'],
+    ];
 
-        // Add description as markdown-safe accommodating for lists.
-        $description_full = '';
-        $lines = explode(PHP_EOL, $class_info['description_full']);
-        $was_list = false;
-        $in_code_block = false;
-        $code_block = '';
-        foreach ($lines as $line) {
-            $trimmed_line = trim($line);
+    foreach ($classInfo['methods'] as $method) {
+      $method['steps'] = is_array($method['steps']) ? $method['steps'] : [$method['steps']];
+      $method['description'] = is_string($method['description']) ? $method['description'] : '';
+      $method['example'] = is_string($method['example']) ? $method['example'] : '';
 
-            // Handle @code tag - start collecting code block.
-            if (str_starts_with($trimmed_line, '@code')) {
-                $in_code_block = true;
-                $code_block = '';
-                continue;
-            }
+      $method['steps'] = array_reduce($method['steps'], fn(string $carry, string $item): string => $carry . sprintf("%s\n", $item), '');
+      $method['steps'] = rtrim((string) $method['steps'], "\n");
 
-            // Handle @endcode tag - wrap collected code in markdown code block.
-            if (str_starts_with($trimmed_line, '@endcode')) {
-                $in_code_block = false;
-                $description_full .= '```' . PHP_EOL;
-                $description_full .= rtrim($code_block) . PHP_EOL;
-                $description_full .= '```' . PHP_EOL;
-                $code_block = '';
-                continue;
-            }
+      $method['description'] = rtrim((string) $method['description'], '.');
 
-            // If inside code block, collect lines without processing.
-            if ($in_code_block) {
-                $code_block .= $line . PHP_EOL;
-                continue;
-            }
-
-            $is_list = str_starts_with($trimmed_line, '-');
-
-            if (!$is_list) {
-                if (empty($line) && !$was_list) {
-                    $description_full .= $line . '<br/><br/>' . PHP_EOL;
-                } else {
-                    $description_full .= $line . PHP_EOL;
-                }
-                $was_list = false;
-            } else {
-                if (str_ends_with($description_full, '<br/><br/>' . PHP_EOL)) {
-                    $description_full = rtrim($description_full, '<br/><br/>' . PHP_EOL) . PHP_EOL;
-                }
-
-                $description_full .= $line . PHP_EOL;
-                $was_list = true;
-            }
-        }
-
-        $description_full = preg_replace('/^/m', '>  ', $description_full);
-        $content_output .= $description_full . PHP_EOL . PHP_EOL;
-
-        // Add to index.
-        $index_rows_path = '#' . preg_replace('/[^A-Za-z0-9_\-]/', '', strtolower((string) $class_info['name_contextual']));
-        if ($path_for_links) {
-            $index_rows_path = $path_for_links . $index_rows_path;
-        }
-        $index_rows[] = [
-            sprintf('[%s](%s)', $class_info['name_contextual'], $index_rows_path),
-            $class_info['description'],
-        ];
-
-        foreach ($class_info['methods'] as $method) {
-            $method['steps'] = is_array($method['steps']) ? $method['steps'] : [$method['steps']];
-            $method['description'] = is_string($method['description']) ? $method['description'] : '';
-            $method['example'] = is_string($method['example']) ? $method['example'] : '';
-
-            $method['steps'] = array_reduce($method['steps'], fn(string $carry, string $item): string => $carry . sprintf("%s\n", $item), '');
-            $method['steps'] = rtrim((string) $method['steps'], "\n");
-
-            $method['description'] = rtrim((string) $method['description'], '.');
-
-            $template = <<<EOT
+      $template = <<<EOT
 <details>
   <summary><code>[step]</code></summary>
 
@@ -538,65 +540,64 @@ function render_info(array $info, string $base_path = '', ?string $path_for_link
 
 EOT;
 
-            $content_output .= strtr(
-                $template,
-                [
-                    '[description]' => $method['description'],
-                    '[step]' => $method['steps'],
-                    '[example]' => $method['example'],
-                ]
-            );
+      $contentOutput .= strtr(
+            $template,
+            [
+              '[description]' => $method['description'],
+              '[step]' => $method['steps'],
+              '[example]' => $method['example'],
+            ]
+        );
 
-            $content_output .= PHP_EOL;
-        }
+      $contentOutput .= PHP_EOL;
     }
+  }
 
-    $index_output = '';
-    if (!empty($index_rows)) {
-        $index_output .= array_to_markdown_table(['Class', 'Description'], $index_rows) . PHP_EOL . PHP_EOL;
-    }
+  $indexOutput = '';
+  if (!empty($indexRows)) {
+    $indexOutput .= array_to_markdown_table(['Class', 'Description'], $indexRows) . PHP_EOL . PHP_EOL;
+  }
 
-    $output = '';
-    $output .= $index_output . PHP_EOL;
+  $output = '';
+  $output .= $indexOutput . PHP_EOL;
 
-    // Render content if this is not a path for links.
-    if (!$path_for_links) {
-        $output .= '---' . PHP_EOL . PHP_EOL;
-        $output .= $content_output . PHP_EOL;
-    }
+  // Render content if this is not a path for links.
+  if (!$pathForLinks) {
+    $output .= '---' . PHP_EOL . PHP_EOL;
+    $output .= $contentOutput . PHP_EOL;
+  }
 
-    return $output;
+  return $output;
 }
 
 /**
  * Find the source file for a class relative to the base path.
  *
- * @param string $class_name
+ * @param string $className
  *   The class name.
- * @param string $base_path
+ * @param string $basePath
  *   Base path for the repository.
  *
  * @return string|null
  *   The relative path to the source file, or NULL if not found.
  */
-function find_source_file(string $class_name, string $base_path): ?string
-{
-    $src_file = sprintf('src/Drupal/DrupalExtension/Context/%s.php', $class_name);
-    $src_file_path = $base_path . DIRECTORY_SEPARATOR . $src_file;
+function find_source_file(string $className, string $basePath): ?string {
+  $srcFile = sprintf('src/Drupal/DrupalExtension/Context/%s.php', $className);
+  $srcFilePath = $basePath . DIRECTORY_SEPARATOR . $srcFile;
 
-    if (file_exists($src_file_path)) {
-        return $src_file;
-    }
+  if (file_exists($srcFilePath)) {
+    return $srcFile;
+  }
 
-    // Fallback: try root src directory (for tests).
-    $src_file = sprintf('src/%s.php', $class_name);
-    $src_file_path = $base_path . DIRECTORY_SEPARATOR . $src_file;
+  // Fallback: try root src directory (for tests).
+  $srcFile = sprintf('src/%s.php', $className);
+  $srcFilePath = $basePath . DIRECTORY_SEPARATOR . $srcFile;
 
-    if (file_exists($src_file_path)) {
-        return $src_file;
-    }
+  if (file_exists($srcFilePath)) {
+    return $srcFile;
+  }
 
-    return null;
+  return NULL;
 }
 
 /**
@@ -604,114 +605,114 @@ function find_source_file(string $class_name, string $base_path): ?string
  *
  * @param array<string,array<string, array<int, array<string, array<int,string>|string>>|string>> $info
  *   Array of info items with 'name', 'from', and 'to' keys.
- * @param string $base_path
+ * @param string $basePath
  *   Base path for the repository.
  *
  * @return array<string, array<string, array<string, bool|string|array<string, array<string, bool|array<int, string>>>>>>
  *   Structured validation results per class and method.
  */
-function validate(array $info, string $base_path = ''): array
-{
-    if (empty($base_path)) {
-        $base_path = dirname(__DIR__); // @codeCoverageIgnore
-    }
+function validate(array $info, string $basePath = ''): array {
+  if (empty($basePath)) {
+    // @codeCoverageIgnore
+    $basePath = dirname(__DIR__);
+  }
 
-    $results = [];
+  $results = [];
 
-    foreach ($info as $class_info) {
-        $class_name = is_string($class_info['name']) ? $class_info['name'] : '';
+  foreach ($info as $classInfo) {
+    $className = is_string($classInfo['name']) ? $classInfo['name'] : '';
 
-        // Check example file.
-        $example_name = camel_to_snake(str_replace('Context', '', $class_name));
-        $example_file = sprintf('tests/behat/features/%s.feature', $example_name);
-        $example_file_path = $base_path . DIRECTORY_SEPARATOR . $example_file;
+    // Check example file.
+    $exampleName = camel_to_snake(str_replace('Context', '', $className));
+    $exampleFile = sprintf('tests/behat/features/%s.feature', $exampleName);
+    $exampleFilePath = $basePath . DIRECTORY_SEPARATOR . $exampleFile;
 
-        $class_result = [
-            'file' => [
-                'pass' => file_exists($example_file_path),
-                'path' => $example_file,
-            ],
-            'methods' => [],
-        ];
+    $classResult = [
+      'file' => [
+        'pass' => file_exists($exampleFilePath),
+        'path' => $exampleFile,
+      ],
+      'methods' => [],
+    ];
 
-        foreach ($class_info['methods'] as $method) {
-            $method['steps'] = is_array($method['steps']) ? $method['steps'] : [$method['steps']];
-            $method['name'] = is_string($method['name']) ? $method['name'] : '';
-            $method['description'] = is_string($method['description']) ? $method['description'] : '';
-            $method['example'] = is_string($method['example']) ? $method['example'] : '';
+    foreach ($classInfo['methods'] as $method) {
+      $method['steps'] = is_array($method['steps']) ? $method['steps'] : [$method['steps']];
+      $method['name'] = is_string($method['name']) ? $method['name'] : '';
+      $method['description'] = is_string($method['description']) ? $method['description'] : '';
+      $method['example'] = is_string($method['example']) ? $method['example'] : '';
 
-            $step = (string) $method['steps'][0];
+      $step = (string) $method['steps'][0];
 
-            // Step wording check.
-            $step_wording = ['pass' => true, 'messages' => []];
-            if (str_starts_with($step, '@Given') && str_ends_with($step, ':') && !str_contains($step, 'following')) {
-                $step_wording['pass'] = false;
-                $step_wording['messages'][] = 'Missing "following" in the step';
-            }
-            if (str_starts_with($step, '@When') && !str_contains($step, 'I ')) {
-                $step_wording['pass'] = false;
-                $step_wording['messages'][] = 'Missing "I " in the step';
-            }
-            if (str_starts_with($step, '@Then')) {
-                if (!str_contains($step, ' should ')) {
-                    $step_wording['pass'] = false;
-                    $step_wording['messages'][] = 'Missing "should" in the step';
-                }
-                if (!(str_contains($step, ' the ') || str_contains($step, ' a ') || str_contains($step, ' no '))) {
-                    $step_wording['pass'] = false;
-                    $step_wording['messages'][] = 'Missing "the", "a" or "no" in the step';
-                }
-            }
-
-            // Method naming check.
-            $method_naming = ['pass' => true, 'messages' => []];
-            if (str_starts_with($step, '@Then')) {
-                if (!str_contains((string) $method['name'], 'Assert')) {
-                    $method_naming['pass'] = false;
-                    $method_naming['messages'][] = 'Missing "Assert" in the method name';
-                }
-                if (str_contains((string) $method['name'], 'Should')) {
-                    $method_naming['pass'] = false;
-                    $method_naming['messages'][] = 'Contains "Should" in the method name';
-                }
-            }
-
-            // Single step check.
-            $single_step = ['pass' => true, 'messages' => []];
-            if (count($method['steps']) > 1) {
-                $single_step['pass'] = false;
-                $single_step['messages'][] = 'Multiple steps found';
-            }
-
-            // Has example check.
-            $has_example = ['pass' => true, 'messages' => []];
-            if (empty($method['example'])) {
-                $has_example['pass'] = false;
-                $has_example['messages'][] = 'Missing example';
-            }
-
-            // Unnecessary regex check.
-            $regex_convertible = ['pass' => true, 'messages' => []];
-            $suggested = regex_to_turnip($step);
-            if ($suggested !== null) {
-                $regex_convertible['pass'] = false;
-                $regex_convertible['messages'][] = $step;
-                $regex_convertible['messages'][] = $suggested;
-            }
-
-            $class_result['methods'][$method['name']] = [
-                'step_wording' => $step_wording,
-                'method_naming' => $method_naming,
-                'single_step' => $single_step,
-                'has_example' => $has_example,
-                'regex_convertible' => $regex_convertible,
-            ];
+      // Step wording check.
+      $stepWording = ['pass' => TRUE, 'messages' => []];
+      if (str_starts_with($step, '@Given') && str_ends_with($step, ':') && !str_contains($step, 'following')) {
+        $stepWording['pass'] = FALSE;
+        $stepWording['messages'][] = 'Missing "following" in the step';
+      }
+      if (str_starts_with($step, '@When') && !str_contains($step, 'I ')) {
+        $stepWording['pass'] = FALSE;
+        $stepWording['messages'][] = 'Missing "I " in the step';
+      }
+      if (str_starts_with($step, '@Then')) {
+        if (!str_contains($step, ' should ')) {
+          $stepWording['pass'] = FALSE;
+          $stepWording['messages'][] = 'Missing "should" in the step';
         }
+        if (!(str_contains($step, ' the ') || str_contains($step, ' a ') || str_contains($step, ' no '))) {
+          $stepWording['pass'] = FALSE;
+          $stepWording['messages'][] = 'Missing "the", "a" or "no" in the step';
+        }
+      }
 
-        $results[$class_name] = $class_result;
+      // Method naming check.
+      $methodNaming = ['pass' => TRUE, 'messages' => []];
+      if (str_starts_with($step, '@Then')) {
+        if (!str_contains((string) $method['name'], 'Assert')) {
+          $methodNaming['pass'] = FALSE;
+          $methodNaming['messages'][] = 'Missing "Assert" in the method name';
+        }
+        if (str_contains((string) $method['name'], 'Should')) {
+          $methodNaming['pass'] = FALSE;
+          $methodNaming['messages'][] = 'Contains "Should" in the method name';
+        }
+      }
+
+      // Single step check.
+      $singleStep = ['pass' => TRUE, 'messages' => []];
+      if (count($method['steps']) > 1) {
+        $singleStep['pass'] = FALSE;
+        $singleStep['messages'][] = 'Multiple steps found';
+      }
+
+      // Has example check.
+      $hasExample = ['pass' => TRUE, 'messages' => []];
+      if (empty($method['example'])) {
+        $hasExample['pass'] = FALSE;
+        $hasExample['messages'][] = 'Missing example';
+      }
+
+      // Unnecessary regex check.
+      $regexConvertible = ['pass' => TRUE, 'messages' => []];
+      $suggested = regex_to_turnip($step);
+      if ($suggested !== NULL) {
+        $regexConvertible['pass'] = FALSE;
+        $regexConvertible['messages'][] = $step;
+        $regexConvertible['messages'][] = $suggested;
+      }
+
+      $classResult['methods'][$method['name']] = [
+        'step_wording' => $stepWording,
+        'method_naming' => $methodNaming,
+        'single_step' => $singleStep,
+        'has_example' => $hasExample,
+        'regex_convertible' => $regexConvertible,
+      ];
     }
 
-    return $results;
+    $results[$className] = $classResult;
+  }
+
+  return $results;
 }
 
 /**
@@ -723,19 +724,18 @@ function validate(array $info, string $base_path = ''): array
  * @return bool
  *   TRUE if there are validation errors.
  */
-function has_validation_errors(array $results): bool
-{
-    foreach ($results as $class_result) {
-        foreach ($class_result['methods'] as $method_checks) {
-            foreach ($method_checks as $check) {
-                if (!$check['pass']) {
-                    return true;
-                }
-            }
+function has_validation_errors(array $results): bool {
+  foreach ($results as $classResult) {
+    foreach ($classResult['methods'] as $methodChecks) {
+      foreach ($methodChecks as $check) {
+        if (!$check['pass']) {
+          return TRUE;
         }
+      }
     }
+  }
 
-    return false;
+  return FALSE;
 }
 
 /**
@@ -747,125 +747,151 @@ function has_validation_errors(array $results): bool
  * @return string
  *   The rendered tree output.
  */
-function render_validation_tree(array $results): string
-{
-    $bold = "\033[1m";
-    $green = "\033[32m";
-    $yellow = "\033[33m";
-    $dim = "\033[2m";
-    $reset = "\033[0m";
+function render_validation_tree(array $results): string {
+  $bold = "\033[1m";
+  $green = "\033[32m";
+  $yellow = "\033[33m";
+  $dim = "\033[2m";
+  $reset = "\033[0m";
 
-    $symbols = [
-        'step_wording' => ['pass' => '◆', 'warn' => '◇', 'label' => 'Step wording'],
-        'method_naming' => ['pass' => '▲', 'warn' => '△', 'label' => 'Method naming'],
-        'single_step' => ['pass' => '●', 'warn' => '○', 'label' => 'Single step'],
-        'has_example' => ['pass' => '✦', 'warn' => '✧', 'label' => 'Example'],
-        'regex_convertible' => ['pass' => '⬢', 'warn' => '⬡', 'label' => 'Regex usage'],
-    ];
+  $symbols = [
+    'step_wording' => ['pass' => '◆', 'warn' => '◇', 'label' => 'Step wording'],
+    'method_naming' => ['pass' => '▲', 'warn' => '△', 'label' => 'Method naming'],
+    'single_step' => ['pass' => '●', 'warn' => '○', 'label' => 'Single step'],
+    'has_example' => ['pass' => '✦', 'warn' => '✧', 'label' => 'Example'],
+    'regex_convertible' => ['pass' => '⬢', 'warn' => '⬡', 'label' => 'Regex usage'],
+  ];
 
-    // Count totals and violations per category.
-    $total_classes = count($results);
-    $total_methods = 0;
-    $total_violations = 0;
-    $counts = ['step_wording' => 0, 'method_naming' => 0, 'single_step' => 0, 'has_example' => 0, 'regex_convertible' => 0, 'file' => 0];
-    foreach ($results as $class_result) {
-        if (!$class_result['file']['pass']) {
-            $counts['file']++;
-            $total_violations++;
+  // Count totals and violations per category.
+  $totalClasses = count($results);
+  $totalMethods = 0;
+  $totalViolations = 0;
+  $counts = [
+    'step_wording' => 0,
+    'method_naming' => 0,
+    'single_step' => 0,
+    'has_example' => 0,
+    'regex_convertible' => 0,
+    'file' => 0,
+  ];
+  foreach ($results as $classResult) {
+    if (!$classResult['file']['pass']) {
+      $counts['file']++;
+      $totalViolations++;
+    }
+    foreach ($classResult['methods'] as $methodChecks) {
+      $totalMethods++;
+      foreach (array_keys($symbols) as $key) {
+        if (!$methodChecks[$key]['pass']) {
+          $counts[$key]++;
+          $totalViolations++;
         }
-        foreach ($class_result['methods'] as $method_checks) {
-            $total_methods++;
-            foreach (array_keys($symbols) as $key) {
-                if (!$method_checks[$key]['pass']) {
-                    $counts[$key]++;
-                    $total_violations++;
-                }
-            }
-        }
+      }
+    }
+  }
+
+  $output = '';
+  $output .= $yellow . 'Validation warnings:' . $reset . PHP_EOL . PHP_EOL;
+
+  $classNames = array_keys($results);
+
+  foreach ($classNames as $className) {
+    $classResult = $results[$className];
+    $output .= $bold . $className . $reset . PHP_EOL;
+
+    $methodNames = array_keys($classResult['methods']);
+    $totalChildren = 1 + count($methodNames);
+    $childIndex = 0;
+
+    // File check.
+    $childIndex++;
+    $isLast = ($childIndex === $totalChildren);
+    $branch = $isLast ? '└── ' : '├── ';
+
+    $fileCont = $isLast ? '    ' : '│   ';
+    if ($classResult['file']['pass']) {
+      $output .= '  ' . $branch . $green . '■' . $reset . ' Example file present' . PHP_EOL;
+    }
+    else {
+      $output .= '  ' . $branch . $yellow . '□' . $reset . ' Example file absent' . PHP_EOL;
+      $output .= '  ' . $fileCont . '  ' . $dim . $classResult['file']['path'] . $reset . PHP_EOL;
     }
 
-    $output = '';
-    $output .= $yellow . 'Validation warnings:' . $reset . PHP_EOL . PHP_EOL;
+    // Methods.
+    foreach ($methodNames as $methodName) {
+      $childIndex++;
+      $isLastMethod = ($childIndex === $totalChildren);
+      $methodBranch = $isLastMethod ? '└── ' : '├── ';
+      $methodCont = $isLastMethod ? '    ' : '│   ';
 
-    $class_names = array_keys($results);
+      $output .= '  ' . $methodBranch . $methodName . PHP_EOL;
 
-    foreach ($class_names as $class_name) {
-        $class_result = $results[$class_name];
-        $output .= $bold . $class_name . $reset . PHP_EOL;
+      $checks = $classResult['methods'][$methodName];
+      $checkKeys = array_keys($symbols);
+      $totalChecks = count($checkKeys);
 
-        $method_names = array_keys($class_result['methods']);
-        $total_children = 1 + count($method_names);
-        $child_index = 0;
+      foreach ($checkKeys as $ki => $checkKey) {
+        $check = $checks[$checkKey];
+        $sym = $symbols[$checkKey];
+        $isLastCheck = ($ki === $totalChecks - 1);
+        $checkBranch = $isLastCheck ? '└── ' : '├── ';
+        $checkCont = $isLastCheck ? '      ' : '│     ';
 
-        // File check.
-        $child_index++;
-        $is_last = ($child_index === $total_children);
-        $branch = $is_last ? '└── ' : '├── ';
-
-        $file_cont = $is_last ? '    ' : '│   ';
-        if ($class_result['file']['pass']) {
-            $output .= '  ' . $branch . $green . '■' . $reset . ' Example file present' . PHP_EOL;
-        } else {
-            $output .= '  ' . $branch . $yellow . '□' . $reset . ' Example file absent' . PHP_EOL;
-            $output .= '  ' . $file_cont . '  ' . $dim . $class_result['file']['path'] . $reset . PHP_EOL;
+        if ($check['pass']) {
+          $output .= '  ' . $methodCont . $checkBranch . $green . $sym['pass'] . $reset . ' ' . $sym['label'] . PHP_EOL;
         }
-
-        // Methods.
-        foreach ($method_names as $method_name) {
-            $child_index++;
-            $is_last_method = ($child_index === $total_children);
-            $method_branch = $is_last_method ? '└── ' : '├── ';
-            $method_cont = $is_last_method ? '    ' : '│   ';
-
-            $output .= '  ' . $method_branch . $method_name . PHP_EOL;
-
-            $checks = $class_result['methods'][$method_name];
-            $check_keys = array_keys($symbols);
-            $total_checks = count($check_keys);
-
-            foreach ($check_keys as $ki => $check_key) {
-                $check = $checks[$check_key];
-                $sym = $symbols[$check_key];
-                $is_last_check = ($ki === $total_checks - 1);
-                $check_branch = $is_last_check ? '└── ' : '├── ';
-                $check_cont = $is_last_check ? '      ' : '│     ';
-
-                if ($check['pass']) {
-                    $output .= '  ' . $method_cont . $check_branch . $green . $sym['pass'] . $reset . ' ' . $sym['label'] . PHP_EOL;
-                } else {
-                    $output .= '  ' . $method_cont . $check_branch . $yellow . $sym['warn'] . $reset . ' ' . $sym['label'] . PHP_EOL;
-                    foreach ($check['messages'] as $message) {
-                        $output .= '  ' . $method_cont . $check_cont . $dim . $message . $reset . PHP_EOL;
-                    }
-                }
-            }
+        else {
+          $output .= '  ' . $methodCont . $checkBranch . $yellow . $sym['warn'] . $reset . ' ' . $sym['label'] . PHP_EOL;
+          foreach ($check['messages'] as $message) {
+            $output .= '  ' . $methodCont . $checkCont . $dim . $message . $reset . PHP_EOL;
+          }
         }
-
-        $output .= PHP_EOL;
+      }
     }
 
-    // Summary.
-    $output .= $yellow . 'Summary:' . $reset . PHP_EOL;
-    $output .= '  Scanned ' . $total_classes . ' classes, ' . $total_methods . ' steps.' . PHP_EOL . PHP_EOL;
+    $output .= PHP_EOL;
+  }
 
-    $summary_lines = [
-        ['Step wording',  $symbols['step_wording'],  $total_methods - $counts['step_wording'], $counts['step_wording'], $total_methods],
-        ['Method naming', $symbols['method_naming'], $total_methods - $counts['method_naming'], $counts['method_naming'], $total_methods],
-        ['Single step',   $symbols['single_step'],   $total_methods - $counts['single_step'], $counts['single_step'], $total_methods],
-        ['Example',       $symbols['has_example'],   $total_methods - $counts['has_example'], $counts['has_example'], $total_methods],
-        ['Regex usage',   $symbols['regex_convertible'], $total_methods - $counts['regex_convertible'], $counts['regex_convertible'], $total_methods],
-        ['Example file',  ['pass' => '■', 'warn' => '□'], $total_classes - $counts['file'], $counts['file'], $total_classes],
-    ];
+  // Summary.
+  $output .= $yellow . 'Summary:' . $reset . PHP_EOL;
+  $output .= '  Scanned ' . $totalClasses . ' classes, ' . $totalMethods . ' steps.' . PHP_EOL . PHP_EOL;
 
-    foreach ($summary_lines as [$label, $sym, $pass_count, $fail_count, $total]) {
-        $line_color = $fail_count > 0 ? $yellow : $green;
-        $check = $fail_count === 0 ? '✓' : '⚠';
-        $pass_str = str_pad((string) $pass_count, 3, ' ', STR_PAD_LEFT);
-        $fail_str = str_pad((string) $fail_count, 3, ' ', STR_PAD_LEFT);
-        $output .= $line_color . '  ' . sprintf('%-15s', $label) . $sym['pass'] . $pass_str . '  ' . $sym['warn'] . $fail_str . '  ' . $check . $reset . PHP_EOL;
-    }
+  $summaryLines = [
+    [
+      'Step wording', $symbols['step_wording'],
+      $totalMethods - $counts['step_wording'], $counts['step_wording'], $totalMethods,
+    ],
+    [
+      'Method naming', $symbols['method_naming'],
+      $totalMethods - $counts['method_naming'], $counts['method_naming'], $totalMethods,
+    ],
+    [
+      'Single step', $symbols['single_step'],
+      $totalMethods - $counts['single_step'], $counts['single_step'], $totalMethods,
+    ],
+    [
+      'Example', $symbols['has_example'],
+      $totalMethods - $counts['has_example'], $counts['has_example'], $totalMethods,
+    ],
+    [
+      'Regex usage', $symbols['regex_convertible'],
+      $totalMethods - $counts['regex_convertible'], $counts['regex_convertible'], $totalMethods,
+    ],
+    [
+      'Example file', ['pass' => '■', 'warn' => '□'],
+      $totalClasses - $counts['file'], $counts['file'], $totalClasses,
+    ],
+  ];
 
-    return $output;
+  foreach ($summaryLines as [$label, $sym, $passCount, $failCount, $total]) {
+    $lineColor = $failCount > 0 ? $yellow : $green;
+    $check = $failCount === 0 ? '✓' : '⚠';
+    $passStr = str_pad((string) $passCount, 3, ' ', STR_PAD_LEFT);
+    $failStr = str_pad((string) $failCount, 3, ' ', STR_PAD_LEFT);
+    $output .= $lineColor . '  ' . sprintf('%-15s', $label) . $sym['pass'] . $passStr . '  ' . $sym['warn'] . $failStr . '  ' . $check . $reset . PHP_EOL;
+  }
+
+  return $output;
 }
 
 /**
@@ -875,33 +901,32 @@ function render_validation_tree(array $results): string
  * - validation-summary.txt: The summary block.
  * - validation-details.txt: The per-context tree.
  *
- * @param string $tree_output
+ * @param string $treeOutput
  *   The rendered validation tree (with ANSI codes).
- * @param string $log_dir
+ * @param string $logDir
  *   The directory to write the log files to.
  */
-function write_validation_logs(string $tree_output, string $log_dir): void
-{
-    if (!is_dir($log_dir)) {
-        mkdir($log_dir, 0777, true);
-    }
+function write_validation_logs(string $treeOutput, string $logDir): void {
+  if (!is_dir($logDir)) {
+    mkdir($logDir, 0777, TRUE);
+  }
 
-    // Strip ANSI escape codes.
-    $plain = (string) preg_replace('/\033\[[0-9;]*m/', '', $tree_output);
+  // Strip ANSI escape codes.
+  $plain = (string) preg_replace('/\033\[[0-9;]*m/', '', $treeOutput);
 
-    if (empty(trim($plain))) {
-        file_put_contents($log_dir . '/validation-summary.txt', 'No validation warnings.' . PHP_EOL);
-        file_put_contents($log_dir . '/validation-details.txt', '');
-        return;
-    }
+  if (empty(trim($plain))) {
+    file_put_contents($logDir . '/validation-summary.txt', 'No validation warnings.' . PHP_EOL);
+    file_put_contents($logDir . '/validation-details.txt', '');
+    return;
+  }
 
-    // Split at "Summary:" line.
-    $parts = explode('Summary:', $plain, 2);
-    $details = trim($parts[0]);
-    $summary = isset($parts[1]) ? 'Summary:' . $parts[1] : $details;
+  // Split at "Summary:" line.
+  $parts = explode('Summary:', $plain, 2);
+  $details = trim($parts[0]);
+  $summary = isset($parts[1]) ? 'Summary:' . $parts[1] : $details;
 
-    file_put_contents($log_dir . '/validation-summary.txt', $summary);
-    file_put_contents($log_dir . '/validation-details.txt', $details . PHP_EOL);
+  file_put_contents($logDir . '/validation-summary.txt', $summary);
+  file_put_contents($logDir . '/validation-details.txt', $details . PHP_EOL);
 }
 
 /**
@@ -916,72 +941,70 @@ function write_validation_logs(string $tree_output, string $log_dir): void
  * @return string|null
  *   The turnip equivalent (e.g. '@Given I visit :arg1'), or NULL.
  */
-function regex_to_turnip(string $step): ?string
-{
-    // Extract annotation and pattern.
-    if (!preg_match('#^(@(?:Given|When|Then))\s+/\^(.*)\$/$#', $step, $matches)) {
-        return null;
+function regex_to_turnip(string $step): ?string {
+  // Extract annotation and pattern.
+  if (!preg_match('#^(@(?:Given|When|Then))\s+/\^(.*)\$/$#', $step, $matches)) {
+    return NULL;
+  }
+
+  $annotation = $matches[1];
+  $pattern = $matches[2];
+
+  // Check for regex features that cannot be expressed in turnip syntax.
+  // Alternation (|), optional groups (?), lookahead/lookbehind, quantifiers
+  // on non-capture-group content, character classes other than [^"]*.
+  // We only convert if the pattern is literal text with simple capture groups.
+  // Replace all capture groups with a placeholder to check the rest.
+  $argCount = 0;
+  $converted = preg_replace_callback('#\(([^)]*)\)#', function (array $m) use (&$argCount): string {
+      $inner = $m[1];
+      // Simple quoted string capture: [^"]*  or [^']*.
+    if ($inner === '[^"]*' || $inner === "[^']*") {
+        $argCount++;
+        return ':arg' . $argCount;
+    }
+      // Simple unquoted capture: .*  or .+.
+    if ($inner === '.*' || $inner === '.+') {
+        $argCount++;
+        return ':arg' . $argCount;
+    }
+      // Numeric capture: \d+ or [0-9]+.
+    if ($inner === '\d+' || $inner === '[0-9]+') {
+        $argCount++;
+        return ':arg' . $argCount;
+    }
+      // Word capture: \w+.
+    if ($inner === '\w+') {
+        $argCount++;
+        return ':arg' . $argCount;
     }
 
-    $annotation = $matches[1];
-    $pattern = $matches[2];
+      // Return original match to signal unconvertible pattern.
+      return $m[0];
+  }, $pattern);
 
-    // Check for regex features that cannot be expressed in turnip syntax.
-    // Alternation (|), optional groups (?), lookahead/lookbehind, quantifiers
-    // on non-capture-group content, character classes other than [^"]*.
-    // We only convert if the pattern is literal text with simple capture groups.
+  // If any capture group could not be converted, bail.
+  if ($converted === NULL || str_contains($converted, '(')) {
+    return NULL;
+  }
 
-    // Replace all capture groups with a placeholder to check the rest.
-    $arg_count = 0;
-    $converted = preg_replace_callback('#\(([^)]*)\)#', function (array $m) use (&$arg_count): string {
-        $inner = $m[1];
-        // Simple quoted string capture: [^"]*  or [^']*
-        if ($inner === '[^"]*' || $inner === "[^']*") {
-            $arg_count++;
-            return ':arg' . $arg_count;
-        }
-        // Simple unquoted capture: .*  or .+
-        if ($inner === '.*' || $inner === '.+') {
-            $arg_count++;
-            return ':arg' . $arg_count;
-        }
-        // Numeric capture: \d+ or [0-9]+
-        if ($inner === '\d+' || $inner === '[0-9]+') {
-            $arg_count++;
-            return ':arg' . $arg_count;
-        }
-        // Word capture: \w+
-        if ($inner === '\w+') {
-            $arg_count++;
-            return ':arg' . $arg_count;
-        }
+  // Check remaining literal text for regex metacharacters.
+  // Remove known-safe escaped characters first.
+  $literalCheck = preg_replace('#\\\\[/"\'.]#', '', $converted);
+  // If there are remaining backslash sequences or regex metacharacters, bail.
+  if ($literalCheck !== NULL && preg_match('#[\\\\.*+?\[\]{}|^$]#', $literalCheck)) {
+    return NULL;
+  }
 
-        // Return original match to signal unconvertible pattern.
-        return $m[0];
-    }, $pattern);
+  // Unescape safe characters in the converted pattern.
+  $converted = str_replace(['\\/', '\\"', "\\'", '\\.'], ['/', '"', "'", '.'], $converted);
 
-    // If any capture group could not be converted, bail.
-    if ($converted === null || str_contains($converted, '(')) {
-        return null;
-    }
+  // Remove surrounding quotes from capture group contexts.
+  // e.g., ":arg1" becomes :arg1 (Behat turnip handles quoting automatically).
+  $converted = preg_replace('#"(:arg\d+)"#', '$1', $converted);
+  $converted = preg_replace("#'(:arg\d+)'#", '$1', (string) $converted);
 
-    // Check remaining literal text for regex metacharacters.
-    // Remove known-safe escaped characters first.
-    $literal_check = preg_replace('#\\\\[/"\'.]#', '', $converted);
-    // If there are remaining backslash sequences or regex metacharacters, bail.
-    if ($literal_check !== null && preg_match('#[\\\\.*+?\[\]{}|^$]#', $literal_check)) {
-        return null;
-    }
-
-    // Unescape safe characters in the converted pattern.
-    $converted = str_replace(['\\/', '\\"', "\\'", '\\.'], ['/', '"', "'", '.'], $converted);
-
-    // Remove surrounding quotes from capture group contexts.
-    // e.g., ":arg1" becomes :arg1 (Behat turnip handles quoting automatically).
-    $converted = preg_replace('#"(:arg\d+)"#', '$1', $converted);
-    $converted = preg_replace("#'(:arg\d+)'#", '$1', (string) $converted);
-
-    return $annotation . ' ' . $converted;
+  return $annotation . ' ' . $converted;
 }
 
 /**
@@ -995,22 +1018,21 @@ function regex_to_turnip(string $step): ?string
  * @return string
  *   The converted string.
  */
-function camel_to_snake(string $string, string $separator = '_'): string
-{
-    $string = preg_replace_callback('/([^0-9])(\d+)/', static fn(array $matches): string => $matches[1] . $separator . $matches[2], $string);
+function camel_to_snake(string $string, string $separator = '_'): string {
+  $string = preg_replace_callback('/([^0-9])(\d+)/', static fn(array $matches): string => $matches[1] . $separator . $matches[2], $string);
 
-    $replacements = [];
-    foreach (mb_str_split((string) $string) as $key => $char) {
-        $lower_case_char = mb_strtolower($char);
-        if ($lower_case_char !== $char && $key !== 0) {
-            $replacements[$char] = $separator . $char;
-        }
+  $replacements = [];
+  foreach (mb_str_split((string) $string) as $key => $char) {
+    $lowerCaseChar = mb_strtolower($char);
+    if ($lowerCaseChar !== $char && $key !== 0) {
+      $replacements[$char] = $separator . $char;
     }
-    $string = str_replace(array_keys($replacements), array_values($replacements), (string) $string);
+  }
+  $string = str_replace(array_keys($replacements), array_values($replacements), (string) $string);
 
-    $string = trim($string, $separator);
+  $string = trim($string, $separator);
 
-    return mb_strtolower($string);
+  return mb_strtolower($string);
 }
 
 /**
@@ -1025,25 +1047,24 @@ function camel_to_snake(string $string, string $separator = '_'): string
  * @param string $replacement
  *   The replacement content.
  */
-function replace_content(string $haystack, string $start, string $end, string $replacement): string
-{
-    if (!str_contains($haystack, $start)) {
-        throw new \Exception('Start not found in the haystack');
-    }
+function replace_content(string $haystack, string $start, string $end, string $replacement): string {
+  if (!str_contains($haystack, $start)) {
+    throw new \Exception('Start not found in the haystack');
+  }
 
-    if (!str_contains($haystack, $end)) {
-        throw new \Exception('End not found in the haystack');
-    }
+  if (!str_contains($haystack, $end)) {
+    throw new \Exception('End not found in the haystack');
+  }
 
-    // Start should be before the end.
-    if (strpos($haystack, $start) > strpos($haystack, $end)) {
-        throw new \Exception('Start is after the end');
-    }
+  // Start should be before the end.
+  if (strpos($haystack, $start) > strpos($haystack, $end)) {
+    throw new \Exception('Start is after the end');
+  }
 
-    $pattern = '/' . preg_quote($start, '/') . '.*?' . preg_quote($end, '/') . '/s';
-    $replacement = $start . PHP_EOL . $replacement . PHP_EOL . $end;
+  $pattern = '/' . preg_quote($start, '/') . '.*?' . preg_quote($end, '/') . '/s';
+  $replacement = $start . PHP_EOL . $replacement . PHP_EOL . $end;
 
-    return (string) preg_replace($pattern, $replacement, $haystack);
+  return (string) preg_replace($pattern, $replacement, $haystack);
 }
 
 /**
@@ -1057,15 +1078,14 @@ function replace_content(string $haystack, string $start, string $end, string $r
  * @return string
  *   The markdown table.
  */
-function array_to_markdown_table(array $headers, array $rows): string
-{
-    if (empty($headers) || empty($rows)) {
-        return '';
-    }
+function array_to_markdown_table(array $headers, array $rows): string {
+  if (empty($headers) || empty($rows)) {
+    return '';
+  }
 
-    $header_row = '| ' . implode(' | ', $headers) . ' |';
-    $separator_row = '| ' . implode(' | ', array_fill(0, count($headers), '---')) . ' |';
-    $data_rows = array_map(fn(array $row): string => '| ' . implode(' | ', $row) . ' |', $rows);
+  $headerRow = '| ' . implode(' | ', $headers) . ' |';
+  $separatorRow = '| ' . implode(' | ', array_fill(0, count($headers), '---')) . ' |';
+  $dataRows = array_map(fn(array $row): string => '| ' . implode(' | ', $row) . ' |', $rows);
 
-    return implode("\n", array_merge([$header_row, $separator_row], $data_rows));
+  return implode("\n", array_merge([$headerRow, $separatorRow], $dataRows));
 }

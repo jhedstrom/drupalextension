@@ -10,61 +10,57 @@ namespace Drupal\DrupalExtension\Hook\Scope;
 
 use Behat\Behat\Context\Context;
 use Behat\Testwork\Environment\Environment;
-use Behat\Testwork\Hook\Scope\HookScope;
 
 /**
  * Represents an Entity hook scope.
  */
-abstract class BaseEntityScope implements EntityScope
-{
+abstract class BaseEntityScope implements EntityScope {
 
+  /**
+   * Initializes the scope.
+   */
+  public function __construct(
+    private readonly Environment $environment,
     /**
-     * Initializes the scope.
+     * Context object.
      */
-    public function __construct(
-        private readonly Environment $environment,
-        /**
-         * Context object.
-         */
-        private readonly Context $context,
-        /**
-         * Entity object.
-         */
-        private readonly \stdClass $entity
-    ) {
-    }
-
+    private readonly Context $context,
     /**
-     * Returns the context.
-     *
-     * @return \Behat\Behat\Context\Context
+     * Entity object.
      */
-    public function getContext()
-    {
-        return $this->context;
-    }
+    private readonly \stdClass $entity,
+  ) {
+  }
 
-    /**
-       * Returns the entity object.
-       */
-    public function getEntity(): \stdClass
-    {
-        return $this->entity;
-    }
+  /**
+   * Returns the context.
+   *
+   * @return \Behat\Behat\Context\Context
+   *   The context object.
+   */
+  public function getContext() {
+    return $this->context;
+  }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getEnvironment()
-    {
-        return $this->environment;
-    }
+  /**
+   * Returns the entity object.
+   */
+  public function getEntity(): \stdClass {
+    return $this->entity;
+  }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getSuite()
-    {
-        return $this->environment->getSuite();
-    }
+  /**
+   * {@inheritdoc}
+   */
+  public function getEnvironment() {
+    return $this->environment;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getSuite() {
+    return $this->environment->getSuite();
+  }
+
 }

@@ -7,19 +7,18 @@ namespace Drupal\DrupalExtension\Tests\Fixtures;
 /**
  * Abstract context for testing.
  */
-abstract class AbstractContext
-{
+abstract class AbstractContext {
 
-    /**
-     * Abstract step.
-     *
-     * @Given I am abstract
-     *
-     * @code
-     * Given I am abstract
-     * @endcode
-     */
-    public function abstractStep(): void
-    {
-    }
+  /**
+   * Abstract step.
+   *
+   * @Given I am abstract
+   *
+   * @code
+   * Given I am abstract
+   * @endcode
+   */
+  public function abstractStep(): void {
+  }
+
 }

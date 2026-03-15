@@ -12,19 +12,18 @@ namespace Drupal\DrupalExtension\Tests\Fixtures;
  * - First item
  * - Second item
  */
-class ListDescriptionContext
-{
+class ListDescriptionContext {
 
-    /**
-     * Step method.
-     *
-     * @Then the list should be visible
-     *
-     * @code
-     * Then the list should be visible
-     * @endcode
-     */
-    public function listAssertVisible(): void
-    {
-    }
+  /**
+   * Step method.
+   *
+   * @Then the list should be visible
+   *
+   * @code
+   * Then the list should be visible
+   * @endcode
+   */
+  public function listAssertVisible(): void {
+  }
+
 }

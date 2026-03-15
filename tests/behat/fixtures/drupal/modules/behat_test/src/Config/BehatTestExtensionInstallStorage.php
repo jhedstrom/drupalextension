@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\behat_test\Config;
 
 use Drupal\Core\Config\ExtensionInstallStorage;

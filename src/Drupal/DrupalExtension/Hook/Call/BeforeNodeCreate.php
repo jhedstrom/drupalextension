@@ -9,22 +9,20 @@ use Drupal\DrupalExtension\Hook\Scope\NodeScope;
 /**
  * BeforeNodeCreate hook class.
  */
-class BeforeNodeCreate extends EntityHook
-{
+class BeforeNodeCreate extends EntityHook {
 
-    /**
-     * Initializes hook.
-     */
-    public function __construct(string|null $filterString, array|callable $callable, string|null $description = null)
-    {
-        parent::__construct(NodeScope::BEFORE, $filterString, $callable, $description);
-    }
+  /**
+   * Initializes hook.
+   */
+  public function __construct(string|null $filterString, array|callable $callable, string|null $description = NULL) {
+    parent::__construct(NodeScope::BEFORE, $filterString, $callable, $description);
+  }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return 'BeforeNodeCreate';
-    }
+  /**
+   * {@inheritdoc}
+   */
+  public function getName() {
+    return 'BeforeNodeCreate';
+  }
+
 }

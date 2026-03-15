@@ -19,14 +19,14 @@ use Drupal\DrupalDriverManager;
  *
  * See the documentation on "Contributed module subcontexts".
  */
-interface DrupalSubContextInterface extends Context
-{
+interface DrupalSubContextInterface extends Context {
 
-    /**
-     * Instantiates the subcontext.
-     *
-     * @param \Drupal\DrupalDriverManager $drupal
-     *   The Drupal Driver manager.
-     */
-    public function __construct(DrupalDriverManager $drupal);
+  /**
+   * Instantiates the subcontext.
+   *
+   * @param \Drupal\DrupalDriverManager $drupal
+   *   The Drupal Driver manager.
+   */
+  public function __construct(DrupalDriverManager $drupal);
+
 }

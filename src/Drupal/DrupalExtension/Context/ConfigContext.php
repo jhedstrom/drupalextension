@@ -14,114 +14,109 @@ use Behat\Gherkin\Node\TableNode;
 /**
  * Provides pre-built step definitions for interacting with Drupal config.
  */
-class ConfigContext extends RawDrupalContext implements TranslatableContext
-{
+class ConfigContext extends RawDrupalContext implements TranslatableContext {
 
-    /**
-     * {@inheritdoc}
-     */
-    public static function getTranslationResources()
-    {
-        return glob(__DIR__ . '/../../../../i18n/*.xliff');
-    }
+  /**
+   * {@inheritdoc}
+   */
+  public static function getTranslationResources() {
+    return glob(__DIR__ . '/../../../../i18n/*.xliff');
+  }
 
-    /**
-     * Keep track of any config that was changed so they can easily be reverted.
-     *
-     * @var array
-     */
-    protected $config = [];
+  /**
+   * Keep track of any config that was changed so they can easily be reverted.
+   *
+   * @var array
+   */
+  protected $config = [];
 
-    /**
-     * Revert any changed config.
-     *
-     * @AfterScenario
-     */
-    public function cleanConfig(): void
-    {
-        // Revert config that was changed.
-        foreach ($this->config as $name => $keyValue) {
-            foreach ($keyValue as $key => $value) {
-                $this->getDriver()->configSet($name, $key, $value);
-            }
-        }
-        $this->config = [];
-    }
-
-    /**
-     * Sets basic configuration item.
-     *
-     * @param string $name
-     *   The name of the configuration object.
-     * @param string $key
-     *   Identifier to store value in configuration.
-     * @param string $value
-     *   Value to associate with identifier.
-     *
-     * @code
-     * Given I set the configuration item "system.site" with key "name" to "My Site"
-     * @endcode
-     *
-     * @Given I set the configuration item :name with key :key to :value
-     */
-    public function setBasicConfig(string $name, string $key, string $value): void
-    {
-        $this->setConfig($name, $key, $value);
-    }
-
-    /**
-     * Sets complex configuration.
-     *
-     * @param string $name
-     *   The name of the configuration object.
-     * @param string $key
-     *   Identifier to store value in configuration.
-     * @param TableNode $config_table
-     *   The table listing configuration keys and values.
-     *
-     * @code
-     * Given I set the configuration item "system.site" with key "page" with values:
-     *   | key   | value  |
-     *   | front | /node  |
-     *   | 403   | /error |
-     * @endcode
-     *
-     * @Given I set the configuration item :name with key :key with values:
-     */
-    public function setComplexConfig(string $name, string $key, TableNode $config_table): void
-    {
-        $value = [];
-        foreach ($config_table->getHash() as $row) {
-            // Allow json values for extra complexity.
-            if (json_decode($row['value'])) {
-                $row['value'] = json_decode($row['value'], true);
-            }
-            $value[$row['key']] = $row['value'];
-        }
-        $this->setConfig($name, $key, $value);
-    }
-
-    /**
-     * Sets a value in a configuration object.
-     *
-     * @param string $name
-     *   The name of the configuration object.
-     * @param string $key
-     *   Identifier to store value in configuration.
-     * @param mixed $value
-     *   Value to associate with identifier.
-     */
-    public function setConfig(string $name, string $key, mixed $value): void
-    {
-        $backup = $this->getDriver()->configGet($name, $key);
+  /**
+   * Revert any changed config.
+   *
+   * @AfterScenario
+   */
+  public function cleanConfig(): void {
+    // Revert config that was changed.
+    foreach ($this->config as $name => $keyValue) {
+      foreach ($keyValue as $key => $value) {
         $this->getDriver()->configSet($name, $key, $value);
-        if (!array_key_exists($name, $this->config)) {
-            $this->config[$name][$key] = $backup;
-            return;
-        }
-
-        if (!array_key_exists($key, $this->config[$name])) {
-            $this->config[$name][$key] = $backup;
-        }
+      }
     }
+    $this->config = [];
+  }
+
+  /**
+   * Sets basic configuration item.
+   *
+   * @param string $name
+   *   The name of the configuration object.
+   * @param string $key
+   *   Identifier to store value in configuration.
+   * @param string $value
+   *   Value to associate with identifier.
+   *
+   * @code
+   *   Given I set the configuration item "system.site" with key "name" to "My Site"
+   * @endcode
+   *
+   * @Given I set the configuration item :name with key :key to :value
+   */
+  public function setBasicConfig(string $name, string $key, string $value): void {
+    $this->setConfig($name, $key, $value);
+  }
+
+  /**
+   * Sets complex configuration.
+   *
+   * @param string $name
+   *   The name of the configuration object.
+   * @param string $key
+   *   Identifier to store value in configuration.
+   * @param \Behat\Gherkin\Node\TableNode $config_table
+   *   The table listing configuration keys and values.
+   *
+   * @code
+   *   Given I set the configuration item "system.site" with key "page" with values:
+   *     | key   | value  |
+   *     | front | /node  |
+   *     | 403   | /error |
+   * @endcode
+   *
+   * @Given I set the configuration item :name with key :key with values:
+   */
+  public function setComplexConfig(string $name, string $key, TableNode $config_table): void {
+    $value = [];
+    foreach ($config_table->getHash() as $row) {
+      // Allow json values for extra complexity.
+      if (json_decode($row['value'])) {
+        $row['value'] = json_decode($row['value'], TRUE);
+      }
+      $value[$row['key']] = $row['value'];
+    }
+    $this->setConfig($name, $key, $value);
+  }
+
+  /**
+   * Sets a value in a configuration object.
+   *
+   * @param string $name
+   *   The name of the configuration object.
+   * @param string $key
+   *   Identifier to store value in configuration.
+   * @param mixed $value
+   *   Value to associate with identifier.
+   */
+  public function setConfig(string $name, string $key, mixed $value): void {
+    $backup = $this->getDriver()->configGet($name, $key);
+    $this->getDriver()->configSet($name, $key, $value);
+    if (!array_key_exists($name, $this->config)) {
+      $this->config[$name][$key] = $backup;
+      return;
+    }
+
+    if (!array_key_exists($key, $this->config[$name])) {
+      $this->config[$name][$key] = $backup;
+    }
+  }
+
 }

@@ -13,32 +13,32 @@ use Behat\Behat\Hook\Scope\BeforeScenarioScope;
  * @see https://github.com/Behat/Behat/issues/650
  * The solution is documented in this issue: https://github.com/Behat/Behat/issues/703#issuecomment-86687563
  */
-trait ScenarioTrait
-{
+trait ScenarioTrait {
 
-    /**
-     * The registered scenario.
-     *
-     * @var \Behat\Gherkin\Node\ScenarioInterface
-     */
-    protected $currentScenario;
+  /**
+   * The registered scenario.
+   *
+   * @var \Behat\Gherkin\Node\ScenarioInterface
+   */
+  protected $currentScenario;
 
-    /**
-     * Register the scenario.
-     *
-     *
-     * @BeforeScenario
-     */
-    public function registerScenario(BeforeScenarioScope $scope): void
-    {
-        $this->currentScenario = $scope->getScenario();
-    }
+  /**
+   * Register the scenario.
+   *
+   * @BeforeScenario
+   */
+  public function registerScenario(BeforeScenarioScope $scope): void {
+    $this->currentScenario = $scope->getScenario();
+  }
 
-    /**
-     * @return \Behat\Gherkin\Node\ScenarioInterface
-     */
-    protected function getScenario()
-    {
-        return $this->currentScenario;
-    }
+  /**
+   * Returns the current scenario.
+   *
+   * @return \Behat\Gherkin\Node\ScenarioInterface
+   *   The current scenario.
+   */
+  protected function getScenario() {
+    return $this->currentScenario;
+  }
+
 }

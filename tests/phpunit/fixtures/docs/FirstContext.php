@@ -7,19 +7,18 @@ namespace Drupal\DrupalExtension\Tests\Fixtures;
 /**
  * First context for testing.
  */
-class FirstContext
-{
+class FirstContext {
 
-    /**
-     * First method.
-     *
-     * @Then the first should pass
-     *
-     * @code
-     * Then the first should pass
-     * @endcode
-     */
-    public function firstAssertFirst(): void
-    {
-    }
+  /**
+   * First method.
+   *
+   * @Then the first should pass
+   *
+   * @code
+   * Then the first should pass
+   * @endcode
+   */
+  public function firstAssertFirst(): void {
+  }
+
 }

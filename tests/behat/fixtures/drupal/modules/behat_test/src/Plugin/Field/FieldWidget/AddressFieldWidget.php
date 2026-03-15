@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\behat_test\Plugin\Field\FieldWidget;
 
 use Drupal\Core\Field\FieldItemListInterface;

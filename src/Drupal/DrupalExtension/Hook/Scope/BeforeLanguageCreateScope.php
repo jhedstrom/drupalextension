@@ -11,16 +11,16 @@ namespace Drupal\DrupalExtension\Hook\Scope;
 /**
  * Represents a language hook scope.
  */
-final class BeforeLanguageCreateScope extends LanguageScope
-{
+final class BeforeLanguageCreateScope extends LanguageScope {
 
-    /**
-     * Returns the scope name.
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return self::BEFORE;
-    }
+  /**
+   * Returns the scope name.
+   *
+   * @return string
+   *   The hook scope name.
+   */
+  public function getName() {
+    return self::BEFORE;
+  }
+
 }

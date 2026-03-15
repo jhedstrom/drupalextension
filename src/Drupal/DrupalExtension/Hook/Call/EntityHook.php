@@ -10,14 +10,13 @@ use Behat\Testwork\Hook\Scope\HookScope;
 /**
  * Entity hook class.
  */
-abstract class EntityHook extends RuntimeFilterableHook
-{
+abstract class EntityHook extends RuntimeFilterableHook {
 
-    /**
-     * {@inheritdoc}
-     */
-    public function filterMatches(HookScope $scope)
-    {
-        return null === ($filterString = $this->getFilterString());
-    }
+  /**
+   * {@inheritdoc}
+   */
+  public function filterMatches(HookScope $scope) {
+    return NULL === ($filterString = $this->getFilterString());
+  }
+
 }

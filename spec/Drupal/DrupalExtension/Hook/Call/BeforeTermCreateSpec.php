@@ -6,27 +6,28 @@ use Drupal\DrupalExtension\Context\Annotation\Reader;
 use Drupal\DrupalExtension\Hook\Call\BeforeTermCreate;
 use PhpSpec\ObjectBehavior;
 
-class BeforeTermCreateSpec extends ObjectBehavior
-{
-    function it_accepts_a_callable()
-    {
-        $this->beConstructedWith(null, [Reader::class, 'readCallee'], null);
-        $this->shouldHaveType(BeforeTermCreate::class);
-        $this->getName()->shouldReturn('BeforeTermCreate');
-    }
+/**
+ * Tests the BeforeTermCreate class.
+ */
+class BeforeTermCreateSpec extends ObjectBehavior {
 
-    function it_accepts_an_array()
-    {
-        // Simulates the scenario where the context class is not yet
-        // autoloadable and the callable array cannot be validated by PHP
-        // as a true callable at construction time.
-        $this->beConstructedWith(null, [Reader::class, 'readCallee'], null);
-        $this->shouldHaveType(BeforeTermCreate::class);
-    }
+  public function it_accepts_a_callable() {
+    $this->beConstructedWith(NULL, [Reader::class, 'readCallee'], NULL);
+    $this->shouldHaveType(BeforeTermCreate::class);
+    $this->getName()->shouldReturn('BeforeTermCreate');
+  }
 
-    function it_accepts_a_filter_string()
-    {
-        $this->beConstructedWith('tags', [Reader::class, 'readCallee'], null);
-        $this->getFilterString()->shouldReturn('tags');
-    }
+  public function it_accepts_an_array() {
+    // Simulates the scenario where the context class is not yet
+    // autoloadable and the callable array cannot be validated by PHP
+    // as a true callable at construction time.
+    $this->beConstructedWith(NULL, [Reader::class, 'readCallee'], NULL);
+    $this->shouldHaveType(BeforeTermCreate::class);
+  }
+
+  public function it_accepts_a_filter_string() {
+    $this->beConstructedWith('tags', [Reader::class, 'readCallee'], NULL);
+    $this->getFilterString()->shouldReturn('tags');
+  }
+
 }

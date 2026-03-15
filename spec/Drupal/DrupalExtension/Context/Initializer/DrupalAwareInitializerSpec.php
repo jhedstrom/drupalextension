@@ -16,39 +16,43 @@ use Behat\Testwork\Hook\HookRepository;
 use Drupal\DrupalExtension\Manager\DrupalAuthenticationManagerInterface;
 use Drupal\DrupalExtension\Manager\DrupalUserManagerInterface;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
-class DrupalAwareInitializerSpec extends ObjectBehavior
-{
-    private $dispatcher;
+/**
+ * Tests the DrupalAwareInitializer class.
+ */
+class DrupalAwareInitializerSpec extends ObjectBehavior {
 
-    function let(DrupalDriverManager $drupal, DrupalAuthenticationManagerInterface $authenticationManager, DrupalUserManagerInterface $userManager)
-    {
-        $callCenter = new CallCenter();
-        $manager = new EnvironmentManager();
-        $repository = new HookRepository($manager);
-        // Cannot mock this class as it is marked as final.
-        $this->dispatcher = new HookDispatcher($repository, $callCenter);
-        $this->beConstructedWith($drupal, [], $this->dispatcher, $authenticationManager, $userManager);
-    }
+  /**
+   * The event dispatcher.
+   *
+   * @var mixed
+   */
+  private $dispatcher;
 
-    function it_is_a_context_initializer()
-    {
-        $this->shouldHaveType(ContextInitializer::class);
-    }
+  public function let(DrupalDriverManager $drupal, DrupalAuthenticationManagerInterface $authenticationManager, DrupalUserManagerInterface $userManager) {
+    $callCenter = new CallCenter();
+    $manager = new EnvironmentManager();
+    $repository = new HookRepository($manager);
+    // Cannot mock this class as it is marked as final.
+    $this->dispatcher = new HookDispatcher($repository, $callCenter);
+    $this->beConstructedWith($drupal, [], $this->dispatcher, $authenticationManager, $userManager);
+  }
 
-    function it_does_nothing_for_basic_contexts(Context $context)
-    {
-        $this->initializeContext($context);
-    }
+  public function it_is_a_context_initializer() {
+    $this->shouldHaveType(ContextInitializer::class);
+  }
 
-    function it_injects_drupal_and_parameters_and_dispatcher_and_user_manager_in_drupal_aware_Contexts(DrupalAwareInterface $context, $drupal, DrupalAuthenticationManagerInterface $authenticationManager, DrupalUserManagerInterface $userManager)
-    {
-        $context->setDispatcher($this->dispatcher)->shouldBeCAlled();
-        $context->setDrupal($drupal)->shouldBeCAlled();
-        $context->setDrupalParameters([])->shouldBeCAlled();
-        $context->setAuthenticationManager($authenticationManager)->shouldBeCalled();
-        $context->setUserManager($userManager)->shouldBeCalled();
-        $this->initializeContext($context);
-    }
+  public function it_does_nothing_for_basic_contexts(Context $context) {
+    $this->initializeContext($context);
+  }
+
+  public function it_injects_drupal_and_parameters_and_dispatcher_and_user_manager_in_drupal_aware_Contexts(DrupalAwareInterface $context, $drupal, DrupalAuthenticationManagerInterface $authenticationManager, DrupalUserManagerInterface $userManager) {
+    $context->setDispatcher($this->dispatcher)->shouldBeCAlled();
+    $context->setDrupal($drupal)->shouldBeCAlled();
+    $context->setDrupalParameters([])->shouldBeCAlled();
+    $context->setAuthenticationManager($authenticationManager)->shouldBeCalled();
+    $context->setUserManager($userManager)->shouldBeCalled();
+    $this->initializeContext($context);
+  }
+
 }
