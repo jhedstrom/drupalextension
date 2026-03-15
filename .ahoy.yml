@@ -16,6 +16,7 @@ commands:
     cmd: |
       ahoy composer self-update
       ahoy composer require --no-interaction --dev --no-update drupal/core:^${DRUPAL_VERSION:-11} drupal/core-composer-scaffold:^${DRUPAL_VERSION:-11}
+      if [ "${DRUPAL_VERSION:-11}" != "11" ]; then ahoy composer remove --no-interaction --dev --no-update phpunit/phpunit; fi
       ahoy composer install
       ahoy cli cp -r tests/behat/fixtures/drupal/drush build/drush
 
