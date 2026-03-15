@@ -416,6 +416,20 @@ Then I should see the "Edit" in the "My article" row
 </details>
 
 <details>
+  <summary><code>@Then I should not see the :link in the :rowText row</code></summary>
+
+<br/>
+Asserts a link does not exist in a table row containing given text
+<br/><br/>
+
+```gherkin
+Then I should not see the "Delete" in the "My article" row
+
+```
+
+</details>
+
+<details>
   <summary><code>@Then I should be able to edit a/an :type( content)</code></summary>
 
 <br/>

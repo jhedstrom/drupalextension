@@ -146,6 +146,33 @@ Feature: DrupalContext coverage gaps
       """
 
   @test-drupal @api
+  Scenario: Assert "Then I should not see the :link in the :rowText row" passes
+    Given I am logged in as a user with the "administrator" role
+    And "article" content:
+      | title         | status |
+      | Link row test | 1      |
+    When I go to "admin/content"
+    Then I should not see the "Nonexistent link" in the "Link row test" row
+
+  @test-drupal @api
+  Scenario: Assert "Then I should not see the :link in the :rowText row" fails for existing link
+    Given some behat configuration
+    And scenario steps tagged with "@test-drupal @api":
+      """
+      Given I am logged in as a user with the "administrator" role
+      And "article" content:
+        | title         | status |
+        | Link row test | 1      |
+      When I go to "admin/content"
+      Then I should not see the "Edit" in the "Link row test" row
+      """
+    When I run behat with drupal profile
+    Then it should fail with an error:
+      """
+      with a "Edit" link
+      """
+
+  @test-drupal @api
   Scenario: Assert "Given I click :link in the :rowText row" fails when link not in row
     Given some behat configuration
     And scenario steps tagged with "@test-drupal @api":
