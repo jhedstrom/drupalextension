@@ -43,7 +43,7 @@ class RawDrupalContextSpec extends ObjectBehavior {
   }
 
   public function it_can_get_the_current_drupal_driver(DrupalDriverManagerInterface $drupal, DriverInterface $driver) {
-    $drupal->getDriver($this->an)->willReturn($driver);
+    $drupal->getDriver(NULL)->willReturn($driver);
     $this->setDrupal($drupal);
     $this->getDriver()->shouldBeAnInstanceOf(DriverInterface::class);
   }
