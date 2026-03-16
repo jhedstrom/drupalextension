@@ -265,14 +265,13 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
   /**
    * Dispatch scope hooks.
    *
-   * @param string $scopeType
-   *   The entity scope to dispatch.
+   * @param class-string $scopeClass
+   *   The fully-qualified scope class name.
    * @param \stdClass $entity
    *   The entity.
    */
-  protected function dispatchHooks(string $scopeType, \stdClass $entity) {
-    $fullScopeClass = 'Drupal\\DrupalExtension\\Hook\\Scope\\' . $scopeType;
-    $scope = new $fullScopeClass($this->getDrupal()->getEnvironment(), $this, $entity);
+  protected function dispatchHooks(string $scopeClass, \stdClass $entity) {
+    $scope = new $scopeClass($this->getDrupal()->getEnvironment(), $this, $entity);
     $callResults = $this->dispatcher->dispatchScopeHooks($scope);
 
     // The dispatcher suppresses exceptions, throw them here if there are any.
