@@ -153,6 +153,10 @@ class MinkContext extends MinkExtension implements TranslatableContext {
    * @Given I wait for AJAX to finish
    */
   public function iWaitForAjaxToFinish(mixed $event = NULL): void {
+    if (!$this->getSession()->isStarted()) {
+      return;
+    }
+
     $condition = <<<JS
     (function() {
       function isAjaxing(instance) {
