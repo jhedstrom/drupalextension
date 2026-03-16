@@ -68,7 +68,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
     $roles = explode(',', $role);
     $roles = array_map(trim(...), $roles);
     foreach ($roles as $role) {
-      if (!in_array(strtolower($role), ['authenticated', 'authenticated user'])) {
+      if (!in_array(strtolower($role), ['authenticated', 'authenticated user'], TRUE)) {
         // Only add roles other than 'authenticated user'.
         $this->getDriver()->userAddRole($user, $role);
       }
@@ -108,7 +108,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
     $roles = explode(',', $role);
     $roles = array_map(trim(...), $roles);
     foreach ($roles as $role) {
-      if (!in_array(strtolower($role), ['authenticated', 'authenticated user'])) {
+      if (!in_array(strtolower($role), ['authenticated', 'authenticated user'], TRUE)) {
         // Only add roles other than 'authenticated user'.
         $this->getDriver()->userAddRole($user, $role);
       }

@@ -1,5 +1,6 @@
 *.phar
 *.tgz
+.env
 /.logs
 /build
 /composer.lock

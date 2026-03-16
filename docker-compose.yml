@@ -55,10 +55,10 @@ services:
       - "--entrypoints.http-80.address=:80"
       - "--entrypoints.http-443.address=:443"
     ports:
-      - "80:80"
-      - "443:443"
+      - "${PROXY_HTTP_PORT:-80}:80"
+      - "${PROXY_HTTPS_PORT:-443}:443"
       # The Web UI (enabled by --api.insecure=true)
-      - "8080:8080"
+      - "${PROXY_DASHBOARD_PORT:-8080}:8080"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     labels:
@@ -114,7 +114,7 @@ services:
   chrome:
     image: selenium/standalone-chromium:145.0
     ports:
-      - "7900:7900"
+      - "${CHROME_VNC_PORT:-7900}:7900"
     expose:
       - "8888"
     shm_size: '1gb'
