@@ -24,6 +24,11 @@ class FeatureContext extends RawDrupalContext {
   use TagTrait;
 
   /**
+   * The previously remembered user name.
+   */
+  protected string $previousUserName = '';
+
+  /**
    * Stop Mink sessions before scenarios that will spawn sub-processes.
    *
    * When a @javascript scenario runs in the parent process, Mink keeps the
@@ -340,6 +345,37 @@ class FeatureContext extends RawDrupalContext {
       $actualTime = \Drupal::state()->get('behat_test.cron_actual_time');
       throw new ExpectationException(
         sprintf('Cron request time drift is %d seconds (request_time=%d, actual_time=%d), expected less than %d.', $drift, $requestTime, $actualTime, $seconds),
+        $this->getSession()->getDriver()
+      );
+    }
+  }
+
+  /**
+   * Stores the current user name for later comparison.
+   *
+   * @Given I remember the current user name
+   */
+  public function testRememberCurrentUserName(): void {
+    $user = $this->getUserManager()->getCurrentUser();
+    if (!$user) {
+      throw new \LogicException('No current user in the user manager.');
+    }
+    $this->previousUserName = $user->name;
+  }
+
+  /**
+   * Asserts the current user name differs from the previously remembered one.
+   *
+   * @Then the current user should be different from the remembered user
+   */
+  public function testAssertDifferentUser(): void {
+    $user = $this->getUserManager()->getCurrentUser();
+    if (!$user) {
+      throw new \LogicException('No current user in the user manager.');
+    }
+    if ($user->name === $this->previousUserName) {
+      throw new ExpectationException(
+        sprintf('Expected a different user but got the same user "%s".', $user->name),
         $this->getSession()->getDriver()
       );
     }

@@ -29,6 +29,13 @@ Feature: DrupalContext coverage gaps
     Then I should see the link "My account"
 
   @test-drupal @api
+  Scenario: Assert "Given I am logged in as a user with the :role role" always creates a fresh user
+    Given I am logged in as a user with the "authenticated user" role
+    And I remember the current user name
+    When I am logged in as a user with the "authenticated user" role
+    Then the current user should be different from the remembered user
+
+  @test-drupal @api
   Scenario: Assert "Given I am an anonymous user" passes
     Given I am an anonymous user
     When I visit "/user/login"
