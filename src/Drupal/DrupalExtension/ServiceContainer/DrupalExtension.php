@@ -219,21 +219,15 @@ class DrupalExtension implements ExtensionInterface {
   /**
    * Load test parameters.
    */
-  private function loadParameters(ContainerBuilder $container, array $config): void {
-    // Store config in parameters array to be passed into the DrupalContext.
-    $drupalParameters = [];
-    foreach ($config as $key => $value) {
-      $drupalParameters[$key] = $value;
-    }
-    $container->setParameter('drupal.parameters', $drupalParameters);
-
+  protected function loadParameters(ContainerBuilder $container, array $config): void {
+    $container->setParameter('drupal.parameters', $config);
     $container->setParameter('drupal.region_map', $config['region_map']);
   }
 
   /**
    * Load the blackbox driver.
    */
-  private function loadBlackBox(FileLoader $loader): void {
+  protected function loadBlackBox(FileLoader $loader): void {
     // Always include the blackbox driver.
     $loader->load('drivers/blackbox.yml');
   }
@@ -241,7 +235,7 @@ class DrupalExtension implements ExtensionInterface {
   /**
    * Load the Drupal driver.
    */
-  private function loadDrupal(FileLoader $loader, ContainerBuilder $container, array $config): void {
+  protected function loadDrupal(FileLoader $loader, ContainerBuilder $container, array $config): void {
     if (isset($config['drupal'])) {
       $loader->load('drivers/drupal.yml');
       $container->setParameter('drupal.driver.drupal.drupal_root', $config['drupal']['drupal_root']);
@@ -251,7 +245,7 @@ class DrupalExtension implements ExtensionInterface {
   /**
    * Load the Drush driver.
    */
-  private function loadDrush(FileLoader $loader, ContainerBuilder $container, array $config): void {
+  protected function loadDrush(FileLoader $loader, ContainerBuilder $container, array $config): void {
     if (isset($config['drush'])) {
       $loader->load('drivers/drush.yml');
       if (!isset($config['drush']['alias']) && !isset($config['drush']['root'])) {
@@ -274,7 +268,7 @@ class DrupalExtension implements ExtensionInterface {
   /**
    * Set global drush arguments.
    */
-  private function setDrushOptions(ContainerBuilder $container, array $config): void {
+  protected function setDrushOptions(ContainerBuilder $container, array $config): void {
     if (isset($config['drush']['global_options'])) {
       $definition = $container->getDefinition('drupal.driver.drush');
       $definition->addMethodCall('setArguments', [$config['drush']['global_options']]);
@@ -284,7 +278,7 @@ class DrupalExtension implements ExtensionInterface {
   /**
    * Process the Driver Pass.
    */
-  private function processDriverPass(ContainerBuilder $container): void {
+  protected function processDriverPass(ContainerBuilder $container): void {
     $driverPass = new DriverPass();
     $driverPass->process($container);
   }
@@ -292,7 +286,7 @@ class DrupalExtension implements ExtensionInterface {
   /**
    * Process the Event Subscriber Pass.
    */
-  private function processEventSubscriberPass(ContainerBuilder $container): void {
+  protected function processEventSubscriberPass(ContainerBuilder $container): void {
     $eventSubscriberPass = new EventSubscriberPass();
     $eventSubscriberPass->process($container);
   }
@@ -300,7 +294,7 @@ class DrupalExtension implements ExtensionInterface {
   /**
    * Process the Environment Reader pass.
    */
-  private function processEnvironmentReaderPass(ContainerBuilder $container): void {
+  protected function processEnvironmentReaderPass(ContainerBuilder $container): void {
     // Register Behat context readers.
     $references = $this->serviceProcessor->findAndSortTaggedServices($container, ContextExtension::READER_TAG);
     $definition = $container->getDefinition('drupal.context.environment.reader');
@@ -313,7 +307,7 @@ class DrupalExtension implements ExtensionInterface {
   /**
    * Switch to custom class generator.
    */
-  private function processClassGenerator(ContainerBuilder $container): void {
+  protected function processClassGenerator(ContainerBuilder $container): void {
     $definition = new Definition(ClassGenerator::class);
     $container->setDefinition(ContextExtension::CLASS_GENERATOR_TAG . '.simple', $definition);
   }

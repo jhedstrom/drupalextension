@@ -16,7 +16,7 @@ abstract class EntityHook extends RuntimeFilterableHook {
    * {@inheritdoc}
    */
   public function filterMatches(HookScope $scope) {
-    return NULL === ($filterString = $this->getFilterString());
+    return $this->getFilterString() === NULL;
   }
 
 }

@@ -23,7 +23,7 @@ class ConfigContext extends RawDrupalContext implements TranslatableContext {
    * {@inheritdoc}
    */
   public static function getTranslationResources() {
-    return glob(__DIR__ . '/../../../../i18n/*.xliff');
+    return self::getDrupalTranslationResources();
   }
 
   /**
@@ -98,8 +98,9 @@ class ConfigContext extends RawDrupalContext implements TranslatableContext {
     $value = [];
     foreach ($config_table->getHash() as $row) {
       // Allow json values for extra complexity.
-      if (json_decode($row['value'])) {
-        $row['value'] = json_decode($row['value'], TRUE);
+      $decoded = json_decode($row['value'], TRUE);
+      if ($decoded !== NULL) {
+        $row['value'] = $decoded;
       }
       $value[$row['key']] = $row['value'];
     }

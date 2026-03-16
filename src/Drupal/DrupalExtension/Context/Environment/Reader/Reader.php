@@ -112,7 +112,7 @@ final class Reader implements EnvironmentReader {
    * @return \Behat\Testwork\Call\Callee[]
    *   An array of callees.
    */
-  private function readContextCallees(ContextEnvironment $environment, string $contextClass): array {
+  protected function readContextCallees(ContextEnvironment $environment, string $contextClass): array {
     $callees = [];
     foreach ($this->contextReaders as $contextReader) {
       $callees = array_merge(
@@ -130,7 +130,7 @@ final class Reader implements EnvironmentReader {
    * @return class-string[]
    *   An array of fully-qualified class names.
    */
-  private function findSubContextClasses(): array {
+  protected function findSubContextClasses(): array {
     $classNames = [];
 
     // Initialize any available sub-contexts.
@@ -188,7 +188,7 @@ final class Reader implements EnvironmentReader {
    * @return string[]
    *   An array of file paths keyed by real path.
    */
-  private function findAvailableSubContexts(string $path, string $pattern = '/^.+\.behat\.inc/i') {
+  protected function findAvailableSubContexts(string $path, string $pattern = '/^.+\.behat\.inc/i') {
 
     if (isset(self::$subContexts[$pattern][$path])) {
       return self::$subContexts[$pattern][$path];
@@ -216,7 +216,7 @@ final class Reader implements EnvironmentReader {
    * @param array $subcontexts
    *   An array of files to include.
    */
-  private function loadSubContexts($subcontexts): void {
+  protected function loadSubContexts($subcontexts): void {
     foreach ($subcontexts as $path => $subcontext) {
       if (!file_exists($path)) {
         throw new \RuntimeException(sprintf('Subcontext path %s path does not exist.', $path));

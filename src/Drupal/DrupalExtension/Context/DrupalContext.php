@@ -23,7 +23,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    *   List of translation resource paths.
    */
   public static function getTranslationResources() {
-    return glob(__DIR__ . '/../../../../i18n/*.xliff');
+    return self::getDrupalTranslationResources();
   }
 
   /**
@@ -55,27 +55,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
   #[Given('I am logged in as a user with the :role role(s)')]
   #[Given('I am logged in as a/an :role')]
   public function assertAuthenticatedByRole(string $role): void {
-    // Create user (and project)
-    $user = (object) [
-      'name' => $this->getRandom()->name(8),
-      'pass' => $this->getRandom()->name(16),
-      'role' => $role,
-    ];
-    $user->mail = $user->name . '@example.com';
-
-    $this->userCreate($user);
-
-    $roles = explode(',', $role);
-    $roles = array_map(trim(...), $roles);
-    foreach ($roles as $role) {
-      if (!in_array(strtolower($role), ['authenticated', 'authenticated user'], TRUE)) {
-        // Only add roles other than 'authenticated user'.
-        $this->getDriver()->userAddRole($user, $role);
-      }
-    }
-
-    // Login.
-    $this->login($user);
+    $this->createAndLoginUserWithRole($role);
   }
 
   /**
@@ -89,32 +69,55 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    */
   #[Given('I am logged in as a user with the :role role(s) and I have the following fields:')]
   public function assertAuthenticatedByRoleWithGivenFields(string $role, TableNode $fields): void {
-    // Create user (and project)
+    $this->createAndLoginUserWithRole($role, $fields->getRowsHash());
+  }
+
+  /**
+   * Creates a user with the given role(s), optional extra fields, and logs in.
+   *
+   * @param string $role
+   *   A single role, or multiple comma-separated roles.
+   * @param array $extra_fields
+   *   Optional associative array of additional fields to set on the user.
+   */
+  protected function createAndLoginUserWithRole(string $role, array $extra_fields = []): void {
+    $user = $this->createUserStub($role, $extra_fields);
+    $this->userCreate($user);
+
+    $roles = explode(',', $role);
+
+    $roles = array_map(trim(...), $roles);
+    foreach ($roles as $role) {
+      if (!in_array(strtolower($role), ['authenticated', 'authenticated user'], TRUE)) {
+        $this->getDriver()->userAddRole($user, $role);
+      }
+    }
+
+    $this->login($user);
+  }
+
+  /**
+   * Creates a user stub with random name, password, and email.
+   *
+   * @param string $role
+   *   The role to assign.
+   * @param array $extra_fields
+   *   Optional additional fields.
+   */
+  protected function createUserStub(string $role, array $extra_fields = []): \stdClass {
     $user = (object) [
       'name' => $this->getRandom()->name(8),
       'pass' => $this->getRandom()->name(16),
       'role' => $role,
     ];
+
     $user->mail = $user->name . '@example.com';
 
-    // Assign fields to user before creation.
-    foreach ($fields->getRowsHash() as $field => $value) {
+    foreach ($extra_fields as $field => $value) {
       $user->{$field} = $value;
     }
 
-    $this->userCreate($user);
-
-    $roles = explode(',', $role);
-    $roles = array_map(trim(...), $roles);
-    foreach ($roles as $role) {
-      if (!in_array(strtolower($role), ['authenticated', 'authenticated user'], TRUE)) {
-        // Only add roles other than 'authenticated user'.
-        $this->getDriver()->userAddRole($user, $role);
-      }
-    }
-
-    // Login.
-    $this->login($user);
+    return $user;
   }
 
   /**
@@ -126,13 +129,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    */
   #[Given('I am logged in as :name')]
   public function assertLoggedInByName(string $name): void {
-    $manager = $this->getUserManager();
-
-    // Change internal current user.
-    $manager->setCurrentUser($manager->getUser($name));
-
-    // Login.
-    $this->login($manager->getUser($name));
+    $this->login($this->getUserManager()->getUser($name));
   }
 
   /**
@@ -145,24 +142,14 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    */
   #[Given('I am logged in as a user with the :permissions permission(s)')]
   public function assertLoggedInWithPermissions(string $permissions): void {
-    // Create a temporary role with given permissions.
     $permissions = array_map(trim(...), explode(',', $permissions));
     $role = $this->getDriver()->roleCreate($permissions);
 
-    // Create user.
-    $user = (object) [
-      'name' => $this->getRandom()->name(8),
-      'pass' => $this->getRandom()->name(16),
-      'role' => $role,
-    ];
-    $user->mail = $user->name . '@example.com';
+    $user = $this->createUserStub($role);
     $this->userCreate($user);
-
-    // Assign the temporary role with given permissions.
     $this->getDriver()->userAddRole($user, $role);
     $this->roles[] = $role;
 
-    // Login.
     $this->login($user);
   }
 

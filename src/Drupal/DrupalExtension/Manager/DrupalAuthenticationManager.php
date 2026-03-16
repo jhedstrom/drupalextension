@@ -200,7 +200,7 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
   /**
    * Log in on the backend driver if it supports authentication.
    */
-  private function backendLogin(\stdClass $user): void {
+  protected function backendLogin(\stdClass $user): void {
     $driver = $this->driverManager->getDriver();
     if ($driver instanceof AuthenticationDriverInterface) {
       $driver->login($user);
@@ -210,7 +210,7 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
   /**
    * Log out on the backend driver if it supports authentication.
    */
-  private function backendLogout(): void {
+  protected function backendLogout(): void {
     $driver = $this->driverManager->getDriver();
     if ($driver instanceof AuthenticationDriverInterface) {
       $driver->logout();

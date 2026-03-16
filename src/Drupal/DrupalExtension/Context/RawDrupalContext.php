@@ -16,7 +16,14 @@ use Drupal\DrupalExtension\DrupalParametersTrait;
 use Drupal\DrupalExtension\Manager\DrupalAuthenticationManagerInterface;
 use Drupal\DrupalExtension\Manager\DrupalUserManagerInterface;
 
+use Drupal\DrupalExtension\Hook\Scope\AfterLanguageCreateScope;
+use Drupal\DrupalExtension\Hook\Scope\AfterNodeCreateScope;
+use Drupal\DrupalExtension\Hook\Scope\AfterTermCreateScope;
+use Drupal\DrupalExtension\Hook\Scope\AfterUserCreateScope;
+use Drupal\DrupalExtension\Hook\Scope\BeforeLanguageCreateScope;
 use Drupal\DrupalExtension\Hook\Scope\BeforeNodeCreateScope;
+use Drupal\DrupalExtension\Hook\Scope\BeforeTermCreateScope;
+use Drupal\DrupalExtension\Hook\Scope\BeforeUserCreateScope;
 use Drupal\DrupalExtension\Manager\FastLogoutInterface;
 
 /**
@@ -160,8 +167,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
     if ($context instanceof DrupalAwareInterface) {
       $driver = $context->getDrupal()->getDriver();
       if ($driver instanceof DrupalDriver) {
-        // @phpstan-ignore-next-line property.notFound
-        $apiVersion = $context->getDrupal()->getDriver()->version;
+        $apiVersion = $driver->version;
       }
     }
 
@@ -259,14 +265,13 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
   /**
    * Dispatch scope hooks.
    *
-   * @param string $scopeType
-   *   The entity scope to dispatch.
+   * @param class-string $scopeClass
+   *   The fully-qualified scope class name.
    * @param \stdClass $entity
    *   The entity.
    */
-  protected function dispatchHooks(string $scopeType, \stdClass $entity) {
-    $fullScopeClass = 'Drupal\\DrupalExtension\\Hook\\Scope\\' . $scopeType;
-    $scope = new $fullScopeClass($this->getDrupal()->getEnvironment(), $this, $entity);
+  protected function dispatchHooks(string $scopeClass, \stdClass $entity) {
+    $scope = new $scopeClass($this->getDrupal()->getEnvironment(), $this, $entity);
     $callResults = $this->dispatcher->dispatchScopeHooks($scope);
 
     // The dispatcher suppresses exceptions, throw them here if there are any.
@@ -285,10 +290,10 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    *   The created node.
    */
   public function nodeCreate(\stdClass $node) {
-    $this->dispatchHooks('BeforeNodeCreateScope', $node);
+    $this->dispatchHooks(BeforeNodeCreateScope::class, $node);
     $this->parseEntityFields('node', $node);
     $saved = $this->getDriver()->createNode($node);
-    $this->dispatchHooks('AfterNodeCreateScope', $saved);
+    $this->dispatchHooks(AfterNodeCreateScope::class, $saved);
     $this->nodes[] = $saved;
     return $saved;
   }
@@ -474,10 +479,10 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    *   The created user.
    */
   public function userCreate(\stdClass $user): \stdClass {
-    $this->dispatchHooks('BeforeUserCreateScope', $user);
+    $this->dispatchHooks(BeforeUserCreateScope::class, $user);
     $this->parseEntityFields('user', $user, ['role']);
     $this->getDriver()->userCreate($user);
-    $this->dispatchHooks('AfterUserCreateScope', $user);
+    $this->dispatchHooks(AfterUserCreateScope::class, $user);
     $this->userManager->addUser($user);
     return $user;
   }
@@ -502,12 +507,12 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
       $term->parent = $parent->tid;
     }
 
-    $this->dispatchHooks('BeforeTermCreateScope', $term);
+    $this->dispatchHooks(BeforeTermCreateScope::class, $term);
     $this->parseEntityFields('taxonomy_term', $term, ['vocabulary_machine_name']);
 
     $saved = $this->getDriver()->createTerm($term);
 
-    $this->dispatchHooks('AfterTermCreateScope', $saved);
+    $this->dispatchHooks(AfterTermCreateScope::class, $saved);
     $this->terms[] = $saved;
 
     return $saved;
@@ -545,11 +550,11 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    *   The created language, or FALSE if the language was already created.
    */
   public function languageCreate(\stdClass $language) {
-    $this->dispatchHooks('BeforeLanguageCreateScope', $language);
+    $this->dispatchHooks(BeforeLanguageCreateScope::class, $language);
     // @phpstan-ignore method.notFound
     $language = $this->getDriver()->languageCreate($language);
     if ($language) {
-      $this->dispatchHooks('AfterLanguageCreateScope', $language);
+      $this->dispatchHooks(AfterLanguageCreateScope::class, $language);
       $this->languages[$language->langcode] = $language;
     }
     return $language;
@@ -643,6 +648,16 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
     }
 
     return FALSE;
+  }
+
+  /**
+   * Returns the paths to the translation resources for the Drupal extension.
+   *
+   * @return array
+   *   List of translation resource paths.
+   */
+  protected static function getDrupalTranslationResources(): array {
+    return glob(__DIR__ . '/../../../../i18n/*.xliff');
   }
 
 }

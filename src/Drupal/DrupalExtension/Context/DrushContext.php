@@ -24,7 +24,7 @@ class DrushContext extends RawDrupalContext implements TranslatableContext {
    * {@inheritdoc}
    */
   public static function getTranslationResources() {
-    return glob(__DIR__ . '/../../../../i18n/*.xliff');
+    return self::getDrupalTranslationResources();
   }
 
   /**

@@ -21,8 +21,7 @@ class MailContext extends RawMailContext {
    */
   #[BeforeScenario]
   public function disableMail(ScenarioScope $event): void {
-    $tags = array_merge($event->getFeature()->getTags(), $event->getScenario()->getTags());
-    if (!in_array('sendmail', $tags) && !in_array('sendemail', $tags)) {
+    if (!$this->hasSendMailTag($event)) {
       $this->getMailManager()->disableMail();
       // Always reset mail count, in case the default mail manager is being used
       // which enables mail collecting automatically when mail is disabled, making
@@ -36,10 +35,17 @@ class MailContext extends RawMailContext {
    */
   #[AfterScenario]
   public function enableMail(ScenarioScope $event): void {
-    $tags = array_merge($event->getFeature()->getTags(), $event->getScenario()->getTags());
-    if (!in_array('sendmail', $tags) && !in_array('sendemail', $tags)) {
+    if (!$this->hasSendMailTag($event)) {
       $this->getMailManager()->enableMail();
     }
+  }
+
+  /**
+   * Checks if the scenario has the @sendmail or @sendemail tag.
+   */
+  protected function hasSendMailTag(ScenarioScope $event): bool {
+    $tags = array_merge($event->getFeature()->getTags(), $event->getScenario()->getTags());
+    return in_array('sendmail', $tags) || in_array('sendemail', $tags);
   }
 
   /**
