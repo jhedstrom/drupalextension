@@ -469,6 +469,28 @@ class FeatureContext extends RawDrupalContext {
   }
 
   /**
+   * Asserts the original (non-overridden) config value matches the expected.
+   *
+   * @param string $name
+   *   The configuration object name.
+   * @param string $key
+   *   The configuration key.
+   * @param string $expected
+   *   The expected original value.
+   *
+   * @Then the original configuration item :name with key :key should be :expected
+   */
+  public function testAssertOriginalConfigValue(string $name, string $key, string $expected): void {
+    $actual = \Drupal::config($name)->getOriginal($key, FALSE);
+    if ($actual !== $expected) {
+      throw new ExpectationException(
+        sprintf('Expected original config "%s:%s" to be "%s", but got "%s".', $name, $key, $expected, $actual),
+        $this->getSession()->getDriver()
+      );
+    }
+  }
+
+  /**
    * Deletes the current user from the database and untracking it.
    *
    * Simulates a database reset between scenarios: the user is removed from

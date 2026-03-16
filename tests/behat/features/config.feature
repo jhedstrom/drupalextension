@@ -30,3 +30,13 @@ Feature: ConfigContext
   Scenario: Assert config was restored by previous scenario cleanup
     When I go to "admin/config/system/site-information"
     Then the "Site name" field should not contain "Temporary Name"
+
+  @test-drupal @api
+  Scenario: Assert config backup uses original DB value when overridden in settings.php
+    Given I set the configuration item "system.site" with key "name" to "Temporary Override Test"
+    When I go to "admin/config/system/site-information"
+    Then the "Site name" field should contain "Temporary Override Test"
+
+  @test-drupal @api
+  Scenario: Assert config was restored to original DB value not the settings.php override
+    Then the original configuration item "system.site" with key "name" should be "Drush Site-Install"
