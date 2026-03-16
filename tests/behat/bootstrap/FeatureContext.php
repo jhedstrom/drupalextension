@@ -469,6 +469,36 @@ class FeatureContext extends RawDrupalContext {
   }
 
   /**
+   * Deletes the current user from the database and untracking it.
+   *
+   * Simulates a database reset between scenarios: the user is removed from
+   * the database and from the tracked users list, but the current user
+   * reference in the user manager is preserved. This makes hasUsers() return
+   * FALSE while a user is still marked as logged in.
+   *
+   * @Given I delete the current user from the database
+   */
+  public function testDeleteCurrentUserFromDatabase(): void {
+    $user = $this->getUserManager()->getCurrentUser();
+
+    if (!$user || empty($user->uid)) {
+      throw new \RuntimeException('No current user to delete.');
+    }
+
+    // Delete the user entity from the database.
+    $account = \Drupal::entityTypeManager()->getStorage('user')->load($user->uid);
+
+    if ($account) {
+      $account->delete();
+    }
+
+    // Remove the user from the tracked list so cleanUsers() won't attempt
+    // to delete it again (which would trigger a PHP warning). The current
+    // user reference is intentionally left set to simulate stale auth state.
+    $this->getUserManager()->removeUser($user->name);
+  }
+
+  /**
    * Throws a test assertion exception.
    *
    * @Given I throw a test assertion exception :calss with message :message
