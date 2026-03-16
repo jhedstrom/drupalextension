@@ -428,6 +428,47 @@ class FeatureContext extends RawDrupalContext {
   }
 
   /**
+   * Asserts that a taxonomy term has the expected parent term.
+   *
+   * @param string $vocabulary
+   *   The vocabulary machine name.
+   * @param string $name
+   *   The term name to check.
+   * @param string $parentName
+   *   The expected parent term name.
+   *
+   * @Then the :vocabulary term :name should have parent :parent_name
+   */
+  public function testAssertTermParent(string $vocabulary, string $name, string $parentName): void {
+    $storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+    $terms = $storage->loadByProperties(['name' => $name, 'vid' => $vocabulary]);
+
+    if (empty($terms)) {
+      throw new \RuntimeException(sprintf('Term "%s" not found in vocabulary "%s".', $name, $vocabulary));
+    }
+
+    /** @var \Drupal\Core\Entity\FieldableEntityInterface $term */
+    $term = reset($terms);
+    $parentValues = $term->get('parent')->getValue();
+    $parentTid = (int) ($parentValues[0]['target_id'] ?? 0);
+
+    if ($parentTid === 0) {
+      throw new ExpectationException(sprintf('Term "%s" has no parent, expected "%s".', $name, $parentName), $this->getSession()->getDriver());
+    }
+
+    $parentTerm = $storage->load($parentTid);
+
+    if (!$parentTerm) {
+      throw new ExpectationException(sprintf('Parent term with tid %d not found for term "%s".', $parentTid, $name), $this->getSession()->getDriver());
+    }
+
+    $actualParentName = $parentTerm->label();
+    if ($actualParentName !== $parentName) {
+      throw new ExpectationException(sprintf('Term "%s" has parent "%s", expected "%s".', $name, $actualParentName, $parentName), $this->getSession()->getDriver());
+    }
+  }
+
+  /**
    * Throws a test assertion exception.
    *
    * @Given I throw a test assertion exception :calss with message :message
