@@ -35,6 +35,41 @@ Feature: FieldHandlers
     And I should see "1000"
     And I should see "Louisalaan 1"
 
+  # Entity reference values containing ' - ' must be double-quoted to prevent
+  # the compound column separator from splitting them.
+  # @see https://github.com/jhedstrom/drupalextension/issues/642
+  @test-drupal @api
+  Scenario: Test entity reference with compound separator in title
+    Given "page" content:
+      | title         |
+      | Alpha - Bravo |
+    When I am viewing a "post" content:
+      | title                | Post with ref     |
+      | field_post_reference | "Alpha - Bravo"   |
+    Then I should see "Alpha - Bravo"
+
+  # Unquoted entity reference values containing ' - ' are still split by the
+  # compound column separator, which breaks the entity query.
+  # @see https://github.com/jhedstrom/drupalextension/issues/642
+  @test-drupal @api
+  Scenario: Assert "Given :type content:" fails for unquoted entity reference title containing compound separator
+    Given some behat configuration
+    And scenario steps tagged with "@test-drupal @api":
+      """
+      Given "page" content:
+        | title         |
+        | Alpha - Bravo |
+      When I am viewing a "post" content:
+        | title                | Post with ref |
+        | field_post_reference | Alpha - Bravo |
+      Then I should see "Alpha - Bravo"
+      """
+    When I run behat with drupal profile
+    Then it should fail with a "Drupal\Core\Database\InvalidQueryException" exception:
+      """
+      must have an array compatible operator
+      """
+
   # This is identical to the previous test, but uses human readable names for
   # the field names. This is better from a BDD standpoint. Please have a look at
   # FeatureContext::transformPostContentTable() to see how the mapping between
