@@ -1,0 +1,131 @@
+# Starter Behat configuration for the Drupal Extension.
+#
+# Copy this file to behat.yml and adjust values for your project.
+#
+# This file lists all available configuration options with their default
+# values for reference. Customize as needed.
+
+# Blackbox profile: tests against a Drupal site without bootstrapping Drupal.
+default:
+  suites:
+    default:
+      contexts:
+        - Drupal\DrupalExtension\Context\MinkContext
+        - Drupal\DrupalExtension\Context\MessageContext
+        - Drupal\DrupalExtension\Context\MarkupContext
+
+  extensions:
+    Drupal\MinkExtension:
+      # Base URL of the Drupal site under test.
+      base_url: http://mysite.local
+      # Path to fixture files for file upload steps.
+      files_path: '%paths.base%/tests/files'
+      # Non-JavaScript browser driver.
+      browserkit_http: ~
+      # Default browser name.
+      browser_name: chrome
+      # JavaScript browser session.
+      javascript_session: selenium2
+      # Maximum time (in seconds) to wait for AJAX calls to complete.
+      ajax_timeout: 5
+      # Automatically open browser on failure.
+      show_auto: false
+      # Command to open the browser (e.g., "open %s" on macOS).
+      show_cmd: ~
+      # Temp directory for show_auto screenshots.
+      show_tmp_dir: /tmp
+      # Selenium2 driver configuration.
+      selenium2:
+        wd_host: 'http://localhost:4444/wd/hub'
+        capabilities:
+          browser: chrome
+          extra_capabilities:
+            'goog:chromeOptions':
+              args:
+                - '--disable-gpu'
+                - '--disable-extensions'
+                - '--no-first-run'
+                - '--test-type'
+
+    Drupal\DrupalExtension:
+      # Default driver: "blackbox" for remote testing.
+      default_driver: blackbox
+      # API driver: "drupal" or "drush" (used when @api tag is present).
+      api_driver: drush
+      # Drush driver variant (legacy setting).
+      drush_driver: drush
+      # Enable the blackbox driver.
+      blackbox: ~
+      # Map of named regions to CSS selectors.
+      region_map:
+        Content: '#main .region-content'
+        Header: '#header'
+        Footer: '#footer'
+        Left sidebar: '#sidebar-first'
+        Right sidebar: '#sidebar-second'
+      # Text strings used in step definitions.
+      text:
+        login_url: /user
+        logout_url: /user/logout
+        logout_confirm_url: /user/logout/confirm
+        log_in: Log in
+        log_out: Log out
+        password_field: Password
+        username_field: Username
+      # CSS selectors for Drupal UI elements.
+      selectors:
+        message_selector: '.messages'
+        error_message_selector: '.messages--error'
+        success_message_selector: '.messages--status'
+        warning_message_selector: '.messages--warning'
+        login_form_selector: 'form#user-login,form#user-login-form'
+        logged_in_selector: 'body.logged-in,body.user-logged-in'
+      # Subcontext discovery settings.
+      subcontexts:
+        autoload: true
+        paths: []
+
+# Drupal API profile: tests that bootstrap Drupal.
+drupal:
+  suites:
+    default:
+      contexts:
+        - Drupal\DrupalExtension\Context\DrupalContext
+        - Drupal\DrupalExtension\Context\MinkContext
+        - Drupal\DrupalExtension\Context\MessageContext
+        - Drupal\DrupalExtension\Context\MarkupContext
+        - Drupal\DrupalExtension\Context\DrushContext
+        - Drupal\DrupalExtension\Context\BatchContext
+        - Drupal\DrupalExtension\Context\MailContext
+        - Drupal\DrupalExtension\Context\RandomContext
+        - Drupal\DrupalExtension\Context\ConfigContext
+
+  extensions:
+    Drupal\MinkExtension:
+      base_url: http://mysite.local
+      files_path: '%paths.base%/tests/files'
+
+    Drupal\DrupalExtension:
+      api_driver: drupal
+      # Drupal API driver settings.
+      drupal:
+        drupal_root: /var/www/html/web
+      # Drush driver settings.
+      drush:
+        alias: ~
+        binary: drush
+        root: /var/www/html/web
+        global_options: ~
+      region_map:
+        Content: '#main .region-content'
+        Header: '#header'
+        Footer: '#footer'
+        Left sidebar: '#sidebar-first'
+        Right sidebar: '#sidebar-second'
+      selectors:
+        message_selector: '.messages'
+        error_message_selector: '.messages--error'
+        success_message_selector: '.messages--status'
+        warning_message_selector: '.messages--warning'
+        login_form_selector: 'form#user-login,form#user-login-form'
+        logged_in_selector: 'body.logged-in,body.user-logged-in'
