@@ -22,6 +22,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversFunction('render_validation_tree')]
 #[CoversFunction('replace_content')]
 #[CoversFunction('extract_info')]
+#[CoversFunction('extract_step_attributes')]
 #[CoversFunction('parse_class_comment')]
 #[CoversFunction('find_source_file')]
 #[CoversFunction('regex_to_turnip')]

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\DrupalExtension\Context;
 
+use Behat\Step\Then;
+use Behat\Step\Given;
 use Behat\Behat\Context\TranslatableContext;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Exception\ExpectationException;
@@ -30,9 +32,8 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
    *   Then I should see the error message "Username is required"
    *   Then I should see the error message containing "Username"
    * @endcode
-   *
-   * @Then I should see the error message( containing) :message
    */
+  #[Then('I should see the error message( containing) :message')]
   public function assertErrorVisible(string $message): void {
     $this->assert(
           $message,
@@ -55,9 +56,8 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
    *     | Username is required   |
    *     | Password is required   |
    * @endcode
-   *
-   * @Then I should see the following error message(s):
    */
+  #[Then('I should see the following error message(s):')]
   public function assertMultipleErrors(TableNode $messages): void {
     $this->assertValidMessageTable($messages, 'error messages');
     foreach ($messages->getHash() as $value) {
@@ -77,9 +77,8 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
    *   Given I should not see the error message "Access denied"
    *   Given I should not see the error message containing "Access"
    * @endcode
-   *
-   * @Given I should not see the error message( containing) :message
    */
+  #[Given('I should not see the error message( containing) :message')]
   public function assertNotErrorVisible(string $message): void {
     $this->assertNot(
           $message,
@@ -100,9 +99,8 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
    *     | error messages |
    *     | Access denied  |
    * @endcode
-   *
-   * @Then I should not see the following error messages:
    */
+  #[Then('I should not see the following error messages:')]
   public function assertNotMultipleErrors(TableNode $messages): void {
     $this->assertValidMessageTable($messages, 'error messages');
     foreach ($messages->getHash() as $value) {
@@ -122,9 +120,8 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
    *   Then I should see the success message "Article has been created"
    *   Then I should see the success message containing "created"
    * @endcode
-   *
-   * @Then I should see the success message( containing) :message
    */
+  #[Then('I should see the success message( containing) :message')]
   public function assertSuccessMessage(string $message): void {
     $this->assert(
           $message,
@@ -146,9 +143,8 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
    *     | success messages        |
    *     | Article has been created |
    * @endcode
-   *
-   * @Then I should see the following success messages:
    */
+  #[Then('I should see the following success messages:')]
   public function assertMultipleSuccessMessage(TableNode $messages): void {
     $this->assertValidMessageTable($messages, 'success messages');
     foreach ($messages->getHash() as $value) {
@@ -168,9 +164,8 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
    *   Given I should not see the success message "saved"
    *   Given I should not see the success message containing "saved"
    * @endcode
-   *
-   * @Given I should not see the success message( containing) :message
    */
+  #[Given('I should not see the success message( containing) :message')]
   public function assertNotSuccessMessage(string $message): void {
     $this->assertNot(
           $message,
@@ -191,9 +186,8 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
    *     | success messages |
    *     | Changes saved    |
    * @endcode
-   *
-   * @Then I should not see the following success messages:
    */
+  #[Then('I should not see the following success messages:')]
   public function assertNotMultipleSuccessMessage(TableNode $messages): void {
     $this->assertValidMessageTable($messages, 'success messages');
     foreach ($messages->getHash() as $value) {
@@ -213,9 +207,8 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
    *   Then I should see the warning message "This action cannot be undone"
    *   Then I should see the warning message containing "cannot be undone"
    * @endcode
-   *
-   * @Then I should see the warning message( containing) :message
    */
+  #[Then('I should see the warning message( containing) :message')]
   public function assertWarningMessage(string $message): void {
     $this->assert(
           $message,
@@ -237,9 +230,8 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
    *     | warning messages                |
    *     | This action cannot be undone    |
    * @endcode
-   *
-   * @Then I should see the following warning messages:
    */
+  #[Then('I should see the following warning messages:')]
   public function assertMultipleWarningMessage(TableNode $messages): void {
     $this->assertValidMessageTable($messages, 'warning messages');
     foreach ($messages->getHash() as $value) {
@@ -259,9 +251,8 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
    *   Given I should not see the warning message "deprecated"
    *   Given I should not see the warning message containing "deprecated"
    * @endcode
-   *
-   * @Given I should not see the warning message( containing) :message
    */
+  #[Given('I should not see the warning message( containing) :message')]
   public function assertNotWarningMessage(string $message): void {
     $this->assertNot(
           $message,
@@ -282,9 +273,8 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
    *     | warning messages |
    *     | deprecated       |
    * @endcode
-   *
-   * @Then I should not see the following warning messages:
    */
+  #[Then('I should not see the following warning messages:')]
   public function assertNotMultipleWarningMessage(TableNode $messages): void {
     $this->assertValidMessageTable($messages, 'warning messages');
     foreach ($messages->getHash() as $value) {
@@ -304,9 +294,8 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
    *   Then I should see the message "Changes saved"
    *   Then I should see the message containing "saved"
    * @endcode
-   *
-   * @Then I should see the message( containing) :message
    */
+  #[Then('I should see the message( containing) :message')]
   public function assertMessage(string $message): void {
     $this->assert(
           $message,
@@ -326,9 +315,8 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
    *   Then I should not see the message "Access denied"
    *   Then I should not see the message containing "denied"
    * @endcode
-   *
-   * @Then I should not see the message( containing) :message
    */
+  #[Then('I should not see the message( containing) :message')]
   public function assertNotMessage(string $message): void {
     $this->assertNot(
           $message,

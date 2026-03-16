@@ -7,9 +7,8 @@ namespace Drupal\DrupalExtension\Tests\Fixtures;
 /**
  * Test fixture for method without step annotations.
  *
- * This is used to test sorting when methods don't have.
- *
- * @Given/@When/@Then annotations.
+ * This is used to test sorting when methods don't have
+ * Given/When/Then annotations.
  */
 class NoStepAnnotationContext {
 

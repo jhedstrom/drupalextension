@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\DrupalExtension;
 
+use Behat\Hook\BeforeStep;
 use Behat\Behat\Hook\Scope\BeforeStepScope;
 
 /**
@@ -27,9 +28,8 @@ trait FeatureTrait {
    *
    * This fires on a BeforeStep rather than a BeforeFeature since the latter
    * can only be called statically.
-   *
-   * @BeforeStep
    */
+  #[BeforeStep]
   public function registerFeature(BeforeStepScope $scope): void {
     $this->currentFeature = $scope->getFeature();
   }

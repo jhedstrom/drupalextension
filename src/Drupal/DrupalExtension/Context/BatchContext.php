@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\DrupalExtension\Context;
 
+use Behat\Step\Given;
 use Behat\Gherkin\Node\TableNode;
 use Behat\MinkExtension\Context\RawMinkContext;
 
@@ -21,9 +22,8 @@ class BatchContext extends RawMinkContext {
    * @code
    * Given I wait for the batch job to finish
    * @endcode
-   *
-   * @Given I wait for the batch job to finish
    */
+  #[Given('I wait for the batch job to finish')]
   public function iWaitForTheBatchJobToFinish(): void {
     $this->getSession()->wait(180000, 'jQuery("#updateprogress").length === 0');
   }
@@ -40,9 +40,8 @@ class BatchContext extends RawMinkContext {
    *     | created | 1700000000            |
    *     | expire  | 0                     |
    * @endcode
-   *
-   * @Given there is an item in the system queue:
    */
+  #[Given('there is an item in the system queue:')]
   public function thereIsAnItemInTheSystemQueue(TableNode $table): void {
     // Gather the data.
     $fields = $table->getRowsHash();

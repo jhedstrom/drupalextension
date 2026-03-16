@@ -8,6 +8,8 @@ declare(strict_types=1);
  */
 namespace Drupal\DrupalExtension\Context;
 
+use Behat\Hook\AfterScenario;
+use Behat\Step\Given;
 use Behat\Behat\Context\TranslatableContext;
 use Behat\Gherkin\Node\TableNode;
 use Drupal\Driver\DrupalDriver;
@@ -33,9 +35,8 @@ class ConfigContext extends RawDrupalContext implements TranslatableContext {
 
   /**
    * Revert any changed config.
-   *
-   * @AfterScenario
    */
+  #[AfterScenario]
   public function cleanConfig(): void {
     $driver = $this->getDriver();
 
@@ -69,9 +70,8 @@ class ConfigContext extends RawDrupalContext implements TranslatableContext {
    * @code
    *   Given I set the configuration item "system.site" with key "name" to "My Site"
    * @endcode
-   *
-   * @Given I set the configuration item :name with key :key to :value
    */
+  #[Given('I set the configuration item :name with key :key to :value')]
   public function setBasicConfig(string $name, string $key, string $value): void {
     $this->setConfig($name, $key, $value);
   }
@@ -92,9 +92,8 @@ class ConfigContext extends RawDrupalContext implements TranslatableContext {
    *     | front | /node  |
    *     | 403   | /error |
    * @endcode
-   *
-   * @Given I set the configuration item :name with key :key with values:
    */
+  #[Given('I set the configuration item :name with key :key with values:')]
   public function setComplexConfig(string $name, string $key, TableNode $config_table): void {
     $value = [];
     foreach ($config_table->getHash() as $row) {

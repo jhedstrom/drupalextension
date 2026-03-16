@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\DrupalExtension\Context;
 
+use Behat\Step\Given;
+use Behat\Step\Then;
 use Behat\Behat\Context\TranslatableContext;
 use Behat\Mink\Element\Element;
 
@@ -32,11 +34,10 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    * Given I am not logged in
    * Then I log out
    * @endcode
-   *
-   * @Given I am an anonymous user
-   * @Given I am not logged in
-   * @Then I log out
    */
+  #[Given('I am an anonymous user')]
+  #[Given('I am not logged in')]
+  #[Then('I log out')]
   public function assertAnonymousUser(): void {
     // Verify the user is logged out.
     $this->logout(TRUE);
@@ -50,10 +51,9 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    * Given I am logged in as a user with the "editor, admin" roles
    * Given I am logged in as an "editor"
    * @endcode
-   *
-   * @Given I am logged in as a user with the :role role(s)
-   * @Given I am logged in as a/an :role
    */
+  #[Given('I am logged in as a user with the :role role(s)')]
+  #[Given('I am logged in as a/an :role')]
   public function assertAuthenticatedByRole(string $role): void {
     // Create user (and project)
     $user = (object) [
@@ -86,9 +86,8 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    *     | field_user_name    | John  |
    *     | field_user_surname | Smith |
    * @endcode
-   *
-   * @Given I am logged in as a user with the :role role(s) and I have the following fields:
    */
+  #[Given('I am logged in as a user with the :role role(s) and I have the following fields:')]
   public function assertAuthenticatedByRoleWithGivenFields(string $role, TableNode $fields): void {
     // Create user (and project)
     $user = (object) [
@@ -124,9 +123,8 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    * @code
    * Given I am logged in as "admin"
    * @endcode
-   *
-   * @Given I am logged in as :name
    */
+  #[Given('I am logged in as :name')]
   public function assertLoggedInByName(string $name): void {
     $manager = $this->getUserManager();
 
@@ -144,9 +142,8 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    * Given I am logged in as a user with the "administer nodes" permission
    * Given I am logged in as a user with the "administer nodes, bypass node access" permissions
    * @endcode
-   *
-   * @Given I am logged in as a user with the :permissions permission(s)
    */
+  #[Given('I am logged in as a user with the :permissions permission(s)')]
   public function assertLoggedInWithPermissions(string $permissions): void {
     // Create a temporary role with given permissions.
     $permissions = array_map(trim(...), explode(',', $permissions));
@@ -202,9 +199,8 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    * Then I should see "Edit" in the "My article" row
    * Then I should see the text "Edit" in the "My article" row
    * @endcode
-   *
-   * @Then I should see (the text ):text in the :rowText row
    */
+  #[Then('I should see (the text ):text in the :rowText row')]
   public function assertTextInTableRow(string $text, string $rowText): void {
     $row = $this->getTableRow($this->getSession()->getPage(), $rowText);
     if (!str_contains($row->getText(), $text)) {
@@ -219,9 +215,8 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    * Then I should not see "Delete" in the "My article" row
    * Then I should not see the text "Delete" in the "My article" row
    * @endcode
-   *
-   * @Then I should not see (the text ):text in the :rowText row
    */
+  #[Then('I should not see (the text ):text in the :rowText row')]
   public function assertTextNotInTableRow(string $text, string $rowText): void {
     $row = $this->getTableRow($this->getSession()->getPage(), $rowText);
     if (str_contains($row->getText(), $text)) {
@@ -239,9 +234,8 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    * Then I see the "Edit" in the "My article" row
    * Then I should see the "Edit" in the "My article" row
    * @endcode
-   *
-   * @Then I (should )see the :link in the :rowText row
    */
+  #[Then('I (should )see the :link in the :rowText row')]
   public function assertLinkInTableRow(string $link, string $rowText): void {
     $page = $this->getSession()->getPage();
     if ($this->getTableRow($page, $rowText)->findLink($link)) {
@@ -259,9 +253,8 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    * @code
    * Then I should not see the "Delete" in the "My article" row
    * @endcode
-   *
-   * @Then I should not see the :link in the :rowText row
    */
+  #[Then('I should not see the :link in the :rowText row')]
   public function assertNotLinkInTableRow(string $link, string $rowText): void {
     $page = $this->getSession()->getPage();
     if ($this->getTableRow($page, $rowText)->findLink($link)) {
@@ -278,9 +271,8 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    * @code
    * Given I click "Edit" in the "My article" row
    * @endcode
-   *
-   * @Given I click :link in the :rowText row
    */
+  #[Given('I click :link in the :rowText row')]
   public function assertClickInTableRow(string $link, string $rowText): void {
     $page = $this->getSession()->getPage();
     if ($linkElement = $this->getTableRow($page, $rowText)->findLink($link)) {
@@ -301,9 +293,8 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    * @code
    * Given I press "Remove" in the "My article" row
    * @endcode
-   *
-   * @Given I press :button in the :rowText row
    */
+  #[Given('I press :button in the :rowText row')]
   public function assertPressInTableRow(string $button, string $rowText): void {
     $page = $this->getSession()->getPage();
     if ($buttonElement = $this->getTableRow($page, $rowText)->findButton($button)) {
@@ -320,9 +311,8 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    * @code
    * Given the cache has been cleared
    * @endcode
-   *
-   * @Given the cache has been cleared
    */
+  #[Given('the cache has been cleared')]
   public function assertCacheClear(): void {
     $this->getDriver()->clearCache();
   }
@@ -333,9 +323,8 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    * @code
    * Given I run cron
    * @endcode
-   *
-   * @Given I run cron
    */
+  #[Given('I run cron')]
   public function assertCron(): void {
     $this->getDriver()->runCron();
   }
@@ -348,10 +337,9 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    * Given I am viewing an "article" content with the title "Test article"
    * Given a "page" with the title "About us"
    * @endcode
-   *
-   * @Given I am viewing a/an :type (content )with the title :title
-   * @Given a/an :type (content )with the title :title
    */
+  #[Given('I am viewing a/an :type (content )with the title :title')]
+  #[Given('a/an :type (content )with the title :title')]
   public function createNode(string $type, string $title): void {
     // @todo make this easily extensible.
     $node = (object) [
@@ -370,9 +358,8 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    * Given I am viewing my "article" with the title "My article"
    * Given I am viewing my "article" content with the title "My article"
    * @endcode
-   *
-   * @Given I am viewing my :type (content )with the title :title
    */
+  #[Given('I am viewing my :type (content )with the title :title')]
   public function createMyNode(string $type, string $title): void {
     if ($this->getUserManager()->currentUserIsAnonymous()) {
       throw new \Exception('There is no current logged in user to create a node for.');
@@ -398,9 +385,8 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    *     | title      | status |
    *     | My article | 1      |
    * @endcode
-   *
-   * @Given :type content:
    */
+  #[Given(':type content:')]
   public function createNodes(string $type, TableNode $nodesTable): void {
     foreach ($nodesTable->getHash() as $nodeHash) {
       $node = (object) $nodeHash;
@@ -420,9 +406,8 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    *     | title | My article     |
    *     | body  | Lorem ipsum    |
    * @endcode
-   *
-   * @Given I am viewing a/an :type( content):
    */
+  #[Given('I am viewing a/an :type( content):')]
   public function assertViewingNode(string $type, TableNode $fields): void {
     $node = (object) [
       'type' => $type,
@@ -444,9 +429,8 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    * Then I should be able to edit an "article"
    * Then I should be able to edit an "article" content
    * @endcode
-   *
-   * @Then I should be able to edit a/an :type( content)
    */
+  #[Then('I should be able to edit a/an :type( content)')]
   public function assertEditNodeOfType(string $type): void {
     $node = (object) [
       'type' => $type,
@@ -468,10 +452,9 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    * Given I am viewing a "tags" term with the name "Sports"
    * Given an "categories" term with the name "News"
    * @endcode
-   *
-   * @Given I am viewing a/an :vocabulary term with the name :name
-   * @Given a/an :vocabulary term with the name :name
    */
+  #[Given('I am viewing a/an :vocabulary term with the name :name')]
+  #[Given('a/an :vocabulary term with the name :name')]
   public function createTerm(string $vocabulary, string $name): void {
     // @todo make this easily extensible.
     $term = (object) [
@@ -493,9 +476,8 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    *     | name     | mail            | roles  |
    *     | Joe User | joe@example.com | editor |
    * @endcode
-   *
-   * @Given users:
    */
+  #[Given('users:')]
   public function createUsers(TableNode $usersTable): void {
     foreach ($usersTable->getHash() as $userHash) {
       // Split out roles to process after user is created.
@@ -529,9 +511,8 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    *     | Sports |
    *     | News   |
    * @endcode
-   *
-   * @Given :vocabulary terms:
    */
+  #[Given(':vocabulary terms:')]
   public function createTerms(string $vocabulary, TableNode $termsTable): void {
     foreach ($termsTable->getHash() as $termsHash) {
       $term = (object) $termsHash;
@@ -555,9 +536,8 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    *     | languages |
    *     | de        |
    * @endcode
-   *
-   * @Given the/these (following )languages are available:
    */
+  #[Given('the/these (following )languages are available:')]
   public function createLanguages(TableNode $langcodesTable): void {
     foreach ($langcodesTable->getHash() as $row) {
       $language = (object) [
@@ -574,9 +554,8 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    * Then break
    * Then I break
    * @endcode
-   *
-   * @Then (I )break
    */
+  #[Then('(I )break')]
   // phpcs:ignore Drupal.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
   public function iPutABreakpoint(): void {
     fwrite(STDOUT, "\033[s \033[93m[Breakpoint] Press \033[1;93m[RETURN]\033[0;93m to continue, or 'q' to quit...\033[0m");

@@ -36,6 +36,10 @@
 
 declare(strict_types=1);
 
+use Behat\Step\Given;
+use Behat\Step\When;
+use Behat\Step\Then;
+
 // Execute the main function only when the script is run directly, not when included.
 // @codeCoverageIgnoreStart
 if (basename((string) $_SERVER['SCRIPT_FILENAME']) === 'docs.php') {
@@ -188,8 +192,15 @@ function extract_info(string $contextDir, array $exclude = [], string $basePath 
         continue;
       }
 
-      $parsedComment = parse_method_comment((string) $method->getDocComment());
-      if ($parsedComment) {
+      $attributeSteps = extract_step_attributes($method);
+      $parsedComment = parse_method_comment((string) $method->getDocComment(), !empty($attributeSteps));
+
+      if (!empty($attributeSteps)) {
+        $methodInfo = $parsedComment ?? ['steps' => [], 'description' => '', 'example' => ''];
+        $methodInfo['steps'] = $attributeSteps;
+        $classInfo['methods'][] = $methodInfo + ['name' => $method->getName()];
+      }
+      elseif ($parsedComment) {
         $classInfo['methods'][] = $parsedComment + ['name' => $method->getName()];
       }
     }
@@ -308,12 +319,15 @@ function parse_class_comment(string $className, string $comment): array {
  *
  * @param string $comment
  *   The comment.
+ * @param bool $allowEmptySteps
+ *   If TRUE, return the parsed data even when no step annotations are found.
+ *   Used when step definitions come from PHP attributes instead of docblocks.
  *
  * @return array<string, array<int, string>|string>|null
  *   Array of 'steps', 'description', and 'example' keys or NULL if steps were
- *   not found in the comment.
+ *   not found in the comment and $allow_empty_steps is FALSE.
  */
-function parse_method_comment(string $comment): ?array {
+function parse_method_comment(string $comment, bool $allowEmptySteps = FALSE): ?array {
   if (empty($comment)) {
     return NULL;
   }
@@ -403,7 +417,42 @@ function parse_method_comment(string $comment): ?array {
     }
   }
 
-  return empty($return['steps']) ? NULL : $return;
+  if (empty($return['steps']) && !$allowEmptySteps) {
+    return NULL;
+  }
+
+  return $return;
+}
+
+/**
+ * Extract step definitions from PHP 8 attributes on a method.
+ *
+ * @param \ReflectionMethod $method
+ *   The method to inspect.
+ *
+ * @return array<int, string>
+ *   Array of step strings in '@Given ...' format, or empty array if no
+ *   step attributes found.
+ */
+function extract_step_attributes(\ReflectionMethod $method): array {
+  $stepMap = [
+    Given::class => '@Given',
+    When::class => '@When',
+    Then::class => '@Then',
+  ];
+
+  $steps = [];
+
+  foreach ($method->getAttributes() as $attribute) {
+    $name = $attribute->getName();
+    if (isset($stepMap[$name])) {
+      $args = $attribute->getArguments();
+      $pattern = $args[0] ?? $args['pattern'] ?? '';
+      $steps[] = $stepMap[$name] . ' ' . $pattern;
+    }
+  }
+
+  return $steps;
 }
 
 /**

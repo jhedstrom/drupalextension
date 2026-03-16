@@ -10,6 +10,9 @@
 
 declare(strict_types=1);
 
+use Behat\Step\Given;
+use Behat\Step\Then;
+use Behat\Step\When;
 use Symfony\Component\Yaml\Yaml;
 use DVDoug\Behat\CodeCoverage\Extension;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
@@ -79,8 +82,9 @@ trait BehatCliTrait {
   }
 
   /**
-   * @Given /^scenario steps(?: tagged with "([^"]*)")?:$/
+   * Writes scenario steps to a stub feature file in the working directory.
    */
+  #[Given('/^scenario steps(?: tagged with "([^"]*)")?:$/')]
   public function behatCliWriteScenarioSteps(PyStringNode $content, $tags = ''): void {
     $content = strtr((string) $content, ["'''" => '"""']);
 
@@ -115,8 +119,9 @@ EOL;
   }
 
   /**
-   * @Given some behat configuration
+   * Writes a behat.yml configuration file to the working directory.
    */
+  #[Given('some behat configuration')]
   public function behatCliWriteBehatYml(): void {
     // @note Hardcoded path to the project root.
     $source = '/var/www/html/behat.yml';
@@ -189,8 +194,9 @@ EOL;
   }
 
   /**
-   * @Then it should fail with an error:
+   * Asserts that behat failed with an assertion error matching the given message.
    */
+  #[Then('it should fail with an error:')]
   public function behatCliAssertFailWithError(PyStringNode $message): void {
     $this->itShouldPassOrFailWith('fail', $message);
 
@@ -209,22 +215,25 @@ EOL;
   }
 
   /**
-   * @When I run behat
+   * Runs behat with the default profile.
    */
+  #[When('I run behat')]
   public function behatCliRun(string $profile = 'default'):void {
     $this->behatCliRunWithProfile($profile);
   }
 
   /**
-   * @When I run behat with :profile profile
+   * Runs behat with the given profile.
    */
+  #[When('I run behat with :profile profile')]
   public function behatCliRunWithProfile(string $profile):void {
     $this->iRunBehat('--profile=' . $profile . ' --no-colors');
   }
 
   /**
-   * @Then it should fail with an exception:
+   * Asserts that behat failed with a RuntimeException matching the given message.
    */
+  #[Then('it should fail with an exception:')]
   public function behatCliAssertFailWithException(PyStringNode $message): void {
     $this->behatCliAssertFailWithCustomException('RuntimeException', $message);
 
@@ -234,8 +243,9 @@ EOL;
   }
 
   /**
-   * @Then it should fail with a :exception exception:
+   * Asserts that behat failed with a specific exception class matching the given message.
    */
+  #[Then('it should fail with a :exception exception:')]
   public function behatCliAssertFailWithCustomException(string $exception, PyStringNode $message): void {
     $this->itShouldPassOrFailWith('fail', $message);
 
@@ -255,9 +265,8 @@ EOL;
    *
    * @param \Behat\Gherkin\Node\PyStringNode $text
    *   PyString text instance.
-   *
-   * @Then the output should not contain:
    */
+  #[Then('the output should not contain:')]
   public function behatCliAssertOutputNotContains(PyStringNode $text): void {
     $expected = $this->getExpectedOutput($text);
     $actual = $this->getOutput();

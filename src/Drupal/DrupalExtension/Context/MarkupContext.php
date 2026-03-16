@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\DrupalExtension\Context;
 
+use Behat\Step\Then;
 use Behat\MinkExtension\Context\RawMinkContext;
 
 /**
@@ -51,10 +52,9 @@ class MarkupContext extends RawMinkContext {
    * Then I should see the button "Submit" in the "content" region
    * Then I should see the "Submit" button in the "content" region
    * @endcode
-   *
-   * @Then I should see the button :button in the :region( region)
-   * @Then I should see the :button button in the :region( region)
    */
+  #[Then('I should see the button :button in the :region( region)')]
+  #[Then('I should see the :button button in the :region( region)')]
   public function assertRegionButton(string $button, string $region): void {
     $regionObj = $this->getRegion($region);
 
@@ -80,10 +80,9 @@ class MarkupContext extends RawMinkContext {
    * Then I should not see the button "Delete" in the "sidebar" region
    * Then I should not see the "Delete" button in the "sidebar" region
    * @endcode
-   *
-   * @Then I should not see the button :button in the :region( region)
-   * @Then I should not see the :button button in the :region( region)
    */
+  #[Then('I should not see the button :button in the :region( region)')]
+  #[Then('I should not see the :button button in the :region( region)')]
   public function assertNotRegionButton(string $button, string $region): void {
     $regionObj = $this->getRegion($region);
 
@@ -100,9 +99,8 @@ class MarkupContext extends RawMinkContext {
    * Then I see the "h2" element in the "content"
    * Then I should see the "h2" element in the "content" region
    * @endcode
-   *
-   * @Then I( should) see the :tag element in the :region( region)
    */
+  #[Then('I( should) see the :tag element in the :region( region)')]
   public function assertRegionElement(string $tag, string $region): void {
     $regionObj = $this->getRegion($region);
     $elements = $regionObj->findAll('css', $tag);
@@ -119,9 +117,8 @@ class MarkupContext extends RawMinkContext {
    * Then I not see the "h2" element in the "sidebar"
    * Then I should not see the "h2" element in the "sidebar" region
    * @endcode
-   *
-   * @Then I( should) not see the :tag element in the :region( region)
    */
+  #[Then('I( should) not see the :tag element in the :region( region)')]
   public function assertNotRegionElement(string $tag, string $region): void {
     $regionObj = $this->getRegion($region);
     $result = $regionObj->findAll('css', $tag);
@@ -137,9 +134,8 @@ class MarkupContext extends RawMinkContext {
    * Then I see "Welcome" in the "h2" element in the "content"
    * Then I should see "Welcome" in the "h2" element in the "content" region
    * @endcode
-   *
-   * @Then I( should) see :text in the :tag element in the :region( region)
    */
+  #[Then('I( should) see :text in the :tag element in the :region( region)')]
   public function assertRegionElementText(string $text, string $tag, string $region): void {
     $regionObj = $this->getRegion($region);
     $results = $regionObj->findAll('css', $tag);
@@ -160,9 +156,8 @@ class MarkupContext extends RawMinkContext {
    * Then I not see "Error" in the "div" element in the "content"
    * Then I should not see "Error" in the "div" element in the "content" region
    * @endcode
-   *
-   * @Then I( should) not see :text in the :tag element in the :region( region)
    */
+  #[Then('I( should) not see :text in the :tag element in the :region( region)')]
   public function assertNotRegionElementText(string $text, string $tag, string $region): void {
     $regionObj = $this->getRegion($region);
     $results = $regionObj->findAll('css', $tag);
@@ -182,9 +177,8 @@ class MarkupContext extends RawMinkContext {
    * Then I see the "a" element with the "href" attribute set to "/about" in the "footer"
    * Then I should see the "a" element with the "href" attribute set to "/about" in the "footer" region
    * @endcode
-   *
-   * @Then I( should) see the :tag element with the :attribute attribute set to :value in the :region( region)
    */
+  #[Then('I( should) see the :tag element with the :attribute attribute set to :value in the :region( region)')]
   public function assertRegionElementAttribute(string $tag, string $attribute, string $value, string $region): void {
     $regionObj = $this->getRegion($region);
     $elements = $regionObj->findAll('css', $tag);
@@ -220,9 +214,8 @@ class MarkupContext extends RawMinkContext {
    * Then I see "About" in the "a" element with the "href" attribute set to "/about" in the "footer"
    * Then I should see "About" in the "a" element with the "href" attribute set to "/about" in the "footer" region
    * @endcode
-   *
-   * @Then I( should) see :text in the :tag element with the :attribute attribute set to :value in the :region( region)
    */
+  #[Then('I( should) see :text in the :tag element with the :attribute attribute set to :value in the :region( region)')]
   public function assertRegionElementTextAttribute(string $text, string $tag, string $attribute, string $value, string $region): void {
     $regionObj = $this->getRegion($region);
     $elements = $regionObj->findAll('css', $tag);
@@ -259,9 +252,8 @@ class MarkupContext extends RawMinkContext {
    * Then I see "Notice" in the "div" element with the "color" CSS property set to "red" in the "content"
    * Then I should see "Notice" in the "div" element with the "color" CSS property set to "red" in the "content" region
    * @endcode
-   *
-   * @Then I( should) see :text in the :tag element with the :property CSS property set to :value in the :region( region)
    */
+  #[Then('I( should) see :text in the :tag element with the :property CSS property set to :value in the :region( region)')]
   public function assertRegionElementTextCss(string $text, string $tag, string $property, string $value, string $region): void {
     $regionObj = $this->getRegion($region);
     $elements = $regionObj->findAll('css', $tag);
