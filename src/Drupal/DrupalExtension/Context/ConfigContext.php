@@ -37,10 +37,20 @@ class ConfigContext extends RawDrupalContext implements TranslatableContext {
    * @AfterScenario
    */
   public function cleanConfig(): void {
+    $driver = $this->getDriver();
+
     // Revert config that was changed.
     foreach ($this->config as $name => $keyValue) {
+      // Reset the config factory cache so the editable config object is
+      // loaded fresh from storage. Without this, the cached object retains
+      // stale originalData from when setConfig() ran, causing
+      // ConfigCrudEvent::isChanged() to compare against the wrong baseline.
+      if ($driver instanceof DrupalDriver) {
+        \Drupal::configFactory()->reset($name);
+      }
+
       foreach ($keyValue as $key => $value) {
-        $this->getDriver()->configSet($name, $key, $value);
+        $driver->configSet($name, $key, $value);
       }
     }
     $this->config = [];
