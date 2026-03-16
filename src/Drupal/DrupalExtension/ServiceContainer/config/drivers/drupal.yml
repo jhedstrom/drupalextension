@@ -5,8 +5,6 @@ parameters:
   drupal.random.class: Drupal\Component\Utility\Random
 
   # Core controllers.
-  drupal.driver.cores.6.class: Drupal\Driver\Cores\Drupal6
-  drupal.driver.cores.7.class: Drupal\Driver\Cores\Drupal7
   drupal.driver.cores.8.class: Drupal\Driver\Cores\Drupal8
 
 services:
@@ -20,22 +18,6 @@ services:
       - "@drupal.driver.random"
     tags:
       - { name: drupal.driver, alias: drupal }
-  drupal.driver.cores.6:
-    class: "%drupal.driver.cores.6.class%"
-    tags:
-      - { name: drupal.core, alias: 6 }
-    arguments:
-      - "%drupal.driver.drupal.drupal_root%"
-      - "%mink.base_url%"
-      - "@drupal.driver.random"
-  drupal.driver.cores.7:
-    class: "%drupal.driver.cores.7.class%"
-    tags:
-      - { name: drupal.core, alias: 7 }
-    arguments:
-      - "%drupal.driver.drupal.drupal_root%"
-      - "%mink.base_url%"
-      - "@drupal.driver.random"
   drupal.driver.cores.8:
     class: "%drupal.driver.cores.8.class%"
     tags:
