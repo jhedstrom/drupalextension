@@ -56,6 +56,24 @@ Feature: DrupalContext coverage gaps
     Then I should see the text "Log in"
 
   @test-drupal @api
+  Scenario: Assert login state is reset between scenarios
+    Given some behat configuration
+    And a file named "features/stub.feature" with:
+      """
+      Feature: Login state across scenarios
+        @test-drupal @api
+        Scenario: One
+          Given I am logged in as a user with the "authenticated" role
+          And I delete the current user from the database
+
+        @test-drupal @api
+        Scenario: Two
+          Then I should be logged out on the backend
+      """
+    When I run behat with drupal profile
+    Then it should pass
+
+  @test-drupal @api
   Scenario: Assert "Given I am logged in as :name" fails for nonexistent user
     Given some behat configuration
     And scenario steps tagged with "@test-drupal @api":
