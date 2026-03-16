@@ -107,6 +107,33 @@ Feature: DrupalContext general testing
     And I should see "Tag two"
 
   @test-drupal @api
+  Scenario: Create taxonomy terms with parent hierarchy
+    Given "tags" terms:
+      | name          | parent        |
+      | Root term     |               |
+      | Child term    | Root term     |
+      | Grandchild    | Child term    |
+      | Great-grandch | Grandchild    |
+    Then the "tags" term "Child term" should have parent "Root term"
+    And the "tags" term "Grandchild" should have parent "Child term"
+    And the "tags" term "Great-grandch" should have parent "Grandchild"
+
+  @test-drupal @api
+  Scenario: Assert "Given :vocabulary terms:" fails for non-existent parent term
+    Given some behat configuration
+    And scenario steps tagged with "@test-drupal @api":
+      """
+      Given "tags" terms:
+        | name   | parent              |
+        | Orphan | NonExistentParent99 |
+      """
+    When I run behat with drupal profile
+    Then it should fail with an exception:
+      """
+      Parent term "NonExistentParent99" not found in vocabulary "tags".
+      """
+
+  @test-drupal @api
   Scenario: Create terms using vocabulary title rather than machine name
     Given "Tags" terms:
       | name    |

@@ -491,12 +491,49 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    *   The created term.
    */
   public function termCreate(\stdClass $term) {
+    // Resolve parent term name to tid before dispatching hooks or parsing
+    // fields. This allows users to specify a human-readable parent name in
+    // Gherkin tables and throws early if the parent cannot be found.
+    if (!empty($term->parent)) {
+      $parent = $this->getExistingTerm($term->parent, $term->vocabulary_machine_name);
+
+      if (!$parent instanceof \stdClass) {
+        throw new \RuntimeException(sprintf('Parent term "%s" not found in vocabulary "%s".', $term->parent, $term->vocabulary_machine_name));
+      }
+
+      $term->parent = $parent->tid;
+    }
+
     $this->dispatchHooks('BeforeTermCreateScope', $term);
     $this->parseEntityFields('taxonomy_term', $term, ['vocabulary_machine_name']);
+
     $saved = $this->getDriver()->createTerm($term);
+
     $this->dispatchHooks('AfterTermCreateScope', $saved);
     $this->terms[] = $saved;
+
     return $saved;
+  }
+
+  /**
+   * Returns an existing term created during the test.
+   *
+   * @param string $name
+   *   The term name to search for.
+   * @param string $vocabulary
+   *   The vocabulary machine name.
+   *
+   * @return \stdClass|null
+   *   The term object or NULL if no matching term was found.
+   */
+  protected function getExistingTerm(string $name, string $vocabulary): ?\stdClass {
+    foreach ($this->terms as $term) {
+      if ($term->name === $name && $term->vocabulary_machine_name === $vocabulary) {
+        return $term;
+      }
+    }
+
+    return NULL;
   }
 
   /**
