@@ -11,6 +11,7 @@ use Behat\Testwork\ServiceContainer\ServiceProcessor;
 use Drupal\DrupalExtension\Compiler\DriverPass;
 use Drupal\DrupalExtension\Compiler\EventSubscriberPass;
 use Drupal\DrupalExtension\Context\ContextClass\ClassGenerator;
+use Behat\Mink\Element\DocumentElement as MinkDocumentElement;
 use Drupal\DrupalExtension\Element\DocumentElement;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\FileLocator;
@@ -67,7 +68,7 @@ class DrupalExtension implements ExtensionInterface {
     // of the page, pieces of texts inside the <head> section.
     // @see https://github.com/minkphp/MinkBrowserKitDriver/issues/153
     // @see https://www.drupal.org/project/drupal/issues/3175718
-    class_alias(DocumentElement::class, \Behat\Mink\Element\DocumentElement::class, TRUE);
+    class_alias(DocumentElement::class, MinkDocumentElement::class, TRUE);
 
     $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/config'));
     $loader->load('services.yml');

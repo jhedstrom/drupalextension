@@ -27,6 +27,7 @@ class DocumentElement extends TraversableElement {
    * Returns XPath for handled element.
    *
    * @return string
+   *   The XPath expression.
    */
   public function getXpath() {
     return '//html';
@@ -36,6 +37,7 @@ class DocumentElement extends TraversableElement {
    * Returns document content.
    *
    * @return string
+   *   The trimmed page content.
    */
   public function getContent(): string {
     return trim($this->getDriver()->getContent());
@@ -45,8 +47,10 @@ class DocumentElement extends TraversableElement {
    * Check whether document has specified content.
    *
    * @param string $content
+   *   The content to check for.
    *
    * @return bool
+   *   TRUE if the content is found, FALSE otherwise.
    */
   public function hasContent(string $content) {
     return $this->has('named', ['content', $content]);
@@ -61,17 +65,17 @@ class DocumentElement extends TraversableElement {
       // To simulate what the user sees, it removes:
       // - all text inside the head tags
       // - Drupal settings json.
-      $raw_content = preg_replace([
+      $rawContent = preg_replace([
         '@<head>(.+?)</head>@si',
         '@<script type="application/json" data-drupal-selector="drupal-settings-json">([^<]*)</script>@',
       ], '', $this->getContent());
       // Filter out all HTML tags, as they are not visible in a normal browser.
-      $text = strip_tags($raw_content);
+      $text = strip_tags((string) $rawContent);
       // To preserve BC and match \Behat\Mink\Element\Element::getText() include
       // the page title.
-      $title_element = $this->find('css', 'title');
-      if ($title_element) {
-        $text = $title_element->getText() . ' ' . $text;
+      $titleElement = $this->find('css', 'title');
+      if ($titleElement) {
+        $text = $titleElement->getText() . ' ' . $text;
       }
       // To match what the user sees and \Behat\Mink\Element\Element::getText()
       // decode HTML entities.
@@ -80,7 +84,7 @@ class DocumentElement extends TraversableElement {
       // normalize spaces.
       $text = str_replace("\n", ' ', $text);
       $text = preg_replace('/ {2,}/', ' ', $text);
-      return trim($text);
+      return trim((string) $text);
     }
 
     return parent::getText();
