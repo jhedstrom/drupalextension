@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\DrupalExtension;
 
+use Behat\Hook\BeforeScenario;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 
 /**
@@ -24,9 +25,8 @@ trait ScenarioTrait {
 
   /**
    * Register the scenario.
-   *
-   * @BeforeScenario
    */
+  #[BeforeScenario]
   public function registerScenario(BeforeScenarioScope $scope): void {
     $this->currentScenario = $scope->getScenario();
   }

@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Drupal\DrupalExtension\Context;
 
+use Behat\Hook\BeforeScenario;
+use Behat\Hook\AfterScenario;
+use Behat\Step\When;
+use Behat\Step\Then;
 use Behat\Behat\Hook\Scope\ScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 
@@ -14,9 +18,8 @@ class MailContext extends RawMailContext {
 
   /**
    * By default, prevent mail from being actually sent out during tests.
-   *
-   * @BeforeScenario
    */
+  #[BeforeScenario]
   public function disableMail(ScenarioScope $event): void {
     $tags = array_merge($event->getFeature()->getTags(), $event->getScenario()->getTags());
     if (!in_array('sendmail', $tags) && !in_array('sendemail', $tags)) {
@@ -30,9 +33,8 @@ class MailContext extends RawMailContext {
 
   /**
    * Restore mail sending.
-   *
-   * @AfterScenario
    */
+  #[AfterScenario]
   public function enableMail(ScenarioScope $event): void {
     $tags = array_merge($event->getFeature()->getTags(), $event->getScenario()->getTags());
     if (!in_array('sendmail', $tags) && !in_array('sendemail', $tags)) {
@@ -45,18 +47,16 @@ class MailContext extends RawMailContext {
    *
    * When using the default mail manager service, it is not necessary to use
    * this tag.
-   *
-   * @BeforeScenario @mail,@email
    */
+  #[BeforeScenario('@mail,@email')]
   public function collectMail(): void {
     $this->getMailManager()->startCollectingMail();
   }
 
   /**
    * Stop collecting mail at scenario end.
-   *
-   * @AfterScenario @mail,@email
    */
+  #[AfterScenario('@mail,@email')]
   public function stopCollectingMail(): void {
     $this->getMailManager()->stopCollectingMail();
   }
@@ -74,9 +74,8 @@ class MailContext extends RawMailContext {
    *     | subject | Test email       |
    *     | body    | Hello world      |
    * @endcode
-   *
-   * @When Drupal sends a/an (e)mail:
    */
+  #[When('Drupal sends a/an (e)mail:')]
   public function drupalSendsMail(TableNode $fields): void {
     $mail = [
       'body' => $this->getRandom()->name(255),
@@ -106,12 +105,11 @@ class MailContext extends RawMailContext {
    *     | body                |
    *     | Welcome to the site |
    * @endcode
-   *
-   * @Then (a )(an )(e)mail(s) has/have been sent:
-   * @Then (a )(an )(e)mail(s) has/have been sent to :to:
-   * @Then (a )(an )(e)mail(s) has/have been sent with the subject :subject:
-   * @Then (a )(an )(e)mail(s) has/have been sent to :to with the subject :subject:
    */
+  #[Then('(a )(an )(e)mail(s) has/have been sent:')]
+  #[Then('(a )(an )(e)mail(s) has/have been sent to :to:')]
+  #[Then('(a )(an )(e)mail(s) has/have been sent with the subject :subject:')]
+  #[Then('(a )(an )(e)mail(s) has/have been sent to :to with the subject :subject:')]
   public function mailHasBeenSent(TableNode $expectedMailTable, string $to = '', string $subject = ''): void {
     $expected = $expectedMailTable->getHash();
     $actual = $this->getMail(['to' => $to, 'subject' => $subject]);
@@ -129,12 +127,11 @@ class MailContext extends RawMailContext {
    *     | subject   |
    *     | Greetings |
    * @endcode
-   *
-   * @Then (a )(an )new (e)mail(s) is/are sent:
-   * @Then (a )(an )new (e)mail(s) is/are sent to :to:
-   * @Then (a )(an )new (e)mail(s) is/are sent with the subject :subject:
-   * @Then (a )(an )new (e)mail(s) is/are sent to :to with the subject :subject:
    */
+  #[Then('(a )(an )new (e)mail(s) is/are sent:')]
+  #[Then('(a )(an )new (e)mail(s) is/are sent to :to:')]
+  #[Then('(a )(an )new (e)mail(s) is/are sent with the subject :subject:')]
+  #[Then('(a )(an )new (e)mail(s) is/are sent to :to with the subject :subject:')]
   public function newMailIsSent(TableNode $expectedMailTable, string $to = '', string $subject = ''): void {
     $expected = $expectedMailTable->getHash();
     $actual = $this->getMail(['to' => $to, 'subject' => $subject], TRUE);
@@ -149,12 +146,11 @@ class MailContext extends RawMailContext {
    * Then 2 mails have been sent to "user@example.com"
    * Then 1 email has been sent with the subject "Welcome"
    * @endcode
-   *
-   * @Then :count (e)mail(s) has/have been sent
-   * @Then :count (e)mail(s) has/have been sent to :to
-   * @Then :count (e)mail(s) has/have been sent with the subject :subject
-   * @Then :count (e)mail(s) has/have been sent to :to with the subject :subject
    */
+  #[Then(':count (e)mail(s) has/have been sent')]
+  #[Then(':count (e)mail(s) has/have been sent to :to')]
+  #[Then(':count (e)mail(s) has/have been sent with the subject :subject')]
+  #[Then(':count (e)mail(s) has/have been sent to :to with the subject :subject')]
   public function noMailHasBeenSent(string $count, string $to = '', string $subject = ''): void {
     $actual = $this->getMail(['to' => $to, 'subject' => $subject]);
     $expectedCount = match ($count) {
@@ -172,12 +168,11 @@ class MailContext extends RawMailContext {
    * Then 0 new emails are sent
    * Then 1 new mail is sent to "user@example.com"
    * @endcode
-   *
-   * @Then :count new (e)mail(s) is/are sent
-   * @Then :count new (e)mail(s) is/are sent to :to
-   * @Then :count new (e)mail(s) is/are sent with the subject :subject
-   * @Then :count new (e)mail(s) is/are sent to :to with the subject :subject
    */
+  #[Then(':count new (e)mail(s) is/are sent')]
+  #[Then(':count new (e)mail(s) is/are sent to :to')]
+  #[Then(':count new (e)mail(s) is/are sent with the subject :subject')]
+  #[Then(':count new (e)mail(s) is/are sent to :to with the subject :subject')]
   public function noNewMailIsSent(string $count, string $to = '', string $subject = ''): void {
     $actual = $this->getMail(['to' => $to, 'subject' => $subject], TRUE);
     $expectedCount = match ($count) {
@@ -197,12 +192,11 @@ class MailContext extends RawMailContext {
    * When I follow the link to "user/reset" from the email to "user@example.com"
    * When I follow the link to "user/reset" from the email with the subject "Welcome"
    * @endcode
-   *
-   * @When I follow the link to :urlFragment from the (e)mail
-   * @When I follow the link to :urlFragment from the (e)mail to :to
-   * @When I follow the link to :urlFragment from the (e)mail with the subject :subject
-   * @When I follow the link to :urlFragment from the (e)mail to :to with the subject :subject
    */
+  #[When('I follow the link to :urlFragment from the (e)mail')]
+  #[When('I follow the link to :urlFragment from the (e)mail to :to')]
+  #[When('I follow the link to :urlFragment from the (e)mail with the subject :subject')]
+  #[When('I follow the link to :urlFragment from the (e)mail to :to with the subject :subject')]
   public function followLinkInMail(string $urlFragment, string $to = '', string $subject = ''): void {
     // Get the message.
     $filters = ['to' => $to, 'subject' => $subject];

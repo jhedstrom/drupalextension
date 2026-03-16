@@ -15,6 +15,9 @@ use Behat\Behat\Context\Annotation\AnnotationReader;
 /**
  * Annotated contexts reader.
  *
+ * @deprecated in drupalextension:5.3.0 and is removed from drupalextension:6.0.0.
+ *   Use PHP 8 attributes from Drupal\DrupalExtension\Hook\Attribute\ instead.
+ *
  * @see \Behat\Behat\Context\Loader\AnnotatedLoader
  */
 class Reader implements AnnotationReader {

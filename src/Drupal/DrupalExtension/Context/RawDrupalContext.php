@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\DrupalExtension\Context;
 
+use Behat\Hook\AfterScenario;
 use Drupal\Driver\DrupalDriver;
+use Drupal\DrupalExtension\Hook\Attribute\BeforeNodeCreate;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Behat\Testwork\Hook\HookDispatcher;
 use Behat\Behat\Context\Environment\InitializedContextEnvironment;
@@ -146,9 +148,8 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
 
   /**
    * Massage node values to match the expectations on different Drupal versions.
-   *
-   * @beforeNodeCreate
    */
+  #[BeforeNodeCreate]
   public static function alterNodeParameters(BeforeNodeCreateScope $scope): void {
     $node = $scope->getEntity();
 
@@ -175,9 +176,8 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
 
   /**
    * Remove any created nodes.
-   *
-   * @AfterScenario
    */
+  #[AfterScenario]
   public function cleanNodes(): void {
     // Remove any nodes that were created.
     foreach ($this->nodes as $node) {
@@ -188,9 +188,8 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
 
   /**
    * Remove any created users.
-   *
-   * @AfterScenario
    */
+  #[AfterScenario]
   public function cleanUsers(): void {
     // Remove any users that were created.
     if ($this->userManager->hasUsers()) {
@@ -214,9 +213,8 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
 
   /**
    * Remove any created terms.
-   *
-   * @AfterScenario
    */
+  #[AfterScenario]
   public function cleanTerms(): void {
     // Remove any terms that were created.
     foreach (array_reverse($this->terms) as $term) {
@@ -227,9 +225,8 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
 
   /**
    * Remove any created roles.
-   *
-   * @AfterScenario
    */
+  #[AfterScenario]
   public function cleanRoles(): void {
     // Remove any roles that were created.
     foreach ($this->roles as $role) {
@@ -240,9 +237,8 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
 
   /**
    * Remove any created languages.
-   *
-   * @AfterScenario
    */
+  #[AfterScenario]
   public function cleanLanguages(): void {
     // Delete any languages that were created.
     foreach ($this->languages as $language) {
@@ -254,9 +250,8 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
 
   /**
    * Clear static caches.
-   *
-   * @AfterScenario @api
    */
+  #[AfterScenario('@api')]
   public function clearStaticCaches(): void {
     $this->getDriver()->clearStaticCaches();
   }

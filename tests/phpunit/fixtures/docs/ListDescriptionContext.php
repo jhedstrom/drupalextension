@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\DrupalExtension\Tests\Fixtures;
 
+use Behat\Step\Then;
+
 /**
  * Context with a list in description.
  *
@@ -17,12 +19,12 @@ class ListDescriptionContext {
   /**
    * Step method.
    *
-   * @Then the list should be visible
    *
    * @code
    * Then the list should be visible
    * @endcode
    */
+  #[Then('the list should be visible')]
   public function listAssertVisible(): void {
   }
 

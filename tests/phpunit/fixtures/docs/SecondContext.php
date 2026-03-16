@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\DrupalExtension\Tests\Fixtures;
 
+use Behat\Step\Then;
+
 /**
  * Second context for testing.
  */
@@ -12,12 +14,12 @@ class SecondContext {
   /**
    * Second method.
    *
-   * @Then the second should pass
    *
    * @code
    * Then the second should pass
    * @endcode
    */
+  #[Then('the second should pass')]
   public function secondAssertSecond(): void {
   }
 

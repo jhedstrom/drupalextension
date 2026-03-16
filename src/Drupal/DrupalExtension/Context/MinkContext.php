@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace Drupal\DrupalExtension\Context;
 
+use Behat\Step\Given;
+use Behat\Step\When;
+use Behat\Hook\BeforeStep;
+use Behat\Hook\AfterStep;
+use Behat\Step\Then;
 use Behat\Behat\Hook\Scope\BeforeStepScope;
 use Behat\Behat\Hook\Scope\AfterStepScope;
 use Behat\Behat\Context\TranslatableContext;
@@ -58,11 +63,11 @@ class MinkContext extends MinkExtension implements TranslatableContext {
    * When I visit "/node/1"
    * @endcode
    *
-   * @Given I am at :path
-   * @When I visit :path
    *
    * @throws \Behat\Mink\Exception\UnsupportedDriverActionException
    */
+  #[Given('I am at :path')]
+  #[When('I visit :path')]
   public function assertAtPath(string $path): void {
     $this->getSession()->visit($this->locatePath($path));
 
@@ -82,9 +87,8 @@ class MinkContext extends MinkExtension implements TranslatableContext {
    * @code
    * When I click "Read more"
    * @endcode
-   *
-   * @When I click :link
    */
+  #[When('I click :link')]
   public function assertClick(string $link): void {
     // Use the Mink Extension step definition.
     $this->clickLink($link);
@@ -97,10 +101,9 @@ class MinkContext extends MinkExtension implements TranslatableContext {
    * Given for "Title" I enter "My article"
    * Given I enter "My article" for "Title"
    * @endcode
-   *
-   * @Given for :field I enter :value
-   * @Given I enter :value for :field
    */
+  #[Given('for :field I enter :value')]
+  #[Given('I enter :value for :field')]
   public function assertEnterField(string $field, string $value): void {
     // Use the Mink Extension step definition.
     $this->fillField($field, $value);
@@ -108,9 +111,8 @@ class MinkContext extends MinkExtension implements TranslatableContext {
 
   /**
    * For javascript enabled scenarios, always wait for AJAX before clicking.
-   *
-   * @BeforeStep
    */
+  #[BeforeStep]
   public function beforeJavascriptStep(BeforeStepScope $event): void {
     /** @var \Behat\Behat\Hook\Scope\BeforeStepScope $event */
     // Make sure the feature is registered in case this hook fires before
@@ -128,9 +130,8 @@ class MinkContext extends MinkExtension implements TranslatableContext {
 
   /**
    * For javascript enabled scenarios, always wait for AJAX after clicking.
-   *
-   * @AfterStep
    */
+  #[AfterStep]
   public function afterJavascriptStep(AfterStepScope $event): void {
     if (!$this->hasTag('javascript')) {
       return;
@@ -149,9 +150,8 @@ class MinkContext extends MinkExtension implements TranslatableContext {
    * @code
    * Given I wait for AJAX to finish
    * @endcode
-   *
-   * @Given I wait for AJAX to finish
    */
+  #[Given('I wait for AJAX to finish')]
   public function iWaitForAjaxToFinish(mixed $event = NULL): void {
     if (!$this->getSession()->isStarted()) {
       return;
@@ -203,9 +203,8 @@ JS;
    * @code
    * When I press the "Save" button
    * @endcode
-   *
-   * @When I press the :button button
    */
+  #[When('I press the :button button')]
   public function pressButton(mixed $button) {
     // Wait for any open autocomplete boxes to finish closing.  They block
     // form-submission if they are still open.
@@ -238,9 +237,8 @@ JS;
    * @code
    *   Given I press the "enter" key in the "Search" field
    * @endcode
-   *
-   * @Given I press the :char key in the :field field
    */
+  #[Given('I press the :char key in the :field field')]
   public function pressKey(mixed $char, string $field): void {
     static $keys = [
       'backspace' => 8,
@@ -296,9 +294,8 @@ JS;
    * @code
    * Then I should see the link "Log out"
    * @endcode
-   *
-   * @Then I should see the link :link
    */
+  #[Then('I should see the link :link')]
   public function assertLinkVisible(string $link): void {
     $element = $this->getSession()->getPage();
     $result = $element->findLink($link);
@@ -325,9 +322,8 @@ JS;
    * @code
    * Then I should not see the link "Log out"
    * @endcode
-   *
-   * @Then I should not see the link :link
    */
+  #[Then('I should not see the link :link')]
   public function assertNotLinkVisible(string $link): void {
     $element = $this->getSession()->getPage();
     $result = $element->findLink($link);
@@ -354,9 +350,8 @@ JS;
    * @code
    * Then I should not visibly see the link "Skip to main content"
    * @endcode
-   *
-   * @Then I should not visibly see the link :link
    */
+  #[Then('I should not visibly see the link :link')]
   public function assertNotLinkVisuallyVisible(string $link): void {
     $element = $this->getSession()->getPage();
     $result = $element->findLink($link);
@@ -384,9 +379,8 @@ JS;
    * Then I see the heading "Welcome"
    * Then I should see the heading "Welcome"
    * @endcode
-   *
-   * @Then I (should )see the heading :heading
    */
+  #[Then('I (should )see the heading :heading')]
   public function assertHeading(string $heading): void {
     $element = $this->getSession()->getPage();
     foreach (['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] as $tag) {
@@ -407,9 +401,8 @@ JS;
    * Then I not see the heading "Error"
    * Then I should not see the heading "Error"
    * @endcode
-   *
-   * @Then I (should )not see the heading :heading
    */
+  #[Then('I (should )not see the heading :heading')]
   public function assertNotHeading(string $heading): void {
     $element = $this->getSession()->getPage();
     foreach (['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] as $tag) {
@@ -430,10 +423,9 @@ JS;
    * Then I should see the button "Save"
    * Then I should see the "Save" button
    * @endcode
-   *
-   * @Then I (should ) see the button :button
-   * @Then I (should ) see the :button button
    */
+  #[Then('I (should ) see the button :button')]
+  #[Then('I (should ) see the :button button')]
   public function assertButton(string $button): void {
     $element = $this->getSession()->getPage();
     $buttonObj = $element->findButton($button);
@@ -449,10 +441,9 @@ JS;
    * Then I should not see the button "Delete"
    * Then I should not see the "Delete" button
    * @endcode
-   *
-   * @Then I should not see the button :button
-   * @Then I should not see the :button button
    */
+  #[Then('I should not see the button :button')]
+  #[Then('I should not see the :button button')]
   public function assertNotButton(string $button): void {
     $element = $this->getSession()->getPage();
     $buttonObj = $element->findButton($button);
@@ -472,9 +463,8 @@ JS;
    * When I follow "Read more" in the "content" region
    * When I click "Read more" in the "content" region
    * @endcode
-   *
-   * @When I follow/click :link in the :region( region)
    */
+  #[When('I follow/click :link in the :region( region)')]
   public function assertRegionLinkFollow(string $link, string $region): void {
     $regionObj = $this->getRegion($region);
 
@@ -501,9 +491,8 @@ JS;
    * Given I press "Submit" in the "sidebar"
    * Given I press "Submit" in the "sidebar" region
    * @endcode
-   *
-   * @Given I press :button in the :region( region)
    */
+  #[Given('I press :button in the :region( region)')]
   public function assertRegionPressButton(string $button, string $region): void {
     $regionObj = $this->getRegion($region);
 
@@ -525,10 +514,9 @@ JS;
    * Given I fill in "test" for "Search" in the "header" region
    * Given I fill in "Search" with "test" in the "header" region
    * @endcode
-   *
-   * @Given I fill in :value for :field in the :region( region)
-   * @Given I fill in :field with :value in the :region( region)
    */
+  #[Given('I fill in :value for :field in the :region( region)')]
+  #[Given('I fill in :field with :value in the :region( region)')]
   public function regionFillField(string $field, string $value, string $region): void {
     $field = $this->fixStepArgument($field);
     $value = $this->fixStepArgument($value);
@@ -551,9 +539,8 @@ JS;
    * Given I check "Published" in the "content"
    * Given I check "Published" in the "content" region
    * @endcode
-   *
-   * @Given I check :locator in the :region( region)
    */
+  #[Given('I check :locator in the :region( region)')]
   public function assertRegionCheckBox(string $locator, string $region): void {
     $regionObj = $this->getRegion($region);
     $regionObj->checkField($locator);
@@ -574,9 +561,8 @@ JS;
    * Given I uncheck "Promoted" in the "content"
    * Given I uncheck "Promoted" in the "content" region
    * @endcode
-   *
-   * @Given I uncheck :checkbox in the :region( region)
    */
+  #[Given('I uncheck :checkbox in the :region( region)')]
   public function assertRegionUncheckBox(string $locator, string $region): void {
     $regionObj = $this->getRegion($region);
     $regionObj->uncheckField($locator);
@@ -593,10 +579,9 @@ JS;
    * Then I should see the heading "Latest news" in the "sidebar" region
    * Then I should see the "Latest news" heading in the "sidebar" region
    * @endcode
-   *
-   * @Then I should see the heading :heading in the :region( region)
-   * @Then I should see the :heading heading in the :region( region)
    */
+  #[Then('I should see the heading :heading in the :region( region)')]
+  #[Then('I should see the :heading heading in the :region( region)')]
   public function assertRegionHeading(string $heading, string $region): void {
     $regionObj = $this->getRegion($region);
 
@@ -624,9 +609,8 @@ JS;
    * Then I should see the link "About us" in the "footer"
    * Then I should see the link "About us" in the "footer" region
    * @endcode
-   *
-   * @Then I should see the link :link in the :region( region)
    */
+  #[Then('I should see the link :link in the :region( region)')]
   public function assertLinkRegion(string $link, string $region): void {
     $regionObj = $this->getRegion($region);
 
@@ -646,9 +630,8 @@ JS;
    * Then I should not see the link "Admin" in the "footer"
    * Then I should not see the link "Admin" in the "footer" region
    * @endcode
-   *
-   * @Then I should not see the link :link in the :region( region)
    */
+  #[Then('I should not see the link :link in the :region( region)')]
   public function assertNotLinkRegion(string $link, string $region): void {
     $regionObj = $this->getRegion($region);
 
@@ -669,9 +652,8 @@ JS;
    * Then I should see "Welcome" in the "content" region
    * Then I should see the text "Welcome" in the "content" region
    * @endcode
-   *
-   * @Then I should see( the text) :text in the :region( region)
    */
+  #[Then('I should see( the text) :text in the :region( region)')]
   public function assertRegionText(string $text, string $region): void {
     $regionObj = $this->getRegion($region);
 
@@ -693,9 +675,8 @@ JS;
    * Then I should not see "Error" in the "content" region
    * Then I should not see the text "Error" in the "content" region
    * @endcode
-   *
-   * @Then I should not see( the text) :text in the :region( region)
    */
+  #[Then('I should not see( the text) :text in the :region( region)')]
   public function assertNotRegionText(string $text, string $region): void {
     $regionObj = $this->getRegion($region);
 
@@ -713,9 +694,8 @@ JS;
    * Then I see the text "Welcome to Drupal"
    * Then I should see the text "Welcome to Drupal"
    * @endcode
-   *
-   * @Then I (should )see the text :text
    */
+  #[Then('I (should )see the text :text')]
   public function assertTextVisible(string $text): void {
     // Use the Mink Extension step definition.
     $this->assertPageContainsText($text);
@@ -727,9 +707,8 @@ JS;
    * @code
    * Then I should not see the text "Access denied"
    * @endcode
-   *
-   * @Then I should not see the text :text
    */
+  #[Then('I should not see the text :text')]
   public function assertNotTextVisible(string $text): void {
     // Use the Mink Extension step definition.
     $this->assertPageNotContainsText($text);
@@ -741,9 +720,8 @@ JS;
    * @code
    * Then I should get a 200 HTTP response
    * @endcode
-   *
-   * @Then I should get a :code HTTP response
    */
+  #[Then('I should get a :code HTTP response')]
   public function assertHttpResponse(int|string $code): void {
     // Use the Mink Extension step definition.
     $this->assertResponseStatus($code);
@@ -755,9 +733,8 @@ JS;
    * @code
    * Then I should not get a 403 HTTP response
    * @endcode
-   *
-   * @Then I should not get a :code HTTP response
    */
+  #[Then('I should not get a :code HTTP response')]
   public function assertNotHttpResponse(int|string $code): void {
     // Use the Mink Extension step definition.
     $this->assertResponseStatusIsNot($code);
@@ -769,9 +746,8 @@ JS;
    * @code
    * Given I check the box "Published"
    * @endcode
-   *
-   * @Given I check the box :checkbox
    */
+  #[Given('I check the box :checkbox')]
   public function assertCheckBox(string $checkbox): void {
     // Use the Mink Extension step definition.
     $this->checkOption($checkbox);
@@ -783,9 +759,8 @@ JS;
    * @code
    * Given I uncheck the box "Promoted to front page"
    * @endcode
-   *
-   * @Given I uncheck the box :checkbox
    */
+  #[Given('I uncheck the box :checkbox')]
   public function assertUncheckBox(string $checkbox): void {
     // Use the Mink Extension step definition.
     $this->uncheckOption($checkbox);
@@ -800,10 +775,9 @@ JS;
    * When I select the radio button "Full HTML"
    * When I select the radio button "Full HTML" with the id "edit-format-full-html"
    * @endcode
-   *
-   * @When I select the radio button :label with the id :id
-   * @When I select the radio button :label
    */
+  #[When('I select the radio button :label with the id :id')]
+  #[When('I select the radio button :label')]
   public function assertSelectRadioById(string $label, string $id = ''): void {
     $element = $this->getSession()->getPage();
     if ($id !== '' && $id !== '0') {
@@ -835,9 +809,8 @@ JS;
    * When I collapse details labelled "Advanced settings"
    * When I click details labelled "Advanced settings"
    * @endcode
-   *
-   * @When I :action details labelled :summary
    */
+  #[When('I :action details labelled :summary')]
   public function iExpandOrCollapseDetailsByLabel(string $action, string $summary): void {
     $page = $this->getSession()->getPage();
 

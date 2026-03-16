@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\DrupalExtension\Context;
 
+use Behat\Transformation\Transform;
+use Behat\Hook\BeforeScenario;
+use Behat\Hook\AfterScenario;
 use Behat\Behat\Hook\Scope\ScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 
@@ -27,9 +30,8 @@ class RandomContext extends RawDrupalContext {
 
   /**
    * Transform random variables.
-   *
-   * @Transform #([^<]*\<\?.*\>[^>]*)#
    */
+  #[Transform('#([^<]*\<\?.*\>[^>]*)#')]
   public function transformVariables(string $message): string|array|null {
     $patterns = [];
     $replacements = [];
@@ -45,9 +47,8 @@ class RandomContext extends RawDrupalContext {
 
   /**
    * Transform random variables in table arguments.
-   *
-   * @Transform table:*
    */
+  #[Transform('table:*')]
   public function transformTable(TableNode $table): TableNode {
     $rows = [];
     foreach ($table->getRows() as $row) {
@@ -58,9 +59,8 @@ class RandomContext extends RawDrupalContext {
 
   /**
    * Set values for each random variable found in the current scenario.
-   *
-   * @BeforeScenario
    */
+  #[BeforeScenario]
   public function beforeScenarioSetVariables(ScenarioScope $scope): void {
     $steps = [];
     if ($scope->getFeature()->hasBackground()) {
@@ -88,9 +88,8 @@ class RandomContext extends RawDrupalContext {
 
   /**
    * Reset variables after the scenario.
-   *
-   * @AfterScenario
    */
+  #[AfterScenario]
   public function afterScenarioResetVariables(ScenarioScope $scope): void {
     $this->values = [];
   }

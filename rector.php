@@ -38,6 +38,7 @@ return RectorConfig::configure()
         __DIR__ . '/tests/phpunit/**',
     ])
     ->withPhpSets(php82: TRUE)
+    ->withAttributesSets(behat: TRUE)
     ->withPreparedSets(
         deadCode: TRUE,
         codeQuality: TRUE,
