@@ -305,6 +305,47 @@ class FeatureContext extends RawDrupalContext {
   }
 
   /**
+   * Makes REQUEST_TIME stale by setting it to a past value.
+   *
+   * This simulates what happens during a long-running Behat test suite where
+   * REQUEST_TIME becomes increasingly outdated.
+   *
+   * @Given the request time is :seconds seconds in the past
+   *
+   * @see https://github.com/jhedstrom/drupalextension/issues/179
+   */
+  public function testSetStaleRequestTime(int $seconds): void {
+    $staleTime = time() - $seconds;
+    $_SERVER['REQUEST_TIME'] = $staleTime;
+    \Drupal::request()->server->set('REQUEST_TIME', $staleTime);
+  }
+
+  /**
+   * Asserts that cron ran with a fresh request time.
+   *
+   * Reads the time drift recorded by behat_test_cron() and asserts it is
+   * within the given threshold.
+   *
+   * @Then the cron request time drift should be less than :seconds seconds
+   *
+   * @see https://github.com/jhedstrom/drupalextension/issues/179
+   */
+  public function testAssertCronRequestTimeDrift(int $seconds): void {
+    $drift = \Drupal::state()->get('behat_test.cron_time_drift');
+    if ($drift === NULL) {
+      throw new \RuntimeException('Cron time drift was not recorded. Ensure the behat_test module is enabled.');
+    }
+    if (abs($drift) >= $seconds) {
+      $requestTime = \Drupal::state()->get('behat_test.cron_request_time');
+      $actualTime = \Drupal::state()->get('behat_test.cron_actual_time');
+      throw new ExpectationException(
+        sprintf('Cron request time drift is %d seconds (request_time=%d, actual_time=%d), expected less than %d.', $drift, $requestTime, $actualTime, $seconds),
+        $this->getSession()->getDriver()
+      );
+    }
+  }
+
+  /**
    * Performs a passing assertion step for testing.
    *
    * @When I use a test passing assertion step
