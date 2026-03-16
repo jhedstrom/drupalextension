@@ -97,122 +97,122 @@ class DrupalExtension implements ExtensionInterface {
    */
   public function configure(ArrayNodeDefinition $builder): void {
     // @formatter:off
+    // phpcs:disable
     $builder
       ->children()
-      ->scalarNode('default_driver')
-      ->defaultValue('blackbox')
-      ->info('Use "blackbox" to test remote site. See "api_driver" for easier integration.')
+        ->scalarNode('default_driver')
+          ->defaultValue('blackbox')
+          ->info('Use "blackbox" to test remote site. See "api_driver" for easier integration.')
+        ->end()
+        ->scalarNode('api_driver')
+          ->defaultValue('drush')
+          ->info('Bootstraps drupal through "drupal8" or "drush".')
+        ->end()
+        ->scalarNode('drush_driver')
+          ->defaultValue('drush')
+        ->end()
+        ->arrayNode('region_map')
+          ->info("Targeting content in specific regions can be accomplished once those regions have been defined." . PHP_EOL
+            . '  My region: "#css-selector"' . PHP_EOL
+            . '  Content: "#main .region-content"' . PHP_EOL
+            . '  Right sidebar: "#sidebar-second"' . PHP_EOL)
+          ->useAttributeAsKey('key')
+          ->prototype('variable')->end()
+        ->end()
+        ->arrayNode('text')
+          ->info(
+            'Text strings, such as Log out or the Username field can be altered via behat.yml if they vary from the default values.' . PHP_EOL
+            . '  login_url: "/user"' . PHP_EOL
+            . '  logout_url: "/user/logout"' . PHP_EOL
+            . '  logout_confirm_url: "/user/logout/confirm"' . PHP_EOL
+            . '  log_out: "Sign out"' . PHP_EOL
+            . '  log_in: "Sign in"' . PHP_EOL
+            . '  password_field: "Enter your password"' . PHP_EOL
+            . '  username_field: "Nickname"'
+          )
+          ->ignoreExtraKeys(FALSE)
+          ->addDefaultsIfNotSet()
+          ->children()
+            ->scalarNode('login_url')
+              ->defaultValue('/user')
+            ->end()
+            ->scalarNode('logout_url')
+              ->defaultValue('/user/logout')
+            ->end()
+            ->scalarNode('logout_confirm_url')
+              ->defaultValue('/user/logout/confirm')
+            ->end()
+            ->scalarNode('log_in')
+              ->defaultValue('Log in')
+            ->end()
+            ->scalarNode('log_out')
+              ->defaultValue('Log out')
+            ->end()
+            ->scalarNode('password_field')
+              ->defaultValue('Password')
+            ->end()
+            ->scalarNode('username_field')
+              ->defaultValue('Username')
+            ->end()
+          ->end()
+        ->end()
+        ->arrayNode('selectors')
+          ->ignoreExtraKeys(FALSE)
+          ->addDefaultsIfNotSet()
+          ->children()
+            ->scalarNode('message_selector')->end()
+            ->scalarNode('error_message_selector')->end()
+            ->scalarNode('success_message_selector')->end()
+            ->scalarNode('warning_message_selector')->end()
+            ->scalarNode('login_form_selector')
+              ->defaultValue('form#user-login,form#user-login-form')
+            ->end()
+            ->scalarNode('logged_in_selector')
+              ->defaultValue('body.logged-in,body.user-logged-in')
+            ->end()
+          ->end()
+        ->end()
+        // Drupal drivers.
+        ->arrayNode('blackbox')->end()
+        ->arrayNode('drupal')
+          ->children()
+            ->scalarNode('drupal_root')->end()
+          ->end()
+        ->end()
+        ->arrayNode('drush')
+          ->children()
+            ->scalarNode('alias')->end()
+            ->scalarNode('binary')->defaultValue('drush')->end()
+            ->scalarNode('root')->end()
+            ->scalarNode('global_options')->end()
+          ->end()
+        ->end()
+        // Subcontext paths.
+        ->arrayNode('subcontexts')
+          ->info(
+            'The Drupal Extension is capable of discovering additional step-definitions provided by subcontexts.' . PHP_EOL
+            . 'Module authors can provide these in files following the naming convention of foo.behat.inc. Once that module is enabled, the Drupal Extension will load these.' . PHP_EOL
+            . PHP_EOL
+            . 'Additional subcontexts can be loaded by either placing them in the bootstrap directory (typically features/bootstrap) or by adding them to behat.yml.'
+          )
+          ->addDefaultsIfNotSet()
+          ->children()
+            ->arrayNode('paths')
+              ->info(
+                '- /path/to/additional/subcontexts' . PHP_EOL
+                . '- /another/path'
+              )
+              ->useAttributeAsKey('key')
+              ->prototype('variable')->end()
+            ->end()
+            ->scalarNode('autoload')
+              ->defaultValue(TRUE)
+            ->end()
+          ->end()
+        ->end()
       ->end()
-      ->scalarNode('api_driver')
-      ->defaultValue('drush')
-      ->info('Bootstraps drupal through "drupal8" or "drush".')
-      ->end()
-      ->scalarNode('drush_driver')
-      ->defaultValue('drush')
-      ->end()
-      ->arrayNode('region_map')
-      ->info("Targeting content in specific regions can be accomplished once those regions have been defined." . PHP_EOL
-                      . '  My region: "#css-selector"' . PHP_EOL
-                      . '  Content: "#main .region-content"' . PHP_EOL
-                      . '  Right sidebar: "#sidebar-second"' . PHP_EOL)
-      ->useAttributeAsKey('key')
-      ->prototype('variable')
-      ->end()
-      ->end()
-      ->arrayNode('text')
-      ->info(
-                      'Text strings, such as Log out or the Username field can be altered via behat.yml if they vary from the default values.' . PHP_EOL
-                      . '  login_url: "/user"' . PHP_EOL
-                      . '  logout_url: "/user/logout"' . PHP_EOL
-                      . '  logout_confirm_url: "/user/logout/confirm"' . PHP_EOL
-                      . '  log_out: "Sign out"' . PHP_EOL
-                      . '  log_in: "Sign in"' . PHP_EOL
-                      . '  password_field: "Enter your password"' . PHP_EOL
-                      . '  username_field: "Nickname"'
-                  )
-      ->ignoreExtraKeys(FALSE)
-      ->addDefaultsIfNotSet()
-      ->children()
-      ->scalarNode('login_url')
-      ->defaultValue('/user')
-      ->end()
-      ->scalarNode('logout_url')
-      ->defaultValue('/user/logout')
-      ->end()
-      ->scalarNode('logout_confirm_url')
-      ->defaultValue('/user/logout/confirm')
-      ->end()
-      ->scalarNode('log_in')
-      ->defaultValue('Log in')
-      ->end()
-      ->scalarNode('log_out')
-      ->defaultValue('Log out')
-      ->end()
-      ->scalarNode('password_field')
-      ->defaultValue('Password')
-      ->end()
-      ->scalarNode('username_field')
-      ->defaultValue('Username')
-      ->end()
-      ->end()
-      ->end()
-      ->arrayNode('selectors')
-      ->ignoreExtraKeys(FALSE)
-      ->addDefaultsIfNotSet()
-      ->children()
-      ->scalarNode('message_selector')->end()
-      ->scalarNode('error_message_selector')->end()
-      ->scalarNode('success_message_selector')->end()
-      ->scalarNode('warning_message_selector')->end()
-      ->scalarNode('login_form_selector')
-      ->defaultValue('form#user-login,form#user-login-form')
-      ->end()
-      ->scalarNode('logged_in_selector')
-      ->defaultValue('body.logged-in,body.user-logged-in')
-      ->end()
-      ->end()
-      ->end()
-    // Drupal drivers.
-      ->arrayNode('blackbox')
-      ->end()
-      ->arrayNode('drupal')
-      ->children()
-      ->scalarNode('drupal_root')->end()
-      ->end()
-      ->end()
-      ->arrayNode('drush')
-      ->children()
-      ->scalarNode('alias')->end()
-      ->scalarNode('binary')->defaultValue('drush')->end()
-      ->scalarNode('root')->end()
-      ->scalarNode('global_options')->end()
-      ->end()
-      ->end()
-    // Subcontext paths.
-      ->arrayNode('subcontexts')
-      ->info(
-                      'The Drupal Extension is capable of discovering additional step-definitions provided by subcontexts.' . PHP_EOL
-                      . 'Module authors can provide these in files following the naming convention of foo.behat.inc. Once that module is enabled, the Drupal Extension will load these.' . PHP_EOL
-                      . PHP_EOL
-                      . 'Additional subcontexts can be loaded by either placing them in the bootstrap directory (typically features/bootstrap) or by adding them to behat.yml.'
-                  )
-      ->addDefaultsIfNotSet()
-      ->children()
-      ->arrayNode('paths')
-      ->info(
-                              '- /path/to/additional/subcontexts' . PHP_EOL
-                              . '- /another/path'
-                          )
-      ->useAttributeAsKey('key')
-      ->prototype('variable')->end()
-      ->end()
-      ->scalarNode('autoload')
-      ->defaultValue(TRUE)
-      ->end()
-      ->end()
-      ->end()
-      ->end()
-      ->end();
+    ->end();
+    // phpcs:enable
     // @formatter:on
   }
 

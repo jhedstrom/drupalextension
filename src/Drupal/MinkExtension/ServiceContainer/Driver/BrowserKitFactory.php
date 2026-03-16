@@ -70,13 +70,15 @@ class BrowserKitFactory extends BrowserKitFactoryOriginal {
    */
   public function configure(ArrayNodeDefinition $builder): void {
     // @formatter:off
+    // phpcs:disable
     $builder
       ->children()
-      ->arrayNode('guzzle_request_options')
-      ->prototype('variable')->end()
-      ->info("Guzzle request options. See \\GuzzleHttp\\RequestOptions. Defaults to ['allow_redirects' => false, 'cookies' => true].")
-      ->end()
+        ->arrayNode('guzzle_request_options')
+          ->prototype('variable')->end()
+          ->info("Guzzle request options. See \\GuzzleHttp\\RequestOptions. Defaults to ['allow_redirects' => false, 'cookies' => true].")
+        ->end()
       ->end();
+    // phpcs:enable
     // @formatter:on
   }
 
