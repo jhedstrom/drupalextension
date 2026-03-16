@@ -32,6 +32,18 @@ Feature: ConfigContext
     Then the "Site name" field should not contain "Temporary Name"
 
   @test-drupal @api
+  Scenario: Assert config cleanup resets cache so change detection works
+    Given I set the configuration item "system.site" with key "name" to "Cache Test Name"
+    And the config save log is cleared
+    When I go to "admin/config/system/site-information"
+    And I fill in "Site name" with "Changed Via Form"
+    And I press "Save configuration"
+
+  @test-drupal @api
+  Scenario: Assert config restore used fresh baseline not stale cache
+    Then the config restore baseline for "system.site" should be "Changed Via Form"
+
+  @test-drupal @api
   Scenario: Assert config backup uses original DB value when overridden in settings.php
     Given I set the configuration item "system.site" with key "name" to "Temporary Override Test"
     When I go to "admin/config/system/site-information"

@@ -2,3 +2,8 @@ services:
   behat_test.config.storage.install:
     class: Drupal\behat_test\Config\BehatTestExtensionInstallStorage
     arguments: ['@config.storage', 'config/install', '', true, '%install_profile%']
+  behat_test.config_save_subscriber:
+    class: Drupal\behat_test\EventSubscriber\ConfigSaveSubscriber
+    arguments: ['@state']
+    tags:
+      - { name: event_subscriber }

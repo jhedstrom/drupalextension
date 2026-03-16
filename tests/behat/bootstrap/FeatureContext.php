@@ -491,6 +491,53 @@ class FeatureContext extends RawDrupalContext {
   }
 
   /**
+   * Clears the config save log used for change detection testing.
+   *
+   * @Given the config save log is cleared
+   */
+  public function testClearConfigSaveLog(): void {
+    \Drupal::state()->delete('behat_test.config_save_log');
+  }
+
+  /**
+   * Asserts the config restore used the correct baseline, not a stale cache.
+   *
+   * When cleanConfig() restores config, the config factory should have a
+   * fresh view of storage. The 'original' value in the save event should
+   * match what was in the DB at restore time (the value set via the form),
+   * not the stale cached value from when setConfig() ran.
+   *
+   * @param string $expected
+   *   The expected original value at restore time.
+   * @param string $name
+   *   The configuration object name.
+   *
+   * @Then the config restore baseline for :name should be :expected
+   */
+  public function testAssertConfigRestoreBaseline(string $name, string $expected): void {
+    $log = \Drupal::state()->get('behat_test.config_save_log', []);
+    $last = NULL;
+    foreach (array_reverse($log) as $entry) {
+      if ($entry['name'] === $name) {
+        $last = $entry;
+        break;
+      }
+    }
+    if ($last === NULL) {
+      throw new ExpectationException(
+        sprintf('Config save log has no entry for "%s".', $name),
+        $this->getSession()->getDriver()
+      );
+    }
+    if ($last['original'] !== $expected) {
+      throw new ExpectationException(
+        sprintf('Config restore for "%s" used baseline "%s" instead of expected "%s". This indicates a stale config cache. Log: %s', $name, $last['original'], $expected, json_encode($log)),
+        $this->getSession()->getDriver()
+      );
+    }
+  }
+
+  /**
    * Deletes the current user from the database and untracking it.
    *
    * Simulates a database reset between scenarios: the user is removed from
