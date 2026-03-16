@@ -371,12 +371,17 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    * @param \stdClass $entity
    *   The entity object. Recognised field properties are replaced in-place
    *   with structured arrays; other properties are left unchanged.
+   * @param string[] $ignored_properties
+   *   Property names to skip during validation. Use this for properties that
+   *   are consumed by the driver (e.g. 'role', 'vocabulary_machine_name') but
+   *   are not real Drupal fields.
    *
    * @throws \RuntimeException
    *   Thrown when a column continuation (':column') appears without a
-   *   preceding 'field:column' header.
+   *   preceding 'field:column' header, or when a property is neither a
+   *   configurable field, a base field, nor in the ignored list.
    */
-  public function parseEntityFields(string $entity_type, \stdClass $entity): void {
+  public function parseEntityFields(string $entity_type, \stdClass $entity, array $ignored_properties = []): void {
     $multicolumnField = '';
     $multicolumnColumn = '';
     $multicolumnFields = [];
@@ -445,6 +450,9 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
           }
         }
       }
+      elseif (!$this->getDriver()->isBaseField($entity_type, $fieldName) && !in_array($fieldName, $ignored_properties, TRUE)) {
+        throw new \RuntimeException(sprintf('Field "%s" does not exist on entity type "%s".', $fieldName, $entity_type));
+      }
     }
 
     // Add the multicolumn fields to the entity.
@@ -464,7 +472,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    */
   public function userCreate(\stdClass $user): \stdClass {
     $this->dispatchHooks('BeforeUserCreateScope', $user);
-    $this->parseEntityFields('user', $user);
+    $this->parseEntityFields('user', $user, ['role']);
     $this->getDriver()->userCreate($user);
     $this->dispatchHooks('AfterUserCreateScope', $user);
     $this->userManager->addUser($user);
@@ -479,7 +487,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    */
   public function termCreate(\stdClass $term) {
     $this->dispatchHooks('BeforeTermCreateScope', $term);
-    $this->parseEntityFields('taxonomy_term', $term);
+    $this->parseEntityFields('taxonomy_term', $term, ['vocabulary_machine_name']);
     $saved = $this->getDriver()->createTerm($term);
     $this->dispatchHooks('AfterTermCreateScope', $saved);
     $this->terms[] = $saved;
