@@ -296,3 +296,18 @@ Feature: MinkContext coverage gaps
       """
       Unable to find details
       """
+
+  @test-blackbox @javascript
+  Scenario: Assert "Given I wait for AJAX to finish" passes when session is started
+    Given I am at "form_controls.html"
+    And I wait for AJAX to finish
+
+  @test-blackbox
+  Scenario: Assert "Given I wait for AJAX to finish" passes when session not started
+    Given some behat configuration
+    And scenario steps tagged with "@test-blackbox":
+      """
+      Given I wait for AJAX to finish
+      """
+    When I run behat
+    Then it should pass
