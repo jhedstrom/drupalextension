@@ -4,6 +4,13 @@ Feature: DrupalContext coverage gaps
   So that I can verify user, node, and term operations work correctly
 
   @test-drupal @api
+  Scenario: Assert head content and Drupal settings JSON are not visible in page text
+    Given I am logged in as a user with the "authenticated user" role
+    When I am on the homepage
+    Then I should see the heading "Welcome!"
+    And I should not see "permissionsHash"
+
+  @test-drupal @api
   Scenario: Assert "Given I am viewing my :type with the title :title" passes
     Given I am logged in as a user with the "administrator" role
     When I am viewing my "article" content with the title "My own article"
