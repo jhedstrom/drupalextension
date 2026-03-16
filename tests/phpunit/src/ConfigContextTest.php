@@ -40,16 +40,16 @@ class ConfigContextTest extends TestCase {
   }
 
   /**
-   * Tests that setConfig stores backup values correctly.
+   * Tests that setBasicConfig stores backup values correctly.
    */
-  #[DataProvider('dataProviderSetConfigBackup')]
-  public function testSetConfigBackup(array $operations, array $expected_backup): void {
+  #[DataProvider('dataProviderSetBasicConfigBackup')]
+  public function testSetBasicConfigBackup(array $operations, array $expected_backup): void {
     $getReturns = array_column($operations, 'original');
     $this->driver->method('configGet')->willReturnOnConsecutiveCalls(...$getReturns);
     $this->driver->method('configSet');
 
     foreach ($operations as $operation) {
-      $this->context->setConfig($operation['name'], $operation['key'], $operation['new_value']);
+      $this->context->setBasicConfig($operation['name'], $operation['key'], $operation['new_value']);
     }
 
     $config = new \ReflectionProperty(ConfigContext::class, 'config');
@@ -63,9 +63,9 @@ class ConfigContextTest extends TestCase {
   }
 
   /**
-   * Provides data for testSetConfigBackup().
+   * Provides data for testSetBasicConfigBackup().
    */
-  public static function dataProviderSetConfigBackup(): \Iterator {
+  public static function dataProviderSetBasicConfigBackup(): \Iterator {
     yield 'single key backup' => [
           [['name' => 'system.site', 'key' => 'name', 'original' => 'Original', 'new_value' => 'New']],
           ['system.site' => ['name' => 'Original']],
@@ -105,7 +105,7 @@ class ConfigContextTest extends TestCase {
                 $setArgs[] = [$name, $key, $value];
       });
 
-    $this->context->setConfig('system.site', 'name', 'New Name');
+    $this->context->setBasicConfig('system.site', 'name', 'New Name');
     $this->context->cleanConfig();
 
     $restoreCall = end($setArgs);

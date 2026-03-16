@@ -117,7 +117,7 @@ class ConfigContext extends RawDrupalContext implements TranslatableContext {
    * @param mixed $value
    *   Value to associate with identifier.
    */
-  public function setConfig(string $name, string $key, mixed $value): void {
+  protected function setConfig(string $name, string $key, mixed $value): void {
     $driver = $this->getDriver();
     if ($driver instanceof DrupalDriver) {
       $backup = $driver->getCore()->configGetOriginal($name, $key);
