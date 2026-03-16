@@ -361,7 +361,7 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
     $actualHeader = reset($headerRow);
     if (strtolower(trim($actualHeader)) !== $expected_header) {
       $capitalizedHeader = ucfirst($expected_header);
-      throw new \RuntimeException(sprintf("The list of %s should have the header '%s'.", $expected_header, $capitalizedHeader));
+      throw new \RuntimeException(sprintf("The list of %s should have the header '%s', but found '%s'.", $expected_header, $capitalizedHeader, $actualHeader));
     }
   }
 
