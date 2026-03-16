@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace Drupal\DrupalExtension\ServiceContainer;
 
 use Behat\Behat\Context\ServiceContainer\ContextExtension;
-use Behat\Mink\Element\DocumentElement;
 use Behat\Testwork\ServiceContainer\Extension as ExtensionInterface;
 use Behat\Testwork\ServiceContainer\ExtensionManager;
 use Behat\Testwork\ServiceContainer\ServiceProcessor;
 use Drupal\DrupalExtension\Compiler\DriverPass;
 use Drupal\DrupalExtension\Compiler\EventSubscriberPass;
 use Drupal\DrupalExtension\Context\ContextClass\ClassGenerator;
-use DrupalFinder\DrupalFinder;
+use Behat\Mink\Element\DocumentElement as MinkDocumentElement;
+use Drupal\DrupalExtension\Element\DocumentElement;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -68,16 +68,7 @@ class DrupalExtension implements ExtensionInterface {
     // of the page, pieces of texts inside the <head> section.
     // @see https://github.com/minkphp/MinkBrowserKitDriver/issues/153
     // @see https://www.drupal.org/project/drupal/issues/3175718
-    $drupalFinder = new DrupalFinder();
-    if (!$drupalFinder->locateRoot(getcwd())) {
-      throw new \RuntimeException('Cannot locate Drupal');
-    }
-    $drupalRoot = $drupalFinder->getDrupalRoot();
-    if (!$drupalRoot) {
-      throw new \RuntimeException('Cannot locate Drupal');
-    }
-    require_once $drupalRoot . '/core/tests/Drupal/Tests/DocumentElement.php';
-    class_alias('\Drupal\Tests\DocumentElement', DocumentElement::class, TRUE);
+    class_alias(DocumentElement::class, MinkDocumentElement::class, TRUE);
 
     $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/config'));
     $loader->load('services.yml');

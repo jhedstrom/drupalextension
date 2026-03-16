@@ -119,10 +119,6 @@ Feature: Test DrupalContext
     But the "nonexisting" tag should not be present
 
   @test-blackbox
-  Scenario: Regression test. See:
-  - https://github.com/minkphp/MinkBrowserKitDriver/issues/153
-  - https://www.drupal.org/project/drupal/issues/3175718
-  - https://www.drupal.org/project/drupal/issues/3295472
-  - https://github.com/jhedstrom/drupalextension/pull/612
+  Scenario: Assert head content is not visible in page text
     Given I am on the homepage
     Then I should not see "This text shouldn't be visible"
