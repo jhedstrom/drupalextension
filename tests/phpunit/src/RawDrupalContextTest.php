@@ -38,130 +38,140 @@ class RawDrupalContextTest extends TestCase {
   }
 
   /**
-   * Tests parsing simple entity fields.
+   * Tests parsing entity fields.
    */
-  #[DataProvider('dataProviderParseEntityFieldsSimple')]
-  public function testParseEntityFieldsSimple(string $input, array $expected): void {
-    $entity = (object) ['field_test' => $input];
-    $this->context->parseEntityFields('node', $entity);
-    $this->assertSame($expected, $entity->field_test);
+  #[DataProvider('dataProviderParseEntityFields')]
+  public function testParseEntityFields(array $input, array $expected, ?array $fields = NULL, ?string $exception = NULL): void {
+    if ($fields !== NULL) {
+      $driver = $this->createMock(DriverInterface::class);
+      $driver->method('isField')->willReturnCallback(
+        fn(string $entityType, string $fieldName): bool => in_array($fieldName, $fields, TRUE)
+      );
+
+      $drupal = $this->createMock(DrupalDriverManagerInterface::class);
+      $drupal->method('getDriver')->willReturn($driver);
+
+      $context = new RawDrupalContext();
+      $context->setDrupal($drupal);
+    }
+    else {
+      $context = $this->context;
+    }
+
+    if ($exception !== NULL) {
+      $this->expectException(\Exception::class);
+      $this->expectExceptionMessage($exception);
+    }
+
+    $entity = (object) $input;
+    $context->parseEntityFields('node', $entity);
+    $this->assertSame($expected, (array) $entity);
   }
 
   /**
-   * Provides data for testParseEntityFieldsSimple().
+   * Provides data for testParseEntityFields().
    */
-  public static function dataProviderParseEntityFieldsSimple(): \Iterator {
+  public static function dataProviderParseEntityFields(): \Iterator {
+    // All properties recognized as fields.
     yield 'single value' => [
-      'A',
-          ['A'],
+      ['field_test' => 'A'],
+      ['field_test' => ['A']],
     ];
     yield 'multiple csv values' => [
-      'A, B, C',
-          ['A', 'B', 'C'],
+      ['field_test' => 'A, B, C'],
+      ['field_test' => ['A', 'B', 'C']],
     ];
     yield 'csv with quoted comma' => [
-      'A, "a value, containing a comma"',
-          ['A', 'a value, containing a comma'],
+      ['field_test' => 'A, "a value, containing a comma"'],
+      ['field_test' => ['A', 'a value, containing a comma']],
+    ];
+    yield 'compound separator' => [
+      ['field_test' => 'A - B'],
+      ['field_test' => [['A', 'B']]],
+    ];
+    yield 'inline named columns' => [
+      ['field_test' => 'x: A - y: B'],
+      ['field_test' => [['x' => 'A', 'y' => 'B']]],
+    ];
+    yield 'multi-value compound' => [
+      ['field_test' => 'A - B, C - D'],
+      ['field_test' => [['A', 'B'], ['C', 'D']]],
+    ];
+    yield 'multi-value named columns' => [
+      ['field_test' => 'x: A - y: B, x: C - y: D'],
+      ['field_test' => [['x' => 'A', 'y' => 'B'], ['x' => 'C', 'y' => 'D']]],
+    ];
+    yield 'blank value unsets field' => [
+      ['field_test' => ''],
+      [],
+    ];
+    yield 'multiple fields on one entity' => [
+      ['field_a' => 'X', 'field_b' => 'Y, Z'],
+      ['field_a' => ['X'], 'field_b' => ['Y', 'Z']],
+    ];
+    yield 'multicolumn' => [
+      ['field_test:col_a' => 'value_a', ':col_b' => 'value_b'],
+      ['field_test' => [0 => ['col_a' => 'value_a', 'col_b' => 'value_b']]],
+    ];
+    yield 'multicolumn multiple values' => [
+      ['field_test:col_a' => 'A1, A2', ':col_b' => 'B1, B2'],
+      ['field_test' => [0 => ['col_a' => 'A1', 'col_b' => 'B1'], 1 => ['col_a' => 'A2', 'col_b' => 'B2']]],
+    ];
+    yield 'multicolumn blank values preserved' => [
+      ['field_test:col_a' => '', ':col_b' => ''],
+      ['field_test' => [0 => ['col_a' => '', 'col_b' => '']]],
+    ];
+
+    // Selective field recognition.
+    yield 'non-field property left untouched' => [
+      ['title' => 'Some title'],
+      ['title' => 'Some title'],
+      [],
+    ];
+    yield 'non-field with compound separator untouched' => [
+      ['title' => 'A - B'],
+      ['title' => 'A - B'],
+      [],
+    ];
+    yield 'multiple non-field properties untouched' => [
+      ['title' => 'Foo', 'status' => '1', 'uid' => '5'],
+      ['title' => 'Foo', 'status' => '1', 'uid' => '5'],
+      [],
+    ];
+    yield 'mixed field and non-field properties' => [
+      ['title' => 'Foo', 'field_test' => 'bar'],
+      ['title' => 'Foo', 'field_test' => ['bar']],
+      ['field_test'],
+    ];
+    yield 'field parsed while non-fields preserved' => [
+      ['title' => 'Foo', 'field_a' => 'X - Y', 'field_b' => 'A, B', 'status' => '1'],
+      ['title' => 'Foo', 'field_a' => [['X', 'Y']], 'field_b' => ['A', 'B'], 'status' => '1'],
+      ['field_a', 'field_b'],
+    ];
+    yield 'multicolumn non-field left untouched' => [
+      ['field_test:col_a' => 'value_a', ':col_b' => 'value_b'],
+      ['field_test:col_a' => 'value_a', ':col_b' => 'value_b'],
+      [],
+    ];
+
+    // Exception cases.
+    yield 'orphaned column throws' => [
+      [':orphan' => 'value'],
+      [],
+      NULL,
+      'Field name missing for :orphan',
     ];
   }
 
   /**
-   * Tests parsing entity fields with compound separator.
+   * Tests that entity type is passed correctly to the driver.
    */
-  public function testParseEntityFieldsCompoundSeparator(): void {
-    $entity = (object) ['field_test' => 'A - B'];
-    $this->context->parseEntityFields('node', $entity);
-    $this->assertSame([['A', 'B']], $entity->field_test);
-  }
-
-  /**
-   * Tests parsing entity fields with inline named columns.
-   */
-  public function testParseEntityFieldsInlineNamedColumns(): void {
-    $entity = (object) ['field_test' => 'x: A - y: B'];
-    $this->context->parseEntityFields('node', $entity);
-    $this->assertSame([['x' => 'A', 'y' => 'B']], $entity->field_test);
-  }
-
-  /**
-   * Tests parsing multi-value compound entity fields.
-   */
-  public function testParseEntityFieldsMultiValueCompound(): void {
-    $entity = (object) ['field_test' => 'A - B, C - D'];
-    $this->context->parseEntityFields('node', $entity);
-    $this->assertSame([['A', 'B'], ['C', 'D']], $entity->field_test);
-  }
-
-  /**
-   * Tests parsing multi-value named column entity fields.
-   */
-  public function testParseEntityFieldsMultiValueNamedColumns(): void {
-    $entity = (object) ['field_test' => 'x: A - y: B, x: C - y: D'];
-    $this->context->parseEntityFields('node', $entity);
-    $this->assertSame(
-          [['x' => 'A', 'y' => 'B'], ['x' => 'C', 'y' => 'D']],
-          $entity->field_test
-      );
-  }
-
-  /**
-   * Tests that blank field values are unset.
-   */
-  public function testParseEntityFieldsBlankValueUnsets(): void {
-    $entity = (object) ['field_test' => ''];
-    $this->context->parseEntityFields('node', $entity);
-    $this->assertObjectNotHasProperty('field_test', $entity);
-  }
-
-  /**
-   * Tests parsing multicolumn entity fields.
-   */
-  public function testParseEntityFieldsMulticolumn(): void {
-    $entity = (object) [
-      'field_test:col_a' => 'value_a',
-      ':col_b' => 'value_b',
-    ];
-    $this->context->parseEntityFields('node', $entity);
-    $this->assertSame(
-          [0 => ['col_a' => 'value_a', 'col_b' => 'value_b']],
-          $entity->field_test
-      );
-  }
-
-  /**
-   * Tests parsing multicolumn entity fields with multiple values.
-   */
-  public function testParseEntityFieldsMulticolumnMultipleValues(): void {
-    $entity = (object) [
-      'field_test:col_a' => 'A1, A2',
-      ':col_b' => 'B1, B2',
-    ];
-    $this->context->parseEntityFields('node', $entity);
-    $this->assertSame(
-          [
-            0 => ['col_a' => 'A1', 'col_b' => 'B1'],
-            1 => ['col_a' => 'A2', 'col_b' => 'B2'],
-          ],
-          $entity->field_test
-      );
-  }
-
-  /**
-   * Tests that orphaned columns throw an exception.
-   */
-  public function testParseEntityFieldsOrphanedColumnThrows(): void {
-    $entity = (object) [':orphan' => 'value'];
-    $this->expectException(\Exception::class);
-    $this->expectExceptionMessage('Field name missing for :orphan');
-    $this->context->parseEntityFields('node', $entity);
-  }
-
-  /**
-   * Tests that non-field properties are left untouched.
-   */
-  public function testParseEntityFieldsNonFieldUntouched(): void {
+  public function testParseEntityFieldsPassesEntityType(): void {
     $driver = $this->createMock(DriverInterface::class);
-    $driver->method('isField')->willReturn(FALSE);
+    $driver->expects($this->once())
+      ->method('isField')
+      ->with('taxonomy_term', 'field_test')
+      ->willReturn(TRUE);
 
     $drupal = $this->createMock(DrupalDriverManagerInterface::class);
     $drupal->method('getDriver')->willReturn($driver);
@@ -169,25 +179,8 @@ class RawDrupalContextTest extends TestCase {
     $context = new RawDrupalContext();
     $context->setDrupal($drupal);
 
-    $entity = (object) ['title' => 'Some title'];
-    $context->parseEntityFields('node', $entity);
-    $this->assertSame('Some title', $entity->title);
-  }
-
-  /**
-   * Tests that blank values in multicolumn fields are preserved.
-   */
-  public function testParseEntityFieldsMulticolumnBlankValuePreserved(): void {
-    $entity = (object) [
-      'field_test:col_a' => '',
-      ':col_b' => '',
-    ];
-    $this->context->parseEntityFields('node', $entity);
-    $this->assertObjectHasProperty('field_test', $entity);
-    $this->assertSame(
-          [0 => ['col_a' => '', 'col_b' => '']],
-          $entity->field_test
-      );
+    $entity = (object) ['field_test' => 'value'];
+    $context->parseEntityFields('taxonomy_term', $entity);
   }
 
 }

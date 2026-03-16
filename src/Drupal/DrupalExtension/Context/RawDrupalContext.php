@@ -296,33 +296,85 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
   }
 
   /**
-   * Parses the field values and turns them into the format expected by Drupal.
+   * Parses field values from Behat table cells into Drupal's field format.
    *
-   * Multiple values in a single field must be separated by commas. Wrap the
-   * field value in double quotes in case it should contain a comma.
+   * Only configurable fields (those for which the driver's isField() returns
+   * TRUE) are parsed. Base properties like "title" or "status" pass through
+   * unchanged.
    *
-   * Compound field properties are identified using a ':' operator, either in
-   * the column heading or in the cell. If multiple properties are present in a
-   * single cell, they must be separated using ' - ', and values should not
-   * contain ':' or ' - '.
+   * Single value:
+   * @code
+   * | title       | field_color |
+   * | My article  | Red         |
+   * @endcode
+   * Result: field_color = ['Red'].
    *
-   * Possible formats for the values:
-   *   A
-   *   A, B, "a value, containing a comma"
-   *   A - B
-   *   x: A - y: B
-   *   A - B, C - D, "E - F"
-   *   x: A - y: B,  x: C - y: D,  "x: E - y: F"
+   * Multiple values (comma-separated):
+   * @code
+   * | field_tags        |
+   * | Sports, Politics  |
+   * @endcode
+   * Result: field_tags = ['Sports', 'Politics'].
+   * Wrap in double quotes to include a literal comma: "a value, with comma".
    *
-   * See field_handlers.feature for examples of usage.
+   * Compound columns using ' - ' separator (e.g. link field with uri + title):
+   * @code
+   * | field_link                        |
+   * | http://example.com - Example site |
+   * @endcode
+   * Result: field_link = [['http://example.com', 'Example site']].
+   *
+   * Named compound columns using inline 'key: value' syntax:
+   * @code
+   * | field_link                                    |
+   * | uri: http://example.com - title: Example site |
+   * @endcode
+   * Result: field_link = [
+   *   ['uri' => 'http://example.com', 'title' => 'Example site']
+   * ].
+   *
+   * Multi-value compound (comma separates each value set):
+   * @code
+   * | field_link                                                 |
+   * | uri: /about - title: About, uri: /contact - title: Contact |
+   * @endcode
+   * Result: field_link = [
+   *   ['uri' => '/about', 'title' => 'About'],
+   *   ['uri' => '/contact', 'title' => 'Contact'],
+   * ].
+   *
+   * Multicolumn table headers using 'field:column' and ':column' syntax
+   * (useful when compound values contain commas or separators):
+   * @code
+   * | field_link:uri          | :title       |
+   * | http://example.com      | Example site |
+   * @endcode
+   * Result: field_link = [
+   *   ['uri' => 'http://example.com', 'title' => 'Example site']
+   * ].
+   *
+   * Multi-value multicolumn (comma-separated within each cell):
+   * @code
+   * | field_link:uri          | :title              |
+   * | /about, /contact        | About, Contact      |
+   * @endcode
+   * Result: field_link = [
+   *   ['uri' => '/about', 'title' => 'About'],
+   *   ['uri' => '/contact', 'title' => 'Contact'],
+   * ].
+   *
+   * Blank values remove the field from the entity so Drupal applies its
+   * default.
    *
    * @param string $entity_type
-   *   The entity type.
+   *   The entity type (e.g. 'node', 'taxonomy_term', 'user').
    * @param \stdClass $entity
-   *   An object containing the entity properties and fields as properties.
+   *   The entity object. Recognised field properties are replaced in-place
+   *   with structured arrays; other properties are left unchanged.
    *
    * @throws \Exception
-   *   Thrown when a field name is invalid.
+   *   Thrown when a column continuation (':column') appears without a
+   *   preceding 'field:column' header.
    */
   public function parseEntityFields(string $entity_type, \stdClass $entity): void {
     $multicolumnField = '';
@@ -373,6 +425,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
               }
             }
           }
+
           // Use the column name if we are tracking a multicolumn field.
           if ($isMulticolumn) {
             $multicolumnFields[$multicolumnField][$key][$multicolumnColumn] = $columns;
@@ -382,6 +435,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
             $values[] = $columns;
           }
         }
+
         // Replace regular fields inline in the entity after parsing.
         if (!$isMulticolumn) {
           $entity->$fieldName = $values;
