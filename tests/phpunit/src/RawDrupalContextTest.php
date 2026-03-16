@@ -104,6 +104,18 @@ class RawDrupalContextTest extends TestCase {
       ['field_test' => 'x: A - y: B, x: C - y: D'],
       ['field_test' => [['x' => 'A', 'y' => 'B'], ['x' => 'C', 'y' => 'D']]],
     ];
+    yield 'quoted value with compound separator preserved' => [
+      ['field_test' => '"Alpha - Bravo"'],
+      ['field_test' => ['Alpha - Bravo']],
+    ];
+    yield 'quoted multi-value with compound separator preserved' => [
+      ['field_test' => '"Alpha - Bravo", "Charlie - Delta"'],
+      ['field_test' => ['Alpha - Bravo', 'Charlie - Delta']],
+    ];
+    yield 'mixed quoted and unquoted values' => [
+      ['field_test' => '"Alpha - Bravo", C - D'],
+      ['field_test' => ['Alpha - Bravo', ['C', 'D']]],
+    ];
     yield 'blank value unsets field' => [
       ['field_test' => ''],
       [],

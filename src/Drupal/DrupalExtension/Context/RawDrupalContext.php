@@ -417,7 +417,12 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
           $value = trim((string) $value);
           $columns = $value;
           // Split up field columns if the ' - ' separator is present.
-          if (str_contains($value, ' - ')) {
+          // Skip splitting if the value was double-quoted in the original
+          // field value, allowing values like "Alpha - Bravo" to pass
+          // through as-is (e.g., entity reference titles with dashes).
+          // @see https://github.com/jhedstrom/drupalextension/issues/642
+          $wasQuoted = str_contains((string) $fieldValue, '"' . $value . '"');
+          if (!$wasQuoted && str_contains($value, ' - ')) {
             $columns = [];
             foreach (explode(' - ', $value) as $column) {
               // Check if it is an inline named column.
