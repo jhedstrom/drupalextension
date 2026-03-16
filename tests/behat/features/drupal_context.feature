@@ -221,3 +221,18 @@ Feature: DrupalContext coverage gaps
       """
       no "Nonexistent button" button
       """
+
+  @test-drupal @api
+  Scenario: Assert "Given :type content:" fails for orphaned multicolumn continuation
+    Given some behat configuration
+    And scenario steps tagged with "@test-drupal @api":
+      """
+      Given "article" content:
+        | :orphan |
+        | value   |
+      """
+    When I run behat with drupal profile
+    Then it should fail with an exception:
+      """
+      Field name missing for :orphan
+      """
