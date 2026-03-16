@@ -19,7 +19,7 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
    * {@inheritdoc}
    */
   public static function getTranslationResources() {
-    return glob(__DIR__ . '/../../../../i18n/*.xliff');
+    return self::getDrupalTranslationResources();
   }
 
   /**
@@ -370,7 +370,7 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
    * @throws \Behat\Mink\Exception\ExpectationException
    *   Thrown when the expected message is not present in the page.
    */
-  private function assert(string $message, string $selectorId, string $exceptionMsgNone, string $exceptionMsgMissing): void {
+  protected function assert(string $message, string $selectorId, string $exceptionMsgNone, string $exceptionMsgMissing): void {
     $selector = $this->getDrupalSelector($selectorId);
     $selectorObjects = $this->getSession()->getPage()->findAll("css", $selector);
     if (empty($selectorObjects)) {
@@ -398,7 +398,7 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
    * @throws \Behat\Mink\Exception\ExpectationException
    *   Thrown when the expected message is present in the page.
    */
-  private function assertNot(string $message, string $selectorId, string $exceptionMsg): void {
+  protected function assertNot(string $message, string $selectorId, string $exceptionMsg): void {
     $selector = $this->getDrupalSelector($selectorId);
     $selectorObjects = $this->getSession()->getPage()->findAll("css", $selector);
     if (!empty($selectorObjects)) {

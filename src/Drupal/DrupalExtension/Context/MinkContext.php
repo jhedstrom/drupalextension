@@ -14,6 +14,7 @@ use Behat\Behat\Hook\Scope\AfterStepScope;
 use Behat\Behat\Context\TranslatableContext;
 use Behat\Mink\Exception\UnsupportedDriverActionException;
 use Behat\MinkExtension\Context\MinkContext as MinkExtension;
+use Drupal\DrupalExtension\RegionTrait;
 use Drupal\DrupalExtension\TagTrait;
 
 /**
@@ -21,6 +22,7 @@ use Drupal\DrupalExtension\TagTrait;
  */
 class MinkContext extends MinkExtension implements TranslatableContext {
 
+  use RegionTrait;
   use TagTrait;
 
   /**
@@ -31,28 +33,6 @@ class MinkContext extends MinkExtension implements TranslatableContext {
    */
   public static function getTranslationResources() {
     return self::getMinkTranslationResources() + glob(__DIR__ . '/../../../../i18n/*.xliff');
-  }
-
-  /**
-   * Return a region from the current page.
-   *
-   * @param string $region
-   *   The machine name of the region to return.
-   *
-   * @return \Behat\Mink\Element\NodeElement
-   *   The region element.
-   *
-   * @throws \Exception
-   *   If region cannot be found.
-   */
-  public function getRegion(string $region) {
-    $session = $this->getSession();
-    $regionObj = $session->getPage()->find('region', $region);
-    if (!$regionObj) {
-      throw new \Exception(sprintf('No region "%s" found on the page %s.', $region, $session->getCurrentUrl()));
-    }
-
-    return $regionObj;
   }
 
   /**
@@ -280,10 +260,8 @@ JS;
     }
 
     $driver = $this->getSession()->getDriver();
-    // $driver->keyPress($element->getXpath(), $char);
-    // This alternative to Driver->keyPress() handles cases that depend on
-    // javascript which binds to key down/up events directly, such as Drupal's
-    // autocomplete.js.
+    // Use keyDown/keyUp instead of keyPress to handle javascript that binds
+    // to key down/up events directly, such as Drupal's autocomplete.js.
     $driver->keyDown($element->getXpath(), $char);
     $driver->keyUp($element->getXpath(), $char);
   }
@@ -383,12 +361,9 @@ JS;
   #[Then('I (should )see the heading :heading')]
   public function assertHeading(string $heading): void {
     $element = $this->getSession()->getPage();
-    foreach (['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] as $tag) {
-      $results = $element->findAll('css', $tag);
-      foreach ($results as $result) {
-        if ($result->getText() == $heading) {
-          return;
-        }
+    foreach ($element->findAll('css', 'h1, h2, h3, h4, h5, h6') as $result) {
+      if ($result->getText() == $heading) {
+        return;
       }
     }
     throw new \Exception(sprintf("The text '%s' was not found in any heading on the page %s", $heading, $this->getSession()->getCurrentUrl()));
@@ -405,12 +380,9 @@ JS;
   #[Then('I (should )not see the heading :heading')]
   public function assertNotHeading(string $heading): void {
     $element = $this->getSession()->getPage();
-    foreach (['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] as $tag) {
-      $results = $element->findAll('css', $tag);
-      foreach ($results as $result) {
-        if ($result->getText() == $heading) {
-          throw new \Exception(sprintf("The text '%s' was found in a heading on the page %s", $heading, $this->getSession()->getCurrentUrl()));
-        }
+    foreach ($element->findAll('css', 'h1, h2, h3, h4, h5, h6') as $result) {
+      if ($result->getText() == $heading) {
+        throw new \Exception(sprintf("The text '%s' was found in a heading on the page %s", $heading, $this->getSession()->getCurrentUrl()));
       }
     }
   }
@@ -500,7 +472,7 @@ JS;
     if (empty($buttonObj)) {
       throw new \Exception(sprintf("The button '%s' was not found in the region '%s' on the page %s", $button, $region, $this->getSession()->getCurrentUrl()));
     }
-    $regionObj->pressButton($button);
+    $buttonObj->press();
   }
 
   /**
@@ -585,14 +557,9 @@ JS;
   public function assertRegionHeading(string $heading, string $region): void {
     $regionObj = $this->getRegion($region);
 
-    foreach (['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] as $tag) {
-      $elements = $regionObj->findAll('css', $tag);
-      if (!empty($elements)) {
-        foreach ($elements as $element) {
-          if (trim($element->getText()) === $heading) {
-            return;
-          }
-        }
+    foreach ($regionObj->findAll('css', 'h1, h2, h3, h4, h5, h6') as $element) {
+      if (trim($element->getText()) === $heading) {
+        return;
       }
     }
 
@@ -837,7 +804,7 @@ JS;
       throw new \Exception(sprintf('Unable to find details%s containing text %s for action %s', $expandedState, $summary, $action));
     }
 
-    $ajaxTimeout = $this->getMinkParameter('ajax_timeout') || 5;
+    $ajaxTimeout = $this->getMinkParameter('ajax_timeout') ?? 5;
     // 1/10th of ajax_timeout, in microseconds.
     $animateDelay = $ajaxTimeout * 100000;
     try {

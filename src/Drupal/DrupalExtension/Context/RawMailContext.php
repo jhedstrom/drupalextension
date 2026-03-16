@@ -189,46 +189,13 @@ class RawMailContext extends RawDrupalContext {
    *   The same mail, but sorted.
    */
   protected function sortMessages(array $messages): array {
-    // Can't sort an empty array.
-    if (count($messages) === 0) {
-      return [];
+    foreach (array_keys($messages) as $key) {
+      $messages[$key] += ['to' => '', 'subject' => '', 'body' => ''];
     }
 
-    // To, subject and body keys must be present.
-    // Empty strings are ignored when matching so adding them is harmless.
-    foreach ($messages as $key => $row) {
-      if (!array_key_exists('to', $row)) {
-        $messages[$key]['to'] = '';
-      }
-
-      if (!array_key_exists('subject', $row)) {
-        $messages[$key]['subject'] = '';
-      }
-
-      if (!array_key_exists('body', $row)) {
-        $messages[$key]['body'] = '';
-      }
-    }
-
-    // Obtain a list of columns.
-    $to = [];
-    $subject = [];
-    $body = [];
-    foreach ($messages as $key => $row) {
-      if (array_key_exists('to', $row)) {
-        $to[$key] = $row['to'];
-      }
-
-      if (array_key_exists('subject', $row)) {
-        $subject[$key] = $row['subject'];
-      }
-
-      if (array_key_exists('body', $row)) {
-        $body[$key] = $row['body'];
-      }
-    }
-
-    // Add $mail as the last parameter, to sort by the common key.
+    $to = array_column($messages, 'to');
+    $subject = array_column($messages, 'subject');
+    $body = array_column($messages, 'body');
     array_multisort($to, SORT_ASC, $subject, SORT_ASC, $body, SORT_ASC, $messages);
 
     return $messages;
