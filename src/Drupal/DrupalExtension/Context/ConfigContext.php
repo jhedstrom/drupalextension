@@ -10,6 +10,7 @@ namespace Drupal\DrupalExtension\Context;
 
 use Behat\Behat\Context\TranslatableContext;
 use Behat\Gherkin\Node\TableNode;
+use Drupal\Driver\DrupalDriver;
 
 /**
  * Provides pre-built step definitions for interacting with Drupal config.
@@ -107,8 +108,14 @@ class ConfigContext extends RawDrupalContext implements TranslatableContext {
    *   Value to associate with identifier.
    */
   public function setConfig(string $name, string $key, mixed $value): void {
-    $backup = $this->getDriver()->configGet($name, $key);
-    $this->getDriver()->configSet($name, $key, $value);
+    $driver = $this->getDriver();
+    if ($driver instanceof DrupalDriver) {
+      $backup = $driver->getCore()->configGetOriginal($name, $key);
+    }
+    else {
+      $backup = $driver->configGet($name, $key);
+    }
+    $driver->configSet($name, $key, $value);
     if (!array_key_exists($name, $this->config)) {
       $this->config[$name][$key] = $backup;
       return;
