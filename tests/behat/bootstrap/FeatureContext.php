@@ -507,10 +507,10 @@ class FeatureContext extends RawDrupalContext {
    * match what was in the DB at restore time (the value set via the form),
    * not the stale cached value from when setConfig() ran.
    *
-   * @param string $expected
-   *   The expected original value at restore time.
    * @param string $name
    *   The configuration object name.
+   * @param string $expected
+   *   The expected original value at restore time.
    *
    * @Then the config restore baseline for :name should be :expected
    */
