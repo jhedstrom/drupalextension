@@ -41,11 +41,14 @@ class RawDrupalContextTest extends TestCase {
    * Tests parsing entity fields.
    */
   #[DataProvider('dataProviderParseEntityFields')]
-  public function testParseEntityFields(array $input, array $expected, ?array $fields = NULL, ?string $exception = NULL): void {
+  public function testParseEntityFields(array $input, array $expected, ?array $fields = NULL, ?array $baseFields = NULL, ?string $exception = NULL, array $ignored_properties = []): void {
     if ($fields !== NULL) {
       $driver = $this->createMock(DriverInterface::class);
       $driver->method('isField')->willReturnCallback(
         fn(string $entityType, string $fieldName): bool => in_array($fieldName, $fields, TRUE)
+      );
+      $driver->method('isBaseField')->willReturnCallback(
+        fn(string $entityType, string $fieldName): bool => in_array($fieldName, $baseFields ?? [], TRUE)
       );
 
       $drupal = $this->createMock(DrupalDriverManagerInterface::class);
@@ -64,7 +67,7 @@ class RawDrupalContextTest extends TestCase {
     }
 
     $entity = (object) $input;
-    $context->parseEntityFields('node', $entity);
+    $context->parseEntityFields('node', $entity, $ignored_properties);
     $this->assertSame($expected, (array) $entity);
   }
 
@@ -122,36 +125,42 @@ class RawDrupalContextTest extends TestCase {
       ['field_test' => [0 => ['col_a' => '', 'col_b' => '']]],
     ];
 
-    // Selective field recognition.
-    yield 'non-field property left untouched' => [
+    // Selective field recognition (base fields pass through unchanged).
+    yield 'base field property left untouched' => [
       ['title' => 'Some title'],
       ['title' => 'Some title'],
       [],
+      ['title'],
     ];
-    yield 'non-field with compound separator untouched' => [
+    yield 'base field with compound separator untouched' => [
       ['title' => 'A - B'],
       ['title' => 'A - B'],
       [],
+      ['title'],
     ];
-    yield 'multiple non-field properties untouched' => [
+    yield 'multiple base field properties untouched' => [
       ['title' => 'Foo', 'status' => '1', 'uid' => '5'],
       ['title' => 'Foo', 'status' => '1', 'uid' => '5'],
       [],
+      ['title', 'status', 'uid'],
     ];
-    yield 'mixed field and non-field properties' => [
+    yield 'mixed field and base field properties' => [
       ['title' => 'Foo', 'field_test' => 'bar'],
       ['title' => 'Foo', 'field_test' => ['bar']],
       ['field_test'],
+      ['title'],
     ];
-    yield 'field parsed while non-fields preserved' => [
+    yield 'field parsed while base fields preserved' => [
       ['title' => 'Foo', 'field_a' => 'X - Y', 'field_b' => 'A, B', 'status' => '1'],
       ['title' => 'Foo', 'field_a' => [['X', 'Y']], 'field_b' => ['A', 'B'], 'status' => '1'],
       ['field_a', 'field_b'],
+      ['title', 'status'],
     ];
-    yield 'multicolumn non-field left untouched' => [
-      ['field_test:col_a' => 'value_a', ':col_b' => 'value_b'],
-      ['field_test:col_a' => 'value_a', ':col_b' => 'value_b'],
+    yield 'multicolumn base field left untouched' => [
+      ['title:col_a' => 'value_a', ':col_b' => 'value_b'],
+      ['title:col_a' => 'value_a', ':col_b' => 'value_b'],
       [],
+      ['title'],
     ];
 
     // Exception cases.
@@ -159,7 +168,47 @@ class RawDrupalContextTest extends TestCase {
       [':orphan' => 'value'],
       [],
       NULL,
+      NULL,
       'Field name missing for :orphan',
+    ];
+    yield 'non-existent field throws' => [
+      ['field_does_not_exist' => 'value'],
+      [],
+      [],
+      [],
+      'Field "field_does_not_exist" does not exist on entity type "node".',
+    ];
+    yield 'non-existent field among valid fields throws' => [
+      ['title' => 'Foo', 'field_tags' => 'A', 'field_fake' => 'B'],
+      [],
+      ['field_tags'],
+      ['title'],
+      'Field "field_fake" does not exist on entity type "node".',
+    ];
+    yield 'non-existent multicolumn field throws' => [
+      ['field_fake:col_a' => 'value'],
+      [],
+      [],
+      [],
+      'Field "field_fake" does not exist on entity type "node".',
+    ];
+
+    // Ignored properties.
+    yield 'ignored property passes validation' => [
+      ['role' => 'administrator', 'field_test' => 'A'],
+      ['role' => 'administrator', 'field_test' => ['A']],
+      ['field_test'],
+      [],
+      NULL,
+      ['role'],
+    ];
+    yield 'multiple ignored properties pass validation' => [
+      ['role' => 'editor', 'vocabulary_machine_name' => 'tags'],
+      ['role' => 'editor', 'vocabulary_machine_name' => 'tags'],
+      [],
+      [],
+      NULL,
+      ['role', 'vocabulary_machine_name'],
     ];
   }
 

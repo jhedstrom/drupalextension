@@ -236,3 +236,18 @@ Feature: DrupalContext coverage gaps
       """
       Field name missing for :orphan
       """
+
+  @test-drupal @api
+  Scenario: Assert "Given :type content:" fails for non-existent field
+    Given some behat configuration
+    And scenario steps tagged with "@test-drupal @api":
+      """
+      Given "article" content:
+        | title | field_does_not_exist |
+        | test  | some value           |
+      """
+    When I run behat with drupal profile
+    Then it should fail with an exception:
+      """
+      Field "field_does_not_exist" does not exist on entity type "node".
+      """
