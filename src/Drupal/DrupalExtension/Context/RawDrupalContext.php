@@ -496,8 +496,13 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    *
    * @return bool
    *   Returns TRUE if the current logged in user has this role (or roles).
+   *
+   * @deprecated in drupalextension:5.3.0 and is removed from
+   *   drupalextension:6.0.0. Role-based login steps no longer check the
+   *   current user's role before creating a new user.
    */
   public function loggedInWithRole($role): bool {
+    @trigger_error("loggedInWithRole() is deprecated in drupalextension:5.3.0 and is removed from drupalextension:6.0.0. Role-based login steps no longer check the current user's role before creating a new user.", E_USER_DEPRECATED);
     return $this->loggedIn() && $this->getUserManager()->currentUserHasRole($role);
   }
 

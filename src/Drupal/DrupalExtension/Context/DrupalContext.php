@@ -55,30 +55,27 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    * @Given I am logged in as a/an :role
    */
   public function assertAuthenticatedByRole(string $role): void {
-    // Check if a user with this role is already logged in.
-    if (!$this->loggedInWithRole($role)) {
-      // Create user (and project)
-      $user = (object) [
-        'name' => $this->getRandom()->name(8),
-        'pass' => $this->getRandom()->name(16),
-        'role' => $role,
-      ];
-      $user->mail = $user->name . '@example.com';
+    // Create user (and project)
+    $user = (object) [
+      'name' => $this->getRandom()->name(8),
+      'pass' => $this->getRandom()->name(16),
+      'role' => $role,
+    ];
+    $user->mail = $user->name . '@example.com';
 
-      $this->userCreate($user);
+    $this->userCreate($user);
 
-      $roles = explode(',', $role);
-      $roles = array_map(trim(...), $roles);
-      foreach ($roles as $role) {
-        if (!in_array(strtolower($role), ['authenticated', 'authenticated user'])) {
-          // Only add roles other than 'authenticated user'.
-          $this->getDriver()->userAddRole($user, $role);
-        }
+    $roles = explode(',', $role);
+    $roles = array_map(trim(...), $roles);
+    foreach ($roles as $role) {
+      if (!in_array(strtolower($role), ['authenticated', 'authenticated user'])) {
+        // Only add roles other than 'authenticated user'.
+        $this->getDriver()->userAddRole($user, $role);
       }
-
-      // Login.
-      $this->login($user);
     }
+
+    // Login.
+    $this->login($user);
   }
 
   /**
@@ -93,35 +90,32 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    * @Given I am logged in as a user with the :role role(s) and I have the following fields:
    */
   public function assertAuthenticatedByRoleWithGivenFields(string $role, TableNode $fields): void {
-    // Check if a user with this role is already logged in.
-    if (!$this->loggedInWithRole($role)) {
-      // Create user (and project)
-      $user = (object) [
-        'name' => $this->getRandom()->name(8),
-        'pass' => $this->getRandom()->name(16),
-        'role' => $role,
-      ];
-      $user->mail = $user->name . '@example.com';
+    // Create user (and project)
+    $user = (object) [
+      'name' => $this->getRandom()->name(8),
+      'pass' => $this->getRandom()->name(16),
+      'role' => $role,
+    ];
+    $user->mail = $user->name . '@example.com';
 
-      // Assign fields to user before creation.
-      foreach ($fields->getRowsHash() as $field => $value) {
-        $user->{$field} = $value;
-      }
-
-      $this->userCreate($user);
-
-      $roles = explode(',', $role);
-      $roles = array_map(trim(...), $roles);
-      foreach ($roles as $role) {
-        if (!in_array(strtolower($role), ['authenticated', 'authenticated user'])) {
-          // Only add roles other than 'authenticated user'.
-          $this->getDriver()->userAddRole($user, $role);
-        }
-      }
-
-      // Login.
-      $this->login($user);
+    // Assign fields to user before creation.
+    foreach ($fields->getRowsHash() as $field => $value) {
+      $user->{$field} = $value;
     }
+
+    $this->userCreate($user);
+
+    $roles = explode(',', $role);
+    $roles = array_map(trim(...), $roles);
+    foreach ($roles as $role) {
+      if (!in_array(strtolower($role), ['authenticated', 'authenticated user'])) {
+        // Only add roles other than 'authenticated user'.
+        $this->getDriver()->userAddRole($user, $role);
+      }
+    }
+
+    // Login.
+    $this->login($user);
   }
 
   /**
