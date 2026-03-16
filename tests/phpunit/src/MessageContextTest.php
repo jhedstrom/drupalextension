@@ -80,7 +80,7 @@ class MessageContextTest extends TestCase {
           ['Something went wrong'],
     ]);
     $this->expectException(\RuntimeException::class);
-    $this->expectExceptionMessage("should have the header 'Error messages'");
+    $this->expectExceptionMessage("should have the header 'Error messages', but found 'Wrong header'");
     $this->assertValidMessageTable->invoke($this->context, $table, 'error messages');
   }
 

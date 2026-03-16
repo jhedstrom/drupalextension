@@ -162,6 +162,111 @@ Feature: MessageContext
       | This should not be here |
 
   @test-drupal @api
+  Scenario: Assert "Then I should see the following error messages:" passes
+    Given I am on "/user/login"
+    When I fill in "a fake user" for "Username"
+    And I fill in "a fake password" for "Password"
+    And I press "Log in"
+    Then I should see the following error messages:
+      | error messages                    |
+      | Unrecognized username or password |
+
+  @test-drupal @api
+  Scenario: Assert "Then I should see the following error messages:" fails when error not present
+    Given some behat configuration
+    And scenario steps tagged with "@test-drupal @api":
+      """
+      Given I am on "/user/login"
+      Then I should see the following error messages:
+        | error messages            |
+        | This error does not exist |
+      """
+    When I run behat with drupal profile
+    Then it should fail with an error:
+      """
+      does not contain any error messages
+      """
+
+  @test-drupal @api
+  Scenario: Assert "Then I should not see the following error messages:" fails when error is present
+    Given some behat configuration
+    And scenario steps tagged with "@test-drupal @api":
+      """
+      Given I am on "/user/login"
+      When I fill in "a fake user" for "Username"
+      And I fill in "a fake password" for "Password"
+      And I press "Log in"
+      Then I should not see the following error messages:
+        | error messages                   |
+        | Unrecognized username or password |
+      """
+    When I run behat with drupal profile
+    Then it should fail with an error:
+      """
+      contains the error message 'Unrecognized username or password'
+      """
+
+  @test-drupal @api
+  Scenario: Assert "Then I should see the following warning messages:" fails when warning not present
+    Given some behat configuration
+    And scenario steps tagged with "@test-drupal @api":
+      """
+      Given I am on "/user/login"
+      Then I should see the following warning messages:
+        | warning messages              |
+        | This warning does not exist   |
+      """
+    When I run behat with drupal profile
+    Then it should fail with an error:
+      """
+      does not contain any warning messages
+      """
+
+  @test-drupal @api
+  Scenario: Assert "Then I should not see the following warning messages:" passes when not present
+    Given I am on "/user/login"
+    Then I should not see the following warning messages:
+      | warning messages        |
+      | This should not be here |
+
+  @test-drupal @api
+  Scenario: Assert "Then I should see the following error messages:" fails for missing header
+    Given some behat configuration
+    And scenario steps tagged with "@test-drupal @api":
+      """
+      Given I am on "/user/login"
+      When I fill in "a fake user" for "Username"
+      And I fill in "a fake password" for "Password"
+      And I press "Log in"
+      Then I should see the following error messages:
+        | Unrecognized username or password |
+      """
+    When I run behat with drupal profile
+    Then it should fail with an exception:
+      """
+      should have the header 'Error messages', but found 'Unrecognized username or password'
+      """
+
+  @test-drupal @api
+  Scenario: Assert "Then I should see the following success messages:" fails for multi-column table
+    Given some behat configuration
+    And scenario steps tagged with "@test-drupal @api":
+      """
+      Given I am logged in as a user with the "administrator" role
+      And I am viewing an "article" with the title "Multi column test"
+      When I click "Edit"
+      And I press "Save"
+      Then I should see the following success messages:
+        | success messages | extra column |
+        | has been updated | extra value  |
+      """
+    When I run behat with drupal profile
+    Then it should fail with an exception:
+      """
+      should only contain 1 column
+      """
+
+  @test-drupal @api
   Scenario: Assert "Then I should not see the error message :message" passes when not present
     Given I am on "/user/login"
     Then I should not see the error message "logged in"
