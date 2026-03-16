@@ -372,7 +372,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    *   The entity object. Recognised field properties are replaced in-place
    *   with structured arrays; other properties are left unchanged.
    *
-   * @throws \Exception
+   * @throws \RuntimeException
    *   Thrown when a column continuation (':column') appears without a
    *   preceding 'field:column' header.
    */
@@ -395,7 +395,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
       elseif (empty($multicolumnField)) {
         // If a field name starts with a ':' but we are not yet tracking a
         // multicolumn field we don't know to which field this belongs.
-        throw new \Exception('Field name missing for ' . $field);
+        throw new \RuntimeException('Field name missing for ' . $field);
       }
       else {
         // Update the column name if the field name starts with a ':' and we are

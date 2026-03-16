@@ -59,7 +59,7 @@ class RawDrupalContextTest extends TestCase {
     }
 
     if ($exception !== NULL) {
-      $this->expectException(\Exception::class);
+      $this->expectException(\RuntimeException::class);
       $this->expectExceptionMessage($exception);
     }
 
