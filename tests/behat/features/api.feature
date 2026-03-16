@@ -31,6 +31,13 @@ Feature: DrupalContext general testing
     Then I should see the link "Cron run completed"
 
   @test-drupal @api
+  Scenario: Assert "I run cron" uses fresh request time
+    Given I am logged in as a user with the "administrator" role
+    And the request time is 60 seconds in the past
+    When I run cron
+    Then the cron request time drift should be less than 5 seconds
+
+  @test-drupal @api
   Scenario: Create many nodes
     Given "page" content:
       | title    |
