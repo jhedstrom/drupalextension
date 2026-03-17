@@ -17,8 +17,6 @@ use Drupal\workflows\Entity\Workflow;
  * editorial workflow as optional config, but it is not imported when
  * content_moderation is installed as a behat_test dependency. This deploy
  * hook runs after module install and creates the workflow if needed.
- *
- * @see https://github.com/jhedstrom/drupalextension/issues/787
  */
 function behat_test_deploy_add_editorial_workflow(): string {
   $workflow = Workflow::load('editorial');
@@ -46,7 +44,17 @@ function behat_test_deploy_add_editorial_workflow(): string {
     $type_plugin->addTransition('publish', 'Publish', ['draft', 'published'], 'published');
   }
 
-  $workflow->getTypePlugin()->addEntityTypeAndBundle('node', 'article');
+  $type_plugin = $workflow->getTypePlugin();
+  $type_plugin->addEntityTypeAndBundle('node', 'article');
+
+  // Set default moderation state to 'published' so existing tests that create
+  // article nodes without specifying moderation_state continue to work.
+  // Read settings from the plugin (not the entity) to preserve the
+  // addEntityTypeAndBundle() change made above.
+  $configuration = $type_plugin->getConfiguration();
+  $configuration['default_moderation_state'] = 'published';
+  $workflow->set('type_settings', $configuration);
+
   $workflow->save();
 
   return 'Attached editorial workflow to article content type.';
