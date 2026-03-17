@@ -114,10 +114,6 @@ commands:
 
       ahoy cli "echo '\$config[\"system.site\"][\"name\"] = \"Overridden Site Name\";' >> build/web/sites/default/settings.php"
 
-      ahoy drush cset core.date_format.olivero_medium pattern 'j F, Y'
-      ahoy drush cset automated_cron.settings interval 0
-      ahoy drush cset user.settings register visitors
-
   clean:
     usage: Remove containers and all build files.
     cmd: |
