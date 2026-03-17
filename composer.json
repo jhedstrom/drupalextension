@@ -20,6 +20,16 @@
         {
             "name": "Pieter Frenssen",
             "homepage": "https://github.com/pfrenssen"
+        },
+        {
+            "name": "Alex Skrypnyk",
+            "email": "alex@drevops.com",
+            "role": "maintainer"
+        },
+        {
+            "name": "Ricardo Sanz",
+            "homepage": "https://github.com/rsanzante",
+            "role": "maintainer"
         }
     ],
     "homepage": "http://drupal.org/project/drupalextension",
