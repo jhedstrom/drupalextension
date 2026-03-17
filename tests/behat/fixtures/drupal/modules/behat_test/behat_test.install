@@ -9,6 +9,12 @@
  * Implements hook_install().
  */
 function behat_test_install() {
+  // Attach the editorial workflow to the article content type so that computed
+  // base fields like 'moderation_state' are available for testing.
+  $workflow = \Drupal\workflows\Entity\Workflow::load('editorial');
+  $workflow->getTypePlugin()->addEntityTypeAndBundle('node', 'article');
+  $workflow->save();
+
   $storage = \Drupal::service('behat_test.config.storage.install');
 
   // Override Standard profile's user settings with our own.
