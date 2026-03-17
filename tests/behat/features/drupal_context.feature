@@ -269,3 +269,15 @@ Feature: DrupalContext coverage gaps
       """
       Field "field_does_not_exist" does not exist on entity type "node".
       """
+
+  @test-drupal @api
+  Scenario: Assert "Given :type content:" passes for moderation_state field
+    Given some behat configuration
+    And scenario steps tagged with "@test-drupal @api":
+      """
+      Given "article" content:
+        | title                  | moderation_state |
+        | Moderated test content | draft            |
+      """
+    When I run behat with drupal profile
+    Then it should pass
