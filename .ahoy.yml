@@ -109,8 +109,6 @@ commands:
       ahoy drush --yes en behat_test
       ahoy drush --yes deploy:hook
 
-      ahoy cli "echo '\$config[\"system.site\"][\"name\"] = \"Overridden Site Name\";' >> build/web/sites/default/settings.php"
-
   clean:
     usage: Remove containers and all build files.
     cmd: |
