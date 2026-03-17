@@ -5,6 +5,10 @@
  * Deploy hooks for the behat_test module.
  */
 
+declare(strict_types=1);
+
+use Drupal\workflows\Entity\Workflow;
+
 /**
  * Attach editorial workflow to the article content type.
  *
@@ -17,17 +21,27 @@
  * @see https://github.com/jhedstrom/drupalextension/issues/787
  */
 function behat_test_deploy_add_editorial_workflow(): string {
-  $workflow = \Drupal\workflows\Entity\Workflow::load('editorial');
+  $workflow = Workflow::load('editorial');
 
   if (!$workflow) {
-    $workflow = \Drupal\workflows\Entity\Workflow::create([
+    $workflow = Workflow::create([
       'id' => 'editorial',
       'label' => 'Editorial',
       'type' => 'content_moderation',
     ]);
     $type_plugin = $workflow->getTypePlugin();
-    $type_plugin->addState('draft', ['label' => 'Draft', 'published' => FALSE, 'default_revision' => FALSE, 'weight' => -5]);
-    $type_plugin->addState('published', ['label' => 'Published', 'published' => TRUE, 'default_revision' => TRUE, 'weight' => 0]);
+    $type_plugin->addState('draft', [
+      'label' => 'Draft',
+      'published' => FALSE,
+      'default_revision' => FALSE,
+      'weight' => -5,
+    ]);
+    $type_plugin->addState('published', [
+      'label' => 'Published',
+      'published' => TRUE,
+      'default_revision' => TRUE,
+      'weight' => 0,
+    ]);
     $type_plugin->addTransition('create_new_draft', 'Create New Draft', ['draft', 'published'], 'draft');
     $type_plugin->addTransition('publish', 'Publish', ['draft', 'published'], 'published');
   }
