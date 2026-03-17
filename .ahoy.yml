@@ -110,7 +110,7 @@ commands:
 
       ahoy drush --yes pmu page_cache,big_pipe
       ahoy drush --yes en behat_test
-      ahoy drush deploy:hook
+      ahoy drush --yes deploy:hook
 
       ahoy cli "echo '\$config[\"system.site\"][\"name\"] = \"Overridden Site Name\";' >> build/web/sites/default/settings.php"
 
