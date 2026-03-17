@@ -168,12 +168,8 @@ jobs:
 
       - name: Adjust Drupal configurations
         run: |
-          docker compose exec -T php ./vendor/bin/drush --yes --root=build/web pmu page_cache,big_pipe
           docker compose exec -T php ./vendor/bin/drush --yes --root=build/web en behat_test
           docker compose exec -T php ./vendor/bin/drush --yes --root=build/web deploy:hook
-          docker compose exec -u ${DOCKER_USER_ID} -T php vendor/bin/drush cset core.date_format.olivero_medium pattern 'j F, Y'
-          docker compose exec -u ${DOCKER_USER_ID} -T php vendor/bin/drush cset automated_cron.settings interval 0
-          docker compose exec -u ${DOCKER_USER_ID} -T php vendor/bin/drush cset user.settings register visitors
 
       - name: Run Behat tests with coverage
         if: ${{ matrix.coverage }}

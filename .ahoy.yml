@@ -18,6 +18,7 @@ commands:
       ahoy composer require --no-interaction --dev --no-update drupal/core:^${DRUPAL_VERSION:-11} drupal/core-composer-scaffold:^${DRUPAL_VERSION:-11}
       if [ "${DRUPAL_VERSION:-11}" != "11" ]; then ahoy composer remove --no-interaction --dev --no-update phpunit/phpunit; fi
       ahoy composer install
+      ahoy cli cp -r tests/behat/fixtures/drupal/modules/behat_test build/web/modules
       ahoy cli cp -r tests/behat/fixtures/drupal/drush build/drush
 
   info:
@@ -105,18 +106,8 @@ commands:
     cmd: |
       ahoy drush sql-drop --yes
       ahoy drush --yes site-install --db-url=mysql://drupal:drupal@database/drupal --debug
-
-      ahoy cli cp -r tests/behat/fixtures/drupal/modules/behat_test build/web/modules
-
-      ahoy drush --yes pmu page_cache,big_pipe
       ahoy drush --yes en behat_test
       ahoy drush --yes deploy:hook
-
-      ahoy cli "echo '\$config[\"system.site\"][\"name\"] = \"Overridden Site Name\";' >> build/web/sites/default/settings.php"
-
-      ahoy drush cset core.date_format.olivero_medium pattern 'j F, Y'
-      ahoy drush cset automated_cron.settings interval 0
-      ahoy drush cset user.settings register visitors
 
   clean:
     usage: Remove containers and all build files.

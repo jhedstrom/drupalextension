@@ -7,6 +7,7 @@
 
 declare(strict_types=1);
 
+use Drupal\Core\Datetime\Entity\DateFormat;
 use Drupal\workflows\Entity\Workflow;
 
 /**
@@ -58,4 +59,56 @@ function behat_test_deploy_add_editorial_workflow(): string {
   $workflow->save();
 
   return 'Attached editorial workflow to article content type.';
+}
+
+/**
+ * Uninstall page_cache and big_pipe to simplify test assertions.
+ *
+ * The Standard profile enables these caching modules by default. They
+ * interfere with Behat tests that assert exact page output, so we
+ * uninstall them during provisioning.
+ */
+function behat_test_deploy_uninstall_caching_modules(): string {
+  $module_installer = \Drupal::service('module_installer');
+  $module_installer->uninstall(['page_cache', 'big_pipe']);
+
+  return 'Uninstalled page_cache and big_pipe.';
+}
+
+/**
+ * Set the Olivero medium date format to match test expectations.
+ */
+function behat_test_deploy_set_date_format(): string {
+  $date_format = DateFormat::load('olivero_medium');
+
+  if ($date_format) {
+    $date_format->setPattern('j F, Y');
+    $date_format->save();
+  }
+
+  return 'Set olivero_medium date format pattern.';
+}
+
+/**
+ * Disable automated cron to prevent test interference.
+ */
+function behat_test_deploy_disable_automated_cron(): string {
+  \Drupal::configFactory()
+    ->getEditable('automated_cron.settings')
+    ->set('interval', 0)
+    ->save();
+
+  return 'Disabled automated cron.';
+}
+
+/**
+ * Enable visitor registration to allow user registration tests.
+ */
+function behat_test_deploy_enable_visitor_registration(): string {
+  \Drupal::configFactory()
+    ->getEditable('user.settings')
+    ->set('register', 'visitors')
+    ->save();
+
+  return 'Enabled visitor registration.';
 }
