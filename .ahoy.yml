@@ -106,7 +106,6 @@ commands:
     cmd: |
       ahoy drush sql-drop --yes
       ahoy drush --yes site-install --db-url=mysql://drupal:drupal@database/drupal --debug
-      ahoy drush --yes pmu page_cache,big_pipe
       ahoy drush --yes en behat_test
       ahoy drush --yes deploy:hook
 

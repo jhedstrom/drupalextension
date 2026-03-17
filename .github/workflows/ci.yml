@@ -168,7 +168,6 @@ jobs:
 
       - name: Adjust Drupal configurations
         run: |
-          docker compose exec -T php ./vendor/bin/drush --yes --root=build/web pmu page_cache,big_pipe
           docker compose exec -T php ./vendor/bin/drush --yes --root=build/web en behat_test
           docker compose exec -T php ./vendor/bin/drush --yes --root=build/web deploy:hook
 

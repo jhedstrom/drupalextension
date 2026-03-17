@@ -62,6 +62,20 @@ function behat_test_deploy_add_editorial_workflow(): string {
 }
 
 /**
+ * Uninstall page_cache and big_pipe to simplify test assertions.
+ *
+ * The Standard profile enables these caching modules by default. They
+ * interfere with Behat tests that assert exact page output, so we
+ * uninstall them during provisioning.
+ */
+function behat_test_deploy_uninstall_caching_modules(): string {
+  $module_installer = \Drupal::service('module_installer');
+  $module_installer->uninstall(['page_cache', 'big_pipe']);
+
+  return 'Uninstalled page_cache and big_pipe.';
+}
+
+/**
  * Set the Olivero medium date format to match test expectations.
  */
 function behat_test_deploy_set_date_format(): string {
