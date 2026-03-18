@@ -281,3 +281,18 @@ Feature: DrupalContext coverage gaps
       """
     When I run behat with drupal profile
     Then it should pass
+
+  @test-drupal @api
+  Scenario: Assert "Given :type content:" passes for author property
+    Given some behat configuration
+    And scenario steps tagged with "@test-drupal @api":
+      """
+      Given users:
+        | name     | mail            | status |
+        | Joe User | joe@example.com | 1      |
+      And "article" content:
+        | title          | author   | status |
+        | Article by Joe | Joe User | 1      |
+      """
+    When I run behat with drupal profile
+    Then it should pass
