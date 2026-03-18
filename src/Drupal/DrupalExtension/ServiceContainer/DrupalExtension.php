@@ -155,6 +155,7 @@ class DrupalExtension implements ExtensionInterface {
               ->defaultValue('Username')
             ->end()
             ->integerNode('login_wait_max_seconds')
+              ->min(0)
               ->defaultValue(0)
               ->info('Maximum number of seconds to wait for the browser to load after login. Set to 0 to disable waiting.')
             ->end()
