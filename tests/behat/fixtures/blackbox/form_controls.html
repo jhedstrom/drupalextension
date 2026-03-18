@@ -1,0 +1,46 @@
+<html>
+  <head>
+    <title>Form Controls | Test Static Site</title>
+  </head>
+  <body>
+    <div id="static-nav">
+      <div id="static-header-left">
+        <h1 id="static-site-name">Form Controls</h1>
+      </div>
+      <div id="static-header-right">
+        <a href="index.html">Home</a>
+      </div>
+    </div>
+    <div id="static-content">
+      <h2>Content Heading</h2>
+      <p>Some content text.</p>
+      <form action="form_results.html" method="post">
+        <label for="name">Name</label>
+        <input id="name" name="name" type="text"/>
+
+        <label for="agree">I agree to terms</label>
+        <input type="checkbox" name="agree" value="1" id="agree">
+
+        <label for="newsletter">Subscribe to newsletter</label>
+        <input type="checkbox" name="newsletter" value="1" id="newsletter" checked="checked">
+
+        <fieldset>
+          <legend>Preferred color</legend>
+          <input type="radio" name="color" value="red" id="color-red"><label for="color-red">Red</label>
+          <input type="radio" name="color" value="blue" id="color-blue"><label for="color-blue">Blue</label>
+          <input type="radio" name="color" value="green" id="color-green"><label for="color-green">Green</label>
+        </fieldset>
+
+        <input type="submit" value="Submit"/>
+      </form>
+      <a href="index.html">Visible link</a>
+      <a href="index.html" style="display:none">Hidden link</a>
+    </div>
+    <div id="static-footer">
+      <p>Footer content</p>
+      <form action="footer.html" method="post">
+        <input type="checkbox" name="footer_check" value="1" id="footer-check"><label for="footer-check">Footer checkbox</label>
+      </form>
+    </div>
+  </body>
+</html>

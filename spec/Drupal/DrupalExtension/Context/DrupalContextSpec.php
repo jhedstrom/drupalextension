@@ -6,16 +6,17 @@ use Behat\Behat\Context\TranslatableContext;
 use Drupal\DrupalExtension\Context\RawDrupalContext;
 use PhpSpec\ObjectBehavior;
 
-class DrupalContextSpec extends ObjectBehavior
-{
-    function it_is_drupal_aware()
-    {
-        $this->shouldHaveType(RawDrupalContext::class);
-    }
+/**
+ * Tests the DrupalContext class.
+ */
+class DrupalContextSpec extends ObjectBehavior {
 
-    function it_is_a_translatable_context()
-    {
-        $this->shouldHaveType(TranslatableContext::class);
-    }
+  public function it_is_drupal_aware() {
+    $this->shouldHaveType(RawDrupalContext::class);
+  }
+
+  public function it_is_a_translatable_context() {
+    $this->shouldHaveType(TranslatableContext::class);
+  }
 
 }

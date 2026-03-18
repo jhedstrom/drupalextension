@@ -1,0 +1,191 @@
+# Test profiles for the Drupal Extension.
+#
+# Contexts in this extension fall into three categories based on what they
+# need to run:
+#
+# 1. Pure blackbox contexts (e.g. MinkContext) work against any HTML page.
+#    They have no dependency on Drupal and are tested against static HTML
+#    fixtures served by a simple web server.
+#
+# 2. Drupal-aware blackbox contexts (e.g. MessageContext, MarkupContext)
+#    also work against any HTML page — they do not call the Drupal API.
+#    However, they rely on Drupal-specific configuration from behat.yml
+#    such as region maps and message selectors. These contexts are tested
+#    in both profiles: once against static HTML fixtures (with selectors
+#    mapped to fixture markup) and once against a real Drupal site (with
+#    selectors mapped to the Drupal theme). This dual testing proves that
+#    the contexts are truly driver-agnostic.
+#
+# 3. Drupal API contexts (e.g. DrupalContext, DrushContext, BatchContext)
+#    require a running Drupal site and the API driver. They can only run
+#    in the drupal profile.
+#
+# Profile-selection tags control which profile runs a given scenario.
+# These use a "test-" prefix to distinguish them from functional tags
+# like @api (which enables the Drupal API driver):
+#   @test-blackbox  — runs in the default (blackbox) profile only
+#   @test-drupal    — runs in the drupal profile only
+#   @test-https     — runs in the drupal_https profile only
+#
+# Each scenario must be explicitly tagged. The drupal profile only picks
+# up scenarios tagged @test-drupal, not "everything that is not @test-blackbox."
+
+# Blackbox profile: tests against static HTML fixtures.
+default:
+  formatters:
+    progress:
+      colors: true
+  autoload: ['%paths.base%/tests/behat/bootstrap']
+  suites:
+    default:
+      paths: ['%paths.base%/tests/behat/features']
+      contexts:
+        # Contexts under tests - Mink context.
+        - Drupal\DrupalExtension\Context\MinkContext
+        # Contexts under tests - Drupal contexts.
+        - Drupal\DrupalExtension\Context\ConfigContext
+        - Drupal\DrupalExtension\Context\DrupalContext
+        - Drupal\DrupalExtension\Context\MessageContext
+        - Drupal\DrupalExtension\Context\MarkupContext
+        # Helper contexts for test execution and reporting.
+        - FeatureContext
+        - BehatCliContext
+        - DrevOps\BehatScreenshotExtension\Context\ScreenshotContext
+      filters:
+        tags: "@test-blackbox&&~@skipped"
+
+  extensions:
+    Drupal\MinkExtension:
+      browserkit_http: ~
+      base_url: http://blackbox
+      browser_name: chrome
+      javascript_session: selenium2
+      selenium2:
+        wd_host: "http://chrome:4444/wd/hub"
+        capabilities:
+          browser: chrome
+          extra_capabilities:
+            "goog:chromeOptions":
+              args:
+                - '--disable-gpu'            # Disables hardware acceleration required in containers and cloud-based instances (like CI runners) where GPU is not available.
+                - '--disable-extensions'     # Disables all installed Chrome extensions. Useful in testing environments to avoid interference from extensions.
+                - '--disable-infobars'       # Hides the infobar that Chrome displays for various notifications, like warnings when opening multiple tabs.
+                - '--disable-popup-blocking' # Disables the popup blocker, allowing all popups to appear. Useful in testing scenarios where popups are expected.
+                - '--disable-translate'      # Disables the built-in translation feature, preventing Chrome from offering to translate pages.
+                - '--no-first-run'           # Skips the initial setup screen that Chrome typically shows when running for the first time.
+                - '--test-type'              # Disables certain security features and UI components that are unnecessary for automated testing, making Chrome more suitable for test environments.
+
+    Drupal\DrupalExtension:
+      blackbox: ~
+      # Region map in the static HTML fixture.
+      region_map:
+        static content: "#static-content"
+        static footer: "#static-footer"
+        static navigation: "#static-nav"
+        static left header: "#static-header-left"
+        static right header: "#static-header-right"
+        static sidebar: "#static-sidebar"
+      selectors:
+        message_selector: '.static-messages'
+        error_message_selector: '.static-messages.static-error'
+        success_message_selector: '.static-messages.static-status'
+        warning_message_selector: '.static-messages.static-warning'
+
+    DrevOps\BehatScreenshotExtension:
+        dir: '%paths.base%/.logs/screenshots'
+        on_failed: true
+        always_fullscreen: true
+        fullscreen_algorithm: resize
+        purge: false
+        info_types:
+            - url
+            - feature
+            - step
+            - datetime
+
+    DVDoug\Behat\CodeCoverage\Extension:
+      filter:
+        include:
+          directories:
+            '%paths.base%/src': ~
+      reports:
+        text:
+          showColors: true
+          showOnlySummary: true
+        html:
+          target: '%paths.base%/.logs/coverage/behat/.coverage-html'
+        cobertura:
+          target: '%paths.base%/.logs/coverage/behat/cobertura.xml'
+        php:
+          target: '%paths.base%/.logs/coverage/behat/phpcov.php'
+
+# Drupal profile: tests against an installed Drupal site with the API driver.
+drupal:
+  suites:
+    default:
+      contexts:
+        # Contexts under tests - Drupal contexts.
+        - Drupal\DrupalExtension\Context\ConfigContext
+        - Drupal\DrupalExtension\Context\BatchContext
+        - Drupal\DrupalExtension\Context\DrupalContext
+        - Drupal\DrupalExtension\Context\DrushContext
+        - Drupal\DrupalExtension\Context\MinkContext
+        - Drupal\DrupalExtension\Context\MarkupContext
+        - Drupal\DrupalExtension\Context\MessageContext
+        - Drupal\DrupalExtension\Context\MailContext
+        - Drupal\DrupalExtension\Context\RandomContext
+        # Helper contexts for test execution and reporting.
+        - FeatureContext
+        - BehatCliContext
+        - DrevOps\BehatScreenshotExtension\Context\ScreenshotContext
+      filters:
+        tags: "@test-drupal&&~@skipped"
+
+  extensions:
+    Drupal\MinkExtension:
+      base_url: http://drupal
+      files_path: /var/www/html/tests/behat/fixtures/files
+
+    Drupal\DrupalExtension:
+      api_driver: "drupal"
+      drupal:
+        drupal_root: "/var/www/html/build/web"
+      drush:
+        root: "/var/www/html/build/web"
+      region_map:
+        main content: "#main"
+      selectors:
+        message_selector: '.messages'
+        error_message_selector: '.messages--error'
+        success_message_selector: '.messages--status'
+        warning_message_selector: '.messages--warning'
+
+# HTTPS profile: tests TLS termination via Traefik reverse proxy.
+# Inherits: autoload, paths, Mink selenium2/chrome config, screenshot extension,
+# code coverage extension.
+drupal_https:
+  suites:
+    default:
+      contexts:
+        # Contexts under tests - Mink context.
+        - Drupal\DrupalExtension\Context\MinkContext
+        # Contexts under tests - Drupal contexts.
+        - Drupal\DrupalExtension\Context\DrupalContext
+        # Helper contexts for test execution and reporting.
+        - FeatureContext
+        - BehatCliContext
+        - DrevOps\BehatScreenshotExtension\Context\ScreenshotContext
+      filters:
+        tags: "@test-https&&~@skipped"
+
+  extensions:
+    Drupal\MinkExtension:
+      base_url: https://proxy
+      browserkit_http:
+        guzzle_request_options:
+          verify: false
+
+    Drupal\DrupalExtension:
+      api_driver: "drupal"
+      drupal:
+        drupal_root: "/var/www/html/build/web"

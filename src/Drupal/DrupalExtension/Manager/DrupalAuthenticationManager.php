@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\DrupalExtension\Manager;
 
 use Behat\Mink\Element\DocumentElement;
@@ -13,194 +15,218 @@ use Drupal\DrupalExtension\MinkAwareTrait;
 /**
  * Default implementation of the Drupal authentication manager service.
  */
-class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterface, FastLogoutInterface
-{
+class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterface, FastLogoutInterface {
 
-    use DrupalParametersTrait;
-    use MinkAwareTrait;
+  use DrupalParametersTrait;
+  use MinkAwareTrait;
 
-    /**
-     * The Drupal user manager.
-     *
-     * @var \Drupal\DrupalExtension\Manager\DrupalUserManagerInterface
-     */
-    protected $userManager;
+  /**
+   * Constructs a DrupalAuthenticationManager object.
+   */
+  public function __construct(
+    Mink $mink,
+    protected DrupalUserManagerInterface $userManager,
+    protected DrupalDriverManagerInterface $driverManager,
+    array $minkParameters,
+    array $drupalParameters,
+  ) {
+    $this->setMink($mink);
+    $this->setMinkParameters($minkParameters);
+    $this->setDrupalParameters($drupalParameters);
+  }
 
-    /**
-     * The active driver.
-     *
-     * @var \Drupal\DrupalExtension\DrupalDriverManagerInterface
-     */
-    protected $driverManager;
+  /**
+   * {@inheritdoc}
+   */
+  public function logIn(\stdClass $user): void {
+    // Log out any existing user before logging in a new user.
+    $this->fastLogout();
 
-    /**
-     * Constructs a DrupalAuthenticationManager object.
-     *
-     * @param \Behat\Mink\Mink $mink
-     *   The Mink sessions manager.
-     * @param \Drupal\DrupalExtension\Manager\DrupalUserManagerInterface $drupalUserManager
-     *   The Drupal user manager.
-     * @param DrupalDriverManagerInterface $driverManager
-     * @param array $minkParameters
-     * @param array $drupalParameters
-     */
-    public function __construct(Mink $mink, DrupalUserManagerInterface $drupalUserManager, DrupalDriverManagerInterface $driverManager, array $minkParameters, array $drupalParameters)
-    {
-        $this->setMink($mink);
-        $this->userManager = $drupalUserManager;
-        $this->driverManager = $driverManager;
-        $this->setMinkParameters($minkParameters);
-        $this->setDrupalParameters($drupalParameters);
+    $session = $this->getSession();
+
+    // Navigate to the login page.
+    $loginUrl = $this->locatePath($this->getDrupalText('login_url'));
+    $session->visit($loginUrl);
+
+    // Fill in the login form credentials.
+    $page = $session->getPage();
+    $page->fillField($this->getDrupalText('username_field'), $user->name);
+    $page->fillField($this->getDrupalText('password_field'), $user->pass);
+
+    // Submit the login form.
+    $loginElement = $this->getLoginElement($page);
+    if (empty($loginElement)) {
+      throw new \Exception(sprintf('No submit button at %s', $session->getCurrentUrl()));
+    }
+    $loginElement->click();
+
+    // Wait for URL change after login (max 3 seconds).
+    $timeout = microtime(true) + 3;
+    while (microtime(true) < $timeout && $session->getCurrentUrl() === $loginUrl) {
+      usleep(100000);
     }
 
-    /**
-     * Helper to get the element we want to use for submitting the login form.
-     */
-    protected function getLoginSubmitElement(DocumentElement $element)
-    {
-        return $element->findButton($this->getDrupalText('log_in'));
+    // Wait for page to be fully loaded before checking if logged in.
+    $timeout = microtime(true) + 3;
+    while (microtime(true) < $timeout && !$session->getPage()->find('css', 'body')) {
+      usleep(100000);
     }
 
-    /**
-     * Helper to get the submit element for the logout confirmation form.
-     */
-    protected function getLogoutConfirmSubmitElement(DocumentElement $element)
-    {
-        return $element->findButton($this->getDrupalText('log_out'));
+    // Verify the login was successful.
+    if (!$this->loggedIn()) {
+      throw new \Exception(isset($user->role)
+            ? sprintf("Unable to determine if logged in because '%s' ('log_out') link cannot be found for user '%s' with role '%s'", $this->getDrupalText('log_out'), $user->name, $user->role)
+            : sprintf("Unable to determine if logged in because '%s' ('log_out') link cannot be found for user '%s'", $this->getDrupalText('log_out'), $user->name));
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function logIn(\stdClass $user)
-    {
-        // Ensure we aren't already logged in.
-        $this->fastLogout();
+    // Track the logged-in user.
+    $this->userManager->setCurrentUser($user);
 
-        $this->getSession()->visit($this->locatePath($this->getDrupalText('login_url')));
-        $element = $this->getSession()->getPage();
-        $element->fillField($this->getDrupalText('username_field'), $user->name);
-        $element->fillField($this->getDrupalText('password_field'), $user->pass);
-        $submit = $this->getLoginSubmitElement($element);
-        if (empty($submit)) {
-            throw new \Exception(sprintf("No submit button at %s", $this->getSession()->getCurrentUrl()));
-        }
+    // Log in on the backend.
+    $this->backendLogin($user);
+  }
 
-        // Store the current URL before clicking login.
-        $loginUrl = $this->getSession()->getCurrentUrl();
+  /**
+   * {@inheritdoc}
+   */
+  public function logout(): void {
+    $session = $this->getSession();
 
-        // Log in.
-        $submit->click();
+    $logoutUrl = $this->locatePath($this->getDrupalText('logout_url'));
+    $logoutConfirmUrl = $this->locatePath($this->getDrupalText('logout_confirm_url'));
 
-        // Wait for URL change after login (max 3 seconds).
-        $timeout = microtime(true) + 3;
-        while (microtime(true) < $timeout && $this->getSession()->getCurrentUrl() === $loginUrl) {
-            usleep(100000);
-        }
+    $session->visit($logoutUrl);
 
-        // Wait for page to be fully loaded before check if loggedIn.
-        $timeout = microtime(true) + 3;
-        while (microtime(true) < $timeout && !$this->getSession()->getPage()->find('css', 'body')) {
-            usleep(100000);
-        }
+    // Check to see if the user is on the logout confirm page (10.3+).
+    if ($session->getCurrentUrl() === $logoutConfirmUrl) {
+      $logoutElement = $this->getLogoutConfirmElement($session->getPage());
 
-        if (!$this->loggedIn()) {
-            if (isset($user->role)) {
-                throw new \Exception(sprintf("Unable to determine if logged in because 'log_out' link cannot be found for user '%s' with role '%s'", $user->name, $user->role));
-            } else {
-                throw new \Exception(sprintf("Unable to determine if logged in because 'log_out' link cannot be found for user '%s'", $user->name));
-            }
-        }
+      if (empty($logoutElement)) {
+        throw new \Exception(sprintf("Unable to determine if logged out because '%s' button cannot be found on the logout confirmation page at %s", $this->getDrupalText('log_out'), $session->getCurrentUrl()));
+      }
 
-        $this->userManager->setCurrentUser($user);
-
-        // Log the user in on the backend if possible.
-        if ($this->driverManager->getDriver() instanceof AuthenticationDriverInterface) {
-            $this->driverManager->getDriver()->login($user);
-        }
+      $logoutElement->click();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function logout()
-    {
-        $session = $this->getSession();
-        $session->visit($this->locatePath($this->getDrupalText('logout_url')));
-        // Check to see if the user is on the logout confirm page (10.3+).
-        if ($session->getCurrentUrl() === $this->locatePath($this->getDrupalText('logout_confirm_url'))) {
-            $submit = $this->getLogoutConfirmSubmitElement($session->getPage());
-            $submit->click();
-        }
-        $this->userManager->setCurrentUser(false);
+    // Reset the currently tracked user.
+    $this->userManager->setCurrentUser(FALSE);
 
-        // Log the user out on the backend if possible.
-        if ($this->driverManager->getDriver() instanceof AuthenticationDriverInterface) {
-            $this->driverManager->getDriver()->logout();
-        }
+    // Log out on the backend.
+    $this->backendLogout();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function loggedIn(): bool {
+    $session = $this->getSession();
+
+    // If the session has not been started, then there is no user logged in.
+    if (!$session->isStarted()) {
+      return FALSE;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function loggedIn()
-    {
-        $session = $this->getSession();
-
-        // If the session has not been started yet, or no page has yet been loaded,
-        // then this is a brand new test session and the user is not logged in.
-        if (!$session->isStarted() || !$page = $session->getPage()) {
-            return false;
-        }
-
-        // Look for a css selector to determine if a user is logged in.
-        // Default is the logged-in class on the body tag.
-        // Which should work with almost any theme.
-        try {
-            if ($page->has('css', $this->getDrupalSelector('logged_in_selector'))) {
-                return true;
-            }
-        } catch (DriverException $e) {
-            // This test may fail if the driver did not load any site yet.
-        }
-
-        // Some themes do not add that class to the body, so lets check if the
-        // login form is displayed on the page with the login form (defaults to
-        // /user/login)
-        $session->visit($this->locatePath($this->getDrupalText('login_url')));
-        if ($page->has('css', $this->getDrupalSelector('login_form_selector'))) {
-            $this->fastLogout();
-            return false;
-        }
-
-        $session->visit($this->locatePath('/'));
-
-        // As a last resort, if a logout link is found, we are logged in. While not
-        // perfect, this is how Drupal SimpleTests currently work as well.
-        if ($page->findLink($this->getDrupalText('log_out'))) {
-            return true;
-        }
-
-        // The user appears to be anonymous. Calling logout() both ensures this is the
-        // case and updates the userManager to reflect this.
-        $this->fastLogout();
-        return false;
+    // If the page is not available, then there is no user logged in.
+    $page = $session->getPage();
+    if (!$page) {
+      return FALSE;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function fastLogout()
-    {
-        $session = $this->getSession();
-        if ($session->isStarted()) {
-            $session->reset();
-        }
-        $this->userManager->setCurrentUser(false);
-
-        // Log the user out on the backend if possible.
-        if ($this->driverManager->getDriver() instanceof AuthenticationDriverInterface) {
-            $this->driverManager->getDriver()->logout();
-        }
+    // Look for a CSS selector to determine if a user is logged in.
+    // Default is the logged-in class on the body tag, which should work
+    // with almost any theme.
+    try {
+      if ($page->has('css', $this->getDrupalSelector('logged_in_selector'))) {
+        return TRUE;
+      }
     }
+    catch (DriverException) {
+      // This may fail if the driver did not load any site yet.
+    }
+
+    // Some themes do not add that class to the body, so check if the login
+    // form is displayed (defaults to /user/login).
+    $loginUrl = $this->locatePath($this->getDrupalText('login_url'));
+    $session->visit($loginUrl);
+    if ($page->has('css', $this->getDrupalSelector('login_form_selector'))) {
+      $this->fastLogout();
+      return FALSE;
+    }
+
+    // As a last resort, if a logout link is found, we are logged in.
+    // While not perfect, this is how Drupal SimpleTests currently work as
+    // well.
+    $session->visit($this->locatePath('/'));
+    if ($this->getLogoutElement()) {
+      return TRUE;
+    }
+
+    // The user appears to be anonymous - fully reset the session to ensure
+    // to prevent any issues with a partially logged-in session state.
+    $this->fastLogout();
+
+    return FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function fastLogout(): void {
+    // Reset the session.
+    $session = $this->getSession();
+    if ($session->isStarted()) {
+      $session->reset();
+    }
+
+    // Reset the currently tracked user.
+    $this->userManager->setCurrentUser(FALSE);
+
+    // Log out on the backend.
+    $this->backendLogout();
+  }
+
+  /**
+   * Get the login element from the page.
+   */
+  protected function getLoginElement(DocumentElement $element) {
+    // @todo v6: Rename `log_in` to `login_text`.
+    return $element->findButton($this->getDrupalText('log_in'));
+  }
+
+  /**
+   * Get the logout element from the page.
+   */
+  public function getLogoutElement() {
+    // @todo v6: Rename `log_out` to `logout_text`.
+    return $this->getSession()->getPage()->findLink($this->getDrupalText('log_out'));
+  }
+
+  /**
+   * Get the logout confirm element from the page.
+   */
+  protected function getLogoutConfirmElement(DocumentElement $element) {
+    // @todo v6: Rename `log_out` to `logout_text`.
+    return $element->findButton($this->getDrupalText('log_out'));
+  }
+
+  /**
+   * Log in on the backend driver if it supports authentication.
+   */
+  protected function backendLogin(\stdClass $user): void {
+    $driver = $this->driverManager->getDriver();
+    if ($driver instanceof AuthenticationDriverInterface) {
+      $driver->login($user);
+    }
+  }
+
+  /**
+   * Log out on the backend driver if it supports authentication.
+   */
+  protected function backendLogout(): void {
+    $driver = $this->driverManager->getDriver();
+    if ($driver instanceof AuthenticationDriverInterface) {
+      $driver->logout();
+    }
+  }
+
 }

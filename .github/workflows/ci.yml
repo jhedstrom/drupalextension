@@ -1,57 +1,235 @@
-name: ci
-on: [push, pull_request]
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  CI_COVERAGE_THRESHOLD: '70'
+
 jobs:
-  tests:
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+
+    env:
+      PHP_VERSION: '8.4'
+      DRUPAL_VERSION: '11'
+      DOCKER_USER_ID: '1001'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Start Docker containers
+        run: docker compose up -d
+
+      - name: Configure git safe directory
+        run: docker compose exec -T php git config --global --add safe.directory /var/www/html
+
+      - name: Install Composer dependencies
+        run: docker compose exec -T php composer install
+
+      - name: Validate composer.json
+        run: docker compose exec -T php composer validate --no-interaction
+
+      - name: Check composer.json is normalized
+        run: docker compose exec -T php composer normalize --dry-run
+
+      - name: Run linting
+        run: |
+          docker compose exec -T php vendor/bin/parallel-lint src spec scripts tests
+          docker compose exec -T php vendor/bin/phpcs
+          docker compose exec -T php vendor/bin/phpstan
+          docker compose exec -T php vendor/bin/rector process --dry-run
+          docker compose exec -T php vendor/bin/gherkinlint lint tests/behat/features
+
+      - name: Lint documentation
+        run: docker compose exec -T php php scripts/docs.php --fail-on-change --warning-on-invalid --log-dir=.logs/docs
+
+      - name: Load docs validation logs
+        if: github.event_name == 'pull_request' && !cancelled()
+        run: |
+          { echo "DOCS_SUMMARY<<EOF"; cat .logs/docs/validation-summary.txt; echo "EOF"; } >> "$GITHUB_ENV"
+          { echo "DOCS_DETAILS<<EOF"; cat .logs/docs/validation-details.txt; echo "EOF"; } >> "$GITHUB_ENV"
+
+      - name: Post docs validation as PR comment
+        if: github.event_name == 'pull_request' && !cancelled()
+        uses: marocchino/sticky-pull-request-comment@773744901bac0e8cbb5a0dc842800d45e9b2b405 # v2
+        with:
+          header: docs-validation
+          message: |
+            **Documentation validation**
+            ```
+            ${{ env.DOCS_SUMMARY }}
+            ```
+            <details>
+            <summary>Per-context details</summary>
+
+            ```
+            ${{ env.DOCS_DETAILS }}
+            ```
+            </details>
+          hide_and_recreate: true
+
+  tests:
+    name: PHP ${{ matrix.php_version }}, Drupal ${{ matrix.drupal_version }}, Deps ${{ matrix.deps }}
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+
     strategy:
       fail-fast: false
       matrix:
         include:
-          - php_version: "7.4"
-            drupal_version: "9"
-          - php_version: "8.2"
-            drupal_version: "10"
-          - php_version: "8.3"
-            drupal_version: "10"
-          - php_version: "8.3"
-            drupal_version: "11"
+          - php_version: '8.2'
+            drupal_version: '10'
+            deps: 'normal'
+          - php_version: '8.2'
+            drupal_version: '10'
+            deps: 'lowest'
+          - php_version: '8.3'
+            drupal_version: '10'
+            deps: 'normal'
+          - php_version: '8.3'
+            drupal_version: '10'
+            deps: 'lowest'
+          - php_version: '8.3'
+            drupal_version: '11'
+            deps: 'normal'
+          - php_version: '8.3'
+            drupal_version: '11'
+            deps: 'lowest'
+          - php_version: '8.4'
+            drupal_version: '10'
+            deps: 'normal'
+          - php_version: '8.4'
+            drupal_version: '10'
+            deps: 'lowest'
+          - php_version: '8.4'
+            drupal_version: '11'
+            deps: 'normal'
+            coverage: true
+          - php_version: '8.4'
+            drupal_version: '11'
+            deps: 'lowest'
+
     env:
       PHP_VERSION: ${{ matrix.php_version }}
       DRUPAL_VERSION: ${{ matrix.drupal_version }}
-      DOCKER_USER_ID: "1001"
+      DOCKER_USER_ID: '1001'
+
     steps:
-      - name: clone
-        uses: actions/checkout@v3
-      - name: docker compose up -d
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Start Docker containers
         run: docker compose up -d
-      - name: npm install
-        run: docker compose exec -T -u node node npm install
-      - name: composer self-update
-        run: docker compose exec -T php composer self-update
-      - name: composer require
+
+      - name: Configure git safe directory
+        run: docker compose exec -T php git config --global --add safe.directory /var/www/html
+
+      - name: Add Drupal core dependency
         run: docker compose exec -u ${DOCKER_USER_ID} -T php composer require --no-interaction --dev --no-update drupal/core:^${DRUPAL_VERSION} drupal/core-composer-scaffold:^${DRUPAL_VERSION}
-      - name: composer install
-        run: docker compose exec -T php composer install
-      - name: drush site-install
-        run: docker compose exec -T php ./vendor/bin/drush --yes --root=drupal site-install --db-url=mysql://drupal:drupal@db/drupal --debug
-      - name: copy fixtures
-        run: docker compose exec -T php cp -r fixtures/drupal/modules/behat_test drupal/modules
-      - name: drush pmu page_cache
-        run: docker compose exec -T php ./vendor/bin/drush --yes --root=drupal pmu page_cache,big_pipe
-      - name: drush en behat_test
-        run: docker compose exec -T php ./vendor/bin/drush --yes --root=drupal en behat_test
-      - name: npm test
-        run: docker compose exec -T -u node node npm test
-      - name: composer test
-        run: docker compose exec -T php composer test
-      - name: behat --profile=blackbox
-        run: docker compose exec -T php vendor/bin/behat -fprogress --strict
-      - name: behat --profile=drupal9
-        if: "${{ matrix.drupal_version == '9'}}"
-        run: docker compose exec -T php cat && docker compose exec -T php vendor/bin/behat -fprogress --profile=drupal9 --strict
-      - name: behat --profile=drupal10
-        if: "${{ matrix.drupal_version != '9'}}"
-        run: docker compose exec -T php cat && docker compose exec -T php vendor/bin/behat -fprogress --profile=drupal10 --strict
-      - name: behat --profile=drupal_https
-        if: "${{ matrix.drupal_version != '9'}}"
-        run: docker compose exec -T php cat && docker compose exec -T php vendor/bin/behat -fprogress --profile=drupal_https --strict
+
+      - name: Remove PHPUnit 11 for Drupal 10
+        if: ${{ !matrix.coverage }}
+        run: docker compose exec -u ${DOCKER_USER_ID} -T php composer remove --no-interaction --dev --no-update phpunit/phpunit
+
+      - name: Install Composer dependencies
+        run: |
+          if [[ "${{ matrix.deps }}" == "lowest" ]]; then
+            docker compose exec -T php composer update --prefer-lowest --prefer-stable
+          else
+            docker compose exec -T php composer install
+          fi
+
+      - name: Copy Drush configuration
+        run: docker compose exec -T php cp -r tests/behat/fixtures/drupal/drush build/drush
+
+      - name: Run PHPSpec tests
+        run: docker compose exec -T php vendor/bin/phpspec run -f pretty --no-interaction
+
+      - name: Run PHPUnit tests
+        if: ${{ matrix.coverage }}
+        run: docker compose exec -T php php -d pcov.enabled=1 -d pcov.directory=. vendor/bin/phpunit -c phpunit.xml
+
+      - name: Provision Drupal site
+        run: docker compose exec -T php ./vendor/bin/drush --yes --root=build/web site-install --db-url=mysql://drupal:drupal@database/drupal --debug
+
+      - name: Copy test fixtures
+        run: docker compose exec -T php cp -r tests/behat/fixtures/drupal/modules/behat_test build/web/modules
+
+      - name: Adjust Drupal configurations
+        run: |
+          docker compose exec -T php ./vendor/bin/drush --yes --root=build/web en behat_test
+          docker compose exec -T php ./vendor/bin/drush --yes --root=build/web deploy:hook
+
+      - name: Run Behat tests with coverage
+        if: ${{ matrix.coverage }}
+        run: |
+          docker compose exec -T php php -d pcov.enabled=1 -d pcov.directory=/var/www/html/src vendor/bin/behat --strict
+          docker compose exec -T php php -d pcov.enabled=1 -d pcov.directory=/var/www/html/src vendor/bin/behat --profile=drupal --strict
+
+      - name: Run Behat tests
+        if: ${{ !matrix.coverage }}
+        run: |
+          docker compose exec -T php vendor/bin/behat --strict --no-coverage
+          docker compose exec -T php vendor/bin/behat --profile=drupal --strict --no-coverage
+          docker compose exec -T php vendor/bin/behat --profile=drupal_https --strict --no-coverage
+
+      - name: Merge all coverage
+        if: ${{ matrix.coverage }}
+        run: docker compose exec -T php php scripts/merge-coverage.php
+
+      - name: Extract total coverage
+        if: ${{ matrix.coverage }}
+        run: |
+          RATE=$(grep -om1 'line-rate="[0-9.]*"' .logs/coverage/merged/cobertura.xml | tr -cd '0-9.')
+          PERCENT=$(awk "BEGIN {printf \"%.2f\", $RATE*100}")
+          echo "**Total coverage: $PERCENT%** (threshold: $CI_COVERAGE_THRESHOLD%)" | tee -a "$GITHUB_STEP_SUMMARY"
+          echo "TOTAL_COVERAGE_PERCENT=${PERCENT}" >> "$GITHUB_ENV"
+          { echo "COVERAGE_SUMMARY<<EOF"; cat .logs/coverage/merged/coverage-summary.txt; echo "EOF"; } >> "$GITHUB_ENV"
+          { echo "COVERAGE_DETAILS<<EOF"; cat .logs/coverage/merged/coverage-details.txt; echo "EOF"; } >> "$GITHUB_ENV"
+
+      - name: Post coverage summary as PR comment
+        if: ${{ github.event_name == 'pull_request' && matrix.coverage }}
+        uses: marocchino/sticky-pull-request-comment@773744901bac0e8cbb5a0dc842800d45e9b2b405 # v2
+        with:
+          header: coverage
+          message: |
+            **Code coverage** (threshold: ${{ env.CI_COVERAGE_THRESHOLD }}%)
+            ```
+            ${{ env.COVERAGE_SUMMARY }}
+            ```
+            <details>
+            <summary>Per-class coverage</summary>
+
+            ```
+            ${{ env.COVERAGE_DETAILS }}
+            ```
+            </details>
+          hide_and_recreate: true
+
+      - name: Check coverage threshold
+        if: ${{ matrix.coverage }}
+        run: |
+          if [ "${TOTAL_COVERAGE_PERCENT//.}" -lt "$((CI_COVERAGE_THRESHOLD*100))" ]; then
+            echo "FAIL: Total coverage ${TOTAL_COVERAGE_PERCENT}% is below threshold ${CI_COVERAGE_THRESHOLD}%"
+            exit 1
+          fi
+
+      - name: Upload test artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-artifacts-php${{ matrix.php_version }}-drupal${{ matrix.drupal_version }}-${{ matrix.deps }}
+          path: .logs
+          include-hidden-files: true
+          if-no-files-found: error

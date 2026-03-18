@@ -1,28 +1,30 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\DrupalExtension\Context;
 
+use Behat\MinkExtension\Context\RawMinkContext;
 use Drupal\DrupalMailManager;
 
 /**
  * Provides helper methods for interacting with mail.
  */
-class RawMailContext extends RawDrupalContext
-{
+class RawMailContext extends RawDrupalContext {
 
   /**
    * The mail manager.
    *
    * @var \Drupal\DrupalMailManagerInterface
    */
-    protected $mailManager;
+  protected $mailManager;
 
   /**
    * The number of mails received so far in this scenario, for each mail store.
    *
    * @var array
    */
-    protected $mailCount = [];
+  protected $mailMessageCount = [];
 
   /**
    * Get the mail manager service that handles stored test mail.
@@ -30,20 +32,20 @@ class RawMailContext extends RawDrupalContext
    * @return \Drupal\DrupalMailManagerInterface
    *   The mail manager service.
    */
-    protected function getMailManager()
-    {
-        // Persist the mail manager between invocations. This is necessary for
-        // remembering and reinstating the original mail backend.
-        if (is_null($this->mailManager)) {
-            $this->mailManager = new DrupalMailManager($this->getDriver());
-        }
-        return $this->mailManager;
+  protected function getMailManager() {
+    // Persist the mail manager between invocations. This is necessary for
+    // remembering and reinstating the original mail backend.
+    if (is_null($this->mailManager)) {
+      $this->mailManager = new DrupalMailManager($this->getDriver());
     }
+
+    return $this->mailManager;
+  }
 
   /**
    * Get collected mail, matching certain specifications.
    *
-   * @param array $matches
+   * @param array $criteria
    *   Associative array of mail fields and the values to filter by.
    * @param bool $new
    *   Whether to ignore previously seen mail.
@@ -52,34 +54,32 @@ class RawMailContext extends RawDrupalContext
    * @param string $store
    *   The name of the mail store to get mail from.
    *
-   * @return \stdClass[]
+   * @return \stdClass[]|\stdClass
    *   An array of mail, each formatted as a Drupal 8
-   * \Drupal\Core\Mail\MailInterface::mail $message array.
+   *   \Drupal\Core\Mail\MailInterface::mail $message array, or a single mail
+   *   object if $index is specified.
    */
-    protected function getMail($matches = [], $new = false, $index = null, $store = 'default')
-    {
-        $mail = $this->getMailManager()->getMail($store);
-        $previousMailCount = $this->getMailCount($store);
-        $this->mailCount[$store] = count($mail);
+  protected function getMail(array $criteria = [], bool $new = FALSE, ?int $index = NULL, string $store = 'default') {
+    $messages = $this->getMailManager()->getMail($store);
+    $previousCount = $this->getMailMessageCount($store);
+    $this->mailMessageCount[$store] = count($messages);
 
-        // Ignore previously seen mail.
-        if ($new) {
-            $mail = array_slice($mail, $previousMailCount);
-        }
-
-        // Filter mail based on $matches; keep only mail where each field mentioned
-        // in $matches contains the value specified for that field.
-        $mail = array_values(array_filter($mail, function ($singleMail) use ($matches) {
-            return ($this->matchesMail($singleMail, $matches));
-        }));
-
-        // Return an individual mail if specified by an index.
-        if (is_null($index) || count($mail) === 0) {
-            return $mail;
-        } else {
-            return array_slice($mail, $index, 1)[0];
-        }
+    // Ignore previously seen messages.
+    if ($new) {
+      $messages = array_slice($messages, $previousCount);
     }
+
+    // Filter messages based on $matches; keep only mail where each field
+    // mentioned in $filters contains the value specified for that field.
+    $messages = array_values(array_filter($messages, fn(array $message): bool => $this->matchMessage($message, $criteria)));
+
+    // Return an individual mail if specified by an index.
+    if (is_null($index) || count($messages) === 0) {
+      return $messages;
+    }
+
+    return array_slice($messages, $index, 1)[0];
+  }
 
   /**
    * Get the number of mails received in a particular mail store.
@@ -87,160 +87,131 @@ class RawMailContext extends RawDrupalContext
    * @return int
    *   The number of mails received during this scenario.
    */
-    protected function getMailCount($store)
-    {
-        if (array_key_exists($store, $this->mailCount)) {
-            $count = $this->mailCount[$store];
-        } else {
-            $count = 0;
-        }
-        return $count;
+  protected function getMailMessageCount(string $store) {
+    if (array_key_exists($store, $this->mailMessageCount)) {
+      return $this->mailMessageCount[$store];
     }
+
+    return 0;
+  }
 
   /**
    * Determine if a mail meets criteria.
    *
-   * @param array $mail
-   *   The mail, as an array of mail fields.
-   * @param array $matches
+   * @param array $message
+   *   The mail message as an associative array of mail fields.
+   * @param array $criteria
    *   The criteria: an associative array of mail fields and desired values.
    *
    * @return bool
-   *   Whether the mail matches the criteria.
+   *   Whether the mail message matches the criteria.
    */
-    protected function matchesMail($mail = [], $matches = [])
-    {
-        // Discard criteria that are just zero-length strings.
-        $matches = array_filter($matches, 'strlen');
-        // For each criteria, check the specified mail field contains the value.
-        foreach ($matches as $field => $value) {
-            // Case insensitive.
-            if (stripos($mail[$field], $value) === false) {
-                return false;
-            }
-        }
-        return true;
+  protected function matchMessage(array $message, array $criteria): bool {
+    // Discard criteria that are just zero-length strings.
+    $criteria = array_filter($criteria, strlen(...));
+
+    // For each criteria, check the specified mail field contains the value.
+    foreach ($criteria as $field => $value) {
+      // Case insensitive.
+      if (stripos((string) $message[$field], (string) $value) === FALSE) {
+        return FALSE;
+      }
     }
+
+    return TRUE;
+  }
 
   /**
    * Compare actual mail with expected mail.
    *
-   * @param array $actualMail
+   * @param array $actualMessages
    *   An array of actual mail.
-   * @param array $expectedMail
+   * @param array $expectedMessages
    *   An array of expected mail.
    */
-    protected function compareMail($actualMail, $expectedMail)
-    {
-        // Make sure there is the same number of actual and expected.
-        $expectedCount = count($expectedMail);
-        $this->assertMailCount($actualMail, $expectedCount);
+  protected function compareMessages(array $actualMessages, array $expectedMessages) {
+    // Make sure there is the same number of actual and expected.
+    $expectedCount = count($expectedMessages);
+    $this->assertMessageCount($actualMessages, $expectedCount);
 
-        // For each row of expected mail, check the corresponding actual mail.
-        // Make the comparison insensitive to the order mails were sent.
-        $actualMail = $this->sortMail($actualMail);
-        $expectedMail = $this->sortMail($expectedMail);
-        foreach ($expectedMail as $index => $expectedMailItem) {
-            // For each column of the expected, check the field of the actual mail.
-            foreach ($expectedMailItem as $fieldName => $fieldValue) {
-                $expectedField = [$fieldName => $fieldValue];
-                $match = $this->matchesMail($actualMail[$index], $expectedField);
-                if (!$match) {
-                    throw new \Exception(sprintf("The #%s mail did not have '%s' in its %s field. It had:\n'%s'", $index, $fieldValue, $fieldName, mb_strimwidth($actualMail[$index][$fieldName], 0, 30, "...")));
-                }
-            }
+    // For each row of expected mail, check the corresponding actual mail.
+    // Make the comparison insensitive to the order mails were sent.
+    $actualMessages = $this->sortMessages($actualMessages);
+    $expectedMessages = $this->sortMessages($expectedMessages);
+    foreach ($expectedMessages as $index => $expectedMailItem) {
+      // For each column of the expected, check the field of the actual mail.
+      foreach ($expectedMailItem as $fieldName => $fieldValue) {
+        $expectedField = [$fieldName => $fieldValue];
+        $isMatch = $this->matchMessage($actualMessages[$index], $expectedField);
+        if (!$isMatch) {
+          throw new \Exception(sprintf("The #%s mail did not have '%s' in its %s field. It had:\n'%s'", $index, $fieldValue, $fieldName, mb_strimwidth((string) $actualMessages[$index][$fieldName], 0, 30, "...")));
         }
+      }
     }
+  }
 
   /**
-   * Assert there is the expected number of mails, or that there are some mails
-   * if the exact number expected is not specified.
+   * Assert there is the expected number of mail messages.
    *
-   * @param array $actualMail
+   * @param array $actualMessages
    *   An array of actual mail.
    * @param int $expectedCount
    *   Optional. The number of mails expected.
    */
-    protected function assertMailCount($actualMail, $expectedCount = null)
-    {
-        $actualCount = count($actualMail);
-        if (is_null($expectedCount)) {
-            // If number to expect is not specified, expect more than zero.
-            if ($actualCount === 0) {
-                throw new \Exception("Expected some mail, but none found.");
-            }
-        } else {
-            if ($expectedCount != $actualCount) {
-                // Prepare a simple list of actual mail.
-                $prettyActualMail = [];
-                foreach ($actualMail as $singleActualMail) {
-                    $prettyActualMail[] = [
-                        'to' => $singleActualMail['to'],
-                        'subject' => $singleActualMail['subject'],
-                    ];
-                }
-                throw new \Exception(sprintf("Expected %s mail, but %s found:\n\n%s", $expectedCount, $actualCount, print_r($prettyActualMail, true)));
-            }
-        }
+  protected function assertMessageCount(array $actualMessages, ?int $expectedCount = NULL) {
+    $actualCount = count($actualMessages);
+    if (is_null($expectedCount)) {
+      // If number to expect is not specified, expect more than zero.
+      if ($actualCount === 0) {
+        throw new \Exception("Expected some mail, but none found.");
+      }
     }
-  
+    elseif ($expectedCount !== $actualCount) {
+      // Prepare a simple list of actual mail.
+      $formattedActualMessages = [];
+      foreach ($actualMessages as $actualMessage) {
+        $formattedActualMessages[] = [
+          'to' => $actualMessage['to'],
+          'subject' => $actualMessage['subject'],
+        ];
+      }
+      throw new \Exception(sprintf("Expected %s mail, but %s found:\n\n%s", $expectedCount, $actualCount, print_r($formattedActualMessages, TRUE)));
+    }
+  }
+
   /**
    * Sort mail by to, subject and body.
    *
-   * @param array $mail
-   *   An array of mail to sort.
+   * @param array $messages
+   *   An array of mail messages to sort.
    *
    * @return array
    *   The same mail, but sorted.
    */
-    protected function sortMail($mail)
-    {
-        // Can't sort an empty array.
-        if (count($mail) === 0) {
-            return [];
-        }
-
-        // To, subject and body keys must be present.
-        // Empty strings are ignored when matching so adding them is harmless.
-        foreach ($mail as $key => $row) {
-            if (!array_key_exists('to', $row)) {
-                $mail[$key]['to'] = '';
-            }
-            if (!array_key_exists('subject', $row)) {
-                $mail[$key]['subject'] = '';
-            }
-            if (!array_key_exists('body', $row)) {
-                $mail[$key]['body'] = '';
-            }
-        }
-
-        // Obtain a list of columns.
-        foreach ($mail as $key => $row) {
-            if (array_key_exists('to', $row)) {
-                $to[$key] = $row['to'];
-            }
-            if (array_key_exists('subject', $row)) {
-                $subject[$key] = $row['subject'];
-            }
-            if (array_key_exists('body', $row)) {
-                $body[$key] = $row['body'];
-            }
-        }
-
-        // Add $mail as the last parameter, to sort by the common key.
-        array_multisort($to, SORT_ASC, $subject, SORT_ASC, $body, SORT_ASC, $mail);
-        return $mail;
+  protected function sortMessages(array $messages): array {
+    foreach (array_keys($messages) as $key) {
+      $messages[$key] += ['to' => '', 'subject' => '', 'body' => ''];
     }
+
+    $to = array_column($messages, 'to');
+    $subject = array_column($messages, 'subject');
+    $body = array_column($messages, 'body');
+    array_multisort($to, SORT_ASC, $subject, SORT_ASC, $body, SORT_ASC, $messages);
+
+    return $messages;
+  }
 
   /**
    * Get the mink context, so we can visit pages using the mink session.
    */
-    protected function getMinkContext()
-    {
-        $minkContext =  $this->getContext('\Behat\MinkExtension\Context\RawMinkContext');
-        if ($minkContext === false) {
-            throw new \Exception(sprintf('No mink context found.'));
-        }
-        return $minkContext;
+  protected function getMinkContext(): object {
+    $minkContext = $this->getContext(RawMinkContext::class);
+
+    if ($minkContext === FALSE) {
+      throw new \Exception('No mink context found.');
     }
+
+    return $minkContext;
+  }
+
 }

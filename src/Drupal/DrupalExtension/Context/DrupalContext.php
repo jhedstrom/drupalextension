@@ -1,7 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\DrupalExtension\Context;
 
+use Behat\Step\Given;
+use Behat\Step\Then;
 use Behat\Behat\Context\TranslatableContext;
 use Behat\Mink\Element\Element;
 
@@ -10,465 +14,566 @@ use Behat\Gherkin\Node\TableNode;
 /**
  * Provides pre-built step definitions for interacting with Drupal.
  */
-class DrupalContext extends RawDrupalContext implements TranslatableContext
-{
+class DrupalContext extends RawDrupalContext implements TranslatableContext {
 
   /**
    * Returns list of definition translation resources paths.
    *
    * @return array
+   *   List of translation resource paths.
    */
-    public static function getTranslationResources()
-    {
-        return glob(__DIR__ . '/../../../../i18n/*.xliff');
-    }
+  public static function getTranslationResources() {
+    return self::getDrupalTranslationResources();
+  }
 
   /**
-   * @Given I am an anonymous user
-   * @Given I am not logged in
-   * @Then I log out
+   * Assert the user is anonymous or log out.
+   *
+   * @code
+   * Given I am an anonymous user
+   * Given I am not logged in
+   * Then I log out
+   * @endcode
    */
-    public function assertAnonymousUser()
-    {
-        // Verify the user is logged out.
-        $this->logout(true);
-    }
+  #[Given('I am an anonymous user')]
+  #[Given('I am not logged in')]
+  #[Then('I log out')]
+  public function assertAnonymousUser(): void {
+    // Verify the user is logged out.
+    $this->logout(TRUE);
+  }
 
   /**
    * Creates and authenticates a user with the given role(s).
    *
-   * @Given I am logged in as a user with the :role role(s)
-   * @Given I am logged in as a/an :role
+   * @code
+   * Given I am logged in as a user with the "editor" role
+   * Given I am logged in as a user with the "editor, admin" roles
+   * Given I am logged in as an "editor"
+   * @endcode
    */
-    public function assertAuthenticatedByRole($role)
-    {
-        // Check if a user with this role is already logged in.
-        if (!$this->loggedInWithRole($role)) {
-            // Create user (and project)
-            $user = (object) [
-                'name' => $this->getRandom()->name(8),
-                'pass' => $this->getRandom()->name(16),
-                'role' => $role,
-            ];
-            $user->mail = "{$user->name}@example.com";
-
-            $this->userCreate($user);
-
-            $roles = explode(',', $role);
-            $roles = array_map('trim', $roles);
-            foreach ($roles as $role) {
-                if (!in_array(strtolower($role), ['authenticated', 'authenticated user'])) {
-                    // Only add roles other than 'authenticated user'.
-                    $this->getDriver()->userAddRole($user, $role);
-                }
-            }
-
-            // Login.
-            $this->login($user);
-        }
-    }
+  #[Given('I am logged in as a user with the :role role(s)')]
+  #[Given('I am logged in as a/an :role')]
+  public function assertAuthenticatedByRole(string $role): void {
+    $this->createAndLoginUserWithRole($role);
+  }
 
   /**
    * Creates and authenticates a user with the given role(s) and given fields.
-   * | field_user_name     | John  |
-   * | field_user_surname  | Smith |
-   * | ...                 | ...   |
    *
-   * @Given I am logged in as a user with the :role role(s) and I have the following fields:
+   * @code
+   *   Given I am logged in as a user with the "editor" role and I have the following fields:
+   *     | field_user_name    | John  |
+   *     | field_user_surname | Smith |
+   * @endcode
    */
-    public function assertAuthenticatedByRoleWithGivenFields($role, TableNode $fields)
-    {
-        // Check if a user with this role is already logged in.
-        if (!$this->loggedInWithRole($role)) {
-            // Create user (and project)
-            $user = (object) [
-                'name' => $this->getRandom()->name(8),
-                'pass' => $this->getRandom()->name(16),
-                'role' => $role,
-            ];
-            $user->mail = "{$user->name}@example.com";
-
-            // Assign fields to user before creation.
-            foreach ($fields->getRowsHash() as $field => $value) {
-                  $user->{$field} = $value;
-            }
-
-            $this->userCreate($user);
-
-            $roles = explode(',', $role);
-            $roles = array_map('trim', $roles);
-            foreach ($roles as $role) {
-                if (!in_array(strtolower($role), ['authenticated', 'authenticated user'])) {
-                    // Only add roles other than 'authenticated user'.
-                    $this->getDriver()->userAddRole($user, $role);
-                }
-            }
-
-            // Login.
-            $this->login($user);
-        }
-    }
-
+  #[Given('I am logged in as a user with the :role role(s) and I have the following fields:')]
+  public function assertAuthenticatedByRoleWithGivenFields(string $role, TableNode $fields): void {
+    $this->createAndLoginUserWithRole($role, $fields->getRowsHash());
+  }
 
   /**
-   * @Given I am logged in as :name
+   * Creates a user with the given role(s), optional extra fields, and logs in.
+   *
+   * @param string $role
+   *   A single role, or multiple comma-separated roles.
+   * @param array $extra_fields
+   *   Optional associative array of additional fields to set on the user.
    */
-    public function assertLoggedInByName($name)
-    {
-        $manager = $this->getUserManager();
+  protected function createAndLoginUserWithRole(string $role, array $extra_fields = []): void {
+    $user = $this->createUserStub($role, $extra_fields);
+    $this->userCreate($user);
 
-        // Change internal current user.
-        $manager->setCurrentUser($manager->getUser($name));
+    $roles = explode(',', $role);
 
-        // Login.
-        $this->login($manager->getUser($name));
-    }
-
-  /**
-   * @Given I am logged in as a user with the :permissions permission(s)
-   */
-    public function assertLoggedInWithPermissions($permissions)
-    {
-        // Create a temporary role with given permissions.
-        $permissions = array_map('trim', explode(',', $permissions));
-        $role = $this->getDriver()->roleCreate($permissions);
-
-        // Create user.
-        $user = (object) [
-            'name' => $this->getRandom()->name(8),
-            'pass' => $this->getRandom()->name(16),
-            'role' => $role,
-        ];
-        $user->mail = "{$user->name}@example.com";
-        $this->userCreate($user);
-
-        // Assign the temporary role with given permissions.
+    $roles = array_map(trim(...), $roles);
+    foreach ($roles as $role) {
+      if (!in_array(strtolower($role), ['authenticated', 'authenticated user'], TRUE)) {
         $this->getDriver()->userAddRole($user, $role);
-        $this->roles[] = $role;
-
-        // Login.
-        $this->login($user);
+      }
     }
+
+    $this->login($user);
+  }
+
+  /**
+   * Creates a user stub with random name, password, and email.
+   *
+   * @param string $role
+   *   The role to assign.
+   * @param array $extra_fields
+   *   Optional additional fields.
+   */
+  protected function createUserStub(string $role, array $extra_fields = []): \stdClass {
+    $user = (object) [
+      'name' => $this->getRandom()->name(8),
+      'pass' => $this->getRandom()->name(16),
+      'role' => $role,
+    ];
+
+    $user->mail = $user->name . '@example.com';
+
+    foreach ($extra_fields as $field => $value) {
+      $user->{$field} = $value;
+    }
+
+    return $user;
+  }
+
+  /**
+   * Log in as an existing user by name.
+   *
+   * @code
+   * Given I am logged in as "admin"
+   * @endcode
+   */
+  #[Given('I am logged in as :name')]
+  public function assertLoggedInByName(string $name): void {
+    $this->login($this->getUserManager()->getUser($name));
+  }
+
+  /**
+   * Log in as a user with specific permissions.
+   *
+   * @code
+   * Given I am logged in as a user with the "administer nodes" permission
+   * Given I am logged in as a user with the "administer nodes, bypass node access" permissions
+   * @endcode
+   */
+  #[Given('I am logged in as a user with the :permissions permission(s)')]
+  public function assertLoggedInWithPermissions(string $permissions): void {
+    $permissions = array_map(trim(...), explode(',', $permissions));
+    $role = $this->getDriver()->roleCreate($permissions);
+
+    $user = $this->createUserStub($role);
+    $this->userCreate($user);
+    $this->getDriver()->userAddRole($user, $role);
+    $this->roles[] = $role;
+
+    $this->login($user);
+  }
 
   /**
    * Retrieve a table row containing specified text from a given element.
    *
-   * @param \Behat\Mink\Element\Element
-   * @param string
+   * @param \Behat\Mink\Element\Element $element
+   *   The element to search within, such as a table or the page.
+   * @param string $search
    *   The text to search for in the table row.
    *
    * @return \Behat\Mink\Element\NodeElement
+   *   The table row element containing the search text.
    *
    * @throws \Exception
    */
-    public function getTableRow(Element $element, $search)
-    {
-        $rows = $element->findAll('css', 'tr');
-        if (empty($rows)) {
-            throw new \Exception(sprintf('No rows found on the page %s', $this->getSession()->getCurrentUrl()));
-        }
-        foreach ($rows as $row) {
-            if (strpos($row->getText(), $search) !== false) {
-                return $row;
-            }
-        }
-        throw new \Exception(sprintf('Failed to find a row containing "%s" on the page %s', $search, $this->getSession()->getCurrentUrl()));
+  public function getTableRow(Element $element, string $search) {
+    $rows = $element->findAll('css', 'tr');
+    if (empty($rows)) {
+      throw new \Exception(sprintf('No rows found on the page %s', $this->getSession()->getCurrentUrl()));
     }
+    foreach ($rows as $row) {
+      if (str_contains($row->getText(), $search)) {
+        return $row;
+      }
+    }
+    throw new \Exception(sprintf('Failed to find a row containing "%s" on the page %s', $search, $this->getSession()->getCurrentUrl()));
+  }
 
   /**
    * Find text in a table row containing given text.
    *
-   * @Then I should see (the text ):text in the :rowText row
+   * @code
+   * Then I should see "Edit" in the "My article" row
+   * Then I should see the text "Edit" in the "My article" row
+   * @endcode
    */
-    public function assertTextInTableRow($text, $rowText)
-    {
-        $row = $this->getTableRow($this->getSession()->getPage(), $rowText);
-        if (strpos($row->getText(), $text) === false) {
-            throw new \Exception(sprintf('Found a row containing "%s", but it did not contain the text "%s".', $rowText, $text));
-        }
+  #[Then('I should see (the text ):text in the :rowText row')]
+  public function assertTextInTableRow(string $text, string $rowText): void {
+    $row = $this->getTableRow($this->getSession()->getPage(), $rowText);
+    if (!str_contains($row->getText(), $text)) {
+      throw new \Exception(sprintf('Found a row containing "%s", but it did not contain the text "%s".', $rowText, $text));
     }
+  }
 
   /**
    * Asset text not in a table row containing given text.
    *
-   * @Then I should not see (the text ):text in the :rowText row
+   * @code
+   * Then I should not see "Delete" in the "My article" row
+   * Then I should not see the text "Delete" in the "My article" row
+   * @endcode
    */
-    public function assertTextNotInTableRow($text, $rowText)
-    {
-        $row = $this->getTableRow($this->getSession()->getPage(), $rowText);
-        if (strpos($row->getText(), $text) !== false) {
-            throw new \Exception(sprintf('Found a row containing "%s", but it contained the text "%s".', $rowText, $text));
-        }
+  #[Then('I should not see (the text ):text in the :rowText row')]
+  public function assertTextNotInTableRow(string $text, string $rowText): void {
+    $row = $this->getTableRow($this->getSession()->getPage(), $rowText);
+    if (str_contains($row->getText(), $text)) {
+      throw new \Exception(sprintf('Found a row containing "%s", but it contained the text "%s".', $rowText, $text));
     }
+  }
 
   /**
-   * Attempts to find a link in a table row containing giving text. This is for
-   * administrative pages such as the administer content types screen found at
-   * `admin/structure/types`.
+   * Asserts a link exists in a table row containing given text.
    *
-   * @Given I click :link in the :rowText row
-   * @Then I (should )see the :link in the :rowText row
+   * This is for administrative pages such as the administer content types
+   * screen found at `admin/structure/types`.
+   *
+   * @code
+   * Then I see the "Edit" in the "My article" row
+   * Then I should see the "Edit" in the "My article" row
+   * @endcode
    */
-    public function assertClickInTableRow($link, $rowText)
-    {
-        $page = $this->getSession()->getPage();
-        if ($link_element = $this->getTableRow($page, $rowText)->findLink($link)) {
-            // Click the link and return.
-            $link_element->click();
-            return;
-        }
-        throw new \Exception(sprintf('Found a row containing "%s", but no "%s" link on the page %s', $rowText, $link, $this->getSession()->getCurrentUrl()));
+  #[Then('I (should )see the :link in the :rowText row')]
+  public function assertLinkInTableRow(string $link, string $rowText): void {
+    $page = $this->getSession()->getPage();
+    if ($this->getTableRow($page, $rowText)->findLink($link)) {
+      return;
     }
+    throw new \Exception(sprintf('Found a row containing "%s", but no "%s" link on the page %s', $rowText, $link, $this->getSession()->getCurrentUrl()));
+  }
 
   /**
-   * @Given the cache has been cleared
+   * Asserts a link does not exist in a table row containing given text.
+   *
+   * This is for administrative pages such as the administer content types
+   * screen found at `admin/structure/types`.
+   *
+   * @code
+   * Then I should not see the "Delete" in the "My article" row
+   * @endcode
    */
-    public function assertCacheClear()
-    {
-        $this->getDriver()->clearCache();
+  #[Then('I should not see the :link in the :rowText row')]
+  public function assertNotLinkInTableRow(string $link, string $rowText): void {
+    $page = $this->getSession()->getPage();
+    if ($this->getTableRow($page, $rowText)->findLink($link)) {
+      throw new \Exception(sprintf('Found a row containing "%s" with a "%s" link on the page %s', $rowText, $link, $this->getSession()->getCurrentUrl()));
     }
+  }
 
   /**
-   * @Given I run cron
+   * Clicks a link in a table row containing given text.
+   *
+   * This is for administrative pages such as the administer content types
+   * screen found at `admin/structure/types`.
+   *
+   * @code
+   * Given I click "Edit" in the "My article" row
+   * @endcode
    */
-    public function assertCron()
-    {
-        $this->getDriver()->runCron();
+  #[Given('I click :link in the :rowText row')]
+  public function assertClickInTableRow(string $link, string $rowText): void {
+    $page = $this->getSession()->getPage();
+    if ($linkElement = $this->getTableRow($page, $rowText)->findLink($link)) {
+      // Click the link and return.
+      $linkElement->click();
+      return;
     }
+    throw new \Exception(sprintf('Found a row containing "%s", but no "%s" link on the page %s', $rowText, $link, $this->getSession()->getCurrentUrl()));
+  }
+
+  /**
+   * Attempts to find a button in a table row containing giving text.
+   *
+   * This is for entity reference forms like Paragraphs, Inline entity form,
+   * etc. where there may be multiple entities in a table, each with separate
+   * edit buttons.
+   *
+   * @code
+   * Given I press "Remove" in the "My article" row
+   * @endcode
+   */
+  #[Given('I press :button in the :rowText row')]
+  public function assertPressInTableRow(string $button, string $rowText): void {
+    $page = $this->getSession()->getPage();
+    if ($buttonElement = $this->getTableRow($page, $rowText)->findButton($button)) {
+      // Press the button and return.
+      $buttonElement->press();
+      return;
+    }
+    throw new \Exception(sprintf('Found a row containing "%s", but no "%s" button on the page %s', $rowText, $button, $this->getSession()->getCurrentUrl()));
+  }
+
+  /**
+   * Clear the Drupal cache.
+   *
+   * @code
+   * Given the cache has been cleared
+   * @endcode
+   */
+  #[Given('the cache has been cleared')]
+  public function assertCacheClear(): void {
+    $this->getDriver()->clearCache();
+  }
+
+  /**
+   * Run Drupal cron.
+   *
+   * @code
+   * Given I run cron
+   * @endcode
+   */
+  #[Given('I run cron')]
+  public function assertCron(): void {
+    $this->getDriver()->runCron();
+  }
 
   /**
    * Creates content of the given type.
    *
-   * @Given I am viewing a/an :type (content )with the title :title
-   * @Given a/an :type (content )with the title :title
+   * @code
+   * Given I am viewing an "article" with the title "Test article"
+   * Given I am viewing an "article" content with the title "Test article"
+   * Given a "page" with the title "About us"
+   * @endcode
    */
-    public function createNode($type, $title)
-    {
-        // @todo make this easily extensible.
-        $node = (object) [
-            'title' => $title,
-            'type' => $type,
-        ];
-        $saved = $this->nodeCreate($node);
-        // Set internal page on the new node.
-        $this->getSession()->visit($this->locatePath('/node/' . $saved->nid));
-    }
+  #[Given('I am viewing a/an :type (content )with the title :title')]
+  #[Given('a/an :type (content )with the title :title')]
+  public function createNode(string $type, string $title): void {
+    // @todo make this easily extensible.
+    $node = (object) [
+      'title' => $title,
+      'type' => $type,
+    ];
+    $saved = $this->nodeCreate($node);
+    // Set internal page on the new node.
+    $this->getSession()->visit($this->locatePath('/node/' . $saved->nid));
+  }
 
   /**
    * Creates content authored by the current user.
    *
-   * @Given I am viewing my :type (content )with the title :title
+   * @code
+   * Given I am viewing my "article" with the title "My article"
+   * Given I am viewing my "article" content with the title "My article"
+   * @endcode
    */
-    public function createMyNode($type, $title)
-    {
-        if ($this->getUserManager()->currentUserIsAnonymous()) {
-            throw new \Exception(sprintf('There is no current logged in user to create a node for.'));
-        }
-
-        $node = (object) [
-            'title' => $title,
-            'type' => $type,
-            'body' => $this->getRandom()->name(255),
-            'uid' => $this->getUserManager()->getCurrentUser()->uid,
-        ];
-        $saved = $this->nodeCreate($node);
-
-        // Set internal page on the new node.
-        $this->getSession()->visit($this->locatePath('/node/' . $saved->nid));
+  #[Given('I am viewing my :type (content )with the title :title')]
+  public function createMyNode(string $type, string $title): void {
+    if ($this->getUserManager()->currentUserIsAnonymous()) {
+      throw new \Exception('There is no current logged in user to create a node for.');
     }
+
+    $node = (object) [
+      'title' => $title,
+      'type' => $type,
+      'body' => $this->getRandom()->name(255),
+      'uid' => $this->getUserManager()->getCurrentUser()->uid,
+    ];
+    $saved = $this->nodeCreate($node);
+
+    // Set internal page on the new node.
+    $this->getSession()->visit($this->locatePath('/node/' . $saved->nid));
+  }
 
   /**
-   * Creates content of a given type provided in the form:
-   * | title    | author     | status | created           |
-   * | My title | Joe Editor | 1      | 2014-10-17 8:00am |
-   * | ...      | ...        | ...    | ...               |
+   * Creates content of a given type.
    *
-   * @Given :type content:
+   * @code
+   *   Given "article" content:
+   *     | title      | status |
+   *     | My article | 1      |
+   * @endcode
    */
-    public function createNodes($type, TableNode $nodesTable)
-    {
-        foreach ($nodesTable->getHash() as $nodeHash) {
-            $node = (object) $nodeHash;
-            $node->type = $type;
-            $this->nodeCreate($node);
-        }
+  #[Given(':type content:')]
+  public function createNodes(string $type, TableNode $nodesTable): void {
+    foreach ($nodesTable->getHash() as $nodeHash) {
+      $node = (object) $nodeHash;
+      $node->type = $type;
+      $this->nodeCreate($node);
     }
+  }
 
   /**
-   * Creates content of the given type, provided in the form:
-   * | title     | My node        |
-   * | Field One | My field value |
-   * | author    | Joe Editor     |
-   * | status    | 1              |
-   * | ...       | ...            |
+   * Creates content of the given type and visits it.
    *
-   * @Given I am viewing a/an :type( content):
+   * @code
+   *   Given I am viewing an "article":
+   *     | title | My article     |
+   *     | body  | Lorem ipsum    |
+   *   Given I am viewing an "article" content:
+   *     | title | My article     |
+   *     | body  | Lorem ipsum    |
+   * @endcode
    */
-    public function assertViewingNode($type, TableNode $fields)
-    {
-        $node = (object) [
-            'type' => $type,
-        ];
-        foreach ($fields->getRowsHash() as $field => $value) {
-            $node->{$field} = $value;
-        }
-
-        $saved = $this->nodeCreate($node);
-
-        // Set internal browser on the node.
-        $this->getSession()->visit($this->locatePath('/node/' . $saved->nid));
+  #[Given('I am viewing a/an :type( content):')]
+  public function assertViewingNode(string $type, TableNode $fields): void {
+    $node = (object) [
+      'type' => $type,
+    ];
+    foreach ($fields->getRowsHash() as $field => $value) {
+      $node->{$field} = $value;
     }
+
+    $saved = $this->nodeCreate($node);
+
+    // Set internal browser on the node.
+    $this->getSession()->visit($this->locatePath('/node/' . $saved->nid));
+  }
 
   /**
    * Asserts that a given content type is editable.
    *
-   * @Then I should be able to edit a/an :type( content)
+   * @code
+   * Then I should be able to edit an "article"
+   * Then I should be able to edit an "article" content
+   * @endcode
    */
-    public function assertEditNodeOfType($type)
-    {
-        $node = (object) [
-            'type' => $type,
-            'title' => "Test $type",
-        ];
-        $saved = $this->nodeCreate($node);
+  #[Then('I should be able to edit a/an :type( content)')]
+  public function assertEditNodeOfType(string $type): void {
+    $node = (object) [
+      'type' => $type,
+      'title' => 'Test ' . $type,
+    ];
+    $saved = $this->nodeCreate($node);
 
-        // Set internal browser on the node edit page.
-        $this->getSession()->visit($this->locatePath('/node/' . $saved->nid . '/edit'));
+    // Set internal browser on the node edit page.
+    $this->getSession()->visit($this->locatePath('/node/' . $saved->nid . '/edit'));
 
-        // Test status.
-        $this->assertSession()->statusCodeEquals('200');
-    }
-
+    // Test status.
+    $this->assertSession()->statusCodeEquals(200);
+  }
 
   /**
    * Creates a term on an existing vocabulary.
    *
-   * @Given I am viewing a/an :vocabulary term with the name :name
-   * @Given a/an :vocabulary term with the name :name
+   * @code
+   * Given I am viewing a "tags" term with the name "Sports"
+   * Given an "categories" term with the name "News"
+   * @endcode
    */
-    public function createTerm($vocabulary, $name)
-    {
-        // @todo make this easily extensible.
-        $term = (object) [
-            'name' => $name,
-            'vocabulary_machine_name' => $vocabulary,
-            'description' => $this->getRandom()->name(255),
-        ];
-        $saved = $this->termCreate($term);
+  #[Given('I am viewing a/an :vocabulary term with the name :name')]
+  #[Given('a/an :vocabulary term with the name :name')]
+  public function createTerm(string $vocabulary, string $name): void {
+    // @todo make this easily extensible.
+    $term = (object) [
+      'name' => $name,
+      'vocabulary_machine_name' => $vocabulary,
+      'description' => $this->getRandom()->name(255),
+    ];
+    $saved = $this->termCreate($term);
 
-        // Set internal page on the term.
-        $this->getSession()->visit($this->locatePath('/taxonomy/term/' . $saved->tid));
-    }
+    // Set internal page on the term.
+    $this->getSession()->visit($this->locatePath('/taxonomy/term/' . $saved->tid));
+  }
 
   /**
    * Creates multiple users.
    *
-   * Provide user data in the following format:
-   *
-   * | name     | mail         | roles        |
-   * | user foo | foo@bar.com  | role1, role2 |
-   *
-   * @Given users:
+   * @code
+   *   Given users:
+   *     | name     | mail            | roles  |
+   *     | Joe User | joe@example.com | editor |
+   * @endcode
    */
-    public function createUsers(TableNode $usersTable)
-    {
-        foreach ($usersTable->getHash() as $userHash) {
-            // Split out roles to process after user is created.
-            $roles = [];
-            if (isset($userHash['roles'])) {
-                $roles = explode(',', $userHash['roles']);
-                $roles = array_filter(array_map('trim', $roles));
-                unset($userHash['roles']);
-            }
+  #[Given('users:')]
+  public function createUsers(TableNode $usersTable): void {
+    foreach ($usersTable->getHash() as $userHash) {
+      // Split out roles to process after user is created.
+      $roles = [];
+      if (isset($userHash['roles'])) {
+        $roles = explode(',', $userHash['roles']);
+        $roles = array_filter(array_map(trim(...), $roles));
+        unset($userHash['roles']);
+      }
 
-            $user = (object) $userHash;
-            // Set a password.
-            if (!isset($user->pass)) {
-                $user->pass = $this->getRandom()->name();
-            }
-            $this->userCreate($user);
+      $user = (object) $userHash;
+      // Set a password.
+      if (!isset($user->pass)) {
+        $user->pass = $this->getRandom()->name();
+      }
+      $this->userCreate($user);
 
-            // Assign roles.
-            foreach ($roles as $role) {
-                $this->getDriver()->userAddRole($user, $role);
-            }
-        }
+      // Assign roles.
+      foreach ($roles as $role) {
+        $this->getDriver()->userAddRole($user, $role);
+      }
     }
+  }
 
   /**
    * Creates one or more terms on an existing vocabulary.
    *
-   * Provide term data in the following format:
-   *
-   * | name  | parent | description | weight | taxonomy_field_image |
-   * | Snook | Fish   | Marine fish | 10     | snook-123.jpg        |
-   * | ...   | ...    | ...         | ...    | ...                  |
-   *
-   * Only the 'name' field is required.
-   *
-   * @Given :vocabulary terms:
+   * @code
+   *   Given "tags" terms:
+   *     | name   |
+   *     | Sports |
+   *     | News   |
+   * @endcode
    */
-    public function createTerms($vocabulary, TableNode $termsTable)
-    {
-        foreach ($termsTable->getHash() as $termsHash) {
-            $term = (object) $termsHash;
-            $term->vocabulary_machine_name = $vocabulary;
-            $this->termCreate($term);
-        }
+  #[Given(':vocabulary terms:')]
+  public function createTerms(string $vocabulary, TableNode $termsTable): void {
+    foreach ($termsTable->getHash() as $termsHash) {
+      $term = (object) $termsHash;
+      $term->vocabulary_machine_name = $vocabulary;
+      $this->termCreate($term);
     }
+  }
 
   /**
    * Creates one or more languages.
    *
-   * @Given the/these (following )languages are available:
-   *
-   * Provide language data in the following format:
-   *
-   * | langcode |
-   * | en       |
-   * | fr       |
-   *
-   * @param TableNode $langcodesTable
+   * @param \Behat\Gherkin\Node\TableNode $langcodesTable
    *   The table listing languages by their ISO code.
+   *
+   * @code
+   *   Given the following languages are available:
+   *     | languages |
+   *     | en        |
+   *     | fr        |
+   *   Given these languages are available:
+   *     | languages |
+   *     | de        |
+   * @endcode
    */
-    public function createLanguages(TableNode $langcodesTable)
-    {
-        foreach ($langcodesTable->getHash() as $row) {
-            $language = (object) [
-                'langcode' => $row['languages'],
-            ];
-            $this->languageCreate($language);
-        }
+  #[Given('the/these (following )languages are available:')]
+  public function createLanguages(TableNode $langcodesTable): void {
+    foreach ($langcodesTable->getHash() as $row) {
+      $language = (object) [
+        'langcode' => $row['languages'],
+      ];
+      $this->languageCreate($language);
     }
+  }
 
   /**
    * Pauses the scenario until the user presses a key. Useful when debugging a scenario.
    *
-   * @Then (I )break
+   * @code
+   * Then break
+   * Then I break
+   * @endcode
    */
-    public function iPutABreakpoint()
-    {
-        fwrite(STDOUT, "\033[s \033[93m[Breakpoint] Press \033[1;93m[RETURN]\033[0;93m to continue, or 'q' to quit...\033[0m");
-        do {
-            $line = trim(fgets(STDIN, 1024));
-            //Note: this assumes ASCII encoding.  Should probably be revamped to
-            //handle other character sets.
-            $charCode = ord($line);
-            switch ($charCode) {
-                case 0: //CR
-                case 121: //y
-                case 89: //Y
-                    break 2;
-                // case 78: //N
-                // case 110: //n
-                case 113: //q
-                case 81: //Q
-                    throw new \Exception("Exiting test intentionally.");
-                default:
-                    fwrite(STDOUT, sprintf("\nInvalid entry '%s'.  Please enter 'y', 'q', or the enter key.\n", $line));
-                    break;
-            }
-        } while (true);
-        fwrite(STDOUT, "\033[u");
-    }
+  #[Then('(I )break')]
+  // phpcs:ignore Drupal.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+  public function iPutABreakpoint(): void {
+    fwrite(STDOUT, "\033[s \033[93m[Breakpoint] Press \033[1;93m[RETURN]\033[0;93m to continue, or 'q' to quit...\033[0m");
+    do {
+      $line = trim(fgets(STDIN, 1024));
+      // Note: this assumes ASCII encoding.  Should probably be revamped to
+      // handle other character sets.
+      $charCode = ord($line);
+      switch ($charCode) {
+        // CR.
+        case 0:
+          // Y.
+        case 121:
+          // Y.
+        case 89:
+          break 2;
+
+        // Case 78: //N
+        // case 110: //n.
+        // q.
+        case 113:
+          // Q.
+        case 81:
+          throw new \Exception("Exiting test intentionally.");
+
+        default:
+          fwrite(STDOUT, sprintf("\nInvalid entry '%s'.  Please enter 'y', 'q', or the enter key.\n", $line));
+          break;
+      }
+    } while (TRUE);
+    fwrite(STDOUT, "\033[u");
+  }
+
 }

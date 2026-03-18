@@ -1,0 +1,20 @@
+{
+    "rules": {
+        "indentation": {
+            "width": 2,
+            "literalBlock": 3
+        },
+        "keyword-order": {
+            "enabled": false
+        },
+        "no-duplicated-feature-names": {
+            "enabled": false
+        },
+        "no-homogenous-tags": {
+            "enabled": false
+        },
+        "scenario-size": {
+            "enabled": false
+        }
+    }
+}

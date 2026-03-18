@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\DrupalExtension\Context\Initializer;
 
 use Behat\Behat\Context\Initializer\ContextInitializer;
@@ -11,66 +13,52 @@ use Drupal\DrupalExtension\Context\DrupalAwareInterface;
 use Drupal\DrupalExtension\Manager\DrupalAuthenticationManagerInterface;
 use Drupal\DrupalExtension\Manager\DrupalUserManagerInterface;
 
-class DrupalAwareInitializer implements ContextInitializer
-{
-    /**
-     * @var DrupalDriverManager
-     */
-    private $drupal;
-
-    /**
-     * @var array
-     */
-    private $parameters;
-
-    /**
-     * @var HookDispatcher
-     */
-    private $dispatcher;
-
-    /**
-     * @var DrupalAuthenticationManagerInterface
-     */
-    private $authenticationManager;
-
-    /**
-     * @var DrupalUserManagerInterface
-     */
-    private $userManager;
-
-    public function __construct(DrupalDriverManager $drupal, array $parameters, HookDispatcher $dispatcher, DrupalAuthenticationManagerInterface $authenticationManager, DrupalUserManagerInterface $userManager)
-    {
-        $this->drupal = $drupal;
-        $this->parameters = $parameters;
-        $this->dispatcher = $dispatcher;
-        $this->authenticationManager = $authenticationManager;
-        $this->userManager = $userManager;
-    }
+/**
+ * Initializes DrupalAwareInterface contexts with required dependencies.
+ */
+class DrupalAwareInitializer implements ContextInitializer {
 
   /**
-   * {@inheritdocs}
+   * Constructs a DrupalAwareInitializer object.
+   *
+   * @param \Drupal\DrupalDriverManager $drupalDriverManager
+   *   The Drupal driver manager.
+   * @param array $parameters
+   *   Configuration parameters.
+   * @param \Behat\Testwork\Hook\HookDispatcher $hookDispatcher
+   *   The hook dispatcher.
+   * @param \Drupal\DrupalExtension\Manager\DrupalAuthenticationManagerInterface $drupalAuthenticationManager
+   *   The Drupal authentication manager.
+   * @param \Drupal\DrupalExtension\Manager\DrupalUserManagerInterface $drupalUserManager
+   *   The Drupal user manager.
    */
-    public function initializeContext(Context $context)
-    {
+  public function __construct(private readonly DrupalDriverManager $drupalDriverManager, private readonly array $parameters, private readonly HookDispatcher $hookDispatcher, private readonly DrupalAuthenticationManagerInterface $drupalAuthenticationManager, private readonly DrupalUserManagerInterface $drupalUserManager) {
+  }
 
-        // All contexts are passed here, only DrupalAwareInterface is allowed.
-        if (!$context instanceof DrupalAwareInterface) {
-            return;
-        }
+  /**
+   * {@inheritdoc}
+   */
+  public function initializeContext(Context $context): void {
 
-        // Set Drupal driver manager.
-        $context->setDrupal($this->drupal);
-
-        // Set event dispatcher.
-        $context->setDispatcher($this->dispatcher);
-
-        // Add all parameters to the context.
-        $context->setDrupalParameters($this->parameters);
-
-        // Set the Drupal authentication manager.
-        $context->setAuthenticationManager($this->authenticationManager);
-
-        // Set the Drupal user manager.
-        $context->setUserManager($this->userManager);
+    // All contexts are passed here, only DrupalAwareInterface is allowed.
+    if (!$context instanceof DrupalAwareInterface) {
+      return;
     }
+
+    // Set Drupal driver manager.
+    $context->setDrupal($this->drupalDriverManager);
+
+    // Set event dispatcher.
+    $context->setDispatcher($this->hookDispatcher);
+
+    // Add all parameters to the context.
+    $context->setDrupalParameters($this->parameters);
+
+    // Set the Drupal authentication manager.
+    $context->setAuthenticationManager($this->drupalAuthenticationManager);
+
+    // Set the Drupal user manager.
+    $context->setUserManager($this->drupalUserManager);
+  }
+
 }

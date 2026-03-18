@@ -1,0 +1,8 @@
+name: Behat test
+type: module
+description: 'Test feature exposing basic configuration for Behat Drupal extension test.'
+package: Test
+core_version_requirement: ^9 || ^10 || ^11
+dependencies:
+  - drupal:content_moderation
+  - drupal:language

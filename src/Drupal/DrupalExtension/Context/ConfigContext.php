@@ -1,51 +1,61 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @file
  * Contains \Drupal\DrupalExtension\Context\ConfigContext.
  */
-
 namespace Drupal\DrupalExtension\Context;
 
+use Behat\Hook\AfterScenario;
+use Behat\Step\Given;
 use Behat\Behat\Context\TranslatableContext;
 use Behat\Gherkin\Node\TableNode;
+use Drupal\Driver\DrupalDriver;
 
 /**
  * Provides pre-built step definitions for interacting with Drupal config.
  */
-class ConfigContext extends RawDrupalContext implements TranslatableContext
-{
+class ConfigContext extends RawDrupalContext implements TranslatableContext {
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
-    public static function getTranslationResources()
-    {
-        return glob(__DIR__ . '/../../../../i18n/*.xliff');
-    }
+  public static function getTranslationResources() {
+    return self::getDrupalTranslationResources();
+  }
 
   /**
    * Keep track of any config that was changed so they can easily be reverted.
    *
    * @var array
    */
-    protected $config = [];
+  protected $config = [];
 
   /**
    * Revert any changed config.
-   *
-   * @AfterScenario
    */
-    public function cleanConfig()
-    {
-        // Revert config that was changed.
-        foreach ($this->config as $name => $key_value) {
-            foreach ($key_value as $key => $value) {
-                $this->getDriver()->configSet($name, $key, $value);
-            }
-        }
-        $this->config = [];
+  #[AfterScenario]
+  public function cleanConfig(): void {
+    $driver = $this->getDriver();
+
+    // Revert config that was changed.
+    foreach ($this->config as $name => $keyValue) {
+      // Reset the config factory cache so the editable config object is
+      // loaded fresh from storage. Without this, the cached object retains
+      // stale originalData from when setConfig() ran, causing
+      // ConfigCrudEvent::isChanged() to compare against the wrong baseline.
+      if ($driver instanceof DrupalDriver) {
+        \Drupal::configFactory()->reset($name);
+      }
+
+      foreach ($keyValue as $key => $value) {
+        $driver->configSet($name, $key, $value);
+      }
     }
+    $this->config = [];
+  }
 
   /**
    * Sets basic configuration item.
@@ -54,15 +64,17 @@ class ConfigContext extends RawDrupalContext implements TranslatableContext
    *   The name of the configuration object.
    * @param string $key
    *   Identifier to store value in configuration.
-   * @param mixed $value
+   * @param string $value
    *   Value to associate with identifier.
    *
-   * @Given I set the configuration item :name with key :key to :value
+   * @code
+   *   Given I set the configuration item "system.site" with key "name" to "My Site"
+   * @endcode
    */
-    public function setBasicConfig($name, $key, $value)
-    {
-        $this->setConfig($name, $key, $value);
-    }
+  #[Given('I set the configuration item :name with key :key to :value')]
+  public function setBasicConfig(string $name, string $key, string $value): void {
+    $this->setConfig($name, $key, $value);
+  }
 
   /**
    * Sets complex configuration.
@@ -71,27 +83,29 @@ class ConfigContext extends RawDrupalContext implements TranslatableContext
    *   The name of the configuration object.
    * @param string $key
    *   Identifier to store value in configuration.
-   * @param TableNode $config_table
+   * @param \Behat\Gherkin\Node\TableNode $config_table
    *   The table listing configuration keys and values.
    *
-   * @Given I set the configuration item :name with key :key with values:
-   *
-   * Provide configuration data in the following format:
-   *  | key   | value  |
-   *  | foo   | bar    |
+   * @code
+   *   Given I set the configuration item "system.site" with key "page" with values:
+   *     | key   | value  |
+   *     | front | /node  |
+   *     | 403   | /error |
+   * @endcode
    */
-    public function setComplexConfig($name, $key, TableNode $config_table)
-    {
-        $value = [];
-        foreach ($config_table->getHash() as $row) {
-            // Allow json values for extra complexity.
-            if (json_decode($row['value'])) {
-                $row['value'] = json_decode($row['value'], true);
-            }
-            $value[$row['key']] = $row['value'];
-        }
-        $this->setConfig($name, $key, $value);
+  #[Given('I set the configuration item :name with key :key with values:')]
+  public function setComplexConfig(string $name, string $key, TableNode $config_table): void {
+    $value = [];
+    foreach ($config_table->getHash() as $row) {
+      // Allow json values for extra complexity.
+      $decoded = json_decode($row['value'], TRUE);
+      if ($decoded !== NULL) {
+        $row['value'] = $decoded;
+      }
+      $value[$row['key']] = $row['value'];
     }
+    $this->setConfig($name, $key, $value);
+  }
 
   /**
    * Sets a value in a configuration object.
@@ -103,17 +117,23 @@ class ConfigContext extends RawDrupalContext implements TranslatableContext
    * @param mixed $value
    *   Value to associate with identifier.
    */
-    public function setConfig($name, $key, $value)
-    {
-        $backup = $this->getDriver()->configGet($name, $key);
-        $this->getDriver()->configSet($name, $key, $value);
-        if (!array_key_exists($name, $this->config)) {
-            $this->config[$name][$key] = $backup;
-            return;
-        }
-
-        if (!array_key_exists($key, $this->config[$name])) {
-            $this->config[$name][$key] = $backup;
-        }
+  protected function setConfig(string $name, string $key, mixed $value): void {
+    $driver = $this->getDriver();
+    if ($driver instanceof DrupalDriver) {
+      $backup = $driver->getCore()->configGetOriginal($name, $key);
     }
+    else {
+      $backup = $driver->configGet($name, $key);
+    }
+    $driver->configSet($name, $key, $value);
+    if (!array_key_exists($name, $this->config)) {
+      $this->config[$name][$key] = $backup;
+      return;
+    }
+
+    if (!array_key_exists($key, $this->config[$name])) {
+      $this->config[$name][$key] = $backup;
+    }
+  }
+
 }

@@ -10,27 +10,28 @@ use Drupal\DrupalExtension\Manager\DrupalAuthenticationManager;
 use Drupal\DrupalExtension\Manager\DrupalUserManagerInterface;
 use PhpSpec\ObjectBehavior;
 
-class DrupalAuthenticationManagerSpec extends ObjectBehavior
-{
-    function let(Mink $mink, DrupalUserManagerInterface $userManager, DrupalDriverManagerInterface $driverManager, Session $session)
-    {
-        $mink->getSession(null)->willReturn($session);
-        $this->beConstructedWith($mink, $userManager, $driverManager, [], []);
-    }
+/**
+ * Tests the DrupalAuthenticationManager class.
+ */
+class DrupalAuthenticationManagerSpec extends ObjectBehavior {
 
-    function it_is_initializable()
-    {
-        $this->shouldHaveType(DrupalAuthenticationManager::class);
-    }
+  public function let(Mink $mink, DrupalUserManagerInterface $userManager, DrupalDriverManagerInterface $driverManager, Session $session) {
+    $mink->getSession(NULL)->willReturn($session);
+    $this->beConstructedWith($mink, $userManager, $driverManager, [], []);
+  }
 
-    function it_can_check_login_status(Session $session, DocumentElement $page)
-    {
-        $this->loggedIn()->shouldBe(false);
+  public function it_is_initializable() {
+    $this->shouldHaveType(DrupalAuthenticationManager::class);
+  }
 
-        $page->has('css', '.a-class')->willReturn(true);
-        $session->isStarted()->willReturn(true);
-        $session->getPage()->willReturn($page);
-        $this->setDrupalParameters(['selectors' => ['logged_in_selector' => '.a-class']]);
-        $this->loggedIn()->shouldBe(true);
-    }
+  public function it_can_check_login_status(Session $session, DocumentElement $page) {
+    $this->loggedIn()->shouldBe(FALSE);
+
+    $page->has('css', '.a-class')->willReturn(TRUE);
+    $session->isStarted()->willReturn(TRUE);
+    $session->getPage()->willReturn($page);
+    $this->setDrupalParameters(['selectors' => ['logged_in_selector' => '.a-class']]);
+    $this->loggedIn()->shouldBe(TRUE);
+  }
+
 }

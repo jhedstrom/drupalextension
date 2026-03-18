@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Contains \Drupal\DrupalExtension\Context\DrupalSubContextInterface.
  */
-
 namespace Drupal\DrupalExtension\Context;
 
 use Behat\Behat\Context\Context;
@@ -18,8 +19,7 @@ use Drupal\DrupalDriverManager;
  *
  * See the documentation on "Contributed module subcontexts".
  */
-interface DrupalSubContextInterface extends Context
-{
+interface DrupalSubContextInterface extends Context {
 
   /**
    * Instantiates the subcontext.
@@ -27,5 +27,6 @@ interface DrupalSubContextInterface extends Context
    * @param \Drupal\DrupalDriverManager $drupal
    *   The Drupal Driver manager.
    */
-    public function __construct(DrupalDriverManager $drupal);
+  public function __construct(DrupalDriverManager $drupal);
+
 }

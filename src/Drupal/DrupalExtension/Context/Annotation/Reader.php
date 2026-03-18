@@ -1,51 +1,61 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\DrupalExtension\Context\Annotation;
 
+use Drupal\DrupalExtension\Hook\Call\AfterNodeCreate;
+use Drupal\DrupalExtension\Hook\Call\AfterTermCreate;
+use Drupal\DrupalExtension\Hook\Call\AfterUserCreate;
+use Drupal\DrupalExtension\Hook\Call\BeforeNodeCreate;
+use Drupal\DrupalExtension\Hook\Call\BeforeTermCreate;
+use Drupal\DrupalExtension\Hook\Call\BeforeUserCreate;
 use Behat\Behat\Context\Annotation\AnnotationReader;
-use Drupal\DrupalExtension\Hook\Dispatcher;
-use ReflectionMethod;
 
 /**
  * Annotated contexts reader.
  *
+ * @deprecated in drupalextension:5.3.0 and is removed from drupalextension:6.0.0.
+ *   Use PHP 8 attributes from Drupal\DrupalExtension\Hook\Attribute\ instead.
+ *
  * @see \Behat\Behat\Context\Loader\AnnotatedLoader
  */
-class Reader implements AnnotationReader
-{
+class Reader implements AnnotationReader {
 
   /**
-   * @var string
+   * Regular expression for matching supported annotation types.
    */
-    private static $regex = '/^\@(beforenodecreate|afternodecreate|beforetermcreate|aftertermcreate|beforeusercreate|afterusercreate)(?:\s+(.+))?$/i';
+  private static string $regex = '/^\@(beforenodecreate|afternodecreate|beforetermcreate|aftertermcreate|beforeusercreate|afterusercreate)(?:\s+(.+))?$/i';
 
   /**
+   * Map of annotation names to their hook call class names.
+   *
    * @var string[]
    */
-    private static $classes = [
-        'afternodecreate' => 'Drupal\DrupalExtension\Hook\Call\AfterNodeCreate',
-        'aftertermcreate' => 'Drupal\DrupalExtension\Hook\Call\AfterTermCreate',
-        'afterusercreate' => 'Drupal\DrupalExtension\Hook\Call\AfterUserCreate',
-        'beforenodecreate' => 'Drupal\DrupalExtension\Hook\Call\BeforeNodeCreate',
-        'beforetermcreate' => 'Drupal\DrupalExtension\Hook\Call\BeforeTermCreate',
-        'beforeusercreate' => 'Drupal\DrupalExtension\Hook\Call\BeforeUserCreate',
-    ];
+  private static array $classes = [
+    'afternodecreate' => AfterNodeCreate::class,
+    'aftertermcreate' => AfterTermCreate::class,
+    'afterusercreate' => AfterUserCreate::class,
+    'beforenodecreate' => BeforeNodeCreate::class,
+    'beforetermcreate' => BeforeTermCreate::class,
+    'beforeusercreate' => BeforeUserCreate::class,
+  ];
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
-    public function readCallee($contextClass, ReflectionMethod $method, $docLine, $description)
-    {
+  public function readCallee(mixed $contextClass, \ReflectionMethod $method, mixed $docLine, mixed $description) {
 
-        if (!preg_match(self::$regex, $docLine, $match)) {
-            return null;
-        }
-
-        $type = strtolower($match[1]);
-        $class = self::$classes[$type];
-        $pattern = isset($match[2]) ? $match[2] : null;
-        $callable = [$contextClass, $method->getName()];
-
-        return new $class($pattern, $callable, $description);
+    if (!preg_match(self::$regex, $docLine, $match)) {
+      return NULL;
     }
+
+    $type = strtolower($match[1]);
+    $class = self::$classes[$type];
+    $pattern = $match[2] ?? NULL;
+    $callable = [$contextClass, $method->getName()];
+
+    return new $class($pattern, $callable, $description);
+  }
+
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal;
 
 use Drupal\Driver\DriverInterface;
@@ -11,67 +13,57 @@ use Drupal\Driver\DriverInterface;
  * collects outbound mail and prevents it from being sent. Therefore using
  * this implementation, mail is collected if and only if sending is disabled.
  */
-class DrupalMailManager implements DrupalMailManagerInterface
-{
+class DrupalMailManager implements DrupalMailManagerInterface {
 
-  /**
-   * The active Drupal driver.
-   *
-   * @var \Drupal\Driver\DriverInterface
-   */
-    protected $driver;
-  
-    public function __construct(DriverInterface $driver)
-    {
-        $this->driver = $driver;
-    }
+  public function __construct(
+    /**
+     * The active Drupal driver.
+     */
+    protected DriverInterface $driver,
+  ) {
+  }
 
   /**
    * {@inheritdoc}
    */
-    public function startCollectingMail()
-    {
-        $this->driver->startCollectingMail();
-        $this->clearMail();
-    }
+  public function startCollectingMail(): void {
+    $this->driver->startCollectingMail();
+    $this->clearMail();
+  }
 
   /**
    * {@inheritdoc}
    */
-    public function stopCollectingMail()
-    {
-        $this->driver->stopCollectingMail();
-    }
-  
-  /**
-   * {@inheritdoc}
-   */
-    public function enableMail()
-    {
-        $this->stopCollectingMail();
-    }
+  public function stopCollectingMail(): void {
+    $this->driver->stopCollectingMail();
+  }
 
   /**
    * {@inheritdoc}
    */
-    public function disableMail()
-    {
-        $this->startCollectingMail();
-    }
-  
-  /**
-   * {@inheritdoc}
-   */
-    public function getMail($store = 'default')
-    {
-        return $this->driver->getMail();
-    }
+  public function enableMail(): void {
+    $this->stopCollectingMail();
+  }
 
   /**
    * {@inheritdoc}
    */
-    public function clearMail($store = 'default')
-    {
-        $this->driver->clearMail();
-    }
+  public function disableMail(): void {
+    $this->startCollectingMail();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getMail($store = 'default') {
+    return $this->driver->getMail();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function clearMail($store = 'default'): void {
+    $this->driver->clearMail();
+  }
+
 }

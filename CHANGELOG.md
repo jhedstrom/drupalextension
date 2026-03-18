@@ -6,6 +6,84 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+## [5.3.0]
+### Added
+ * [#776](https://github.com/jhedstrom/drupalextension/pull/776) - Added table header validation and improved error message in `assertValidMessageTable()`.
+ * [#773](https://github.com/jhedstrom/drupalextension/pull/773) - Added `behat.dist.yml` with all configuration values pre-filled.
+ * [#772](https://github.com/jhedstrom/drupalextension/pull/772) - Added parent term resolution in `termCreate()` with validation and tests.
+ * [#767](https://github.com/jhedstrom/drupalextension/pull/767) - Added double-quote escaping to prevent compound separator splitting entity reference values.
+ * [#765](https://github.com/jhedstrom/drupalextension/pull/765) - Added validation for non-existent entity fields in `parseEntityFields()`.
+ * [#764](https://github.com/jhedstrom/drupalextension/pull/764) - Added custom `DocumentElement` to remove DrupalFinder dependency from extension boot.
+ * [#762](https://github.com/jhedstrom/drupalextension/pull/762) - Added test for fresh `REQUEST_TIME` during cron and bumped drupal-driver to ^2.4.2.
+ * [#744](https://github.com/jhedstrom/drupalextension/pull/744) - Added examples to tests and updated docs generator to post summary to CI.
+ * [#743](https://github.com/jhedstrom/drupalextension/pull/743) - Added instructions for AI agents.
+ * [#742](https://github.com/jhedstrom/drupalextension/pull/742) - Added steps documentation generator.
+ * [#756](https://github.com/jhedstrom/drupalextension/pull/756) - Added more negative test coverage.
+ * [#753](https://github.com/jhedstrom/drupalextension/pull/753) - Added tests for Managers.
+ * [#740](https://github.com/jhedstrom/drupalextension/pull/740) - Added comprehensive test coverage for all Context classes.
+### Changed
+ * [#781](https://github.com/jhedstrom/drupalextension/pull/781) - Simplified code.
+ * [#780](https://github.com/jhedstrom/drupalextension/pull/780) - Converted standard Behat annotations to PHP 8 attributes.
+   > [!WARNING]
+   > If you extend any of the bundled context classes and override step or hook
+   > methods, you must switch your overrides from docblock annotations (`@Given`,
+   > `@When`, `@Then`, `@BeforeScenario`, etc.) to PHP 8 attributes (`#[Given]`,
+   > `#[When]`, `#[Then]`, `#[BeforeScenario]`, etc.). Behat resolves both the
+   > parent attribute and the child annotation independently, which causes a
+   > `RedundantStepException` for step definitions and duplicate execution for
+   > hooks. To safely override a method, either re-declare the step/hook using
+   > only the PHP 8 attribute on the child (and remove it from the parent by not
+   > registering the parent context), or override the method without any
+   > annotation or attribute to inherit the parent's definition.
+ * [#779](https://github.com/jhedstrom/drupalextension/pull/779) - Changed `ConfigContext::setConfig()` visibility from public to protected.
+ * [#771](https://github.com/jhedstrom/drupalextension/pull/771) - Reformatted configuration trees to use hierarchical indentation and added formatter fences.
+ * [#768](https://github.com/jhedstrom/drupalextension/pull/768) - Removed Drupal 6 and 7 driver support.
+ * [#763](https://github.com/jhedstrom/drupalextension/pull/763) - Always create fresh user in role-based login steps.
+ * [#761](https://github.com/jhedstrom/drupalextension/pull/761) - Separated link assertion from click action.
+ * [#760](https://github.com/jhedstrom/drupalextension/pull/760) - Removed Drupal 6 and 7 support remnants.
+ * [#758](https://github.com/jhedstrom/drupalextension/pull/758) - Removed deprecated `ScenarioTagTrait` and `RawDrupalContext` magic property accessors.
+ * [#757](https://github.com/jhedstrom/drupalextension/pull/757) - Switched coding standards to Drupal.
+ * [#755](https://github.com/jhedstrom/drupalextension/pull/755) - Updated testing harness to support negative coverage.
+ * [#751](https://github.com/jhedstrom/drupalextension/pull/751) - Increased coverage for Mink extension service container.
+ * [#750](https://github.com/jhedstrom/drupalextension/pull/750) - Fixed coverage merge.
+ * [#748](https://github.com/jhedstrom/drupalextension/pull/748) - Increased coverage for `DrupalDriverManager`.
+ * [#747](https://github.com/jhedstrom/drupalextension/pull/747) - Renamed blackbox fixtures to generic names and updated region mappings.
+ * [#746](https://github.com/jhedstrom/drupalextension/pull/746) - Merged `FeatureContextTrait` into `FeatureContext`.
+ * [#745](https://github.com/jhedstrom/drupalextension/pull/745) - Replaced regex annotation with turnip in `BatchContext::iWaitForTheBatchJobToFinish()`.
+ * [#741](https://github.com/jhedstrom/drupalextension/pull/741) - Added posting of the coverage as comments to the PR.
+ * [#739](https://github.com/jhedstrom/drupalextension/pull/739) - Updated stack to support Ahoy command wrapper and added coverage support.
+### Fixed
+ * [#778](https://github.com/jhedstrom/drupalextension/pull/778) - Fixed `iWaitForAjaxToFinish()` crashing on unstarted session.
+ * [#777](https://github.com/jhedstrom/drupalextension/pull/777) - Fixed stale config cache in `cleanConfig()` breaking change detection.
+ * [#775](https://github.com/jhedstrom/drupalextension/pull/775) - Fixed config backup using overridden value instead of original.
+ * [#774](https://github.com/jhedstrom/drupalextension/pull/774) - Fixed stale login state leaking between scenarios.
+## [5.2.0]
+### Added
+ * [#594](https://github.com/jhedstrom/drupalextension/pull/594) - Added expanding/collapsing of `<details>` element.
+ * [#636](https://github.com/jhedstrom/drupalextension/pull/636) - Added "press button in row" step.
+ * [#591](https://github.com/jhedstrom/drupalextension/pull/591) - Added checkbox manipulation in regions.
+ * [#685](https://github.com/jhedstrom/drupalextension/pull/685) - Allow adding extra entries to text and selectors in `behat.yml`.
+ * [#705](https://github.com/jhedstrom/drupalextension/pull/705) - Added `assertRegionElementText()` step.
+ * [#722](https://github.com/jhedstrom/drupalextension/pull/722) - Added screenshot taking helper.
+ * [#668](https://github.com/jhedstrom/drupalextension/pull/668) - Made it possible to override how to get the log out link.
+ * [#592](https://github.com/jhedstrom/drupalextension/pull/592) - Added AJAX wait on `attachFileToField()`.
+### Changed
+ * [#678](https://github.com/jhedstrom/drupalextension/pull/678) - Aligned package with Drupal core.
+ * [#689](https://github.com/jhedstrom/drupalextension/pull/689) - Added Symfony 7 compatibility.
+ * [#713](https://github.com/jhedstrom/drupalextension/pull/713) - Switched to use Drupal 11 by default.
+ * [#708](https://github.com/jhedstrom/drupalextension/pull/708) - Added PHP 8.4 support.
+ * [#699](https://github.com/jhedstrom/drupalextension/pull/699) - Removed PHP 7.4 and Drupal 9 support.
+ * [#723](https://github.com/jhedstrom/drupalextension/pull/723) - Added PHPStan and Rector for static analysis.
+ * [#702](https://github.com/jhedstrom/drupalextension/pull/702) - Added `ergebnis/composer-normalize`.
+ * [#717](https://github.com/jhedstrom/drupalextension/pull/717) - Moved tests under `tests` directory.
+### Fixed
+ * [#681](https://github.com/jhedstrom/drupalextension/pull/681) - Fixed `DrupalAuthenticationManager::logout()`.
+ * [#605](https://github.com/jhedstrom/drupalextension/pull/605) - Fixed `TableNode` namespace for `instanceof` check.
+ * [#666](https://github.com/jhedstrom/drupalextension/pull/666) - Fixed `iWaitForAjaxToFinish` failing.
+ * [#690](https://github.com/jhedstrom/drupalextension/pull/690) - Fixed PHP 8.4 deprecation with `str_getcsv`.
+ * [#682](https://github.com/jhedstrom/drupalextension/pull/682) - Fixed PHP 8.4 deprecation.
+ * [#707](https://github.com/jhedstrom/drupalextension/pull/707) - Fixed `RandomContext` not transforming `<?placeholder>` variables in `TableNode` arguments.
+ * [#665](https://github.com/jhedstrom/drupalextension/pull/665) - Fixed reverse term removal order.
 ## [5.1.0]
 ### Added
  * [#677](https://github.com/jhedstrom/drupalextension/pull/677) - Drupal 11 support
@@ -151,7 +229,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   * [#437](https://github.com/jhedstrom/drupalextension/pull/437): Radio button selector fix.
   * [#439](https://github.com/jhedstrom/drupalextension/pull/439): Symfony 3 compatibility follow-up fix.
 
-[Unreleased]: https://github.com/jhedstrom/drupalextension/compare/v5.1.0...HEAD
+[Unreleased]: https://github.com/jhedstrom/drupalextension/compare/v5.3.0...HEAD
+[5.3.0]: https://github.com/jhedstrom/drupalextension/compare/v5.2.0...v5.3.0
+[5.2.0]: https://github.com/jhedstrom/drupalextension/compare/v5.1.0...v5.2.0
 [5.1.0]: https://github.com/jhedstrom/drupalextension/compare/v5.0.0...v5.1.0
 [5.0.0]: https://github.com/jhedstrom/drupalextension/compare/v5.0.0rc1...v5.0.0
 [5.0.0 alpha1]: https://github.com/jhedstrom/drupalextension/compare/v4.2.0...v5.0.0alpha1

@@ -25,8 +25,9 @@ parameters:
   # Event listeners.
   drupal.listener.drivers.class: Drupal\DrupalExtension\Listener\DriverListener
 
-  # Hook loader.
+  # Hook loaders.
   drupal.context.annotation.reader.class: Drupal\DrupalExtension\Context\Annotation\Reader
+  drupal.context.attribute.reader.class: Drupal\DrupalExtension\Context\Attribute\HookAttributeReader
 
   # Region selector class.
   drupal.context.region_selector.class: Drupal\DrupalExtension\Selector\RegionSelector
@@ -75,6 +76,10 @@ services:
     arguments:
     tags:
       - { name: context.annotation_reader }
+  drupal.context.loader.attribute:
+    class: "%drupal.context.attribute.reader.class%"
+    tags:
+      - { name: context.attribute_reader }
   drupal.listener.driver:
     class: "%drupal.listener.drivers.class%"
     arguments:

@@ -2,14 +2,79 @@
 
 namespace spec\Drupal\DrupalExtension\Context\Annotation;
 
+use Drupal\DrupalExtension\Context\Annotation\Reader;
+use Drupal\DrupalExtension\Hook\Call\AfterUserCreate;
+use Drupal\DrupalExtension\Hook\Call\BeforeNodeCreate;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
-use ReflectionMethod;
 
-class ReaderSpec extends ObjectBehavior
-{
-    function it_is_initializable()
-    {
-        $this->shouldHaveType('Drupal\DrupalExtension\Context\Annotation\Reader');
-    }
+/**
+ * Tests the Reader class.
+ */
+class ReaderSpec extends ObjectBehavior {
+
+  public function it_is_initializable() {
+    $this->shouldHaveType(Reader::class);
+  }
+
+  public function it_returns_null_for_non_matching_annotation() {
+    $context = new class {
+
+      public static function hook(): void {
+      }
+
+    };
+    $method = new \ReflectionMethod($context, 'hook');
+    $this->readCallee($context::class, $method, '@Given something', 'desc')
+      ->shouldReturn(NULL);
+  }
+
+  public function it_reads_before_node_create_with_callable() {
+    $context = new class {
+
+      public static function hook(): void {
+      }
+
+    };
+    $method = new \ReflectionMethod($context, 'hook');
+    $this->readCallee($context::class, $method, '@BeforeNodeCreate', 'desc')
+      ->shouldBeAnInstanceOf(BeforeNodeCreate::class);
+  }
+
+  public function it_reads_after_user_create_with_callable() {
+    $context = new class {
+
+      public static function hook(): void {
+      }
+
+    };
+    $method = new \ReflectionMethod($context, 'hook');
+    $this->readCallee($context::class, $method, '@AfterUserCreate', 'desc')
+      ->shouldBeAnInstanceOf(AfterUserCreate::class);
+  }
+
+  public function it_reads_hook_with_filter_string() {
+    $context = new class {
+
+      public static function hook(): void {
+      }
+
+    };
+    $method = new \ReflectionMethod($context, 'hook');
+    $callee = $this->readCallee($context::class, $method, '@BeforeNodeCreate article', 'desc');
+    $callee->shouldBeAnInstanceOf(BeforeNodeCreate::class);
+    $callee->getFilterString()->shouldReturn('article');
+  }
+
+  public function it_reads_annotation_case_insensitively() {
+    $context = new class {
+
+      public static function hook(): void {
+      }
+
+    };
+    $method = new \ReflectionMethod($context, 'hook');
+    $this->readCallee($context::class, $method, '@beforenodecreate', 'desc')
+      ->shouldBeAnInstanceOf(BeforeNodeCreate::class);
+  }
+
 }

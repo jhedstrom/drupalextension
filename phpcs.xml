@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<!-- PHP_CodeSniffer standard -->
+<!-- See https://github.com/squizlabs/PHP_CodeSniffer/wiki/Annotated-ruleset.xml -->
+<ruleset name="drupal/drupal-extension">
+    <description>Drupal Behat Extension coding standards</description>
+    <arg name="colors"/>
+    <arg value="sp"/>
+
+    <file>src</file>
+    <file>spec</file>
+    <file>scripts</file>
+    <file>tests/behat/bootstrap</file>
+    <file>tests/behat/fixtures/drupal</file>
+    <file>tests/phpunit</file>
+
+    <rule ref="Drupal">
+        <exclude name="Drupal.Files.LineLength.TooLong"/>
+        <exclude name="Drupal.Semantics.FunctionTriggerError"/>
+        <exclude name="Drupal.Commenting.Deprecated"/>
+    </rule>
+
+    <!-- PHPSpec uses snake_case methods without visibility keywords and does
+         not follow Drupal commenting conventions. -->
+    <rule ref="Drupal.NamingConventions.ValidFunctionName.ScopeNotCamelCaps">
+        <exclude-pattern>*/spec/*</exclude-pattern>
+    </rule>
+    <rule ref="Squiz.Scope.MethodScope">
+        <exclude-pattern>*/spec/*</exclude-pattern>
+    </rule>
+
+    <rule ref="Drupal.Commenting.FunctionComment">
+        <exclude-pattern>*/spec/*</exclude-pattern>
+    </rule>
+    <rule ref="Drupal.Commenting.DocComment">
+        <exclude-pattern>*/spec/*</exclude-pattern>
+    </rule>
+    <rule ref="Drupal.Commenting.VariableComment">
+        <exclude-pattern>*/spec/*</exclude-pattern>
+    </rule>
+
+    <rule ref="Generic.PHP.RequireStrictTypes">
+        <exclude-pattern>*/spec/*</exclude-pattern>
+    </rule>
+
+    <rule ref="DrevOps.NamingConventions.LocalVariableNaming">
+        <properties>
+            <property name="format" value="camelCase"/>
+        </properties>
+        <exclude-pattern>*/spec/*</exclude-pattern>
+        <exclude-pattern>*/tests/behat/fixtures/*</exclude-pattern>
+    </rule>
+
+    <rule ref="DrevOps.NamingConventions.ParameterNaming">
+        <properties>
+            <property name="format" value="camelCase"/>
+        </properties>
+        <exclude-pattern>*/spec/*</exclude-pattern>
+        <exclude-pattern>*/tests/behat/fixtures/*</exclude-pattern>
+    </rule>
+
+</ruleset>

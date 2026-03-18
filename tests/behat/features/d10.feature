@@ -1,0 +1,37 @@
+Feature: DrupalContext
+  As a developer
+  I want to use Drupal-specific step definitions
+  So that I can test table row links, user roles, and region headings
+
+  @d10 @test-https @api
+  Scenario: Target links within table rows (Drupal 10)
+    Given I am logged in as a user with the "administrator" role
+    When I am at "admin/structure/types"
+    And I click "Manage fields" in the "Article" row
+    Then I should be on "admin/structure/types/manage/article/fields"
+    And I should see the link "Create a new field"
+
+  @test-drupal @api
+  Scenario: Create users with roles
+    Given users:
+      | name     | mail             | roles         |
+      | Joe User | joe@example.com  | Administrator |
+      | Jane Doe | jane@example.com |               |
+    And I am logged in as a user with the "administrator" role
+    When I visit "admin/people"
+    Then I should see the text "Administrator" in the "Joe User" row
+    And  I should not see the text "administrator" in the "Jane Doe" row
+
+  @test-drupal @api
+  Scenario: Find a heading in a region
+    Given I am not logged in
+    When I am on the homepage
+    Then I should see the heading "Welcome!" in the "main content" region
+
+  # This tests that a user that is created in one particular Context class (in
+  # this case FeatureContext::assertLoggedInByUsernameAndPassword()) can be
+  # accessed in another Context (DrupalContext::assertLoggedInByName()).
+  @test-drupal @api
+  Scenario: Logging in as a user without an e-mail address.
+    Given I am logged in as a user with name "Carrot Ironfoundersson" and password "citywatch1234"
+    Then I am logged in as "Carrot Ironfoundersson"

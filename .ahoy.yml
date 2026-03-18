@@ -1,0 +1,271 @@
+ahoyapi: v2
+
+commands:
+
+  build:
+    usage: Build or rebuild project.
+    cmd: |
+      ahoy reset
+      ahoy up -- --build --force-recreate
+      ahoy assemble
+      ahoy provision
+      ahoy info 1
+
+  assemble:
+    usage: Install Composer dependencies for the selected Drupal version.
+    cmd: |
+      ahoy composer self-update
+      ahoy composer require --no-interaction --dev --no-update drupal/core:^${DRUPAL_VERSION:-11} drupal/core-composer-scaffold:^${DRUPAL_VERSION:-11}
+      if [ "${DRUPAL_VERSION:-11}" != "11" ]; then ahoy composer remove --no-interaction --dev --no-update phpunit/phpunit; fi
+      ahoy composer install
+      ahoy cli cp -r tests/behat/fixtures/drupal/modules/behat_test build/web/modules
+      ahoy cli cp -r tests/behat/fixtures/drupal/drush build/drush
+
+  info:
+    usage: Print information about this project.
+    cmd: |
+      echo "  Drupal version           : " ${DRUPAL_VERSION:-11}
+      echo "  PHP version              : " ${PHP_VERSION:-8.3}
+      echo "  Site local URL           : " http://localhost:${DRUPAL_HOST_PORT:-8888}
+      echo "  Blackbox local URL       : " http://localhost:${BLACKBOX_HOST_PORT:-8889}
+      echo "  Path to project          : " /var/www/html
+      echo "  Path to web root         : " /var/www/html/build/web
+      echo "  DB port on host          : " $(docker compose port database 3306 2>/dev/null | cut -d : -f 2)
+      echo "  Selenium VNC URL on host :  http://localhost:$(docker compose port chrome 7900 2>/dev/null | cut -d : -f 2)/?autoconnect=1&password=secret"
+      echo "  Xdebug                   : " $(docker compose exec -T php php -v 2>/dev/null | grep -q Xdebug && echo "enabled (disable with ahoy up)" || echo "disabled (enable with ahoy debug)")
+      if [ -n "$1" ]; then
+        echo "  One-time login           : " $(ahoy login -- --no-browser)
+      fi
+
+  db:
+    usage: Open DB in Sequel Ace.
+    cmd: |
+      uname -a | grep -i -q darwin && mdfind -name 'Sequel Ace'|grep -q "Ace" && \
+      HOST_DB_PORT="$(docker compose port database 3306 2>/dev/null | cut -d : -f 2)" && \
+      open "mysql://drupal:drupal@127.0.0.1:${HOST_DB_PORT}/drupal" -a "Sequel Ace" \
+      || echo "Not a supported OS or Sequel Ace is not installed."
+
+  # ----------------------------------------------------------------------------
+  # Docker commands.
+  # ----------------------------------------------------------------------------
+
+  up:
+    usage: Build and start Docker containers.
+    cmd: docker compose up -d "$@" && if docker compose logs | grep -q "\[Error\]"; then exit 1; fi
+
+  down:
+    usage: Stop Docker containers and remove container, images, volumes and networks.
+    cmd: if [ -f "docker-compose.yml" ]; then docker compose down --remove-orphans --volumes > /dev/null 2>&1; fi
+
+  start:
+    usage: Start existing Docker containers.
+    cmd: docker compose start "$@"
+
+  stop:
+    usage: Stop running Docker containers.
+    cmd: docker compose stop "$@"
+
+  restart:
+    usage: Restart all stopped and running Docker containers.
+    cmd: docker compose restart
+
+  logs:
+    usage: Show Docker logs.
+    cmd: docker compose logs "$@"
+
+  pull:
+    usage: Pull latest docker images.
+    cmd: if [ ! -z "$(docker image ls -q)" ]; then docker image ls --format \"{{.Repository}}:{{.Tag}}\" | grep wodby/ | grep -v none | xargs -n1 docker pull | cat; fi
+
+  cli:
+    usage: Start a shell inside PHP container or run a command.
+    cmd: if \[ "${#}" -ne 0 \]; then docker compose exec -e BEHAT_CLI_DEBUG=${BEHAT_CLI_DEBUG:-0} php bash -c "$*"; else docker compose exec php bash; fi
+
+  composer:
+    usage: Run Composer commands in the PHP service container.
+    cmd: docker compose exec -T php composer "$@"
+
+  drush:
+    usage: Run Drush commands in the PHP service container.
+    cmd: ahoy cli "./vendor/bin/drush --root=build/web $*"
+
+  debug:
+    usage: Enable PHP Xdebug.
+    cmd: PHP_EXTENSIONS_DISABLE=xhprof,spx PHP_XDEBUG_MODE=debug docker compose up -d --force-recreate php && ahoy cli php -v | grep -q Xdebug && echo "Enabled debug configuration. Use 'ahoy up -- --force-recreate' to disable."
+
+  # ----------------------------------------------------------------------------
+  # Application commands.
+  # ----------------------------------------------------------------------------
+
+  login:
+    usage: Login to a website.
+    cmd: ahoy drush --uri="http://localhost:${DRUPAL_HOST_PORT:-8888}" uli "$@"
+
+  provision:
+    usage: Provision a fixture test site.
+    cmd: |
+      ahoy drush sql-drop --yes
+      ahoy drush --yes site-install --db-url=mysql://drupal:drupal@database/drupal --debug
+      ahoy drush --yes en behat_test
+      ahoy drush --yes deploy:hook
+
+  clean:
+    usage: Remove containers and all build files.
+    cmd: |
+      ahoy down || true
+      sleep 5
+      chmod -Rf 777 build 2>&1 > /dev/null || true
+      rm -rf \
+        ./vendor \
+        ./composer.lock \
+        ./build \
+        2>&1 > /dev/null || true
+
+  reset:
+    usage: "Reset environment: remove containers, all build files, and logs."
+    cmd: ahoy clean && rm -rf ./.logs ./composer.lock ./patches.lock.json
+
+  # ----------------------------------------------------------------------------
+  # Documentation commands.
+  # ----------------------------------------------------------------------------
+
+  docs:
+    usage: Generate STEPS.md and README.md documentation.
+    cmd: php scripts/docs.php --warning-on-invalid
+
+  docs-lint:
+    usage: Check that generated documentation is up to date.
+    aliases: [lint-docs]
+    cmd: php scripts/docs.php --fail-on-change --warning-on-invalid
+
+  # ----------------------------------------------------------------------------
+  # Test commands.
+  # ----------------------------------------------------------------------------
+
+  lint:
+    usage: Lint code.
+    cmd: |
+      ahoy title "Running PHP Parallel Lint"
+      ahoy cli "vendor/bin/parallel-lint src spec scripts tests"
+
+      ahoy title "Running PHP Code Sniffer"
+      ahoy cli "vendor/bin/phpcs"
+
+      ahoy title "Running PHPStan"
+      ahoy cli vendor/bin/phpstan
+
+      ahoy title "Running Rector (dry-run)"
+      ahoy cli "vendor/bin/rector process --dry-run"
+
+      ahoy title "Running Gherkin Lint"
+      ahoy cli "vendor/bin/gherkinlint lint tests/behat/features"
+
+      ahoy title "Running Docs Lint"
+      ahoy docs-lint
+
+  lint-fix:
+    usage: Fix code.
+    cmd: |
+      ahoy title "Running Rector"
+      ahoy cli "vendor/bin/rector process"
+
+      ahoy title "Running PHP Code Beautifier"
+      ahoy cli "vendor/bin/phpcbf"
+
+  test:
+    usage: Run all tests without coverage.
+    cmd: |
+      ahoy title "Running PHPSpec"
+      ahoy test-phpspec
+
+      ahoy title "Running PHPUnit"
+      ahoy test-unit
+
+      ahoy test-bdd
+
+  test-phpspec:
+    usage: Run PHPSpec unit tests.
+    cmd: ahoy cli "vendor/bin/phpspec run -f pretty --no-interaction"
+
+  test-unit:
+    usage: Run PHPUnit tests.
+    cmd: ahoy cli "vendor/bin/phpunit -c phpunit.xml --no-coverage $@"
+
+  test-bdd:
+    usage: Run all Behat tests.
+    cmd: |
+      # If no arguments are passed, run in strict mode. If any arguments are passed, do not use strict mode to allow running specific tests.
+      STRICT=""; if [ -z "$1" ]; then STRICT="--strict"; fi
+
+      ahoy title "Running Behat: blackbox"
+      ahoy cli "vendor/bin/behat $STRICT --no-coverage --allow-no-tests $@"
+
+      ahoy title "Running Behat: drupal"
+      ahoy cli "vendor/bin/behat --profile=drupal $STRICT --no-coverage --allow-no-tests $@"
+
+  test-bdd-blackbox:
+    usage: Run blackbox Behat tests.
+    cmd: ahoy cli "vendor/bin/behat --strict --no-coverage $@"
+
+  test-bdd-drupal:
+    usage: Run Drupal API Behat tests.
+    cmd: ahoy cli "vendor/bin/behat --profile=drupal --strict --no-coverage $@"
+
+  test-bdd-drupal-https:
+    usage: Run HTTPS Behat tests.
+    cmd: ahoy cli "vendor/bin/behat --profile=drupal_https --strict --no-coverage $@"
+
+  test-coverage:
+    usage: Run all tests with coverage and merge reports.
+    cmd: |
+      ahoy cli "rm -rf .logs/coverage && mkdir -p .logs/coverage/phpunit .logs/coverage/behat .logs/coverage/behat_cli/phpcov"
+
+      ahoy title "Running PHPUnit with coverage"
+      ahoy cli "php -d pcov.enabled=1 -d pcov.directory=. vendor/bin/phpunit -c phpunit.xml"
+
+      ahoy title "Running Behat with coverage: blackbox"
+      ahoy cli "php -d pcov.enabled=1 -d pcov.directory=/var/www/html/src vendor/bin/behat --strict --allow-no-tests"
+
+      ahoy title "Running Behat with coverage: drupal"
+      ahoy cli "php -d pcov.enabled=1 -d pcov.directory=/var/www/html/src vendor/bin/behat --profile=drupal --strict --allow-no-tests"
+
+      ahoy cli "php scripts/merge-coverage.php"
+
+  test-unit-coverage:
+    usage: Run PHPUnit tests with coverage.
+    cmd: |
+      ahoy cli "rm -rf .logs/coverage && mkdir -p .logs/coverage/phpunit"
+
+      ahoy title "Running PHPUnit with coverage"
+      ahoy cli "php -d pcov.enabled=1 -d pcov.directory=. vendor/bin/phpunit -c phpunit.xml $@"
+
+      ahoy cli "php scripts/merge-coverage.php"
+
+  test-bdd-coverage:
+    usage: Run all Behat tests with coverage and merge reports.
+    cmd: |
+      ahoy cli "rm -rf .logs/coverage && mkdir -p .logs/coverage/behat .logs/coverage/behat_cli/phpcov"
+
+      # If no arguments are passed, run in strict mode. If any arguments are passed, do not use strict mode to allow running specific tests.
+      STRICT=""; if [ -z "$1" ]; then STRICT="--strict"; fi
+
+      ahoy title "Running Behat with coverage: blackbox"
+      ahoy cli "php -d pcov.enabled=1 -d pcov.directory=/var/www/html/src vendor/bin/behat $STRICT --allow-no-tests $@"
+
+      ahoy title "Running Behat with coverage: drupal"
+      ahoy cli "php -d pcov.enabled=1 -d pcov.directory=/var/www/html/src vendor/bin/behat --profile=drupal $STRICT --allow-no-tests $@"
+
+      ahoy cli "php scripts/merge-coverage.php"
+
+  title:
+    usage: Print a cyan header.
+    cmd: echo -e "\n\033[36m$@\033[0m"
+    hide: true
+
+entrypoint:
+  - bash
+  - "-c"
+  - "-e"
+  - bash -e -c "$0" "$@"
+  - '{{cmd}}'
+  - '{{name}}'

@@ -1,0 +1,23 @@
+<?php
+
+/**
+ * @file
+ * Hooks for the behat_test module.
+ */
+
+/**
+ * Implements hook_cron().
+ *
+ * Records the drift between \Drupal::time()->getRequestTime() and the actual
+ * wall-clock time. Used to verify that REQUEST_TIME is refreshed before cron
+ * runs during Behat tests.
+ *
+ * @see https://github.com/jhedstrom/drupalextension/issues/179
+ */
+function behat_test_cron(): void {
+  $request_time = \Drupal::time()->getRequestTime();
+  $actual_time = time();
+  \Drupal::state()->set('behat_test.cron_request_time', $request_time);
+  \Drupal::state()->set('behat_test.cron_actual_time', $actual_time);
+  \Drupal::state()->set('behat_test.cron_time_drift', $actual_time - $request_time);
+}
