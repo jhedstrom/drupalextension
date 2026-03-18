@@ -291,7 +291,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    */
   public function nodeCreate(\stdClass $node) {
     $this->dispatchHooks(BeforeNodeCreateScope::class, $node);
-    $this->parseEntityFields('node', $node);
+    $this->parseEntityFields('node', $node, ['author']);
     $saved = $this->getDriver()->createNode($node);
     $this->dispatchHooks(AfterNodeCreateScope::class, $saved);
     $this->nodes[] = $saved;
