@@ -24,6 +24,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
  * [#781](https://github.com/jhedstrom/drupalextension/pull/781) - Simplified code.
  * [#780](https://github.com/jhedstrom/drupalextension/pull/780) - Converted standard Behat annotations to PHP 8 attributes.
+   > [!WARNING]
+   > If you extend any of the bundled context classes and override step or hook
+   > methods, you must switch your overrides from docblock annotations (`@Given`,
+   > `@When`, `@Then`, `@BeforeScenario`, etc.) to PHP 8 attributes (`#[Given]`,
+   > `#[When]`, `#[Then]`, `#[BeforeScenario]`, etc.). Behat resolves both the
+   > parent attribute and the child annotation independently, which causes a
+   > `RedundantStepException` for step definitions and duplicate execution for
+   > hooks. To safely override a method, either re-declare the step/hook using
+   > only the PHP 8 attribute on the child (and remove it from the parent by not
+   > registering the parent context), or override the method without any
+   > annotation or attribute to inherit the parent's definition.
  * [#779](https://github.com/jhedstrom/drupalextension/pull/779) - Changed `ConfigContext::setConfig()` visibility from public to protected.
  * [#771](https://github.com/jhedstrom/drupalextension/pull/771) - Reformatted configuration trees to use hierarchical indentation and added formatter fences.
  * [#768](https://github.com/jhedstrom/drupalextension/pull/768) - Removed Drupal 6 and 7 driver support.
