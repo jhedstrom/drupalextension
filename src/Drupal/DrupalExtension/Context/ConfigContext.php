@@ -108,6 +108,43 @@ class ConfigContext extends RawDrupalContext implements TranslatableContext {
   }
 
   /**
+   * Sets a configuration item from a JSON-encoded value.
+   *
+   * Unlike setBasicConfig() which only accepts strings, this step accepts any
+   * JSON-encodable value, making it possible to store booleans, integers,
+   * null, and arrays directly in configuration.
+   *
+   * @param string $name
+   *   The name of the configuration object.
+   * @param string $key
+   *   Identifier to store value in configuration.
+   * @param string $value
+   *   A JSON-encoded scalar or string. Must be valid JSON. Due to how behat
+   *   handles arguments, [] and {} should not be used as value here, because
+   *   they would be wrongly converted in a variable. Use ::setComplexConfig
+   *   instead.
+   *
+   * @throws \InvalidArgumentException
+   *   When $value is not valid JSON.
+   *
+   * @code
+   *   Given I set the configuration item "system.performance" with key "css.preprocess" to JSON value false
+   *   Given I set the configuration item "system.site" with key "weight_select_max" to JSON value 100
+   *   Given I set the configuration item "system.site" with key "weight_select_max" to JSON value null
+   * @endcode
+   */
+  #[Given('I set the configuration item :name with key :key to JSON value :value')]
+  public function setTypedConfig(string $name, string $key, string $value): void {
+    try {
+      $decoded = json_decode($value, TRUE, flags: JSON_THROW_ON_ERROR);
+    }
+    catch (\JsonException $e) {
+      throw new \InvalidArgumentException(sprintf('"%s" is not valid JSON: %s', $value, $e->getMessage()));
+    }
+    $this->setConfig($name, $key, $decoded);
+  }
+
+  /**
    * Sets a value in a configuration object.
    *
    * @param string $name

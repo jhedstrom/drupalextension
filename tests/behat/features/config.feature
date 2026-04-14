@@ -52,3 +52,23 @@ Feature: ConfigContext
   @test-drupal @api
   Scenario: Assert config was restored to original DB value not the settings.php override
     Then the original configuration item "system.site" with key "name" should be "Drush Site-Install"
+
+  @test-drupal @api
+  Scenario: Assert typed config can be set to JSON scalar values
+    Given I set the configuration item "system.performance" with key "css.preprocess" to JSON value false
+    Then the configuration item "system.performance" with key "css.preprocess" should be JSON false
+    Given I set the configuration item "system.performance" with key "css.preprocess" to JSON value true
+    Then the configuration item "system.performance" with key "css.preprocess" should be JSON true
+    Given I set the configuration item "system.site" with key "weight_select_max" to JSON value 50
+    Then the configuration item "system.site" with key "weight_select_max" should be JSON 50
+    Given I set the configuration item "system.site" with key "weight_select_max" to JSON value null
+    Then the configuration item "system.site" with key "weight_select_max" should be JSON null
+
+  @test-drupal @api
+  Scenario: Assert typed config is restored after scenario
+    Given I set the configuration item "system.performance" with key "css.preprocess" to JSON value false
+    Then the configuration item "system.performance" with key "css.preprocess" should be JSON false
+
+  @test-drupal @api
+  Scenario: Assert typed config was restored by previous scenario cleanup
+    Then the configuration item "system.performance" with key "css.preprocess" should be JSON true

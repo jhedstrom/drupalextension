@@ -416,6 +416,39 @@ class FeatureContext extends RawDrupalContext {
   }
 
   /**
+   * Asserts the live config value matches a JSON-decoded expected value.
+   *
+   * Uses strict equality so the PHP type is checked, not just the string
+   * representation. This is the companion assertion for setTypedConfig().
+   *
+   * @param string $name
+   *   The configuration object name.
+   * @param string $key
+   *   The configuration key (dot-notation supported, e.g. "css.preprocess").
+   * @param string $expected
+   *   A JSON-encoded expected value (e.g. false, 100, null, []).
+   */
+  #[Then('the configuration item :name with key :key should be JSON :expected')]
+  public function testAssertConfigJsonValue(string $name, string $key, string $expected): void {
+    $expectedDecoded = json_decode($expected, TRUE, flags: JSON_THROW_ON_ERROR);
+    $actual = \Drupal::config($name)->get($key);
+    if ($actual !== $expectedDecoded) {
+      throw new ExpectationException(
+        sprintf(
+          'Expected config "%s.%s" to be %s (%s) but got %s (%s).',
+          $name,
+          $key,
+          json_encode($expectedDecoded),
+          gettype($expectedDecoded),
+          json_encode($actual),
+          gettype($actual),
+        ),
+        $this->getSession()->getDriver()
+      );
+    }
+  }
+
+  /**
    * Asserts that a taxonomy term has the expected parent term.
    *
    * @param string $vocabulary
