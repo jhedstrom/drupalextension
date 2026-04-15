@@ -52,3 +52,20 @@ Feature: ConfigContext
   @test-drupal @api
   Scenario: Assert config was restored to original DB value not the settings.php override
     Then the original configuration item "system.site" with key "name" should be "Drush Site-Install"
+
+  @test-drupal @api
+  Scenario: Assert "Given I set the configuration item :name with key :key to :value" passes for boolean value
+    Given I set the configuration item "system.performance" with key "css.preprocess" to "false"
+    When I go to "admin/config/development/performance"
+    Then the "Aggregate CSS files" checkbox should not be checked
+
+  @test-drupal @api
+  Scenario: Assert typed config is restored after scenario
+    Given I set the configuration item "system.performance" with key "css.preprocess" to "false"
+    When I go to "admin/config/development/performance"
+    Then the "Aggregate CSS files" checkbox should not be checked
+
+  @test-drupal @api
+  Scenario: Assert typed config was restored by previous scenario cleanup
+    When I go to "admin/config/development/performance"
+    Then the "Aggregate CSS files" checkbox should be checked

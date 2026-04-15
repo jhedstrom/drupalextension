@@ -64,11 +64,14 @@ Creates a queue item. Defaults inputs if none are available.
   <summary><code>@Given I set the configuration item :name with key :key to :value</code></summary>
 
 <br/>
-Sets basic configuration item. 
+Sets a configuration item. 
 <br/><br/>
 
 ```gherkin
   Given I set the configuration item "system.site" with key "name" to "My Site"
+  Given I set the configuration item "system.performance" with key "css.preprocess" to "false"
+  Given I set the configuration item "system.site" with key "weight_select_max" to "50"
+  Given I set the configuration item "some.config" with key "nullable_key" to "null"
 
 ```
 
@@ -86,6 +89,11 @@ Sets complex configuration.
     | key   | value  |
     | front | /node  |
     | 403   | /error |
+  Given I set the configuration item "some.config" with key "settings" with values:
+    | key     | value                    |
+    | enabled | true                     |
+    | count   | 5                        |
+    | nested  | {"foo": "bar", "baz": 1} |
 
 ```
 
