@@ -58,7 +58,11 @@ class ConfigContext extends RawDrupalContext implements TranslatableContext {
   }
 
   /**
-   * Sets basic configuration item.
+   * Sets a configuration item.
+   *
+   * Scalar type coercion is applied automatically so that values like "true",
+   * "false", "null", and numeric strings are stored with their native PHP
+   * types rather than as plain strings.
    *
    * @param string $name
    *   The name of the configuration object.
@@ -69,11 +73,14 @@ class ConfigContext extends RawDrupalContext implements TranslatableContext {
    *
    * @code
    *   Given I set the configuration item "system.site" with key "name" to "My Site"
+   *   Given I set the configuration item "system.performance" with key "css.preprocess" to "false"
+   *   Given I set the configuration item "system.site" with key "weight_select_max" to "50"
+   *   Given I set the configuration item "some.config" with key "nullable_key" to "null"
    * @endcode
    */
   #[Given('I set the configuration item :name with key :key to :value')]
   public function setBasicConfig(string $name, string $key, string $value): void {
-    $this->setConfig($name, $key, $value);
+    $this->setConfig($name, $key, static::coerceValue($value));
   }
 
   /**
@@ -91,20 +98,62 @@ class ConfigContext extends RawDrupalContext implements TranslatableContext {
    *     | key   | value  |
    *     | front | /node  |
    *     | 403   | /error |
+   *   Given I set the configuration item "some.config" with key "settings" with values:
+   *     | key     | value                    |
+   *     | enabled | true                     |
+   *     | count   | 5                        |
+   *     | nested  | {"foo": "bar", "baz": 1} |
    * @endcode
    */
   #[Given('I set the configuration item :name with key :key with values:')]
   public function setComplexConfig(string $name, string $key, TableNode $config_table): void {
     $value = [];
     foreach ($config_table->getHash() as $row) {
-      // Allow json values for extra complexity.
-      $decoded = json_decode($row['value'], TRUE);
-      if ($decoded !== NULL) {
-        $row['value'] = $decoded;
+      $coerced = static::coerceValue($row['value']);
+      // If coercion returned the string unchanged, attempt JSON decode to
+      // support complex nested structures like {"key": "value"} or [1, 2].
+      if (is_string($coerced)) {
+        $decoded = json_decode($coerced, TRUE);
+        if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+          $coerced = $decoded;
+        }
       }
-      $value[$row['key']] = $row['value'];
+      $value[$row['key']] = $coerced;
     }
     $this->setConfig($name, $key, $value);
+  }
+
+  /**
+   * Coerces a string value to its native PHP type.
+   *
+   * Behat always passes step arguments as strings. This method converts
+   * well-known scalar representations to their proper PHP types so that
+   * Drupal configuration receives correctly typed values.
+   *
+   * @param string $value
+   *   The raw string value from a Behat step argument.
+   *
+   * @return mixed
+   *   The coerced value: bool, null, int, float, or the original string.
+   */
+  protected static function coerceValue(string $value): mixed {
+    if ($value === 'true') {
+      return TRUE;
+    }
+
+    if ($value === 'false') {
+      return FALSE;
+    }
+
+    if ($value === 'null') {
+      return NULL;
+    }
+
+    if (is_numeric($value)) {
+      return str_contains($value, '.') ? (float) $value : (int) $value;
+    }
+
+    return $value;
   }
 
   /**

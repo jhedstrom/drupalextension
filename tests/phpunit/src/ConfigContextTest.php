@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\DrupalExtension\Tests;
 
+use Behat\Gherkin\Node\TableNode;
 use PHPUnit\Framework\MockObject\MockObject;
 use Drupal\Driver\DriverInterface;
 use Drupal\DrupalDriverManagerInterface;
@@ -125,6 +126,93 @@ class ConfigContextTest extends TestCase {
       ->with('system.site', 'name', 'New');
 
     $this->context->setBasicConfig('system.site', 'name', 'New');
+  }
+
+  /**
+   * Tests that setBasicConfig coerces scalar string values to native types.
+   */
+  #[DataProvider('dataProviderSetBasicConfigCoercion')]
+  public function testSetBasicConfigCoercion(string $input, mixed $expected): void {
+    $this->driver->method('configGet')->willReturn('original');
+
+    $actual = NULL;
+    $this->driver->method('configSet')
+      ->willReturnCallback(function (string $name, string $key, mixed $value) use (&$actual): void {
+        $actual = $value;
+      });
+
+    $this->context->setBasicConfig('test.config', 'key', $input);
+    $this->assertSame($expected, $actual);
+  }
+
+  /**
+   * Provides data for testSetBasicConfigCoercion().
+   */
+  public static function dataProviderSetBasicConfigCoercion(): \Iterator {
+    yield 'boolean true' => ['true', TRUE];
+    yield 'boolean false' => ['false', FALSE];
+    yield 'null' => ['null', NULL];
+    yield 'integer' => ['50', 50];
+    yield 'negative integer' => ['-1', -1];
+    yield 'float' => ['3.14', 3.14];
+    yield 'string stays string' => ['My Site', 'My Site'];
+    yield 'string TRUE not coerced' => ['TRUE', 'TRUE'];
+    yield 'string False not coerced' => ['False', 'False'];
+    yield 'string Null not coerced' => ['Null', 'Null'];
+    yield 'empty string stays string' => ['', ''];
+    yield 'path stays string' => ['/node', '/node'];
+  }
+
+  /**
+   * Tests that setComplexConfig coerces table values to native types.
+   */
+  public function testSetComplexConfigCoercion(): void {
+    $this->driver->method('configGet')->willReturn([]);
+
+    $actual = NULL;
+    $this->driver->method('configSet')
+      ->willReturnCallback(function (string $name, string $key, mixed $value) use (&$actual): void {
+        $actual = $value;
+      });
+
+    $table = new TableNode([
+      ['key', 'value'],
+      ['preprocess', 'true'],
+      ['gzip', 'false'],
+      ['max_age', '300'],
+    ]);
+
+    $this->context->setComplexConfig('system.performance', 'css', $table);
+
+    $this->assertSame(['preprocess' => TRUE, 'gzip' => FALSE, 'max_age' => 300], $actual);
+  }
+
+  /**
+   * Tests that setComplexConfig decodes JSON array/object values in table rows.
+   */
+  public function testSetComplexConfigJsonDecode(): void {
+    $this->driver->method('configGet')->willReturn([]);
+
+    $actual = NULL;
+    $this->driver->method('configSet')
+      ->willReturnCallback(function (string $name, string $key, mixed $value) use (&$actual): void {
+        $actual = $value;
+      });
+
+    $table = new TableNode([
+      ['key', 'value'],
+      ['nested', '{"foo": "bar", "baz": 1}'],
+      ['list', '[1, 2, 3]'],
+      ['plain', '/node'],
+    ]);
+
+    $this->context->setComplexConfig('some.config', 'settings', $table);
+
+    $this->assertSame([
+      'nested' => ['foo' => 'bar', 'baz' => 1],
+      'list' => [1, 2, 3],
+      'plain' => '/node',
+    ], $actual);
   }
 
 }
