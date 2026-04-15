@@ -95,7 +95,6 @@ default:
         dir: '%paths.base%/.logs/screenshots'
         on_failed: true
         always_fullscreen: true
-        fullscreen_algorithm: resize
         purge: false
         info_types:
             - url
