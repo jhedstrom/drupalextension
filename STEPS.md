@@ -1246,6 +1246,20 @@ When I press the "Save" button
 </details>
 
 <details>
+  <summary><code>@When I drag element :source onto element :target</code></summary>
+
+<br/>
+Drag and drop one element onto another. 
+<br/><br/>
+
+```gherkin
+When I drag element "#draggable" onto element "#droppable"
+
+```
+
+</details>
+
+<details>
   <summary><code>@When I follow/click :link in the :region( region)</code></summary>
 
 <br/>
