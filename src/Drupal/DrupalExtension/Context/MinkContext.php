@@ -12,6 +12,7 @@ use Behat\Step\Then;
 use Behat\Behat\Hook\Scope\BeforeStepScope;
 use Behat\Behat\Hook\Scope\AfterStepScope;
 use Behat\Behat\Context\TranslatableContext;
+use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\Mink\Exception\UnsupportedDriverActionException;
 use Behat\MinkExtension\Context\MinkContext as MinkExtension;
 use Drupal\DrupalExtension\RegionTrait;
@@ -264,6 +265,33 @@ JS;
     // to key down/up events directly, such as Drupal's autocomplete.js.
     $driver->keyDown($element->getXpath(), $char);
     $driver->keyUp($element->getXpath(), $char);
+  }
+
+  /**
+   * Drag and drop one element onto another.
+   *
+   * @code
+   * When I drag element "#draggable" onto element "#droppable"
+   * @endcode
+   *
+   * @throws \Behat\Mink\Exception\ElementNotFoundException
+   */
+  #[When('I drag element :source onto element :target')]
+  public function dragElementOntoAnother(string $source, string $target): void {
+    $page = $this->getSession()->getPage();
+    $driver = $this->getSession()->getDriver();
+
+    $sourceElement = $page->find('css', $source);
+    if ($sourceElement === NULL) {
+      throw new ElementNotFoundException($driver, 'source element', 'css selector', $source);
+    }
+
+    $targetElement = $page->find('css', $target);
+    if ($targetElement === NULL) {
+      throw new ElementNotFoundException($driver, 'target element', 'css selector', $target);
+    }
+
+    $sourceElement->dragTo($targetElement);
   }
 
   /**
