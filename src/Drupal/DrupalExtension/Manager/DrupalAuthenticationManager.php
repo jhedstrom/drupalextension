@@ -60,6 +60,18 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
     }
     $loginElement->click();
 
+    // Wait for URL change after login (max 3 seconds).
+    $timeout = microtime(true) + 3;
+    while (microtime(true) < $timeout && $session->getCurrentUrl() === $loginUrl) {
+      usleep(100000);
+    }
+
+    // Wait for page to be fully loaded before checking if logged in.
+    $timeout = microtime(true) + 3;
+    while (microtime(true) < $timeout && !$session->getPage()->find('css', 'body')) {
+      usleep(100000);
+    }
+
     // Verify the login was successful.
     if (!$this->loggedIn()) {
       throw new \Exception(isset($user->role)
