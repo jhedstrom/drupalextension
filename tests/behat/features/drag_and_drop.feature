@@ -9,10 +9,10 @@ Feature: Drag and drop
     When I drag element "#source" onto element "#target"
     Then I should see "Element was dropped"
 
-  @test-blackbox @javascript
+  @test-blackbox
   Scenario: Assert "When I drag element :source onto element :target" fails for missing source
     Given some behat configuration
-    And scenario steps tagged with "@test-blackbox @javascript":
+    And scenario steps tagged with "@test-blackbox":
       """
       Given I am at "drag_and_drop.html"
       When I drag element "#nonexistent" onto element "#target"
@@ -23,10 +23,10 @@ Feature: Drag and drop
       Source element with css selector "#nonexistent" not found.
       """
 
-  @test-blackbox @javascript
+  @test-blackbox
   Scenario: Assert "When I drag element :source onto element :target" fails for missing target
     Given some behat configuration
-    And scenario steps tagged with "@test-blackbox @javascript":
+    And scenario steps tagged with "@test-blackbox":
       """
       Given I am at "drag_and_drop.html"
       When I drag element "#source" onto element "#nonexistent"
