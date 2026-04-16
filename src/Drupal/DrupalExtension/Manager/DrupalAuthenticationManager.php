@@ -60,6 +60,28 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
     }
     $loginElement->click();
 
+    // Wait for the browser to load after login, if configured.
+    $loginWait = $this->getDrupalParameter('login_wait');
+    if ($loginWait > 0) {
+      // Wait for URL change after login (redirect away from login form).
+      $timeout = microtime(TRUE) + $loginWait;
+      while (microtime(TRUE) < $timeout && $session->getCurrentUrl() === $loginUrl) {
+        usleep(100000);
+      }
+
+      // Wait for page body to render.
+      $timeout = microtime(TRUE) + $loginWait;
+      while (microtime(TRUE) < $timeout && !$session->getPage()->find('css', 'body')) {
+        usleep(100000);
+      }
+
+      // Wait for the logged-in selector to appear (may be added by JS/AJAX).
+      $timeout = microtime(TRUE) + $loginWait;
+      while (microtime(TRUE) < $timeout && !$session->getPage()->has('css', $this->getDrupalSelector('logged_in_selector'))) {
+        usleep(100000);
+      }
+    }
+
     // Verify the login was successful.
     if (!$this->loggedIn()) {
       throw new \Exception(isset($user->role)

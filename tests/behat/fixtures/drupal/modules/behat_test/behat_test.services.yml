@@ -7,3 +7,8 @@ services:
     arguments: ['@state']
     tags:
       - { name: event_subscriber }
+  behat_test.slow_login_subscriber:
+    class: Drupal\behat_test\EventSubscriber\SlowLoginSubscriber
+    arguments: ['@state']
+    tags:
+      - { name: event_subscriber }
