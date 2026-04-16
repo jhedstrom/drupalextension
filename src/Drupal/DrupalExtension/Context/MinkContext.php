@@ -270,27 +270,29 @@ JS;
   /**
    * Drag and drop one element onto another.
    *
-   * @throws \Behat\Mink\Exception\ElementNotFoundException
+   * @code
+   * When I drag element "#draggable" onto element "#droppable"
+   * @endcode
    *
-   * @Given I drag element :dragged onto element :target
+   * @throws \Behat\Mink\Exception\ElementNotFoundException
    */
-    public function dragElementOntoAnother($dragged, $target)
-    {
-        $session = $this->getSession();
-        $driver = $session->getDriver();
+  #[When('I drag element :source onto element :target')]
+  public function dragElementOntoAnother(string $source, string $target): void {
+    $page = $this->getSession()->getPage();
+    $driver = $this->getSession()->getDriver();
 
-        $draggedElement = $session->getPage()->find('css', $dragged);
-        if (empty($draggedElement)) {
-            throw new ElementNotFoundException($driver, 'dragged element', 'css selector', $dragged);
-        }
-
-        $targetElement = $session->getPage()->find('css', $target);
-        if (empty($targetElement)) {
-            throw new ElementNotFoundException($driver, 'target element', 'css selector', $target);
-        }
-
-        $draggedElement->dragTo($targetElement);
+    $sourceElement = $page->find('css', $source);
+    if ($sourceElement === NULL) {
+      throw new ElementNotFoundException($driver, 'source element', 'css selector', $source);
     }
+
+    $targetElement = $page->find('css', $target);
+    if ($targetElement === NULL) {
+      throw new ElementNotFoundException($driver, 'target element', 'css selector', $target);
+    }
+
+    $sourceElement->dragTo($targetElement);
+  }
 
   /**
    * Assert a link is visible on the page.
