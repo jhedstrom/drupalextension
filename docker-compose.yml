@@ -14,6 +14,9 @@ services:
       PHP_FPM_GROUP: wodby
       PHP_FPM_CLEAR_ENV: "yes"
       PHP_OPCACHE_PRELOAD_USER: wodby
+      # Override PATH to remove vendor/bin so that bare 'drush' does not
+      # resolve globally — forces tests to exercise the binary resolution.
+      PATH: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
       PHP_EXTENSIONS_DISABLE: "${PHP_EXTENSIONS_DISABLE:-xdebug,xhprof,spx}"
       PHP_XDEBUG_MODE: "${PHP_XDEBUG_MODE:-off}"
       PHP_XDEBUG_CLIENT_HOST: host.docker.internal

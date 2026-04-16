@@ -115,7 +115,7 @@ drupal:
       # Drush driver settings.
       drush:
         alias: ~
-        binary: drush
+        binary: vendor/bin/drush
         root: /var/www/html/web
         global_options: ~
       region_map:

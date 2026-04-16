@@ -187,7 +187,7 @@ class DrupalExtension implements ExtensionInterface {
         ->arrayNode('drush')
           ->children()
             ->scalarNode('alias')->end()
-            ->scalarNode('binary')->defaultValue('drush')->end()
+            ->scalarNode('binary')->defaultValue('vendor/bin/drush')->end()
             ->scalarNode('root')->end()
             ->scalarNode('global_options')->end()
           ->end()
@@ -259,7 +259,8 @@ class DrupalExtension implements ExtensionInterface {
       $config['drush']['alias'] ??= FALSE;
       $container->setParameter('drupal.driver.drush.alias', $config['drush']['alias']);
 
-      $config['drush']['binary'] ??= 'drush';
+      $config['drush']['binary'] ??= 'vendor/bin/drush';
+      $config['drush']['binary'] = self::resolveBinaryPath($config['drush']['binary']);
       $container->setParameter('drupal.driver.drush.binary', $config['drush']['binary']);
 
       $config['drush']['root'] ??= FALSE;
@@ -268,6 +269,45 @@ class DrupalExtension implements ExtensionInterface {
       // Set global arguments.
       $this->setDrushOptions($container, $config);
     }
+  }
+
+  /**
+   * Resolve a relative binary path to an absolute path.
+   *
+   * Probes the current working directory and its parent to locate the binary.
+   * This ensures the path remains valid after the Drupal API driver changes
+   * the working directory to DRUPAL_ROOT via chdir().
+   *
+   * Absolute paths and binaries without a directory separator (bare commands
+   * like 'drush' that resolve via $PATH) are returned as-is.
+   */
+  public static function resolveBinaryPath(string $binary): string {
+    // Absolute paths need no resolution.
+    if (str_starts_with($binary, '/')) {
+      return $binary;
+    }
+
+    // Bare command names (no directory separator) resolve via $PATH.
+    if (!str_contains($binary, '/')) {
+      return $binary;
+    }
+
+    $cwd = (string) getcwd();
+
+    // Probe current working directory.
+    $candidate = $cwd . '/' . $binary;
+    if (file_exists($candidate)) {
+      return $candidate;
+    }
+
+    // Probe parent directory (handles cwd being one level deep,
+    // e.g. Drupal root inside a project).
+    $candidate = dirname($cwd) . '/' . $binary;
+    if (file_exists($candidate)) {
+      return $candidate;
+    }
+
+    return $binary;
   }
 
   /**

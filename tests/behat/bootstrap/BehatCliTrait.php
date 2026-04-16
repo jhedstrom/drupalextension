@@ -183,6 +183,19 @@ EOL;
       unset($yaml['default']['extensions'][Extension::class]);
     }
 
+    // Resolve the drush binary to an absolute path so subprocess tests
+    // can find it regardless of their working directory.
+    // The source behat.yml is at /var/www/html, so resolve relative to that.
+    $projectRoot = dirname($source);
+    $drushBinary = $projectRoot . '/vendor/bin/drush';
+    if (file_exists($drushBinary)) {
+      foreach (['default', 'drupal', 'drupal_https'] as $profile) {
+        if (isset($yaml[$profile]['extensions']['Drupal\DrupalExtension']['drush'])) {
+          $yaml[$profile]['extensions']['Drupal\DrupalExtension']['drush']['binary'] = $drushBinary;
+        }
+      }
+    }
+
     $content = Yaml::dump($yaml, 4, 2);
 
     $filename = 'behat.yml';
