@@ -3,31 +3,31 @@
     <title>Drag and Drop Test</title>
     <style>
       #source { width: 100px; height: 100px; background: #3498db; cursor: move; }
-      #target { width: 200px; height: 200px; background: #ecf0f1; border: 2px dashed #bdc3c7; margin-top: 20px; }
-      #target.dropped { background: #2ecc71; }
+      .drop-zone { width: 200px; height: 200px; background: #ecf0f1; border: 2px dashed #bdc3c7; margin-top: 20px; display: inline-block; vertical-align: top; margin-right: 20px; }
     </style>
   </head>
   <body>
     <div id="source" draggable="true">Drag me</div>
-    <div id="target">Drop here</div>
+    <div id="target-a" class="drop-zone">Target A</div>
+    <div id="target-b" class="drop-zone">Target B</div>
     <div id="result"></div>
     <script>
       var source = document.getElementById('source');
-      var target = document.getElementById('target');
       var result = document.getElementById('result');
 
       source.addEventListener('dragstart', function(e) {
-        e.dataTransfer.setData('text/plain', 'dragged');
+        e.dataTransfer.setData('text/plain', source.id);
       });
 
-      target.addEventListener('dragover', function(e) {
-        e.preventDefault();
-      });
+      document.querySelectorAll('.drop-zone').forEach(function(zone) {
+        zone.addEventListener('dragover', function(e) {
+          e.preventDefault();
+        });
 
-      target.addEventListener('drop', function(e) {
-        e.preventDefault();
-        target.classList.add('dropped');
-        result.textContent = 'Element was dropped';
+        zone.addEventListener('drop', function(e) {
+          e.preventDefault();
+          result.textContent = 'Dropped on ' + zone.id;
+        });
       });
     </script>
   </body>
