@@ -186,7 +186,7 @@ EOL;
     // Resolve the drush binary to an absolute path so subprocess tests
     // can find it regardless of their working directory.
     foreach (['default', 'drupal', 'drupal_https'] as $profile) {
-      if (!isset($yaml[$profile]['extensions']['Drupal\DrupalExtension'])) {
+      if (!isset($yaml[$profile]['extensions']['Drupal\DrupalExtension']['drush'])) {
         continue;
       }
 
