@@ -231,6 +231,18 @@ EOL;
   }
 
   /**
+   * Runs behat with the drupal profile and a custom login_wait value.
+   */
+  #[When('I run behat with drupal profile and :key set to :value')]
+  public function behatCliRunWithDrupalProfileAndConfig(string $key, string $value):void {
+    $configFile = $this->workingDir . DIRECTORY_SEPARATOR . 'behat.yml';
+    $yaml = Yaml::parse(file_get_contents($configFile));
+    $yaml['drupal']['extensions']['Drupal\DrupalExtension'][$key] = is_numeric($value) ? (int) $value : $value;
+    file_put_contents($configFile, Yaml::dump($yaml, 4, 2));
+    $this->iRunBehat('--profile=drupal --no-colors');
+  }
+
+  /**
    * Asserts that behat failed with a RuntimeException matching the given message.
    */
   #[Then('it should fail with an exception:')]

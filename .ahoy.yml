@@ -104,7 +104,7 @@ commands:
   provision:
     usage: Provision a fixture test site.
     cmd: |
-      ahoy drush sql-drop --yes
+      ahoy drush sql-drop --yes 2>/dev/null || true
       ahoy drush --yes site-install --db-url=mysql://drupal:drupal@database/drupal --debug
       ahoy drush --yes en behat_test
       ahoy drush --yes deploy:hook

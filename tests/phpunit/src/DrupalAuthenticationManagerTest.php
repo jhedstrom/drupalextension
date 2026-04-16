@@ -416,9 +416,112 @@ class DrupalAuthenticationManagerTest extends TestCase {
   }
 
   /**
+   * Tests that logIn() skips waiting when login_wait is 0.
+   */
+  public function testLogInSkipsWaitWhenLoginWaitIsZero(): void {
+    $submit = $this->createMock(NodeElement::class);
+
+    $page = $this->createMock(DocumentElement::class);
+    $page->method('findButton')->with('Log in')->willReturn($submit);
+    $page->method('has')->willReturn(TRUE);
+
+    $session = $this->createSessionMock($page);
+    // @phpstan-ignore method.notFound
+    $session->method('isStarted')->willReturn(TRUE);
+    // getCurrentUrl should never be called for wait purposes when disabled.
+    // @phpstan-ignore method.notFound
+    $session->method('getCurrentUrl')->willReturn('http://localhost/user/login');
+
+    $params = self::DRUPAL_PARAMS;
+    $params['login_wait'] = 0;
+
+    $manager = $this->createManager($session, NULL, NULL, $params);
+    $manager->logIn((object) ['name' => 'admin', 'pass' => 'password']);
+
+    // If we get here without hanging, the wait was skipped.
+    $this->assertTrue(TRUE);
+  }
+
+  /**
+   * Tests that logIn() waits for the logged-in selector when login_wait > 0.
+   */
+  public function testLogInWaitsForLoggedInSelector(): void {
+    $submit = $this->createMock(NodeElement::class);
+
+    $callCount = 0;
+    $page = $this->createMock(DocumentElement::class);
+    $page->method('findButton')->with('Log in')->willReturn($submit);
+    // Simulate: logged_in_selector not found on first call, found on second.
+    $page->method('has')->willReturnCallback(function (string $selector, string $locator) use (&$callCount): bool {
+      if ($locator === 'body.logged-in') {
+        $callCount++;
+        // First two calls return FALSE (during wait loop and loggedIn check),
+        // then return TRUE.
+        return $callCount > 2;
+      }
+      return FALSE;
+    });
+    $page->method('find')->willReturnCallback(function (string $selector, string $locator) use ($page): ?DocumentElement {
+      if ($locator === 'body') {
+        return $page;
+      }
+      return NULL;
+    });
+
+    $urlCallCount = 0;
+    $session = $this->createSessionMock($page);
+    // @phpstan-ignore method.notFound
+    $session->method('isStarted')->willReturn(TRUE);
+    // Simulate URL change after login (redirect).
+    // @phpstan-ignore method.notFound
+    $session->method('getCurrentUrl')->willReturnCallback(function () use (&$urlCallCount): string {
+      $urlCallCount++;
+      return $urlCallCount <= 1 ? 'http://localhost/user/login' : 'http://localhost/user/1';
+    });
+
+    $params = self::DRUPAL_PARAMS;
+    $params['login_wait'] = 1;
+
+    $userManager = new DrupalUserManager();
+    $manager = $this->createManager($session, $userManager, NULL, $params);
+    $manager->logIn((object) ['name' => 'admin', 'pass' => 'password']);
+
+    $this->assertNotFalse($userManager->getCurrentUser());
+  }
+
+  /**
+   * Tests that logIn() without login_wait throws when selector is delayed.
+   *
+   * Demonstrates the race condition: without login_wait, a delayed
+   * logged_in_selector causes login to fail even though login succeeded.
+   */
+  public function testLogInFailsWithoutLoginWaitWhenSelectorDelayed(): void {
+    $submit = $this->createMock(NodeElement::class);
+
+    $page = $this->createMock(DocumentElement::class);
+    $page->method('findButton')->willReturnCallback(fn(string $text): ?NodeElement => $text === 'Log in' ? $submit : NULL);
+    // logged_in_selector is never found (simulates slow JS).
+    $page->method('has')->willReturn(FALSE);
+    $page->method('findLink')->willReturn(NULL);
+
+    $session = $this->createSessionMock($page);
+    // @phpstan-ignore method.notFound
+    $session->method('isStarted')->willReturn(TRUE);
+    // @phpstan-ignore method.notFound
+    $session->method('getCurrentUrl')->willReturn('http://localhost/user/1');
+
+    // No login_wait configured — the race condition scenario.
+    $manager = $this->createManager($session);
+
+    $this->expectException(\Exception::class);
+    $this->expectExceptionMessage("Unable to determine if logged in");
+    $manager->logIn((object) ['name' => 'admin', 'pass' => 'password']);
+  }
+
+  /**
    * Creates a DrupalAuthenticationManager with optional overrides.
    */
-  private function createManager(?Session $session = NULL, ?DrupalUserManagerInterface $user_manager = NULL, ?DrupalDriverManagerInterface $driver_manager = NULL): DrupalAuthenticationManager {
+  private function createManager(?Session $session = NULL, ?DrupalUserManagerInterface $user_manager = NULL, ?DrupalDriverManagerInterface $driver_manager = NULL, ?array $drupal_params = NULL): DrupalAuthenticationManager {
     $session ??= $this->createSessionMock();
     $mink = new Mink(['default' => $session]);
     $mink->setDefaultSessionName('default');
@@ -428,7 +531,7 @@ class DrupalAuthenticationManagerTest extends TestCase {
           $user_manager ?? new DrupalUserManager(),
           $driver_manager ?? $this->createDriverManagerMock(),
           self::MINK_PARAMS,
-          self::DRUPAL_PARAMS
+          $drupal_params ?? self::DRUPAL_PARAMS
       );
   }
 
