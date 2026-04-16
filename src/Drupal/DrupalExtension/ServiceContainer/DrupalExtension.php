@@ -187,7 +187,7 @@ class DrupalExtension implements ExtensionInterface {
         ->arrayNode('drush')
           ->children()
             ->scalarNode('alias')->end()
-            ->scalarNode('binary')->defaultValue('drush')->end()
+            ->scalarNode('binary')->defaultValue('vendor/bin/drush')->end()
             ->scalarNode('root')->end()
             ->scalarNode('global_options')->end()
           ->end()
