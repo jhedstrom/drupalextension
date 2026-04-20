@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal;
 
-use Drupal\Driver\DriverInterface;
+use Drupal\Driver\Capability\MailCapabilityInterface;
 
 /**
  * Default implementation of the Drupal mail manager service.
@@ -19,7 +19,7 @@ class DrupalMailManager implements DrupalMailManagerInterface {
     /**
      * The active Drupal driver.
      */
-    protected DriverInterface $driver,
+    protected MailCapabilityInterface $driver,
   ) {
   }
 
@@ -27,7 +27,7 @@ class DrupalMailManager implements DrupalMailManagerInterface {
    * {@inheritdoc}
    */
   public function startCollectingMail(): void {
-    $this->driver->startCollectingMail();
+    $this->driver->mailStartCollecting();
     $this->clearMail();
   }
 
@@ -35,7 +35,7 @@ class DrupalMailManager implements DrupalMailManagerInterface {
    * {@inheritdoc}
    */
   public function stopCollectingMail(): void {
-    $this->driver->stopCollectingMail();
+    $this->driver->mailStopCollecting();
   }
 
   /**
@@ -55,15 +55,15 @@ class DrupalMailManager implements DrupalMailManagerInterface {
   /**
    * {@inheritdoc}
    */
-  public function getMail($store = 'default') {
-    return $this->driver->getMail();
+  public function getMail($store = 'default'): array {
+    return $this->driver->mailGet();
   }
 
   /**
    * {@inheritdoc}
    */
   public function clearMail($store = 'default'): void {
-    $this->driver->clearMail();
+    $this->driver->mailClear();
   }
 
 }

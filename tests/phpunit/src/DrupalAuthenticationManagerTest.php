@@ -11,7 +11,7 @@ use Behat\Mink\Element\NodeElement;
 use Behat\Mink\Exception\DriverException;
 use Behat\Mink\Mink;
 use Behat\Mink\Session;
-use Drupal\Driver\AuthenticationDriverInterface;
+use Drupal\Driver\Capability\AuthenticationCapabilityInterface;
 use Drupal\DrupalDriverManagerInterface;
 use Drupal\DrupalExtension\Manager\DrupalAuthenticationManager;
 use Drupal\DrupalExtension\Manager\DrupalAuthenticationManagerInterface;
@@ -393,11 +393,11 @@ class DrupalAuthenticationManagerTest extends TestCase {
   }
 
   /**
-   * Creates a mock implementing both AuthenticationDriverInterface and DriverInterface.
+   * Creates a mock implementing both AuthenticationCapabilityInterface and DriverInterface.
    */
-  private function createAuthDriverMock(): AuthenticationDriverInterface|DriverInterface|MockObject {
+  private function createAuthDriverMock(): AuthenticationCapabilityInterface|DriverInterface|MockObject {
     $driver = $this->createMockForIntersectionOfInterfaces([
-      AuthenticationDriverInterface::class,
+      AuthenticationCapabilityInterface::class,
       DriverInterface::class,
     ]);
     $driver->method('isBootstrapped')->willReturn(TRUE);

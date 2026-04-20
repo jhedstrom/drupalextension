@@ -19,6 +19,7 @@ class DrupalDriverManagerSpec extends ObjectBehavior {
   }
 
   public function it_registers_drivers(DriverInterface $driver) {
+    $driver->isBootstrapped()->willReturn(TRUE);
     $this->shouldThrow(\InvalidArgumentException::class)->duringGetDriver();
     $this->registerDriver('name', $driver);
     $this->shouldThrow(\InvalidArgumentException::class)->duringGetDriver();

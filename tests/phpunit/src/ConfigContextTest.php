@@ -6,7 +6,7 @@ namespace Drupal\DrupalExtension\Tests;
 
 use Behat\Gherkin\Node\TableNode;
 use PHPUnit\Framework\MockObject\MockObject;
-use Drupal\Driver\DriverInterface;
+use Drupal\Driver\Capability\ConfigCapabilityInterface;
 use Drupal\DrupalDriverManagerInterface;
 use Drupal\DrupalExtension\Context\ConfigContext;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -34,7 +34,7 @@ class ConfigContextTest extends TestCase {
    */
   protected function setUp(): void {
     $this->context = new ConfigContext();
-    $this->driver = $this->createMock(DriverInterface::class);
+    $this->driver = $this->createMock(ConfigCapabilityInterface::class);
     $drupal = $this->createMock(DrupalDriverManagerInterface::class);
     $drupal->method('getDriver')->willReturn($this->driver);
     $this->context->setDrupal($drupal);
@@ -46,7 +46,7 @@ class ConfigContextTest extends TestCase {
   #[DataProvider('dataProviderSetBasicConfigBackup')]
   public function testSetBasicConfigBackup(array $operations, array $expected_backup): void {
     $getReturns = array_column($operations, 'original');
-    $this->driver->method('configGet')->willReturnOnConsecutiveCalls(...$getReturns);
+    $this->driver->method('configGetOriginal')->willReturnOnConsecutiveCalls(...$getReturns);
     $this->driver->method('configSet');
 
     foreach ($operations as $operation) {
@@ -98,7 +98,7 @@ class ConfigContextTest extends TestCase {
    * Tests that cleanConfig restores all original values.
    */
   public function testCleanConfigRestoresAllValues(): void {
-    $this->driver->method('configGet')->willReturn('Original');
+    $this->driver->method('configGetOriginal')->willReturn('Original');
 
     $setArgs = [];
     $this->driver->method('configSet')
@@ -120,7 +120,7 @@ class ConfigContextTest extends TestCase {
    * Tests that setBasicConfig delegates to setConfig.
    */
   public function testSetBasicConfigDelegatesToSetConfig(): void {
-    $this->driver->method('configGet')->willReturn('old');
+    $this->driver->method('configGetOriginal')->willReturn('old');
     $this->driver->expects($this->once())
       ->method('configSet')
       ->with('system.site', 'name', 'New');
@@ -133,7 +133,7 @@ class ConfigContextTest extends TestCase {
    */
   #[DataProvider('dataProviderSetBasicConfigCoercion')]
   public function testSetBasicConfigCoercion(string $input, mixed $expected): void {
-    $this->driver->method('configGet')->willReturn('original');
+    $this->driver->method('configGetOriginal')->willReturn('original');
 
     $actual = NULL;
     $this->driver->method('configSet')
@@ -167,7 +167,7 @@ class ConfigContextTest extends TestCase {
    * Tests that setComplexConfig coerces table values to native types.
    */
   public function testSetComplexConfigCoercion(): void {
-    $this->driver->method('configGet')->willReturn([]);
+    $this->driver->method('configGetOriginal')->willReturn([]);
 
     $actual = NULL;
     $this->driver->method('configSet')
@@ -191,7 +191,7 @@ class ConfigContextTest extends TestCase {
    * Tests that setComplexConfig decodes JSON array/object values in table rows.
    */
   public function testSetComplexConfigJsonDecode(): void {
-    $this->driver->method('configGet')->willReturn([]);
+    $this->driver->method('configGetOriginal')->willReturn([]);
 
     $actual = NULL;
     $this->driver->method('configSet')

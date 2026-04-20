@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\DrupalExtension\Tests;
 
-use Drupal\Driver\DriverInterface;
+use Drupal\Driver\Capability\MailCapabilityInterface;
 use Drupal\DrupalMailManager;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -21,11 +21,13 @@ class DrupalMailManagerTest extends TestCase {
    */
   #[DataProvider('dataProviderDriverDelegation')]
   public function testDriverDelegation(string $method, string $driver_method, array $extra_driver_methods = []): void {
-    $driver = $this->createMock(DriverInterface::class);
+    $driver = $this->createMock(MailCapabilityInterface::class);
     $driver->expects($this->once())->method($driver_method);
+
     foreach ($extra_driver_methods as $extraDriverMethod) {
       $driver->expects($this->once())->method($extraDriverMethod);
     }
+
     $manager = new DrupalMailManager($driver);
     $manager->$method();
   }
@@ -34,11 +36,11 @@ class DrupalMailManagerTest extends TestCase {
    * Provides data for testDriverDelegation().
    */
   public static function dataProviderDriverDelegation(): \Iterator {
-    yield 'startCollectingMail calls driver and clears' => ['startCollectingMail', 'startCollectingMail', ['clearMail']];
-    yield 'stopCollectingMail delegates to driver' => ['stopCollectingMail', 'stopCollectingMail'];
-    yield 'disableMail starts collecting' => ['disableMail', 'startCollectingMail', ['clearMail']];
-    yield 'enableMail stops collecting' => ['enableMail', 'stopCollectingMail'];
-    yield 'clearMail delegates to driver' => ['clearMail', 'clearMail'];
+    yield 'startCollectingMail calls driver and clears' => ['startCollectingMail', 'mailStartCollecting', ['mailClear']];
+    yield 'stopCollectingMail delegates to driver' => ['stopCollectingMail', 'mailStopCollecting'];
+    yield 'disableMail starts collecting' => ['disableMail', 'mailStartCollecting', ['mailClear']];
+    yield 'enableMail stops collecting' => ['enableMail', 'mailStopCollecting'];
+    yield 'clearMail delegates to driver' => ['clearMail', 'mailClear'];
   }
 
   /**
@@ -46,8 +48,8 @@ class DrupalMailManagerTest extends TestCase {
    */
   public function testGetMailDelegatesToDriver(): void {
     $expected = [['to' => 'a@b.com', 'subject' => 'test', 'body' => 'hello']];
-    $driver = $this->createMock(DriverInterface::class);
-    $driver->expects($this->once())->method('getMail')->willReturn($expected);
+    $driver = $this->createMock(MailCapabilityInterface::class);
+    $driver->expects($this->once())->method('mailGet')->willReturn($expected);
     $manager = new DrupalMailManager($driver);
     $this->assertSame($expected, $manager->getMail());
   }

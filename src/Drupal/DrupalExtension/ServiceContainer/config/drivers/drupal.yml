@@ -4,8 +4,8 @@ parameters:
   # Random generator.
   drupal.random.class: Drupal\Component\Utility\Random
 
-  # Core controllers.
-  drupal.driver.cores.8.class: Drupal\Driver\Cores\Drupal8
+  # Core controller.
+  drupal.driver.core.class: Drupal\Driver\Core\Core
 
 services:
   drupal.driver.random:
@@ -15,13 +15,12 @@ services:
     arguments:
       - "%drupal.driver.drupal.drupal_root%"
       - "%mink.base_url%"
-      - "@drupal.driver.random"
     tags:
       - { name: drupal.driver, alias: drupal }
-  drupal.driver.cores.8:
-    class: "%drupal.driver.cores.8.class%"
+  drupal.driver.core:
+    class: "%drupal.driver.core.class%"
     tags:
-      - { name: drupal.core, alias: 8 }
+      - { name: drupal.core }
     arguments:
       - "%drupal.driver.drupal.drupal_root%"
       - "%mink.base_url%"

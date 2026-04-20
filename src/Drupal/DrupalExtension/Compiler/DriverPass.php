@@ -22,39 +22,30 @@ class DriverPass implements CompilerPassInterface {
     }
 
     $drupalDefinition = $container->getDefinition('drupal.drupal');
+
     foreach ($container->findTaggedServiceIds('drupal.driver') as $id => $attributes) {
       foreach ($attributes as $attribute) {
         if (isset($attribute['alias']) && $name = $attribute['alias']) {
-          $drupalDefinition->addMethodCall(
-                'registerDriver',
-                [$name, new Reference($id)]
-            );
+          $drupalDefinition->addMethodCall('registerDriver', [$name, new Reference($id)]);
         }
       }
 
-      // If this is Drupal Driver, then a core controller needs to be
-      // instantiated as well.
-      if ('drupal.driver.drupal' === $id) {
-        $drupalDriverDefinition = $container->getDefinition($id);
-        $availableCores = [];
-        foreach ($container->findTaggedServiceIds('drupal.core') as $coreId => $coreAttributes) {
-          foreach ($coreAttributes as $coreAttribute) {
-            if (isset($coreAttribute['alias']) && $name = $coreAttribute['alias']) {
-              $availableCores[$name] = $container->getDefinition($coreId);
-            }
-          }
-        }
-        $drupalDriverDefinition->addMethodCall(
-              'setCore',
-              [$availableCores]
-          );
+      // The DrupalDriver in 3.x takes a single Core via setCore(). Resolve
+      // the first service tagged 'drupal.core' and inject it.
+      if ('drupal.driver.drupal' !== $id) {
+        continue;
       }
+
+      $coreIds = array_keys($container->findTaggedServiceIds('drupal.core'));
+
+      if ($coreIds === []) {
+        continue;
+      }
+
+      $container->getDefinition($id)->addMethodCall('setCore', [new Reference($coreIds[0])]);
     }
 
-    $drupalDefinition->addMethodCall(
-          'setDefaultDriverName',
-          [$container->getParameter('drupal.drupal.default_driver')]
-      );
+    $drupalDefinition->addMethodCall('setDefaultDriverName', [$container->getParameter('drupal.drupal.default_driver')]);
   }
 
 }

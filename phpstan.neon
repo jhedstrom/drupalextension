@@ -28,3 +28,18 @@ parameters:
       message: '#.*no value type specified in iterable type array.#'
       path: spec/*
       reportUnmatched: false
+    -
+      # The drupal-driver 3.x DriverInterface intentionally exposes only
+      # bootstrap/random methods; CRUD operations are split into capability
+      # interfaces. Driver-specific calls below are guarded by scenario
+      # tagging (e.g. '@api' enforces a DrupalDriver) rather than static
+      # type checks; PHPStan cannot prove the capability without a runtime
+      # check on every call site, so we accept the narrow miss here.
+      identifier: method.notFound
+      message: '#Call to an undefined method Drupal\\Driver\\DriverInterface::(cacheClear|cacheClearStatic|cronRun|fieldExists|fieldIsBase|nodeCreate|nodeDelete|termCreate|termDelete|userCreate|userDelete|userAddRole|roleCreate|roleDelete|configSet|processBatch)\(\)#'
+      path: src/Drupal/DrupalExtension/Context/*.php
+    -
+      # The driver returns mail in Drupal's array<string, mixed> format;
+      # the manager interface still types it as array<\stdClass> for BC.
+      message: '#Method Drupal\\DrupalMailManager::getMail\(\) should return#'
+      path: src/Drupal/DrupalMailManager.php

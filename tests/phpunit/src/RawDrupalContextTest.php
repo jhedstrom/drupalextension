@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\DrupalExtension\Tests;
 
-use Drupal\Driver\DriverInterface;
+use Drupal\Driver\Capability\FieldCapabilityInterface;
 use Drupal\DrupalDriverManagerInterface;
 use Drupal\DrupalExtension\Context\RawDrupalContext;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -28,8 +28,8 @@ class RawDrupalContextTest extends TestCase {
   protected function setUp(): void {
     $this->context = new RawDrupalContext();
 
-    $driver = $this->createMock(DriverInterface::class);
-    $driver->method('isField')->willReturn(TRUE);
+    $driver = $this->createMock(FieldCapabilityInterface::class);
+    $driver->method('fieldExists')->willReturn(TRUE);
 
     $drupal = $this->createMock(DrupalDriverManagerInterface::class);
     $drupal->method('getDriver')->willReturn($driver);
@@ -43,11 +43,11 @@ class RawDrupalContextTest extends TestCase {
   #[DataProvider('dataProviderParseEntityFields')]
   public function testParseEntityFields(array $input, array $expected, ?array $fields = NULL, ?array $baseFields = NULL, ?string $exception = NULL, array $ignored_properties = []): void {
     if ($fields !== NULL) {
-      $driver = $this->createMock(DriverInterface::class);
-      $driver->method('isField')->willReturnCallback(
+      $driver = $this->createMock(FieldCapabilityInterface::class);
+      $driver->method('fieldExists')->willReturnCallback(
         fn(string $entityType, string $fieldName): bool => in_array($fieldName, $fields, TRUE)
       );
-      $driver->method('isBaseField')->willReturnCallback(
+      $driver->method('fieldIsBase')->willReturnCallback(
         fn(string $entityType, string $fieldName): bool => in_array($fieldName, $baseFields ?? [], TRUE)
       );
 
@@ -228,9 +228,9 @@ class RawDrupalContextTest extends TestCase {
    * Tests that entity type is passed correctly to the driver.
    */
   public function testParseEntityFieldsPassesEntityType(): void {
-    $driver = $this->createMock(DriverInterface::class);
+    $driver = $this->createMock(FieldCapabilityInterface::class);
     $driver->expects($this->once())
-      ->method('isField')
+      ->method('fieldExists')
       ->with('taxonomy_term', 'field_test')
       ->willReturn(TRUE);
 

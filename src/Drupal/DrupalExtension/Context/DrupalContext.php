@@ -301,7 +301,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    */
   #[Given('the cache has been cleared')]
   public function assertCacheClear(): void {
-    $this->getDriver()->clearCache();
+    $this->getDriver()->cacheClear();
   }
 
   /**
@@ -313,7 +313,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    */
   #[Given('I run cron')]
   public function assertCron(): void {
-    $this->getDriver()->runCron();
+    $this->getDriver()->cronRun();
   }
 
   /**
