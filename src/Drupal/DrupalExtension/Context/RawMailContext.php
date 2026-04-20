@@ -61,10 +61,10 @@ class RawMailContext extends RawDrupalContext {
    * @param string $store
    *   The name of the mail store to get mail from.
    *
-   * @return \stdClass[]|\stdClass
-   *   An array of mail, each formatted as a Drupal 8
-   *   \Drupal\Core\Mail\MailInterface::mail $message array, or a single mail
-   *   object if $index is specified.
+   * @return array<int, array<string, mixed>>|array<string, mixed>
+   *   An array of mail messages keyed by index, or a single mail message
+   *   array when '$index' is specified. Each item follows Drupal's
+   *   'MailInterface::mail()' shape ('to', 'subject', 'body', etc.).
    */
   protected function getMail(array $criteria = [], bool $new = FALSE, ?int $index = NULL, string $store = 'default') {
     $messages = $this->getMailManager()->getMail($store);

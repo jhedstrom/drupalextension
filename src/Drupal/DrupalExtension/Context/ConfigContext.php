@@ -39,7 +39,15 @@ class ConfigContext extends RawDrupalContext implements TranslatableContext {
    */
   #[AfterScenario]
   public function cleanConfig(): void {
+    if ($this->config === []) {
+      return;
+    }
+
     $driver = $this->getDriver();
+
+    if (!$driver instanceof ConfigCapabilityInterface) {
+      return;
+    }
 
     // Revert config that was changed.
     foreach ($this->config as $name => $keyValue) {
@@ -55,6 +63,7 @@ class ConfigContext extends RawDrupalContext implements TranslatableContext {
         $driver->configSet($name, $key, $value);
       }
     }
+
     $this->config = [];
   }
 

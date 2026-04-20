@@ -6,7 +6,12 @@ namespace Drupal\DrupalExtension\Context;
 
 use Drupal\Component\Utility\Random;
 use Behat\Hook\AfterScenario;
+use Drupal\Driver\Capability\CacheCapabilityInterface;
+use Drupal\Driver\Capability\ContentCapabilityInterface;
+use Drupal\Driver\Capability\FieldCapabilityInterface;
 use Drupal\Driver\Capability\LanguageCapabilityInterface;
+use Drupal\Driver\Capability\RoleCapabilityInterface;
+use Drupal\Driver\Capability\UserCapabilityInterface;
 use Drupal\Driver\DrupalDriver;
 use Drupal\DrupalExtension\Hook\Attribute\BeforeNodeCreate;
 use Drupal\taxonomy\Entity\Vocabulary;
@@ -189,10 +194,20 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    */
   #[AfterScenario]
   public function cleanNodes(): void {
-    // Remove any nodes that were created.
-    foreach ($this->nodes as $node) {
-      $this->getDriver()->nodeDelete($node);
+    if ($this->nodes === []) {
+      return;
     }
+
+    $driver = $this->getDriver();
+
+    if (!$driver instanceof ContentCapabilityInterface) {
+      return;
+    }
+
+    foreach ($this->nodes as $node) {
+      $driver->nodeDelete($node);
+    }
+
     $this->nodes = [];
   }
 
@@ -201,12 +216,14 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    */
   #[AfterScenario]
   public function cleanUsers(): void {
-    // Remove any users that were created.
-    if ($this->userManager->hasUsers()) {
+    $driver = $this->getDriver();
+
+    if ($this->userManager->hasUsers() && $driver instanceof UserCapabilityInterface) {
       foreach ($this->userManager->getUsers() as $user) {
-        $this->getDriver()->userDelete($user);
+        $driver->userDelete($user);
       }
-      $this->getDriver()->processBatch();
+
+      $this->processDriverBatch($driver);
       $this->userManager->clearUsers();
     }
 
@@ -222,14 +239,38 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
   }
 
   /**
+   * Drains pending Drupal batch operations on drivers that support batches.
+   *
+   * 'processBatch()' lives on the concrete 'DrupalDriver' / 'DrushDriver'
+   * classes but is not part of any 'Capability' interface, so guard the
+   * call with an explicit method existence check rather than a type
+   * narrowing.
+   */
+  protected function processDriverBatch(object $driver): void {
+    if (method_exists($driver, 'processBatch')) {
+      $driver->processBatch();
+    }
+  }
+
+  /**
    * Remove any created terms.
    */
   #[AfterScenario]
   public function cleanTerms(): void {
-    // Remove any terms that were created.
-    foreach (array_reverse($this->terms) as $term) {
-      $this->getDriver()->termDelete($term);
+    if ($this->terms === []) {
+      return;
     }
+
+    $driver = $this->getDriver();
+
+    if (!$driver instanceof ContentCapabilityInterface) {
+      return;
+    }
+
+    foreach (array_reverse($this->terms) as $term) {
+      $driver->termDelete($term);
+    }
+
     $this->terms = [];
   }
 
@@ -238,10 +279,20 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    */
   #[AfterScenario]
   public function cleanRoles(): void {
-    // Remove any roles that were created.
-    foreach ($this->roles as $role) {
-      $this->getDriver()->roleDelete($role);
+    if ($this->roles === []) {
+      return;
     }
+
+    $driver = $this->getDriver();
+
+    if (!$driver instanceof RoleCapabilityInterface) {
+      return;
+    }
+
+    foreach ($this->roles as $role) {
+      $driver->roleDelete($role);
+    }
+
     $this->roles = [];
   }
 
@@ -271,7 +322,11 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    */
   #[AfterScenario('@api')]
   public function clearStaticCaches(): void {
-    $this->getDriver()->cacheClearStatic();
+    $driver = $this->getDriver();
+
+    if ($driver instanceof CacheCapabilityInterface) {
+      $driver->cacheClearStatic();
+    }
   }
 
   /**
@@ -301,12 +356,18 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    * @return object
    *   The created node.
    */
-  public function nodeCreate(\stdClass $node) {
+  public function nodeCreate(\stdClass $node): object {
     $this->dispatchHooks(BeforeNodeCreateScope::class, $node);
     $this->parseEntityFields('node', $node, ['author']);
 
+    $driver = $this->getDriver();
+
+    if (!$driver instanceof ContentCapabilityInterface) {
+      throw new \RuntimeException(sprintf('The active Drupal driver "%s" does not support content creation.', $driver::class));
+    }
+
     $scalars = $this->captureScalarBaseFields($node);
-    $saved = $this->getDriver()->nodeCreate($node);
+    $saved = $driver->nodeCreate($node);
     $this->restoreScalarBaseFields($saved, $scalars);
 
     $this->dispatchHooks(AfterNodeCreateScope::class, $saved);
@@ -402,6 +463,12 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    *   configurable field, a base field, nor in the ignored list.
    */
   public function parseEntityFields(string $entity_type, \stdClass $entity, array $ignored_properties = []): void {
+    $driver = $this->getDriver();
+
+    if (!$driver instanceof FieldCapabilityInterface) {
+      throw new \RuntimeException(sprintf('The active Drupal driver "%s" does not support field inspection.', $driver::class));
+    }
+
     $multicolumnField = '';
     $multicolumnColumn = '';
     $multicolumnFields = [];
@@ -430,7 +497,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
 
       $isMulticolumn = $multicolumnField && $multicolumnColumn;
       $fieldName = $multicolumnField ?: $field;
-      if ($this->getDriver()->fieldExists($entity_type, $fieldName)) {
+      if ($driver->fieldExists($entity_type, $fieldName)) {
         // Split up multiple values in multi-value fields.
         $values = [];
         foreach (str_getcsv((string) $fieldValue, escape: "\\") as $key => $value) {
@@ -475,7 +542,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
           }
         }
       }
-      elseif (!$this->getDriver()->fieldIsBase($entity_type, $fieldName) && !in_array($fieldName, $ignored_properties, TRUE)) {
+      elseif (!$driver->fieldIsBase($entity_type, $fieldName) && !in_array($fieldName, $ignored_properties, TRUE)) {
         throw new \RuntimeException(sprintf('Field "%s" does not exist on entity type "%s".', $fieldName, $entity_type));
       }
     }
@@ -499,8 +566,14 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
     $this->dispatchHooks(BeforeUserCreateScope::class, $user);
     $this->parseEntityFields('user', $user, ['role']);
 
+    $driver = $this->getDriver();
+
+    if (!$driver instanceof UserCapabilityInterface) {
+      throw new \RuntimeException(sprintf('The active Drupal driver "%s" does not support user creation.', $driver::class));
+    }
+
     $scalars = $this->captureScalarBaseFields($user);
-    $this->getDriver()->userCreate($user);
+    $driver->userCreate($user);
     $this->restoreScalarBaseFields($user, $scalars);
 
     $this->dispatchHooks(AfterUserCreateScope::class, $user);
@@ -515,7 +588,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    * @return object
    *   The created term.
    */
-  public function termCreate(\stdClass $term) {
+  public function termCreate(\stdClass $term): object {
     // The 3.x DrupalDriver only loads vocabularies by machine name. Allow
     // the Gherkin author to pass either the machine name or the human
     // label by resolving the label to a machine name when the literal
@@ -538,8 +611,14 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
     $this->dispatchHooks(BeforeTermCreateScope::class, $term);
     $this->parseEntityFields('taxonomy_term', $term, ['vocabulary_machine_name']);
 
+    $driver = $this->getDriver();
+
+    if (!$driver instanceof ContentCapabilityInterface) {
+      throw new \RuntimeException(sprintf('The active Drupal driver "%s" does not support term creation.', $driver::class));
+    }
+
     $scalars = $this->captureScalarBaseFields($term);
-    $saved = $this->getDriver()->termCreate($term);
+    $saved = $driver->termCreate($term);
     $this->restoreScalarBaseFields($saved, $scalars);
 
     $this->dispatchHooks(AfterTermCreateScope::class, $saved);

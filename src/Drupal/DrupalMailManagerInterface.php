@@ -35,9 +35,10 @@ interface DrupalMailManagerInterface {
    * @param string $store
    *   The name of the mail store to get mail from.
    *
-   * @return \stdClass[]
-   *   An array of collected emails, each formatted as a Drupal 8
-   *   \Drupal\Core\Mail\MailInterface::mail $message array.
+   * @return array<int, array<string, mixed>>
+   *   An array of collected emails. Each item is a Drupal mail message
+   *   array as produced by 'MailInterface::mail()' - the keys include
+   *   'to', 'subject', 'body', 'headers', etc.
    */
   public function getMail($store);
 

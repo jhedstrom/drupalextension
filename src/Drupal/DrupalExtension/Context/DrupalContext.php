@@ -10,6 +10,10 @@ use Behat\Behat\Context\TranslatableContext;
 use Behat\Mink\Element\Element;
 
 use Behat\Gherkin\Node\TableNode;
+use Drupal\Driver\Capability\CacheCapabilityInterface;
+use Drupal\Driver\Capability\CronCapabilityInterface;
+use Drupal\Driver\Capability\RoleCapabilityInterface;
+use Drupal\Driver\Capability\UserCapabilityInterface;
 
 /**
  * Provides pre-built step definitions for interacting with Drupal.
@@ -84,12 +88,18 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
     $user = $this->createUserStub($role, $extra_fields);
     $this->userCreate($user);
 
-    $roles = explode(',', $role);
+    $driver = $this->getDriver();
 
+    if (!$driver instanceof UserCapabilityInterface) {
+      throw new \RuntimeException(sprintf('The active Drupal driver "%s" does not support user role assignment.', $driver::class));
+    }
+
+    $roles = explode(',', $role);
     $roles = array_map(trim(...), $roles);
+
     foreach ($roles as $role) {
       if (!in_array(strtolower($role), ['authenticated', 'authenticated user'], TRUE)) {
-        $this->getDriver()->userAddRole($user, $role);
+        $driver->userAddRole($user, $role);
       }
     }
 
@@ -142,12 +152,18 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    */
   #[Given('I am logged in as a user with the :permissions permission(s)')]
   public function assertLoggedInWithPermissions(string $permissions): void {
+    $driver = $this->getDriver();
+
+    if (!$driver instanceof RoleCapabilityInterface || !$driver instanceof UserCapabilityInterface) {
+      throw new \RuntimeException(sprintf('The active Drupal driver "%s" does not support role and user management.', $driver::class));
+    }
+
     $permissions = array_map(trim(...), explode(',', $permissions));
-    $role = $this->getDriver()->roleCreate($permissions);
+    $role = $driver->roleCreate($permissions);
 
     $user = $this->createUserStub($role);
     $this->userCreate($user);
-    $this->getDriver()->userAddRole($user, $role);
+    $driver->userAddRole($user, $role);
     $this->roles[] = $role;
 
     $this->login($user);
@@ -301,7 +317,13 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    */
   #[Given('the cache has been cleared')]
   public function assertCacheClear(): void {
-    $this->getDriver()->cacheClear();
+    $driver = $this->getDriver();
+
+    if (!$driver instanceof CacheCapabilityInterface) {
+      throw new \RuntimeException(sprintf('The active Drupal driver "%s" does not support cache clearing.', $driver::class));
+    }
+
+    $driver->cacheClear();
   }
 
   /**
@@ -313,7 +335,13 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    */
   #[Given('I run cron')]
   public function assertCron(): void {
-    $this->getDriver()->cronRun();
+    $driver = $this->getDriver();
+
+    if (!$driver instanceof CronCapabilityInterface) {
+      throw new \RuntimeException(sprintf('The active Drupal driver "%s" does not support running cron.', $driver::class));
+    }
+
+    $driver->cronRun();
   }
 
   /**
@@ -466,9 +494,16 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    */
   #[Given('users:')]
   public function createUsers(TableNode $usersTable): void {
+    $driver = $this->getDriver();
+
+    if (!$driver instanceof UserCapabilityInterface) {
+      throw new \RuntimeException(sprintf('The active Drupal driver "%s" does not support user creation.', $driver::class));
+    }
+
     foreach ($usersTable->getHash() as $userHash) {
       // Split out roles to process after user is created.
       $roles = [];
+
       if (isset($userHash['roles'])) {
         $roles = explode(',', $userHash['roles']);
         $roles = array_filter(array_map(trim(...), $roles));
@@ -480,11 +515,11 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
       if (!isset($user->pass)) {
         $user->pass = $this->getRandom()->name();
       }
+
       $this->userCreate($user);
 
-      // Assign roles.
       foreach ($roles as $role) {
-        $this->getDriver()->userAddRole($user, $role);
+        $driver->userAddRole($user, $role);
       }
     }
   }
