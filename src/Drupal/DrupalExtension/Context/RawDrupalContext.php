@@ -8,7 +8,6 @@ use Drupal\Component\Utility\Random;
 use Behat\Hook\AfterScenario;
 use Drupal\Driver\Capability\CacheCapabilityInterface;
 use Drupal\Driver\Capability\ContentCapabilityInterface;
-use Drupal\Driver\Capability\FieldCapabilityInterface;
 use Drupal\Driver\Capability\LanguageCapabilityInterface;
 use Drupal\Driver\Capability\RoleCapabilityInterface;
 use Drupal\Driver\Capability\UserCapabilityInterface;
@@ -465,9 +464,11 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
   public function parseEntityFields(string $entity_type, \stdClass $entity, array $ignored_properties = []): void {
     $driver = $this->getDriver();
 
-    if (!$driver instanceof FieldCapabilityInterface) {
+    if (!$driver instanceof DrupalDriver) {
       throw new \RuntimeException(sprintf('The active Drupal driver "%s" does not support field inspection.', $driver::class));
     }
+
+    $classifier = $driver->getCore()->classifier();
 
     $multicolumnField = '';
     $multicolumnColumn = '';
@@ -497,7 +498,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
 
       $isMulticolumn = $multicolumnField && $multicolumnColumn;
       $fieldName = $multicolumnField ?: $field;
-      if ($driver->fieldExists($entity_type, $fieldName)) {
+      if ($classifier->fieldIsConfigurable($entity_type, $fieldName)) {
         // Split up multiple values in multi-value fields.
         $values = [];
         foreach (str_getcsv((string) $fieldValue, escape: "\\") as $key => $value) {
@@ -542,7 +543,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
           }
         }
       }
-      elseif (!$driver->fieldIsBase($entity_type, $fieldName) && !in_array($fieldName, $ignored_properties, TRUE)) {
+      elseif (!$classifier->fieldIsBaseStandard($entity_type, $fieldName) && !in_array($fieldName, $ignored_properties, TRUE)) {
         throw new \RuntimeException(sprintf('Field "%s" does not exist on entity type "%s".', $fieldName, $entity_type));
       }
     }
