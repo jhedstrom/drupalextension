@@ -543,8 +543,21 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
           }
         }
       }
-      elseif (!$classifier->fieldIsBaseStandard($entity_type, $fieldName) && !in_array($fieldName, $ignored_properties, TRUE)) {
-        throw new \RuntimeException(sprintf('Field "%s" does not exist on entity type "%s".', $fieldName, $entity_type));
+      else {
+        // The v2 'fieldIsBase()' predicate returned TRUE for any field in
+        // 'getBaseFieldDefinitions()'. The v3 classifier splits that set
+        // across F1-F4 (standard, computed read-only, computed writable,
+        // custom storage), so the OR replaces the single v2 check and keeps
+        // computed/custom-storage base fields like 'moderation_state' from
+        // tripping the unknown-field guard.
+        $isBaseField = $classifier->fieldIsBaseStandard($entity_type, $fieldName)
+          || $classifier->fieldIsBaseComputedReadOnly($entity_type, $fieldName)
+          || $classifier->fieldIsBaseComputedWritable($entity_type, $fieldName)
+          || $classifier->fieldIsBaseCustomStorage($entity_type, $fieldName);
+
+        if (!$isBaseField && !in_array($fieldName, $ignored_properties, TRUE)) {
+          throw new \RuntimeException(sprintf('Field "%s" does not exist on entity type "%s".', $fieldName, $entity_type));
+        }
       }
     }
 
