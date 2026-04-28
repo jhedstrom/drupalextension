@@ -12,6 +12,7 @@ use Behat\Hook\AfterScenario;
 use Behat\Step\Given;
 use Behat\Behat\Context\TranslatableContext;
 use Behat\Gherkin\Node\TableNode;
+use Drupal\Driver\Capability\ConfigCapabilityInterface;
 use Drupal\Driver\DrupalDriver;
 
 /**
@@ -38,7 +39,15 @@ class ConfigContext extends RawDrupalContext implements TranslatableContext {
    */
   #[AfterScenario]
   public function cleanConfig(): void {
+    if ($this->config === []) {
+      return;
+    }
+
     $driver = $this->getDriver();
+
+    if (!$driver instanceof ConfigCapabilityInterface) {
+      return;
+    }
 
     // Revert config that was changed.
     foreach ($this->config as $name => $keyValue) {
@@ -54,6 +63,7 @@ class ConfigContext extends RawDrupalContext implements TranslatableContext {
         $driver->configSet($name, $key, $value);
       }
     }
+
     $this->config = [];
   }
 
@@ -168,13 +178,14 @@ class ConfigContext extends RawDrupalContext implements TranslatableContext {
    */
   protected function setConfig(string $name, string $key, mixed $value): void {
     $driver = $this->getDriver();
-    if ($driver instanceof DrupalDriver) {
-      $backup = $driver->getCore()->configGetOriginal($name, $key);
+
+    if (!$driver instanceof ConfigCapabilityInterface) {
+      throw new \RuntimeException(sprintf('The active Drupal driver "%s" does not support configuration management.', $driver::class));
     }
-    else {
-      $backup = $driver->configGet($name, $key);
-    }
+
+    $backup = $driver->configGetOriginal($name, $key);
     $driver->configSet($name, $key, $value);
+
     if (!array_key_exists($name, $this->config)) {
       $this->config[$name][$key] = $backup;
       return;

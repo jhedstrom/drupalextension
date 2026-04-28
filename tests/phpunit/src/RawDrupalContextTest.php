@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\DrupalExtension\Tests;
 
-use Drupal\Driver\DriverInterface;
+use Drupal\Driver\Core\CoreInterface;
+use Drupal\Driver\Core\Field\FieldClassifierInterface;
+use Drupal\Driver\DrupalDriver;
 use Drupal\DrupalDriverManagerInterface;
 use Drupal\DrupalExtension\Context\RawDrupalContext;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -28,8 +30,14 @@ class RawDrupalContextTest extends TestCase {
   protected function setUp(): void {
     $this->context = new RawDrupalContext();
 
-    $driver = $this->createMock(DriverInterface::class);
-    $driver->method('isField')->willReturn(TRUE);
+    $classifier = $this->createMock(FieldClassifierInterface::class);
+    $classifier->method('fieldIsConfigurable')->willReturn(TRUE);
+
+    $core = $this->createMock(CoreInterface::class);
+    $core->method('classifier')->willReturn($classifier);
+
+    $driver = $this->createMock(DrupalDriver::class);
+    $driver->method('getCore')->willReturn($core);
 
     $drupal = $this->createMock(DrupalDriverManagerInterface::class);
     $drupal->method('getDriver')->willReturn($driver);
@@ -43,13 +51,22 @@ class RawDrupalContextTest extends TestCase {
   #[DataProvider('dataProviderParseEntityFields')]
   public function testParseEntityFields(array $input, array $expected, ?array $fields = NULL, ?array $baseFields = NULL, ?string $exception = NULL, array $ignored_properties = []): void {
     if ($fields !== NULL) {
-      $driver = $this->createMock(DriverInterface::class);
-      $driver->method('isField')->willReturnCallback(
+      $isBaseField = fn(string $entityType, string $fieldName): bool => in_array($fieldName, $baseFields ?? [], TRUE);
+
+      $classifier = $this->createMock(FieldClassifierInterface::class);
+      $classifier->method('fieldIsConfigurable')->willReturnCallback(
         fn(string $entityType, string $fieldName): bool => in_array($fieldName, $fields, TRUE)
       );
-      $driver->method('isBaseField')->willReturnCallback(
-        fn(string $entityType, string $fieldName): bool => in_array($fieldName, $baseFields ?? [], TRUE)
-      );
+      $classifier->method('fieldIsBaseStandard')->willReturnCallback($isBaseField);
+      $classifier->method('fieldIsBaseComputedReadOnly')->willReturnCallback($isBaseField);
+      $classifier->method('fieldIsBaseComputedWritable')->willReturnCallback($isBaseField);
+      $classifier->method('fieldIsBaseCustomStorage')->willReturnCallback($isBaseField);
+
+      $core = $this->createMock(CoreInterface::class);
+      $core->method('classifier')->willReturn($classifier);
+
+      $driver = $this->createMock(DrupalDriver::class);
+      $driver->method('getCore')->willReturn($core);
 
       $drupal = $this->createMock(DrupalDriverManagerInterface::class);
       $drupal->method('getDriver')->willReturn($driver);
@@ -225,14 +242,71 @@ class RawDrupalContextTest extends TestCase {
   }
 
   /**
+   * Tests that non-F1 base fields pass through without throwing.
+   *
+   * Regression guard: the v2 'fieldIsBase()' check covered all four base
+   * F-rows, so computed-writable base fields like 'moderation_state' (F3)
+   * must not trigger the unknown-field error in v3.
+   */
+  #[DataProvider('dataProviderNonStandardBaseFields')]
+  public function testParseEntityFieldsAcceptsNonStandardBaseFields(string $truePredicate): void {
+    $basePredicates = [
+      'fieldIsBaseStandard',
+      'fieldIsBaseComputedReadOnly',
+      'fieldIsBaseComputedWritable',
+      'fieldIsBaseCustomStorage',
+    ];
+
+    $classifier = $this->createMock(FieldClassifierInterface::class);
+    $classifier->method('fieldIsConfigurable')->willReturn(FALSE);
+
+    foreach ($basePredicates as $predicate) {
+      $classifier->method($predicate)->willReturn($predicate === $truePredicate);
+    }
+
+    $core = $this->createMock(CoreInterface::class);
+    $core->method('classifier')->willReturn($classifier);
+
+    $driver = $this->createMock(DrupalDriver::class);
+    $driver->method('getCore')->willReturn($core);
+
+    $drupal = $this->createMock(DrupalDriverManagerInterface::class);
+    $drupal->method('getDriver')->willReturn($driver);
+
+    $context = new RawDrupalContext();
+    $context->setDrupal($drupal);
+
+    $entity = (object) ['moderation_state' => 'draft'];
+    $context->parseEntityFields('node', $entity);
+
+    $this->assertSame(['moderation_state' => 'draft'], (array) $entity);
+  }
+
+  /**
+   * Provides data for testParseEntityFieldsAcceptsNonStandardBaseFields().
+   */
+  public static function dataProviderNonStandardBaseFields(): \Iterator {
+    yield 'F1 base standard' => ['fieldIsBaseStandard'];
+    yield 'F2 base computed read-only' => ['fieldIsBaseComputedReadOnly'];
+    yield 'F3 base computed writable' => ['fieldIsBaseComputedWritable'];
+    yield 'F4 base custom storage' => ['fieldIsBaseCustomStorage'];
+  }
+
+  /**
    * Tests that entity type is passed correctly to the driver.
    */
   public function testParseEntityFieldsPassesEntityType(): void {
-    $driver = $this->createMock(DriverInterface::class);
-    $driver->expects($this->once())
-      ->method('isField')
+    $classifier = $this->createMock(FieldClassifierInterface::class);
+    $classifier->expects($this->once())
+      ->method('fieldIsConfigurable')
       ->with('taxonomy_term', 'field_test')
       ->willReturn(TRUE);
+
+    $core = $this->createMock(CoreInterface::class);
+    $core->method('classifier')->willReturn($classifier);
+
+    $driver = $this->createMock(DrupalDriver::class);
+    $driver->method('getCore')->willReturn($core);
 
     $drupal = $this->createMock(DrupalDriverManagerInterface::class);
     $drupal->method('getDriver')->willReturn($driver);

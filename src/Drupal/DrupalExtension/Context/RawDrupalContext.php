@@ -4,9 +4,16 @@ declare(strict_types=1);
 
 namespace Drupal\DrupalExtension\Context;
 
+use Drupal\Component\Utility\Random;
 use Behat\Hook\AfterScenario;
+use Drupal\Driver\Capability\CacheCapabilityInterface;
+use Drupal\Driver\Capability\ContentCapabilityInterface;
+use Drupal\Driver\Capability\LanguageCapabilityInterface;
+use Drupal\Driver\Capability\RoleCapabilityInterface;
+use Drupal\Driver\Capability\UserCapabilityInterface;
 use Drupal\Driver\DrupalDriver;
 use Drupal\DrupalExtension\Hook\Attribute\BeforeNodeCreate;
+use Drupal\taxonomy\Entity\Vocabulary;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Behat\Testwork\Hook\HookDispatcher;
 use Behat\Behat\Context\Environment\InitializedContextEnvironment;
@@ -149,7 +156,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
   /**
    * Get driver's random generator.
    */
-  public function getRandom() {
+  public function getRandom(): Random {
     return $this->getDriver()->getRandom();
   }
 
@@ -160,22 +167,23 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
   public static function alterNodeParameters(BeforeNodeCreateScope $scope): void {
     $node = $scope->getEntity();
 
-    // Get the Drupal API version if available. This is not available when
-    // using e.g. the BlackBoxDriver or DrushDriver.
-    $apiVersion = NULL;
+    // Convert string dates on timestamp fields when the in-process Drupal
+    // driver is active. Blackbox and Drush drivers route around this entity
+    // pipeline entirely, so the conversion is only meaningful for the API
+    // path.
     $context = $scope->getContext();
-    if ($context instanceof DrupalAwareInterface) {
-      $driver = $context->getDrupal()->getDriver();
-      if ($driver instanceof DrupalDriver) {
-        $apiVersion = $driver->version;
-      }
+
+    if (!$context instanceof DrupalAwareInterface) {
+      return;
     }
 
-    if ($apiVersion === 8) {
-      foreach (['changed', 'created', 'revision_timestamp'] as $field) {
-        if (!empty($node->$field) && !is_numeric($node->$field)) {
-          $node->$field = strtotime((string) $node->$field);
-        }
+    if (!$context->getDrupal()->getDriver() instanceof DrupalDriver) {
+      return;
+    }
+
+    foreach (['changed', 'created', 'revision_timestamp'] as $field) {
+      if (!empty($node->$field) && !is_numeric($node->$field)) {
+        $node->$field = strtotime((string) $node->$field);
       }
     }
   }
@@ -185,10 +193,20 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    */
   #[AfterScenario]
   public function cleanNodes(): void {
-    // Remove any nodes that were created.
-    foreach ($this->nodes as $node) {
-      $this->getDriver()->nodeDelete($node);
+    if ($this->nodes === []) {
+      return;
     }
+
+    $driver = $this->getDriver();
+
+    if (!$driver instanceof ContentCapabilityInterface) {
+      return;
+    }
+
+    foreach ($this->nodes as $node) {
+      $driver->nodeDelete($node);
+    }
+
     $this->nodes = [];
   }
 
@@ -197,12 +215,14 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    */
   #[AfterScenario]
   public function cleanUsers(): void {
-    // Remove any users that were created.
-    if ($this->userManager->hasUsers()) {
+    $driver = $this->getDriver();
+
+    if ($this->userManager->hasUsers() && $driver instanceof UserCapabilityInterface) {
       foreach ($this->userManager->getUsers() as $user) {
-        $this->getDriver()->userDelete($user);
+        $driver->userDelete($user);
       }
-      $this->getDriver()->processBatch();
+
+      $this->processDriverBatch($driver);
       $this->userManager->clearUsers();
     }
 
@@ -218,14 +238,38 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
   }
 
   /**
+   * Drains pending Drupal batch operations on drivers that support batches.
+   *
+   * 'processBatch()' lives on the concrete 'DrupalDriver' / 'DrushDriver'
+   * classes but is not part of any 'Capability' interface, so guard the
+   * call with an explicit method existence check rather than a type
+   * narrowing.
+   */
+  protected function processDriverBatch(object $driver): void {
+    if (method_exists($driver, 'processBatch')) {
+      $driver->processBatch();
+    }
+  }
+
+  /**
    * Remove any created terms.
    */
   #[AfterScenario]
   public function cleanTerms(): void {
-    // Remove any terms that were created.
-    foreach (array_reverse($this->terms) as $term) {
-      $this->getDriver()->termDelete($term);
+    if ($this->terms === []) {
+      return;
     }
+
+    $driver = $this->getDriver();
+
+    if (!$driver instanceof ContentCapabilityInterface) {
+      return;
+    }
+
+    foreach (array_reverse($this->terms) as $term) {
+      $driver->termDelete($term);
+    }
+
     $this->terms = [];
   }
 
@@ -234,10 +278,20 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    */
   #[AfterScenario]
   public function cleanRoles(): void {
-    // Remove any roles that were created.
-    foreach ($this->roles as $role) {
-      $this->getDriver()->roleDelete($role);
+    if ($this->roles === []) {
+      return;
     }
+
+    $driver = $this->getDriver();
+
+    if (!$driver instanceof RoleCapabilityInterface) {
+      return;
+    }
+
+    foreach ($this->roles as $role) {
+      $driver->roleDelete($role);
+    }
+
     $this->roles = [];
   }
 
@@ -246,10 +300,18 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    */
   #[AfterScenario]
   public function cleanLanguages(): void {
-    // Delete any languages that were created.
+    if ($this->languages === []) {
+      return;
+    }
+
+    $driver = $this->getDriver();
+
+    if (!$driver instanceof LanguageCapabilityInterface) {
+      return;
+    }
+
     foreach ($this->languages as $language) {
-      // @phpstan-ignore method.notFound
-      $this->getDriver()->languageDelete($language);
+      $driver->languageDelete($language);
       unset($this->languages[$language->langcode]);
     }
   }
@@ -259,7 +321,11 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    */
   #[AfterScenario('@api')]
   public function clearStaticCaches(): void {
-    $this->getDriver()->clearStaticCaches();
+    $driver = $this->getDriver();
+
+    if ($driver instanceof CacheCapabilityInterface) {
+      $driver->cacheClearStatic();
+    }
   }
 
   /**
@@ -289,12 +355,23 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    * @return object
    *   The created node.
    */
-  public function nodeCreate(\stdClass $node) {
+  public function nodeCreate(\stdClass $node): object {
     $this->dispatchHooks(BeforeNodeCreateScope::class, $node);
     $this->parseEntityFields('node', $node, ['author']);
-    $saved = $this->getDriver()->createNode($node);
+
+    $driver = $this->getDriver();
+
+    if (!$driver instanceof ContentCapabilityInterface) {
+      throw new \RuntimeException(sprintf('The active Drupal driver "%s" does not support content creation.', $driver::class));
+    }
+
+    $scalars = $this->captureScalarBaseFields($node);
+    $saved = $driver->nodeCreate($node);
+    $this->restoreScalarBaseFields($saved, $scalars);
+
     $this->dispatchHooks(AfterNodeCreateScope::class, $saved);
     $this->nodes[] = $saved;
+
     return $saved;
   }
 
@@ -385,6 +462,14 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    *   configurable field, a base field, nor in the ignored list.
    */
   public function parseEntityFields(string $entity_type, \stdClass $entity, array $ignored_properties = []): void {
+    $driver = $this->getDriver();
+
+    if (!$driver instanceof DrupalDriver) {
+      throw new \RuntimeException(sprintf('The active Drupal driver "%s" does not support field inspection.', $driver::class));
+    }
+
+    $classifier = $driver->getCore()->classifier();
+
     $multicolumnField = '';
     $multicolumnColumn = '';
     $multicolumnFields = [];
@@ -413,7 +498,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
 
       $isMulticolumn = $multicolumnField && $multicolumnColumn;
       $fieldName = $multicolumnField ?: $field;
-      if ($this->getDriver()->isField($entity_type, $fieldName)) {
+      if ($classifier->fieldIsConfigurable($entity_type, $fieldName)) {
         // Split up multiple values in multi-value fields.
         $values = [];
         foreach (str_getcsv((string) $fieldValue, escape: "\\") as $key => $value) {
@@ -458,8 +543,21 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
           }
         }
       }
-      elseif (!$this->getDriver()->isBaseField($entity_type, $fieldName) && !in_array($fieldName, $ignored_properties, TRUE)) {
-        throw new \RuntimeException(sprintf('Field "%s" does not exist on entity type "%s".', $fieldName, $entity_type));
+      else {
+        // The v2 'fieldIsBase()' predicate returned TRUE for any field in
+        // 'getBaseFieldDefinitions()'. The v3 classifier splits that set
+        // across F1-F4 (standard, computed read-only, computed writable,
+        // custom storage), so the OR replaces the single v2 check and keeps
+        // computed/custom-storage base fields like 'moderation_state' from
+        // tripping the unknown-field guard.
+        $isBaseField = $classifier->fieldIsBaseStandard($entity_type, $fieldName)
+          || $classifier->fieldIsBaseComputedReadOnly($entity_type, $fieldName)
+          || $classifier->fieldIsBaseComputedWritable($entity_type, $fieldName)
+          || $classifier->fieldIsBaseCustomStorage($entity_type, $fieldName);
+
+        if (!$isBaseField && !in_array($fieldName, $ignored_properties, TRUE)) {
+          throw new \RuntimeException(sprintf('Field "%s" does not exist on entity type "%s".', $fieldName, $entity_type));
+        }
       }
     }
 
@@ -481,9 +579,20 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
   public function userCreate(\stdClass $user): \stdClass {
     $this->dispatchHooks(BeforeUserCreateScope::class, $user);
     $this->parseEntityFields('user', $user, ['role']);
-    $this->getDriver()->userCreate($user);
+
+    $driver = $this->getDriver();
+
+    if (!$driver instanceof UserCapabilityInterface) {
+      throw new \RuntimeException(sprintf('The active Drupal driver "%s" does not support user creation.', $driver::class));
+    }
+
+    $scalars = $this->captureScalarBaseFields($user);
+    $driver->userCreate($user);
+    $this->restoreScalarBaseFields($user, $scalars);
+
     $this->dispatchHooks(AfterUserCreateScope::class, $user);
     $this->userManager->addUser($user);
+
     return $user;
   }
 
@@ -493,29 +602,99 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    * @return object
    *   The created term.
    */
-  public function termCreate(\stdClass $term) {
-    // Resolve parent term name to tid before dispatching hooks or parsing
-    // fields. This allows users to specify a human-readable parent name in
-    // Gherkin tables and throws early if the parent cannot be found.
-    if (!empty($term->parent)) {
-      $parent = $this->getExistingTerm($term->parent, $term->vocabulary_machine_name);
+  public function termCreate(\stdClass $term): object {
+    // The 3.x DrupalDriver only loads vocabularies by machine name. Allow
+    // the Gherkin author to pass either the machine name or the human
+    // label by resolving the label to a machine name when the literal
+    // string does not match a vocabulary id. Resolution is best-effort -
+    // the driver throws a clearer error than we could when the lookup
+    // ultimately fails.
+    if (!empty($term->vocabulary_machine_name)) {
+      $term->vocabulary_machine_name = $this->resolveVocabularyMachineName($term->vocabulary_machine_name);
+    }
 
-      if (!$parent instanceof \stdClass) {
-        throw new \RuntimeException(sprintf('Parent term "%s" not found in vocabulary "%s".', $term->parent, $term->vocabulary_machine_name));
-      }
-
-      $term->parent = $parent->tid;
+    // The 3.x DrupalDriver resolves a 'parent' property as a term name
+    // against the configured vocabulary and throws if it does not exist;
+    // pass the name through unchanged. An empty 'parent' must be removed
+    // so the field-handler pipeline does not try to expand the empty
+    // string as an entity reference.
+    if (empty($term->parent)) {
+      unset($term->parent);
     }
 
     $this->dispatchHooks(BeforeTermCreateScope::class, $term);
     $this->parseEntityFields('taxonomy_term', $term, ['vocabulary_machine_name']);
 
-    $saved = $this->getDriver()->createTerm($term);
+    $driver = $this->getDriver();
+
+    if (!$driver instanceof ContentCapabilityInterface) {
+      throw new \RuntimeException(sprintf('The active Drupal driver "%s" does not support term creation.', $driver::class));
+    }
+
+    $scalars = $this->captureScalarBaseFields($term);
+    $saved = $driver->termCreate($term);
+    $this->restoreScalarBaseFields($saved, $scalars);
 
     $this->dispatchHooks(AfterTermCreateScope::class, $saved);
     $this->terms[] = $saved;
 
     return $saved;
+  }
+
+  /**
+   * Resolves a vocabulary identifier to its machine name.
+   *
+   * Accepts either the machine name (returned as-is) or the human label
+   * (looked up via the vocabulary storage). Falls back to the original
+   * value when no label match exists, leaving the driver to surface a
+   * not-found error.
+   */
+  protected function resolveVocabularyMachineName(string $identifier): string {
+    if (!class_exists(Vocabulary::class) || Vocabulary::load($identifier) instanceof Vocabulary) {
+      return $identifier;
+    }
+
+    foreach (Vocabulary::loadMultiple() as $vocabulary) {
+      if ($vocabulary->label() === $identifier) {
+        return $vocabulary->id();
+      }
+    }
+
+    return $identifier;
+  }
+
+  /**
+   * Captures scalar properties on an entity stub.
+   *
+   * The 3.x DrupalDriver runs base fields through the field-handler
+   * pipeline during create, which casts scalar properties such as
+   * 'title', 'name', 'mail' or 'pass' to single-element arrays. Most
+   * drupalextension downstream code (user manager indexing, login flow,
+   * stub matching) expects scalars, so callers snapshot the scalars
+   * before the driver call and restore them after.
+   *
+   * @param object $entity
+   *   The entity stub to inspect.
+   *
+   * @return array<string, scalar>
+   *   The scalar properties keyed by name.
+   */
+  protected function captureScalarBaseFields(object $entity): array {
+    return array_filter((array) $entity, is_scalar(...));
+  }
+
+  /**
+   * Restores scalar properties previously captured.
+   *
+   * @param object $entity
+   *   The entity stub to mutate.
+   * @param array<string, scalar> $scalars
+   *   Map of property name to original scalar value.
+   */
+  protected function restoreScalarBaseFields(object $entity, array $scalars): void {
+    foreach ($scalars as $field => $value) {
+      $entity->$field = $value;
+    }
   }
 
   /**
@@ -546,17 +725,25 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    *   An object with the following properties:
    *   - langcode: the langcode of the language to create.
    *
-   * @return object|false
+   * @return \stdClass|false
    *   The created language, or FALSE if the language was already created.
    */
-  public function languageCreate(\stdClass $language) {
+  public function languageCreate(\stdClass $language): \stdClass|false {
     $this->dispatchHooks(BeforeLanguageCreateScope::class, $language);
-    // @phpstan-ignore method.notFound
-    $language = $this->getDriver()->languageCreate($language);
+
+    $driver = $this->getDriver();
+
+    if (!$driver instanceof LanguageCapabilityInterface) {
+      throw new \RuntimeException(sprintf('The active Drupal driver "%s" does not support language management.', $driver::class));
+    }
+
+    $language = $driver->languageCreate($language);
+
     if ($language) {
       $this->dispatchHooks(AfterLanguageCreateScope::class, $language);
       $this->languages[$language->langcode] = $language;
     }
+
     return $language;
   }
 

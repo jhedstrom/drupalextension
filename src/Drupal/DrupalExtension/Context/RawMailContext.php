@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\DrupalExtension\Context;
 
 use Behat\MinkExtension\Context\RawMinkContext;
+use Drupal\Driver\Capability\MailCapabilityInterface;
 use Drupal\DrupalMailManager;
 
 /**
@@ -36,7 +37,13 @@ class RawMailContext extends RawDrupalContext {
     // Persist the mail manager between invocations. This is necessary for
     // remembering and reinstating the original mail backend.
     if (is_null($this->mailManager)) {
-      $this->mailManager = new DrupalMailManager($this->getDriver());
+      $driver = $this->getDriver();
+
+      if (!$driver instanceof MailCapabilityInterface) {
+        throw new \RuntimeException(sprintf('The active Drupal driver "%s" does not support mail collection.', $driver::class));
+      }
+
+      $this->mailManager = new DrupalMailManager($driver);
     }
 
     return $this->mailManager;
@@ -54,10 +61,10 @@ class RawMailContext extends RawDrupalContext {
    * @param string $store
    *   The name of the mail store to get mail from.
    *
-   * @return \stdClass[]|\stdClass
-   *   An array of mail, each formatted as a Drupal 8
-   *   \Drupal\Core\Mail\MailInterface::mail $message array, or a single mail
-   *   object if $index is specified.
+   * @return array<int, array<string, mixed>>|array<string, mixed>
+   *   An array of mail messages keyed by index, or a single mail message
+   *   array when '$index' is specified. Each item follows Drupal's
+   *   'MailInterface::mail()' shape ('to', 'subject', 'body', etc.).
    */
   protected function getMail(array $criteria = [], bool $new = FALSE, ?int $index = NULL, string $store = 'default') {
     $messages = $this->getMailManager()->getMail($store);

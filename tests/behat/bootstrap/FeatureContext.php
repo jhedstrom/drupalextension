@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * @file
+ * Test contexts and fixture support classes for the Drupal Extension.
+ *
+ * phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
+ */
+
 declare(strict_types=1);
 
 use Behat\Step\When;
@@ -13,6 +20,8 @@ use Behat\Hook\AfterFeature;
 use Behat\Hook\BeforeScenario;
 use Behat\Mink\Exception\ExpectationException;
 use Drupal\Core\Database\Database;
+use Drupal\Driver\Core\Field\AbstractHandler;
+use Drupal\Driver\DrupalDriver;
 use Drupal\DrupalExtension\Hook\Attribute\AfterNodeCreate;
 use Drupal\DrupalExtension\Hook\Attribute\AfterTermCreate;
 use Drupal\DrupalExtension\Hook\Attribute\AfterUserCreate;
@@ -69,6 +78,25 @@ class FeatureContext extends RawDrupalContext {
   #[When('sleep for :seconds second(s)')]
   public function testSleepForSeconds(int|string $seconds): void {
     sleep((int) $seconds);
+  }
+
+  /**
+   * Registers fixture-only field handlers with the active driver's core.
+   *
+   * The fixture module 'behat_test' ships an 'address_field' type with four
+   * columns (country/locality/thoroughfare/postal_code). The driver's
+   * 'DefaultHandler' refuses non-scalar fields, so the fixture must register
+   * its own handler before any scenario uses the field.
+   */
+  #[BeforeScenario]
+  public function testRegisterFixtureFieldHandlers(): void {
+    $driver = $this->getDriver();
+
+    if (!$driver instanceof DrupalDriver) {
+      return;
+    }
+
+    $driver->getCore()->registerFieldHandler('behat_test_address_field', \BehatTestAddressFieldHandler::class);
   }
 
   /**
@@ -568,6 +596,71 @@ class FeatureContext extends RawDrupalContext {
   #[Given('I throw a test runtime exception with message :message')]
   public function throwTestRuntimeException(string $message): never {
     throw new \RuntimeException($message);
+  }
+
+}
+
+/**
+ * Handler for the 'behat_test_address_field' fixture field type.
+ *
+ * The fixture's 'AddressFieldItem' has four columns - country, locality,
+ * thoroughfare, postal_code - so the driver's 'DefaultHandler' (single
+ * 'value' column only) cannot marshal it. This handler accepts the inline
+ * 'key: value' shape produced by 'parseEntityFields()' and returns Drupal
+ * storage format directly.
+ *
+ * Defined alongside 'FeatureContext' so subprocess Behat runs (which copy
+ * only 'FeatureContext.php' to their working dir) pick it up without any
+ * extra autoload wiring.
+ */
+class BehatTestAddressFieldHandler extends AbstractHandler {
+
+  /**
+   * {@inheritdoc}
+   */
+  public function expand($values): array {
+    $columns = ['country', 'locality', 'thoroughfare', 'postal_code'];
+    $expanded = [];
+
+    foreach ($values as $value) {
+      $expanded[] = is_array($value) ? $this->normaliseRow($value, $columns) : [$columns[0] => (string) $value];
+    }
+
+    return $expanded;
+  }
+
+  /**
+   * Normalises a row of key/value or positional values into a column map.
+   *
+   * @param array<int|string, mixed> $value
+   *   Row produced by 'parseEntityFields()'. Keys are either column names
+   *   (when the inline 'key: value' shape was used) or 0-indexed integers
+   *   (when the values were supplied positionally).
+   * @param array<int, string> $columns
+   *   Ordered column names for positional values.
+   *
+   * @return array<string, mixed>
+   *   A row keyed by column name.
+   */
+  protected function normaliseRow(array $value, array $columns): array {
+    $row = [];
+    $position = 0;
+
+    foreach ($value as $key => $fieldValue) {
+      if (is_string($key)) {
+        $row[$key] = $fieldValue;
+        continue;
+      }
+
+      if (!isset($columns[$position])) {
+        throw new \RuntimeException(sprintf('Too many positional values supplied for "behat_test_address_field"; only %d columns available.', count($columns)));
+      }
+
+      $row[$columns[$position]] = $fieldValue;
+      $position++;
+    }
+
+    return $row;
   }
 
 }

@@ -7,7 +7,7 @@ namespace Drupal\DrupalExtension\Manager;
 use Behat\Mink\Element\DocumentElement;
 use Behat\Mink\Exception\DriverException;
 use Behat\Mink\Mink;
-use Drupal\Driver\AuthenticationDriverInterface;
+use Drupal\Driver\Capability\AuthenticationCapabilityInterface;
 use Drupal\DrupalDriverManagerInterface;
 use Drupal\DrupalExtension\DrupalParametersTrait;
 use Drupal\DrupalExtension\MinkAwareTrait;
@@ -224,7 +224,7 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
    */
   protected function backendLogin(\stdClass $user): void {
     $driver = $this->driverManager->getDriver();
-    if ($driver instanceof AuthenticationDriverInterface) {
+    if ($driver instanceof AuthenticationCapabilityInterface) {
       $driver->login($user);
     }
   }
@@ -234,7 +234,7 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
    */
   protected function backendLogout(): void {
     $driver = $this->driverManager->getDriver();
-    if ($driver instanceof AuthenticationDriverInterface) {
+    if ($driver instanceof AuthenticationCapabilityInterface) {
       $driver->logout();
     }
   }

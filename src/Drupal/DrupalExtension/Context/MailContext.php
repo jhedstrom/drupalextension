@@ -10,6 +10,7 @@ use Behat\Step\When;
 use Behat\Step\Then;
 use Behat\Behat\Hook\Scope\ScenarioScope;
 use Behat\Gherkin\Node\TableNode;
+use Drupal\Driver\Capability\MailCapabilityInterface;
 
 /**
  * Provides pre-built step definitions for interacting with mail.
@@ -21,13 +22,15 @@ class MailContext extends RawMailContext {
    */
   #[BeforeScenario]
   public function disableMail(ScenarioScope $event): void {
-    if (!$this->hasSendMailTag($event)) {
-      $this->getMailManager()->disableMail();
-      // Always reset mail count, in case the default mail manager is being used
-      // which enables mail collecting automatically when mail is disabled, making
-      // the use of the @mail tag optional in this case.
-      $this->mailMessageCount = [];
+    if ($this->hasSendMailTag($event) || !$this->getDriver() instanceof MailCapabilityInterface) {
+      return;
     }
+
+    $this->getMailManager()->disableMail();
+    // Always reset mail count, in case the default mail manager is being used
+    // which enables mail collecting automatically when mail is disabled, making
+    // the use of the @mail tag optional in this case.
+    $this->mailMessageCount = [];
   }
 
   /**
@@ -35,9 +38,11 @@ class MailContext extends RawMailContext {
    */
   #[AfterScenario]
   public function enableMail(ScenarioScope $event): void {
-    if (!$this->hasSendMailTag($event)) {
-      $this->getMailManager()->enableMail();
+    if ($this->hasSendMailTag($event) || !$this->getDriver() instanceof MailCapabilityInterface) {
+      return;
     }
+
+    $this->getMailManager()->enableMail();
   }
 
   /**
@@ -94,7 +99,13 @@ class MailContext extends RawMailContext {
       $mail[$field] = $value;
     }
 
-    $this->getDriver()->sendMail($mail['body'], $mail['subject'], $mail['to'], $mail['langcode']);
+    $driver = $this->getDriver();
+
+    if (!$driver instanceof MailCapabilityInterface) {
+      throw new \RuntimeException(sprintf('The active Drupal driver "%s" does not support sending mail.', $driver::class));
+    }
+
+    $driver->mailSend($mail['body'], $mail['subject'], $mail['to'], $mail['langcode']);
   }
 
   /**

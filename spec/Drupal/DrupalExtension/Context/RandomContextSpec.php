@@ -7,7 +7,7 @@ use Behat\Gherkin\Node\FeatureNode;
 use Behat\Gherkin\Node\ScenarioInterface;
 use Behat\Gherkin\Node\StepNode;
 use Drupal\Component\Utility\Random;
-use Drupal\Driver\Cores\CoreInterface;
+use Drupal\Driver\Core\CoreInterface;
 use Drupal\Driver\DrupalDriver;
 use Drupal\DrupalDriverManager;
 use Drupal\DrupalExtension\Context\RandomContext;
