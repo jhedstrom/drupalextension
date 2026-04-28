@@ -22,13 +22,15 @@ class MailContext extends RawMailContext {
    */
   #[BeforeScenario]
   public function disableMail(ScenarioScope $event): void {
-    if (!$this->hasSendMailTag($event)) {
-      $this->getMailManager()->disableMail();
-      // Always reset mail count, in case the default mail manager is being used
-      // which enables mail collecting automatically when mail is disabled, making
-      // the use of the @mail tag optional in this case.
-      $this->mailMessageCount = [];
+    if ($this->hasSendMailTag($event) || !$this->driverSupportsMail()) {
+      return;
     }
+
+    $this->getMailManager()->disableMail();
+    // Always reset mail count, in case the default mail manager is being used
+    // which enables mail collecting automatically when mail is disabled, making
+    // the use of the @mail tag optional in this case.
+    $this->mailMessageCount = [];
   }
 
   /**
@@ -36,9 +38,11 @@ class MailContext extends RawMailContext {
    */
   #[AfterScenario]
   public function enableMail(ScenarioScope $event): void {
-    if (!$this->hasSendMailTag($event)) {
-      $this->getMailManager()->enableMail();
+    if ($this->hasSendMailTag($event) || !$this->driverSupportsMail()) {
+      return;
     }
+
+    $this->getMailManager()->enableMail();
   }
 
   /**

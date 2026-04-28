@@ -497,7 +497,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
     $driver = $this->getDriver();
 
     if (!$driver instanceof UserCapabilityInterface) {
-      throw new \RuntimeException(sprintf('The active Drupal driver "%s" does not support user creation.', $driver::class));
+      throw new \RuntimeException(sprintf('The active Drupal driver "%s" does not support user role assignment.', $driver::class));
     }
 
     foreach ($usersTable->getHash() as $userHash) {
