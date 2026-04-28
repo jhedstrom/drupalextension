@@ -25,6 +25,13 @@ The Drupal Extension is an integration layer between [Behat](http://behat.org),
 provides step definitions for common testing scenarios specific to Drupal
 sites.
 
+> **Note:** This `main` branch is under heavy development for
+> version `6.x`, which will use DrupalDriver `3.x`. For the
+> `5.x` maintenance line, use the
+> [`5.x` branch](https://github.com/jhedstrom/drupalextension/tree/5.x).
+> See the
+> [6.x epic](https://github.com/jhedstrom/drupalextension/issues/782)
+> for details and progress.
 
 ## Use it for testing your Drupal site.
 
@@ -40,7 +47,7 @@ the [Full documentation](https://behat-drupal-extension.readthedocs.org)
     ```
 
 2. Create a file called `behat.yml` with a minimal configuration.
-    For more information on configuration options, see [Full documentation](https://behat-drupal-extension.readthedocs.org)
+   For more information on configuration options, see [Full documentation](https://behat-drupal-extension.readthedocs.org)
 
     ```yaml behat.yml
     default:
@@ -114,27 +121,27 @@ For detailed step documentation, see: vendor/drupal/drupal-extension/STEPS.md
 
 ## Credits
 
- * Originally developed by [Jonathan Hedstrom](https://github.com/jhedstrom) with great help from [eliza411](https://github.com/eliza411)
- * Maintainers
-   * [Alex Skrypnyk](https://github.com/AlexSkrypnyk)
-   * [Pieter Frenssen](https://github.com/pfrenssen)
-   * [Ricardo Sanz](https://github.com/rsanzante)
-   * [All these great contributors](https://github.com/jhedstrom/drupalextension/graphs/contributors)
+* Originally developed by [Jonathan Hedstrom](https://github.com/jhedstrom) with great help from [eliza411](https://github.com/eliza411)
+* Maintainers
+  * [Alex Skrypnyk](https://github.com/AlexSkrypnyk)
+  * [Pieter Frenssen](https://github.com/pfrenssen)
+  * [Ricardo Sanz](https://github.com/rsanzante)
+  * [All these great contributors](https://github.com/jhedstrom/drupalextension/graphs/contributors)
 
 ## Additional resources
 
- * [Behat Drupal Extension documentation](https://behat-drupal-extension.readthedocs.org)
- * [Behat documentation](http://docs.behat.org)
- * [Mink documentation](http://mink.behat.org)
- * [Drupal Behat group](http://groups.drupal.org/behat)
+* [Behat Drupal Extension documentation](https://behat-drupal-extension.readthedocs.org)
+* [Behat documentation](http://docs.behat.org)
+* [Mink documentation](http://mink.behat.org)
+* [Drupal Behat group](http://groups.drupal.org/behat)
 
 ## Examples and code snippets
 
- * [Complex node creation, with field collections and entity references](https://gist.github.com/jhedstrom/5708233)
- * [Achievements module support](https://gist.github.com/jhedstrom/9633067)
- * [Drupal form element visibility](https://gist.github.com/pbuyle/7698675)
- * [Track down PHP notices](https://www.godel.com.au/blog/use-behat-track-down-php-notices-they-take-over-your-drupal-site-forever)
- * [Support for sites using basic HTTP authentication](https://gist.github.com/jhedstrom/5bc5192d6dacbf8cc459)
+* [Complex node creation, with field collections and entity references](https://gist.github.com/jhedstrom/5708233)
+* [Achievements module support](https://gist.github.com/jhedstrom/9633067)
+* [Drupal form element visibility](https://gist.github.com/pbuyle/7698675)
+* [Track down PHP notices](https://www.godel.com.au/blog/use-behat-track-down-php-notices-they-take-over-your-drupal-site-forever)
+* [Support for sites using basic HTTP authentication](https://gist.github.com/jhedstrom/5bc5192d6dacbf8cc459)
 
 ## Release notes
 
