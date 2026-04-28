@@ -22,7 +22,7 @@ class MailContext extends RawMailContext {
    */
   #[BeforeScenario]
   public function disableMail(ScenarioScope $event): void {
-    if ($this->hasSendMailTag($event) || !$this->driverSupportsMail()) {
+    if ($this->hasSendMailTag($event) || !$this->getDriver() instanceof MailCapabilityInterface) {
       return;
     }
 
@@ -38,7 +38,7 @@ class MailContext extends RawMailContext {
    */
   #[AfterScenario]
   public function enableMail(ScenarioScope $event): void {
-    if ($this->hasSendMailTag($event) || !$this->driverSupportsMail()) {
+    if ($this->hasSendMailTag($event) || !$this->getDriver() instanceof MailCapabilityInterface) {
       return;
     }
 

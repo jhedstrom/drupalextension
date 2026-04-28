@@ -50,18 +50,6 @@ class RawMailContext extends RawDrupalContext {
   }
 
   /**
-   * TRUE when the active driver implements 'MailCapabilityInterface'.
-   *
-   * Lets unconditional scenario hooks (e.g. 'MailContext::disableMail()')
-   * skip mail bookkeeping under drivers that lack mail support, while
-   * explicit mail steps still hit 'getMailManager()' and surface a hard
-   * failure when the capability is genuinely needed.
-   */
-  protected function driverSupportsMail(): bool {
-    return $this->getDriver() instanceof MailCapabilityInterface;
-  }
-
-  /**
    * Get collected mail, matching certain specifications.
    *
    * @param array $criteria
