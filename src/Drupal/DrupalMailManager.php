@@ -56,6 +56,8 @@ class DrupalMailManager implements DrupalMailManagerInterface {
    * {@inheritdoc}
    */
   public function getMail($store = 'default'): array {
+    $this->assertDefaultStore($store);
+
     return $this->driver->mailGet();
   }
 
@@ -63,7 +65,24 @@ class DrupalMailManager implements DrupalMailManagerInterface {
    * {@inheritdoc}
    */
   public function clearMail($store = 'default'): void {
+    $this->assertDefaultStore($store);
+
     $this->driver->mailClear();
+  }
+
+  /**
+   * Rejects non-default mail stores.
+   *
+   * The v3 driver's 'MailCapabilityInterface' exposes a single implicit
+   * collector, so any '$store' other than 'default' is unsupported. Throw
+   * loudly rather than silently misroute reads or clears that consumers
+   * relied on under earlier multi-store implementations. The '$store'
+   * parameter will be removed entirely in a follow-up.
+   */
+  protected function assertDefaultStore(string $store): void {
+    if ($store !== 'default') {
+      throw new \InvalidArgumentException(sprintf('Mail store "%s" is not supported - the active driver only exposes the default store.', $store));
+    }
   }
 
 }
