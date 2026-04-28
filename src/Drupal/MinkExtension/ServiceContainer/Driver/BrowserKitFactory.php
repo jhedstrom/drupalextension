@@ -65,7 +65,13 @@ class BrowserKitFactory extends BrowserKitFactoryOriginal {
    * @codeCoverageIgnore
    */
   protected function getCwd(): string {
-    return (string) getcwd();
+    $cwd = getcwd();
+
+    if ($cwd === FALSE) {
+      throw new \RuntimeException('Unable to determine the current working directory.');
+    }
+
+    return $cwd;
   }
 
   /**

@@ -33,7 +33,10 @@ class MinkContext extends MinkExtension implements TranslatableContext {
    *   List of translation resource paths.
    */
   public static function getTranslationResources(): array {
-    return self::getMinkTranslationResources() + (glob(__DIR__ . '/../../../../i18n/*.xliff') ?: []);
+    return array_merge(
+      self::getMinkTranslationResources(),
+      glob(__DIR__ . '/../../../../i18n/*.xliff') ?: [],
+    );
   }
 
   /**

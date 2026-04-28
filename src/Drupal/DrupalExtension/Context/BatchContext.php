@@ -59,7 +59,7 @@ class BatchContext extends RawMinkContext {
     $data = is_string($fields['data']) ? $fields['data'] : (string) json_encode($fields['data']);
     $query = $connection->insert('queue')
       ->fields([
-        'name' => $fields['name'] ?: $password_generator->generate(),
+        'name' => (($fields['name'] ?? '') !== '') ? $fields['name'] : $password_generator->generate(),
         'data' => serialize(json_decode($data)),
         'created' => $fields['created'] ?: $_SERVER['REQUEST_TIME'],
         'expire' => $fields['expire'] ?: 0,
