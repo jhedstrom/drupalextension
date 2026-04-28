@@ -81,9 +81,9 @@ final class Reader implements EnvironmentReader {
       return $callees;
     }
 
-    $contextClasses = $this->findSubContextClasses();
+    $context_classes = $this->findSubContextClasses();
 
-    foreach ($contextClasses as $contextClass) {
+    foreach ($context_classes as $context_class) {
       // When executing test scenarios with an examples table the registering of
       // contexts is handled differently in newer version of Behat. Starting
       // with Behat 3.2.0 the contexts are already registered, and the callees
@@ -92,14 +92,14 @@ final class Reader implements EnvironmentReader {
       // 3.2.0 and higher by checking if the class already exists before
       // registering it and returning the callees.
       // @see https://github.com/Behat/Behat/issues/758
-      if (!$environment->hasContextClass($contextClass)) {
+      if (!$environment->hasContextClass($context_class)) {
         $callees = array_merge(
           $callees,
-          $this->readContextCallees($environment, $contextClass)
+          $this->readContextCallees($environment, $context_class)
         );
 
         // Register context.
-        $environment->registerContextClass($contextClass, [$this->drupalDriverManager]);
+        $environment->registerContextClass($context_class, [$this->drupalDriverManager]);
       }
     }
 
@@ -114,10 +114,10 @@ final class Reader implements EnvironmentReader {
    */
   protected function readContextCallees(ContextEnvironment $environment, string $contextClass): array {
     $callees = [];
-    foreach ($this->contextReaders as $contextReader) {
+    foreach ($this->contextReaders as $context_reader) {
       $callees = array_merge(
         $callees,
-        $contextReader->readContextCallees($environment, $contextClass)
+        $context_reader->readContextCallees($environment, $contextClass)
       );
     }
 
@@ -131,7 +131,7 @@ final class Reader implements EnvironmentReader {
    *   An array of fully-qualified class names.
    */
   protected function findSubContextClasses(): array {
-    $classNames = [];
+    $class_names = [];
 
     // Initialize any available sub-contexts.
     if (isset($this->parameters['subcontexts'])) {
@@ -149,7 +149,7 @@ final class Reader implements EnvironmentReader {
       if (isset($this->parameters['subcontexts']['paths'])) {
         if (!empty($this->parameters['subcontexts']['paths'])) {
           @trigger_error(
-            'The `subcontexts.paths` parameter is deprecated in Drupal Behat Extension 4.0.0 and will be removed in 4.1.0. Normal Behat contexts should be used instead and loaded via behat.yml.',
+            'The "subcontexts.paths" parameter is deprecated in drupalextension:4.0.0 and is removed from drupalextension:4.1.0. Normal Behat contexts should be used instead and loaded via behat.yml. See https://www.drupal.org/project/drupalextension/issues/676',
             E_USER_DEPRECATED
           );
         }
@@ -168,13 +168,13 @@ final class Reader implements EnvironmentReader {
       foreach ($classes as $class) {
         $reflect = new \ReflectionClass($class);
         if (!$reflect->isAbstract() && $reflect->implementsInterface(DrupalSubContextInterface::class)) {
-          @trigger_error('Sub-contexts are deprecated in Drupal Behat Extension 4.0.0 and will be removed in 4.1.0. Class ' . $class . ' is a subcontext. This logic should be moved to a normal Behat context and loaded via behat.yml.', E_USER_DEPRECATED);
-          $classNames[] = $class;
+          @trigger_error('Sub-context support is deprecated in drupalextension:4.0.0 and is removed from drupalextension:4.1.0. Class ' . $class . ' is a sub-context. This logic should be moved to a normal Behat context and loaded via behat.yml. See https://www.drupal.org/project/drupalextension/issues/676', E_USER_DEPRECATED);
+          $class_names[] = $class;
         }
       }
     }
 
-    return $classNames;
+    return $class_names;
   }
 
   /**
@@ -196,14 +196,14 @@ final class Reader implements EnvironmentReader {
 
     self::$subContexts[$pattern][$path] = [];
 
-    $fileIterator = new \RegexIterator(
+    $file_iterator = new \RegexIterator(
       new \RecursiveIteratorIterator(
         new \RecursiveDirectoryIterator($path)
       ),
       $pattern,
       \RegexIterator::MATCH
     );
-    foreach ($fileIterator as $found) {
+    foreach ($file_iterator as $found) {
       self::$subContexts[$pattern][$path][$found->getRealPath()] = $found->getFileName();
     }
 

@@ -55,7 +55,7 @@ echo "\033[32mCoverage merge started\033[0m" . PHP_EOL;
  * @var \SebastianBergmann\CodeCoverage\CodeCoverage|null $merged
  */
 $merged = NULL;
-$mergeCount = 0;
+$merge_count = 0;
 
 // Load main coverage sources (PHPUnit and Behat).
 foreach ($sources as $label => $file) {
@@ -83,30 +83,30 @@ foreach ($sources as $label => $file) {
   else {
     $merged->merge($coverage);
   }
-  $mergeCount++;
+  $merge_count++;
   echo sprintf("  \033[2m◆ Loaded %s coverage from: %s\033[0m%s", $label, $file, PHP_EOL);
 }
 
 // Find and merge subprocess coverage files.
-$subprocessFiles = [];
+$subprocess_files = [];
 if (is_dir(SOURCE_SUBPROCESS_COVERAGE_DIR)) {
-  $subprocessFiles = glob(SOURCE_SUBPROCESS_COVERAGE_DIR . '/*.php');
+  $subprocess_files = glob(SOURCE_SUBPROCESS_COVERAGE_DIR . '/*.php');
 }
 
-if (!empty($subprocessFiles)) {
-  echo sprintf("  \033[2m◆ Merging %d subprocess coverage files...\033[0m%s", count($subprocessFiles), PHP_EOL);
+if (!empty($subprocess_files)) {
+  echo sprintf("  \033[2m◆ Merging %d subprocess coverage files...\033[0m%s", count($subprocess_files), PHP_EOL);
 
-  foreach ($subprocessFiles as $file) {
+  foreach ($subprocess_files as $file) {
     try {
-      $subprocessCoverage = include $file;
-      if ($subprocessCoverage instanceof CodeCoverage) {
+      $subprocess_coverage = include $file;
+      if ($subprocess_coverage instanceof CodeCoverage) {
         if ($merged === NULL) {
-          $merged = $subprocessCoverage;
+          $merged = $subprocess_coverage;
         }
         else {
-          $merged->merge($subprocessCoverage);
+          $merged->merge($subprocess_coverage);
         }
-        $mergeCount++;
+        $merge_count++;
         echo "\033[2m    ├ Merged: " . basename($file) . "\033[0m" . PHP_EOL;
       }
     }
@@ -121,51 +121,51 @@ if ($merged === NULL) {
   exit(1);
 }
 
-echo sprintf('▶ Merged %d coverage sources.%s', $mergeCount, PHP_EOL);
+echo sprintf('▶ Merged %d coverage sources.%s', $merge_count, PHP_EOL);
 
 // Save merged coverage.
-$outputDir = dirname(OUTPUT_MERGED_COVERAGE_FILE);
-if (!is_dir($outputDir)) {
-  mkdir($outputDir, 0755, TRUE);
+$output_dir = dirname(OUTPUT_MERGED_COVERAGE_FILE);
+if (!is_dir($output_dir)) {
+  mkdir($output_dir, 0755, TRUE);
 }
 
 file_put_contents(OUTPUT_MERGED_COVERAGE_FILE, '<?php' . PHP_EOL . 'return \\unserialize(' . var_export(serialize($merged), TRUE) . ');' . PHP_EOL);
 echo sprintf("  \033[2m✦ Coverage merged and saved to: %s\033[0m%s", OUTPUT_MERGED_COVERAGE_FILE, PHP_EOL);
 
 // Generate Cobertura report.
-$coberturaReport = new Cobertura();
-file_put_contents(OUTPUT_COBERTURA_REPORT_FILE, $coberturaReport->process($merged));
+$cobertura_report = new Cobertura();
+file_put_contents(OUTPUT_COBERTURA_REPORT_FILE, $cobertura_report->process($merged));
 echo sprintf("  \033[2m✦ Cobertura report generated: %s\033[0m%s", OUTPUT_COBERTURA_REPORT_FILE, PHP_EOL);
 
 // Generate HTML report.
-$htmlReport = new Facade();
-$htmlReport->process($merged, OUTPUT_HTML_REPORT_DIR);
+$html_report = new Facade();
+$html_report->process($merged, OUTPUT_HTML_REPORT_DIR);
 echo sprintf("  \033[2m✦ HTML report generated: %s\033[0m%s", OUTPUT_HTML_REPORT_DIR, PHP_EOL);
 
 // Generate text report and split into summary and details.
-$textReport = new Text(Thresholds::default(), TRUE);
-$coverageText = $textReport->process($merged, FALSE);
-file_put_contents(COVERAGE_ROOT_PATH . '/merged/coverage.txt', $coverageText);
+$text_report = new Text(Thresholds::default(), TRUE);
+$coverage_text = $text_report->process($merged, FALSE);
+file_put_contents(COVERAGE_ROOT_PATH . '/merged/coverage.txt', $coverage_text);
 
-$lines = explode("\n", $coverageText);
-$summaryLines = [];
-$detailsLines = [];
-$inDetails = FALSE;
+$lines = explode("\n", $coverage_text);
+$summary_lines = [];
+$details_lines = [];
+$in_details = FALSE;
 foreach ($lines as $line) {
-  if (!$inDetails && preg_match('/^\S+\\\\\S+/', $line)) {
-    $inDetails = TRUE;
+  if (!$in_details && preg_match('/^\S+\\\\\S+/', $line)) {
+    $in_details = TRUE;
   }
-  if ($inDetails) {
-    $detailsLines[] = $line;
+  if ($in_details) {
+    $details_lines[] = $line;
   }
   elseif (preg_match('/^\s+(Classes|Methods|Lines):/', $line, $matches)) {
-    $summaryLines[$matches[1]] = $line;
+    $summary_lines[$matches[1]] = $line;
   }
 }
-$summaryOrder = ['Lines', 'Methods', 'Classes'];
-$orderedSummary = array_filter(array_map(fn(string $key): ?string => $summaryLines[$key] ?? NULL, $summaryOrder));
-file_put_contents(COVERAGE_ROOT_PATH . '/merged/coverage-summary.txt', implode("\n", $orderedSummary) . "\n");
-file_put_contents(COVERAGE_ROOT_PATH . '/merged/coverage-details.txt', implode("\n", $detailsLines));
+$summary_order = ['Lines', 'Methods', 'Classes'];
+$ordered_summary = array_filter(array_map(fn(string $key): ?string => $summary_lines[$key] ?? NULL, $summary_order));
+file_put_contents(COVERAGE_ROOT_PATH . '/merged/coverage-summary.txt', implode("\n", $ordered_summary) . "\n");
+file_put_contents(COVERAGE_ROOT_PATH . '/merged/coverage-details.txt', implode("\n", $details_lines));
 echo sprintf("  \033[2m✦ Text report generated: %s/merged/coverage.txt\033[0m%s", COVERAGE_ROOT_PATH, PHP_EOL);
 
 echo "\033[32mCoverage merge finished\033[0m" . PHP_EOL;

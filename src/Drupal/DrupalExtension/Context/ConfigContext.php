@@ -50,7 +50,7 @@ class ConfigContext extends RawDrupalContext implements TranslatableContext {
     }
 
     // Revert config that was changed.
-    foreach ($this->config as $name => $keyValue) {
+    foreach ($this->config as $name => $key_value) {
       // Reset the config factory cache so the editable config object is
       // loaded fresh from storage. Without this, the cached object retains
       // stale originalData from when setConfig() ran, causing
@@ -59,7 +59,7 @@ class ConfigContext extends RawDrupalContext implements TranslatableContext {
         \Drupal::configFactory()->reset($name);
       }
 
-      foreach ($keyValue as $key => $value) {
+      foreach ($key_value as $key => $value) {
         $driver->configSet($name, $key, $value);
       }
     }

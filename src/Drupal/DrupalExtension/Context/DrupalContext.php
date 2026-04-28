@@ -278,9 +278,9 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
   #[Given('I click :link in the :rowText row')]
   public function assertClickInTableRow(string $link, string $rowText): void {
     $page = $this->getSession()->getPage();
-    if ($linkElement = $this->getTableRow($page, $rowText)->findLink($link)) {
+    if ($link_element = $this->getTableRow($page, $rowText)->findLink($link)) {
       // Click the link and return.
-      $linkElement->click();
+      $link_element->click();
       return;
     }
     throw new \Exception(sprintf('Found a row containing "%s", but no "%s" link on the page %s', $rowText, $link, $this->getSession()->getCurrentUrl()));
@@ -300,9 +300,9 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
   #[Given('I press :button in the :rowText row')]
   public function assertPressInTableRow(string $button, string $rowText): void {
     $page = $this->getSession()->getPage();
-    if ($buttonElement = $this->getTableRow($page, $rowText)->findButton($button)) {
+    if ($button_element = $this->getTableRow($page, $rowText)->findButton($button)) {
       // Press the button and return.
-      $buttonElement->press();
+      $button_element->press();
       return;
     }
     throw new \Exception(sprintf('Found a row containing "%s", but no "%s" button on the page %s', $rowText, $button, $this->getSession()->getCurrentUrl()));
@@ -403,8 +403,8 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    */
   #[Given(':type content:')]
   public function createNodes(string $type, TableNode $nodesTable): void {
-    foreach ($nodesTable->getHash() as $nodeHash) {
-      $node = (object) $nodeHash;
+    foreach ($nodesTable->getHash() as $node_hash) {
+      $node = (object) $node_hash;
       $node->type = $type;
       $this->nodeCreate($node);
     }
@@ -500,17 +500,17 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
       throw new \RuntimeException(sprintf('The active Drupal driver "%s" does not support user role assignment.', $driver::class));
     }
 
-    foreach ($usersTable->getHash() as $userHash) {
+    foreach ($usersTable->getHash() as $user_hash) {
       // Split out roles to process after user is created.
       $roles = [];
 
-      if (isset($userHash['roles'])) {
-        $roles = explode(',', $userHash['roles']);
+      if (isset($user_hash['roles'])) {
+        $roles = explode(',', $user_hash['roles']);
         $roles = array_filter(array_map(trim(...), $roles));
-        unset($userHash['roles']);
+        unset($user_hash['roles']);
       }
 
-      $user = (object) $userHash;
+      $user = (object) $user_hash;
       // Set a password.
       if (!isset($user->pass)) {
         $user->pass = $this->getRandom()->name();
@@ -536,8 +536,8 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    */
   #[Given(':vocabulary terms:')]
   public function createTerms(string $vocabulary, TableNode $termsTable): void {
-    foreach ($termsTable->getHash() as $termsHash) {
-      $term = (object) $termsHash;
+    foreach ($termsTable->getHash() as $terms_hash) {
+      $term = (object) $terms_hash;
       $term->vocabulary_machine_name = $vocabulary;
       $this->termCreate($term);
     }
@@ -570,7 +570,9 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
   }
 
   /**
-   * Pauses the scenario until the user presses a key. Useful when debugging a scenario.
+   * Pauses the scenario until the user presses a key.
+   *
+   * Useful when debugging a scenario.
    *
    * @code
    * Then break
@@ -585,8 +587,8 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
       $line = trim(fgets(STDIN, 1024));
       // Note: this assumes ASCII encoding.  Should probably be revamped to
       // handle other character sets.
-      $charCode = ord($line);
-      switch ($charCode) {
+      $char_code = ord($line);
+      switch ($char_code) {
         // CR.
         case 0:
           // Y.

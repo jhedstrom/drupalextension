@@ -20,12 +20,12 @@ class EventSubscriberPass implements CompilerPassInterface {
     if (!$container->hasDefinition('drupal.event_dispatcher')) {
       return;
     }
-    $dispatcherDefinition = $container->getDefinition('drupal.event_dispatcher');
+    $dispatcher_definition = $container->getDefinition('drupal.event_dispatcher');
 
     foreach ($container->findTaggedServiceIds('drupal.event_subscriber') as $id => $attributes) {
       foreach ($attributes as $attribute) {
         $priority = isset($attribute['priority']) ? intval($attribute['priority']) : 0;
-        $dispatcherDefinition->addMethodCall(
+        $dispatcher_definition->addMethodCall(
               'addSubscriber',
               [new Reference($id), $priority]
           );

@@ -69,18 +69,18 @@ class RandomContext extends RawDrupalContext {
     $steps = array_merge($steps, $scope->getScenario()->getSteps());
     foreach ($steps as $step) {
       preg_match_all(static::VARIABLE_REGEX, $step->getText(), $matches);
-      $variablesFound = $matches[0];
+      $variables_found = $matches[0];
       // Find variables in are TableNodes or PyStringNodes.
-      $stepArgument = $step->getArguments();
-      if (!empty($stepArgument) && $stepArgument[0] instanceof TableNode) {
-        preg_match_all(static::VARIABLE_REGEX, $stepArgument[0]->getTableAsString(), $matches);
-        $variablesFound = array_filter(array_merge($variablesFound, $matches[0]));
+      $step_argument = $step->getArguments();
+      if (!empty($step_argument) && $step_argument[0] instanceof TableNode) {
+        preg_match_all(static::VARIABLE_REGEX, $step_argument[0]->getTableAsString(), $matches);
+        $variables_found = array_filter(array_merge($variables_found, $matches[0]));
       }
-      foreach ($variablesFound as $variableFound) {
-        if (!isset($this->values[$variableFound])) {
+      foreach ($variables_found as $variable_found) {
+        if (!isset($this->values[$variable_found])) {
           $value = $this->getDriver()->getRandom()->name(10);
           // Value forced to lowercase to ensure it is machine-readable.
-          $this->values[$variableFound] = strtolower((string) $value);
+          $this->values[$variable_found] = strtolower((string) $value);
         }
       }
     }

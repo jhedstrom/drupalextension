@@ -155,7 +155,7 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
   }
 
   /**
-   * Checks if the current page does not contain the given set of success message.
+   * Checks the page does not contain the given success message.
    *
    * @param string $message
    *   The text to be checked.
@@ -175,7 +175,7 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
   }
 
   /**
-   * Checks if the current page does not contain the given set of success messages.
+   * Checks the page does not contain the given set of success messages.
    *
    * @param \Behat\Gherkin\Node\TableNode $messages
    *   An array of texts to be checked. The first row should consist of the
@@ -242,7 +242,7 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
   }
 
   /**
-   * Checks if the current page does not contain the given set of warning message.
+   * Checks the page does not contain the given warning message.
    *
    * @param string $message
    *   The text to be checked.
@@ -262,7 +262,7 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
   }
 
   /**
-   * Checks if the current page does not contain the given set of warning messages.
+   * Checks the page does not contain the given set of warning messages.
    *
    * @param \Behat\Gherkin\Node\TableNode $messages
    *   An array of texts to be checked. The first row should consist of the
@@ -338,18 +338,18 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
    */
   protected function assertValidMessageTable(TableNode $messages, string $expected_header) {
     // Check that the table only contains a single column.
-    $headerRow = $messages->getRow(0);
+    $header_row = $messages->getRow(0);
 
-    $columnCount = count($headerRow);
-    if ($columnCount !== 1) {
-      throw new \RuntimeException(sprintf('The list of %s should only contain 1 column. It has %s columns.', $expected_header, $columnCount));
+    $column_count = count($header_row);
+    if ($column_count !== 1) {
+      throw new \RuntimeException(sprintf('The list of %s should only contain 1 column. It has %s columns.', $expected_header, $column_count));
     }
 
     // Check that the correct header is used.
-    $actualHeader = reset($headerRow);
-    if (strtolower(trim($actualHeader)) !== $expected_header) {
-      $capitalizedHeader = ucfirst($expected_header);
-      throw new \RuntimeException(sprintf("The list of %s should have the header '%s', but found '%s'.", $expected_header, $capitalizedHeader, $actualHeader));
+    $actual_header = reset($header_row);
+    if (strtolower(trim($actual_header)) !== $expected_header) {
+      $capitalized_header = ucfirst($expected_header);
+      throw new \RuntimeException(sprintf("The list of %s should have the header '%s', but found '%s'.", $expected_header, $capitalized_header, $actual_header));
     }
   }
 
@@ -372,12 +372,12 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
    */
   protected function assert(string $message, string $selectorId, string $exceptionMsgNone, string $exceptionMsgMissing): void {
     $selector = $this->getDrupalSelector($selectorId);
-    $selectorObjects = $this->getSession()->getPage()->findAll("css", $selector);
-    if (empty($selectorObjects)) {
+    $selector_objects = $this->getSession()->getPage()->findAll("css", $selector);
+    if (empty($selector_objects)) {
       throw new ExpectationException(sprintf($exceptionMsgNone, $this->getSession()->getCurrentUrl()), $this->getSession()->getDriver());
     }
-    foreach ($selectorObjects as $selectorObject) {
-      if (str_contains(trim($selectorObject->getText()), $message)) {
+    foreach ($selector_objects as $selector_object) {
+      if (str_contains(trim($selector_object->getText()), $message)) {
         return;
       }
     }
@@ -385,7 +385,7 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
   }
 
   /**
-   * Internal callback to check if the current page does not contain the given message.
+   * Internal callback to check the page does not contain the given message.
    *
    * @param string $message
    *   The message to be checked.
@@ -400,10 +400,10 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
    */
   protected function assertNot(string $message, string $selectorId, string $exceptionMsg): void {
     $selector = $this->getDrupalSelector($selectorId);
-    $selectorObjects = $this->getSession()->getPage()->findAll("css", $selector);
-    if (!empty($selectorObjects)) {
-      foreach ($selectorObjects as $selectorObject) {
-        if (str_contains(trim($selectorObject->getText()), $message)) {
+    $selector_objects = $this->getSession()->getPage()->findAll("css", $selector);
+    if (!empty($selector_objects)) {
+      foreach ($selector_objects as $selector_object) {
+        if (str_contains(trim($selector_object->getText()), $message)) {
           throw new ExpectationException(sprintf($exceptionMsg, $this->getSession()->getCurrentUrl(), $message), $this->getSession()->getDriver());
         }
       }

@@ -456,7 +456,7 @@ Then I should be able to edit an "article" content
   <summary><code>@Then (I )break</code></summary>
 
 <br/>
-Pauses the scenario until the user presses a key. Useful when debugging a scenario. 
+Pauses the scenario until the user presses a key. 
 <br/><br/>
 
 ```gherkin
@@ -862,7 +862,7 @@ Checks if the current page does not contain the given error message.
   <summary><code>@Given I should not see the success message( containing) :message</code></summary>
 
 <br/>
-Checks if the current page does not contain the given set of success message. 
+Checks the page does not contain the given success message. 
 <br/><br/>
 
 ```gherkin
@@ -877,7 +877,7 @@ Checks if the current page does not contain the given set of success message.
   <summary><code>@Given I should not see the warning message( containing) :message</code></summary>
 
 <br/>
-Checks if the current page does not contain the given set of warning message. 
+Checks the page does not contain the given warning message. 
 <br/><br/>
 
 ```gherkin
@@ -971,7 +971,7 @@ Checks if the current page contains the given set of success messages.
   <summary><code>@Then I should not see the following success messages:</code></summary>
 
 <br/>
-Checks if the current page does not contain the given set of success messages. 
+Checks the page does not contain the given set of success messages. 
 <br/><br/>
 
 ```gherkin
@@ -1018,7 +1018,7 @@ Checks if the current page contains the given set of warning messages.
   <summary><code>@Then I should not see the following warning messages:</code></summary>
 
 <br/>
-Checks if the current page does not contain the given set of warning messages. 
+Checks the page does not contain the given set of warning messages. 
 <br/><br/>
 
 ```gherkin
@@ -1131,7 +1131,7 @@ Press a key in a form field.
   <summary><code>@Given I press :button in the :region( region)</code></summary>
 
 <br/>
-Checks if a button with id|name|title|alt|value exists or not and presses the same. 
+Checks if a button exists and presses it. 
 <br/><br/>
 
 ```gherkin
@@ -1163,7 +1163,7 @@ Given I fill in "Search" with "test" in the "header" region
   <summary><code>@Given I check :locator in the :region( region)</code></summary>
 
 <br/>
-Checks if a checkbox with id|name|title|alt|value exists or not and checks the same. 
+Checks if a checkbox exists and checks it. 
 <br/><br/>
 
 ```gherkin
@@ -1178,7 +1178,7 @@ Given I check "Published" in the "content" region
   <summary><code>@Given I uncheck :checkbox in the :region( region)</code></summary>
 
 <br/>
-Checks if a checkbox with id|name|title|alt|value exists or not and unchecks the same. 
+Checks if a checkbox exists and unchecks it. 
 <br/><br/>
 
 ```gherkin
@@ -1339,7 +1339,7 @@ Then I should not see the link "Log out"
   <summary><code>@Then I should not visibly see the link :link</code></summary>
 
 <br/>
-Links are loaded but not visually visible (e.g they have display: hidden applied). 
+Links are loaded but not visually visible. 
 <br/><br/>
 
 ```gherkin

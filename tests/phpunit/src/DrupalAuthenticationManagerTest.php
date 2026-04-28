@@ -72,13 +72,13 @@ class DrupalAuthenticationManagerTest extends TestCase {
     // @phpstan-ignore method.notFound
     $session->method('isStarted')->willReturn(TRUE);
 
-    $userManager = new DrupalUserManager();
-    $driverManager = $this->createDriverManagerMock();
-    $manager = $this->createManager($session, $userManager, $driverManager);
+    $user_manager = new DrupalUserManager();
+    $driver_manager = $this->createDriverManagerMock();
+    $manager = $this->createManager($session, $user_manager, $driver_manager);
 
     $user = (object) ['name' => 'admin', 'pass' => 'password'];
     $manager->logIn($user);
-    $this->assertSame($user, $userManager->getCurrentUser());
+    $this->assertSame($user, $user_manager->getCurrentUser());
   }
 
   /**
@@ -152,13 +152,13 @@ class DrupalAuthenticationManagerTest extends TestCase {
     // @phpstan-ignore method.notFound
     $session->method('isStarted')->willReturn(TRUE);
 
-    $authDriver = $this->createAuthDriverMock();
-    $authDriver->expects($this->once())->method('login');
+    $auth_driver = $this->createAuthDriverMock();
+    $auth_driver->expects($this->once())->method('login');
 
-    $driverManager = $this->createMock(DrupalDriverManagerInterface::class);
-    $driverManager->method('getDriver')->willReturn($authDriver);
+    $driver_manager = $this->createMock(DrupalDriverManagerInterface::class);
+    $driver_manager->method('getDriver')->willReturn($auth_driver);
 
-    $manager = $this->createManager($session, NULL, $driverManager);
+    $manager = $this->createManager($session, NULL, $driver_manager);
     $manager->logIn((object) ['name' => 'admin', 'pass' => 'pass']);
   }
 
@@ -174,13 +174,13 @@ class DrupalAuthenticationManagerTest extends TestCase {
     // @phpstan-ignore method.notFound
     $session->method('getCurrentUrl')->willReturn('http://localhost/user/logout');
 
-    $userManager = new DrupalUserManager();
-    $userManager->setCurrentUser((object) ['name' => 'admin']);
+    $user_manager = new DrupalUserManager();
+    $user_manager->setCurrentUser((object) ['name' => 'admin']);
 
-    $driverManager = $this->createDriverManagerMock();
-    $manager = $this->createManager($session, $userManager, $driverManager);
+    $driver_manager = $this->createDriverManagerMock();
+    $manager = $this->createManager($session, $user_manager, $driver_manager);
     $manager->logout();
-    $this->assertFalse($userManager->getCurrentUser());
+    $this->assertFalse($user_manager->getCurrentUser());
   }
 
   /**
@@ -197,11 +197,11 @@ class DrupalAuthenticationManagerTest extends TestCase {
     // @phpstan-ignore method.notFound
     $session->method('getCurrentUrl')->willReturn('http://localhost/user/logout/confirm');
 
-    $userManager = new DrupalUserManager();
-    $driverManager = $this->createDriverManagerMock();
-    $manager = $this->createManager($session, $userManager, $driverManager);
+    $user_manager = new DrupalUserManager();
+    $driver_manager = $this->createDriverManagerMock();
+    $manager = $this->createManager($session, $user_manager, $driver_manager);
     $manager->logout();
-    $this->assertFalse($userManager->getCurrentUser());
+    $this->assertFalse($user_manager->getCurrentUser());
   }
 
   /**
@@ -231,13 +231,13 @@ class DrupalAuthenticationManagerTest extends TestCase {
     // @phpstan-ignore method.notFound
     $session->method('getCurrentUrl')->willReturn('http://localhost/user/logout');
 
-    $authDriver = $this->createAuthDriverMock();
-    $authDriver->expects($this->once())->method('logout');
+    $auth_driver = $this->createAuthDriverMock();
+    $auth_driver->expects($this->once())->method('logout');
 
-    $driverManager = $this->createMock(DrupalDriverManagerInterface::class);
-    $driverManager->method('getDriver')->willReturn($authDriver);
+    $driver_manager = $this->createMock(DrupalDriverManagerInterface::class);
+    $driver_manager->method('getDriver')->willReturn($auth_driver);
 
-    $manager = $this->createManager($session, NULL, $driverManager);
+    $manager = $this->createManager($session, NULL, $driver_manager);
     $manager->logout();
   }
 
@@ -248,14 +248,14 @@ class DrupalAuthenticationManagerTest extends TestCase {
   public function testLoggedIn(bool $session_started, bool $has_logged_in_selector, bool $has_login_form, bool $has_logout_link, bool $expected): void {
     $page = $this->createMock(DocumentElement::class);
 
-    $hasMap = [];
+    $has_map = [];
     if ($session_started) {
-      $hasMap[] = ['css', 'body.logged-in', $has_logged_in_selector];
+      $has_map[] = ['css', 'body.logged-in', $has_logged_in_selector];
       if (!$has_logged_in_selector) {
-        $hasMap[] = ['css', 'form#user-login', $has_login_form];
+        $has_map[] = ['css', 'form#user-login', $has_login_form];
       }
     }
-    $page->method('has')->willReturnMap($hasMap);
+    $page->method('has')->willReturnMap($has_map);
     $page->method('findLink')->willReturn($has_logout_link ? $this->createMock(NodeElement::class) : NULL);
 
     $session = $this->createSessionMock($page);
@@ -324,18 +324,18 @@ class DrupalAuthenticationManagerTest extends TestCase {
     $mink = new Mink(['default' => $session]);
     $mink->setDefaultSessionName('default');
 
-    $userManager = new DrupalUserManager();
-    $userManager->setCurrentUser((object) ['name' => 'admin']);
+    $user_manager = new DrupalUserManager();
+    $user_manager->setCurrentUser((object) ['name' => 'admin']);
 
-    $driverManager = $this->createDriverManagerMock();
-    $manager = new DrupalAuthenticationManager($mink, $userManager, $driverManager, self::MINK_PARAMS, self::DRUPAL_PARAMS);
+    $driver_manager = $this->createDriverManagerMock();
+    $manager = new DrupalAuthenticationManager($mink, $user_manager, $driver_manager, self::MINK_PARAMS, self::DRUPAL_PARAMS);
     $manager->fastLogout();
 
-    $this->assertFalse($userManager->getCurrentUser());
+    $this->assertFalse($user_manager->getCurrentUser());
   }
 
   /**
-   * Tests that fastLogout() skips session reset when the session is not started.
+   * Tests fastLogout() skips session reset when the session is not started.
    */
   public function testFastLogoutSkipsResetWhenNotStarted(): void {
     $session = $this->createMock(Session::class);
@@ -345,8 +345,8 @@ class DrupalAuthenticationManagerTest extends TestCase {
     $mink = new Mink(['default' => $session]);
     $mink->setDefaultSessionName('default');
 
-    $driverManager = $this->createDriverManagerMock();
-    $manager = new DrupalAuthenticationManager($mink, new DrupalUserManager(), $driverManager, self::MINK_PARAMS, self::DRUPAL_PARAMS);
+    $driver_manager = $this->createDriverManagerMock();
+    $manager = new DrupalAuthenticationManager($mink, new DrupalUserManager(), $driver_manager, self::MINK_PARAMS, self::DRUPAL_PARAMS);
     $manager->fastLogout();
   }
 
@@ -360,13 +360,13 @@ class DrupalAuthenticationManagerTest extends TestCase {
     $mink = new Mink(['default' => $session]);
     $mink->setDefaultSessionName('default');
 
-    $authDriver = $this->createAuthDriverMock();
-    $authDriver->expects($this->once())->method('logout');
+    $auth_driver = $this->createAuthDriverMock();
+    $auth_driver->expects($this->once())->method('logout');
 
-    $driverManager = $this->createMock(DrupalDriverManagerInterface::class);
-    $driverManager->method('getDriver')->willReturn($authDriver);
+    $driver_manager = $this->createMock(DrupalDriverManagerInterface::class);
+    $driver_manager->method('getDriver')->willReturn($auth_driver);
 
-    $manager = new DrupalAuthenticationManager($mink, new DrupalUserManager(), $driverManager, self::MINK_PARAMS, self::DRUPAL_PARAMS);
+    $manager = new DrupalAuthenticationManager($mink, new DrupalUserManager(), $driver_manager, self::MINK_PARAMS, self::DRUPAL_PARAMS);
     $manager->fastLogout();
   }
 
@@ -393,7 +393,7 @@ class DrupalAuthenticationManagerTest extends TestCase {
   }
 
   /**
-   * Creates a mock implementing both AuthenticationCapabilityInterface and DriverInterface.
+   * Creates a mock for the AuthenticationCapability and DriverInterface.
    */
   private function createAuthDriverMock(): AuthenticationCapabilityInterface|DriverInterface|MockObject {
     $driver = $this->createMockForIntersectionOfInterfaces([
@@ -410,9 +410,9 @@ class DrupalAuthenticationManagerTest extends TestCase {
   private function createDriverManagerMock(): DrupalDriverManagerInterface {
     $driver = $this->createMock(DriverInterface::class);
     $driver->method('isBootstrapped')->willReturn(TRUE);
-    $driverManager = $this->createMock(DrupalDriverManagerInterface::class);
-    $driverManager->method('getDriver')->willReturn($driver);
-    return $driverManager;
+    $driver_manager = $this->createMock(DrupalDriverManagerInterface::class);
+    $driver_manager->method('getDriver')->willReturn($driver);
+    return $driver_manager;
   }
 
   /**
@@ -448,16 +448,16 @@ class DrupalAuthenticationManagerTest extends TestCase {
   public function testLogInWaitsForLoggedInSelector(): void {
     $submit = $this->createMock(NodeElement::class);
 
-    $callCount = 0;
+    $call_count = 0;
     $page = $this->createMock(DocumentElement::class);
     $page->method('findButton')->with('Log in')->willReturn($submit);
     // Simulate: logged_in_selector not found on first call, found on second.
-    $page->method('has')->willReturnCallback(function (string $selector, string $locator) use (&$callCount): bool {
+    $page->method('has')->willReturnCallback(function (string $selector, string $locator) use (&$call_count): bool {
       if ($locator === 'body.logged-in') {
-        $callCount++;
+        $call_count++;
         // First two calls return FALSE (during wait loop and loggedIn check),
         // then return TRUE.
-        return $callCount > 2;
+        return $call_count > 2;
       }
       return FALSE;
     });
@@ -468,25 +468,25 @@ class DrupalAuthenticationManagerTest extends TestCase {
       return NULL;
     });
 
-    $urlCallCount = 0;
+    $url_call_count = 0;
     $session = $this->createSessionMock($page);
     // @phpstan-ignore method.notFound
     $session->method('isStarted')->willReturn(TRUE);
     // Simulate URL change after login (redirect).
     // @phpstan-ignore method.notFound
-    $session->method('getCurrentUrl')->willReturnCallback(function () use (&$urlCallCount): string {
-      $urlCallCount++;
-      return $urlCallCount <= 1 ? 'http://localhost/user/login' : 'http://localhost/user/1';
+    $session->method('getCurrentUrl')->willReturnCallback(function () use (&$url_call_count): string {
+      $url_call_count++;
+      return $url_call_count <= 1 ? 'http://localhost/user/login' : 'http://localhost/user/1';
     });
 
     $params = self::DRUPAL_PARAMS;
     $params['login_wait'] = 1;
 
-    $userManager = new DrupalUserManager();
-    $manager = $this->createManager($session, $userManager, NULL, $params);
+    $user_manager = new DrupalUserManager();
+    $manager = $this->createManager($session, $user_manager, NULL, $params);
     $manager->logIn((object) ['name' => 'admin', 'pass' => 'password']);
 
-    $this->assertNotFalse($userManager->getCurrentUser());
+    $this->assertNotFalse($user_manager->getCurrentUser());
   }
 
   /**

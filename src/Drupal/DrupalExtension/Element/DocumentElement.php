@@ -65,17 +65,17 @@ class DocumentElement extends TraversableElement {
       // To simulate what the user sees, it removes:
       // - all text inside the head tags
       // - Drupal settings json.
-      $rawContent = preg_replace([
+      $raw_content = preg_replace([
         '@<head>(.+?)</head>@si',
         '@<script type="application/json" data-drupal-selector="drupal-settings-json">([^<]*)</script>@',
       ], '', $this->getContent());
       // Filter out all HTML tags, as they are not visible in a normal browser.
-      $text = strip_tags((string) $rawContent);
+      $text = strip_tags((string) $raw_content);
       // To preserve BC and match \Behat\Mink\Element\Element::getText() include
       // the page title.
-      $titleElement = $this->find('css', 'title');
-      if ($titleElement) {
-        $text = $titleElement->getText() . ' ' . $text;
+      $title_element = $this->find('css', 'title');
+      if ($title_element) {
+        $text = $title_element->getText() . ' ' . $text;
       }
       // To match what the user sees and \Behat\Mink\Element\Element::getText()
       // decode HTML entities.

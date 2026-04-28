@@ -170,12 +170,12 @@ class MailContext extends RawMailContext {
   #[Then(':count (e)mail(s) has/have been sent to :to with the subject :subject')]
   public function noMailHasBeenSent(string $count, string $to = '', string $subject = ''): void {
     $actual = $this->getMail(['to' => $to, 'subject' => $subject]);
-    $expectedCount = match ($count) {
+    $expected_count = match ($count) {
       'no' => 0,
             'a', 'an' => NULL,
             default => (int) $count,
     };
-    $this->assertMessageCount($actual, $expectedCount);
+    $this->assertMessageCount($actual, $expected_count);
   }
 
   /**
@@ -192,12 +192,12 @@ class MailContext extends RawMailContext {
   #[Then(':count new (e)mail(s) is/are sent to :to with the subject :subject')]
   public function noNewMailIsSent(string $count, string $to = '', string $subject = ''): void {
     $actual = $this->getMail(['to' => $to, 'subject' => $subject], TRUE);
-    $expectedCount = match ($count) {
+    $expected_count = match ($count) {
       'no' => 0,
             'a', 'an' => 1,
             default => (int) $count,
     };
-    $this->assertMessageCount($actual, $expectedCount);
+    $this->assertMessageCount($actual, $expected_count);
   }
 
   /**

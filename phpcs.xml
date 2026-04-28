@@ -14,10 +14,10 @@
     <file>tests/phpunit</file>
 
     <rule ref="Drupal">
-        <exclude name="Drupal.Files.LineLength.TooLong"/>
-        <exclude name="Drupal.Semantics.FunctionTriggerError"/>
         <exclude name="Drupal.Commenting.Deprecated"/>
     </rule>
+    <rule ref="DrevOps"/>
+    <rule ref="Generic.PHP.RequireStrictTypes" />
 
     <!-- PHPSpec uses snake_case methods without visibility keywords and does
          not follow Drupal commenting conventions. -->
@@ -40,22 +40,6 @@
 
     <rule ref="Generic.PHP.RequireStrictTypes">
         <exclude-pattern>*/spec/*</exclude-pattern>
-    </rule>
-
-    <rule ref="DrevOps.NamingConventions.LocalVariableNaming">
-        <properties>
-            <property name="format" value="camelCase"/>
-        </properties>
-        <exclude-pattern>*/spec/*</exclude-pattern>
-        <exclude-pattern>*/tests/behat/fixtures/*</exclude-pattern>
-    </rule>
-
-    <rule ref="DrevOps.NamingConventions.ParameterNaming">
-        <properties>
-            <property name="format" value="camelCase"/>
-        </properties>
-        <exclude-pattern>*/spec/*</exclude-pattern>
-        <exclude-pattern>*/tests/behat/fixtures/*</exclude-pattern>
     </rule>
 
 </ruleset>

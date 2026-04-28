@@ -28,10 +28,10 @@ class BrowserKitFactory extends BrowserKitFactoryOriginal {
       // @codeCoverageIgnoreEnd
     }
 
-    $drupalFinder = new DrupalFinder();
-    $drupalFinder->locateRoot($this->getCwd());
-    $drupalRoot = $drupalFinder->getDrupalRoot();
-    require_once $drupalRoot . '/core/tests/Drupal/Tests/DrupalTestBrowser.php';
+    $drupal_finder = new DrupalFinder();
+    $drupal_finder->locateRoot($this->getCwd());
+    $drupal_root = $drupal_finder->getDrupalRoot();
+    require_once $drupal_root . '/core/tests/Drupal/Tests/DrupalTestBrowser.php';
 
     if (!class_exists('Drupal\Tests\DrupalTestBrowser')) {
       // @codeCoverageIgnoreStart
@@ -41,17 +41,17 @@ class BrowserKitFactory extends BrowserKitFactoryOriginal {
       // @codeCoverageIgnoreEnd
     }
 
-    $guzzleRequestOptions = $config['guzzle_request_options'] ?? [
+    $guzzle_request_options = $config['guzzle_request_options'] ?? [
       'allow_redirects' => FALSE,
       'cookies' => TRUE,
     ];
 
-    $guzzleClientService = new Definition(Client::class, [$guzzleRequestOptions]);
-    $testBrowserService = (new Definition('Drupal\Tests\DrupalTestBrowser'))
-      ->addMethodCall('setClient', [$guzzleClientService]);
+    $guzzle_client_service = new Definition(Client::class, [$guzzle_request_options]);
+    $test_browser_service = (new Definition('Drupal\Tests\DrupalTestBrowser'))
+      ->addMethodCall('setClient', [$guzzle_client_service]);
 
     return new Definition(BrowserKitDriver::class, [
-      $testBrowserService,
+      $test_browser_service,
       '%mink.base_url%',
     ]);
   }

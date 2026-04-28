@@ -58,12 +58,12 @@ class FeatureContext extends RawDrupalContext {
    */
   #[BeforeScenario]
   public function testStopSessionsBeforeSubProcess(BeforeScenarioScope $scope): void {
-    $hasTraitTag = (bool) array_filter($scope->getScenario()->getTags(), fn(string $tag): bool => str_starts_with($tag, 'javascript'));
+    $has_trait_tag = (bool) array_filter($scope->getScenario()->getTags(), fn(string $tag): bool => str_starts_with($tag, 'javascript'));
 
     // Stop all Mink sessions before sub-process scenarios to prevent
     // connection interference between parent and child processes.
     // @see \Behat\MinkExtension\Listener\SessionsListener::prepareDefaultMinkSession().
-    if ($hasTraitTag) {
+    if ($has_trait_tag) {
       $this->getMink()->stopSessions();
     }
   }
@@ -218,12 +218,12 @@ class FeatureContext extends RawDrupalContext {
 
     // The first row of the table contains the field names.
     $table = $user_table->getTable();
-    $firstRow = array_key_first($table);
+    $first_row = array_key_first($table);
 
     // Replace the aliased field names with the actual ones.
-    foreach ($table[$firstRow] as $key => $alias) {
+    foreach ($table[$first_row] as $key => $alias) {
       if (array_key_exists($alias, $aliases)) {
-        $table[$firstRow][$key] = $aliases[$alias];
+        $table[$first_row][$key] = $aliases[$alias];
       }
     }
 
@@ -343,9 +343,9 @@ class FeatureContext extends RawDrupalContext {
    */
   #[Given('the request time is :seconds seconds in the past')]
   public function testSetStaleRequestTime(int $seconds): void {
-    $staleTime = time() - $seconds;
-    $_SERVER['REQUEST_TIME'] = $staleTime;
-    \Drupal::request()->server->set('REQUEST_TIME', $staleTime);
+    $stale_time = time() - $seconds;
+    $_SERVER['REQUEST_TIME'] = $stale_time;
+    \Drupal::request()->server->set('REQUEST_TIME', $stale_time);
   }
 
   /**
@@ -363,10 +363,10 @@ class FeatureContext extends RawDrupalContext {
       throw new \RuntimeException('Cron time drift was not recorded. Ensure the behat_test module is enabled.');
     }
     if (abs($drift) >= $seconds) {
-      $requestTime = \Drupal::state()->get('behat_test.cron_request_time');
-      $actualTime = \Drupal::state()->get('behat_test.cron_actual_time');
+      $request_time = \Drupal::state()->get('behat_test.cron_request_time');
+      $actual_time = \Drupal::state()->get('behat_test.cron_actual_time');
       throw new ExpectationException(
-        sprintf('Cron request time drift is %d seconds (request_time=%d, actual_time=%d), expected less than %d.', $drift, $requestTime, $actualTime, $seconds),
+        sprintf('Cron request time drift is %d seconds (request_time=%d, actual_time=%d), expected less than %d.', $drift, $request_time, $actual_time, $seconds),
         $this->getSession()->getDriver()
       );
     }
@@ -464,22 +464,22 @@ class FeatureContext extends RawDrupalContext {
 
     /** @var \Drupal\Core\Entity\FieldableEntityInterface $term */
     $term = reset($terms);
-    $parentValues = $term->get('parent')->getValue();
-    $parentTid = (int) ($parentValues[0]['target_id'] ?? 0);
+    $parent_values = $term->get('parent')->getValue();
+    $parent_tid = (int) ($parent_values[0]['target_id'] ?? 0);
 
-    if ($parentTid === 0) {
+    if ($parent_tid === 0) {
       throw new ExpectationException(sprintf('Term "%s" has no parent, expected "%s".', $name, $parentName), $this->getSession()->getDriver());
     }
 
-    $parentTerm = $storage->load($parentTid);
+    $parent_term = $storage->load($parent_tid);
 
-    if (!$parentTerm) {
-      throw new ExpectationException(sprintf('Parent term with tid %d not found for term "%s".', $parentTid, $name), $this->getSession()->getDriver());
+    if (!$parent_term) {
+      throw new ExpectationException(sprintf('Parent term with tid %d not found for term "%s".', $parent_tid, $name), $this->getSession()->getDriver());
     }
 
-    $actualParentName = $parentTerm->label();
-    if ($actualParentName !== $parentName) {
-      throw new ExpectationException(sprintf('Term "%s" has parent "%s", expected "%s".', $name, $actualParentName, $parentName), $this->getSession()->getDriver());
+    $actual_parent_name = $parent_term->label();
+    if ($actual_parent_name !== $parentName) {
+      throw new ExpectationException(sprintf('Term "%s" has parent "%s", expected "%s".', $name, $actual_parent_name, $parentName), $this->getSession()->getDriver());
     }
   }
 
@@ -646,9 +646,9 @@ class BehatTestAddressFieldHandler extends AbstractHandler {
     $row = [];
     $position = 0;
 
-    foreach ($value as $key => $fieldValue) {
+    foreach ($value as $key => $field_value) {
       if (is_string($key)) {
-        $row[$key] = $fieldValue;
+        $row[$key] = $field_value;
         continue;
       }
 
@@ -656,7 +656,7 @@ class BehatTestAddressFieldHandler extends AbstractHandler {
         throw new \RuntimeException(sprintf('Too many positional values supplied for "behat_test_address_field"; only %d columns available.', count($columns)));
       }
 
-      $row[$columns[$position]] = $fieldValue;
+      $row[$columns[$position]] = $field_value;
       $position++;
     }
 

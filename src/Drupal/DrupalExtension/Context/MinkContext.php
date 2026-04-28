@@ -156,15 +156,15 @@ class MinkContext extends MinkExtension implements TranslatableContext {
       );
     }());
 JS;
-    $ajaxTimeout = $this->getMinkParameter('ajax_timeout');
-    $result = $this->getSession()->wait(1000 * $ajaxTimeout, $condition);
+    $ajax_timeout = $this->getMinkParameter('ajax_timeout');
+    $result = $this->getSession()->wait(1000 * $ajax_timeout, $condition);
     if (!$result) {
-      if ($ajaxTimeout === NULL) {
+      if ($ajax_timeout === NULL) {
         throw new \Exception('No AJAX timeout has been defined. Please verify that "Drupal\MinkExtension" is configured in behat.yml (and not "Behat\MinkExtension").');
       }
       if ($event) {
         /** @var \Behat\Behat\Hook\Scope\BeforeStepScope $event */
-        $eventData = ' ' . json_encode([
+        $event_data = ' ' . json_encode([
           'name' => $event->getName(),
           'feature' => $event->getFeature()->getTitle(),
           'step' => $event->getStep()->getText(),
@@ -172,9 +172,9 @@ JS;
         ]);
       }
       else {
-        $eventData = '';
+        $event_data = '';
       }
-      throw new \RuntimeException('Unable to complete AJAX request.' . $eventData);
+      throw new \RuntimeException('Unable to complete AJAX request.' . $event_data);
     }
   }
 
@@ -281,17 +281,17 @@ JS;
     $page = $this->getSession()->getPage();
     $driver = $this->getSession()->getDriver();
 
-    $sourceElement = $page->find('css', $source);
-    if ($sourceElement === NULL) {
+    $source_element = $page->find('css', $source);
+    if ($source_element === NULL) {
       throw new ElementNotFoundException($driver, 'source element', 'css selector', $source);
     }
 
-    $targetElement = $page->find('css', $target);
-    if ($targetElement === NULL) {
+    $target_element = $page->find('css', $target);
+    if ($target_element === NULL) {
       throw new ElementNotFoundException($driver, 'target element', 'css selector', $target);
     }
 
-    $sourceElement->dragTo($targetElement);
+    $source_element->dragTo($target_element);
   }
 
   /**
@@ -351,7 +351,9 @@ JS;
   }
 
   /**
-   * Links are loaded but not visually visible (e.g they have display: hidden applied).
+   * Links are loaded but not visually visible.
+   *
+   * For example, they have 'display: hidden' applied.
    *
    * @code
    * Then I should not visibly see the link "Skip to main content"
@@ -428,8 +430,8 @@ JS;
   #[Then('I (should ) see the :button button')]
   public function assertButton(string $button): void {
     $element = $this->getSession()->getPage();
-    $buttonObj = $element->findButton($button);
-    if (empty($buttonObj)) {
+    $button_obj = $element->findButton($button);
+    if (empty($button_obj)) {
       throw new \Exception(sprintf("The button '%s' was not found on the page %s", $button, $this->getSession()->getCurrentUrl()));
     }
   }
@@ -446,8 +448,8 @@ JS;
   #[Then('I should not see the :button button')]
   public function assertNotButton(string $button): void {
     $element = $this->getSession()->getPage();
-    $buttonObj = $element->findButton($button);
-    if (!empty($buttonObj)) {
+    $button_obj = $element->findButton($button);
+    if (!empty($button_obj)) {
       throw new \Exception(sprintf("The button '%s' was found on the page %s", $button, $this->getSession()->getCurrentUrl()));
     }
   }
@@ -466,18 +468,25 @@ JS;
    */
   #[When('I follow/click :link in the :region( region)')]
   public function assertRegionLinkFollow(string $link, string $region): void {
-    $regionObj = $this->getRegion($region);
+    $region_obj = $this->getRegion($region);
 
     // Find the link within the region.
-    $linkObj = $regionObj->findLink($link);
-    if (empty($linkObj)) {
-      throw new \Exception(sprintf('The link "%s" was not found in the region "%s" on the page %s', $link, $region, $this->getSession()->getCurrentUrl()));
+    $link_obj = $region_obj->findLink($link);
+    if (empty($link_obj)) {
+      throw new \Exception(sprintf(
+        'The link "%s" was not found in the region "%s" on the page %s',
+        $link,
+        $region,
+        $this->getSession()->getCurrentUrl()
+      ));
     }
-    $linkObj->click();
+    $link_obj->click();
   }
 
   /**
-   * Checks if a button with id|name|title|alt|value exists or not and presses the same.
+   * Checks if a button exists and presses it.
+   *
+   * Matches by id|name|title|alt|value.
    *
    * @param string $button
    *   The id|name|title|alt|value of the button to be pressed.
@@ -494,13 +503,13 @@ JS;
    */
   #[Given('I press :button in the :region( region)')]
   public function assertRegionPressButton(string $button, string $region): void {
-    $regionObj = $this->getRegion($region);
+    $region_obj = $this->getRegion($region);
 
-    $buttonObj = $regionObj->findButton($button);
-    if (empty($buttonObj)) {
+    $button_obj = $region_obj->findButton($button);
+    if (empty($button_obj)) {
       throw new \Exception(sprintf("The button '%s' was not found in the region '%s' on the page %s", $button, $region, $this->getSession()->getCurrentUrl()));
     }
-    $buttonObj->press();
+    $button_obj->press();
   }
 
   /**
@@ -520,12 +529,14 @@ JS;
   public function regionFillField(string $field, string $value, string $region): void {
     $field = $this->fixStepArgument($field);
     $value = $this->fixStepArgument($value);
-    $regionObj = $this->getRegion($region);
-    $regionObj->fillField($field, $value);
+    $region_obj = $this->getRegion($region);
+    $region_obj->fillField($field, $value);
   }
 
   /**
-   * Checks if a checkbox with id|name|title|alt|value exists or not and checks the same.
+   * Checks if a checkbox exists and checks it.
+   *
+   * Matches by id|name|title|alt|value.
    *
    * @param string $locator
    *   The id|name|title|alt|value of the checkbox to be checked.
@@ -542,12 +553,14 @@ JS;
    */
   #[Given('I check :locator in the :region( region)')]
   public function assertRegionCheckBox(string $locator, string $region): void {
-    $regionObj = $this->getRegion($region);
-    $regionObj->checkField($locator);
+    $region_obj = $this->getRegion($region);
+    $region_obj->checkField($locator);
   }
 
   /**
-   * Checks if a checkbox with id|name|title|alt|value exists or not and unchecks the same.
+   * Checks if a checkbox exists and unchecks it.
+   *
+   * Matches by id|name|title|alt|value.
    *
    * @param string $locator
    *   The id|name|title|alt|value of the checkbox to be unchecked.
@@ -564,8 +577,8 @@ JS;
    */
   #[Given('I uncheck :checkbox in the :region( region)')]
   public function assertRegionUncheckBox(string $locator, string $region): void {
-    $regionObj = $this->getRegion($region);
-    $regionObj->uncheckField($locator);
+    $region_obj = $this->getRegion($region);
+    $region_obj->uncheckField($locator);
   }
 
   /**
@@ -583,9 +596,9 @@ JS;
   #[Then('I should see the heading :heading in the :region( region)')]
   #[Then('I should see the :heading heading in the :region( region)')]
   public function assertRegionHeading(string $heading, string $region): void {
-    $regionObj = $this->getRegion($region);
+    $region_obj = $this->getRegion($region);
 
-    foreach ($regionObj->findAll('css', 'h1, h2, h3, h4, h5, h6') as $element) {
+    foreach ($region_obj->findAll('css', 'h1, h2, h3, h4, h5, h6') as $element) {
       if (trim($element->getText()) === $heading) {
         return;
       }
@@ -607,9 +620,9 @@ JS;
    */
   #[Then('I should see the link :link in the :region( region)')]
   public function assertLinkRegion(string $link, string $region): void {
-    $regionObj = $this->getRegion($region);
+    $region_obj = $this->getRegion($region);
 
-    $result = $regionObj->findLink($link);
+    $result = $region_obj->findLink($link);
     if (empty($result)) {
       throw new \Exception(sprintf('No link to "%s" in the "%s" region on the page %s', $link, $region, $this->getSession()->getCurrentUrl()));
     }
@@ -628,9 +641,9 @@ JS;
    */
   #[Then('I should not see the link :link in the :region( region)')]
   public function assertNotLinkRegion(string $link, string $region): void {
-    $regionObj = $this->getRegion($region);
+    $region_obj = $this->getRegion($region);
 
-    $result = $regionObj->findLink($link);
+    $result = $region_obj->findLink($link);
     if (!empty($result)) {
       throw new \Exception(sprintf('Link to "%s" in the "%s" region on the page %s', $link, $region, $this->getSession()->getCurrentUrl()));
     }
@@ -650,11 +663,11 @@ JS;
    */
   #[Then('I should see( the text) :text in the :region( region)')]
   public function assertRegionText(string $text, string $region): void {
-    $regionObj = $this->getRegion($region);
+    $region_obj = $this->getRegion($region);
 
     // Find the text within the region.
-    $regionText = $regionObj->getText();
-    if (!str_contains($regionText, $text)) {
+    $region_text = $region_obj->getText();
+    if (!str_contains($region_text, $text)) {
       throw new \Exception(sprintf("The text '%s' was not found in the region '%s' on the page %s", $text, $region, $this->getSession()->getCurrentUrl()));
     }
   }
@@ -673,11 +686,11 @@ JS;
    */
   #[Then('I should not see( the text) :text in the :region( region)')]
   public function assertNotRegionText(string $text, string $region): void {
-    $regionObj = $this->getRegion($region);
+    $region_obj = $this->getRegion($region);
 
     // Find the text within the region.
-    $regionText = $regionObj->getText();
-    if (str_contains($regionText, $text)) {
+    $region_text = $region_obj->getText();
+    if (str_contains($region_text, $text)) {
       throw new \Exception(sprintf('The text "%s" was found in the region "%s" on the page %s', $text, $region, $this->getSession()->getCurrentUrl()));
     }
   }
@@ -788,8 +801,8 @@ JS;
       throw new \Exception(sprintf('The radio button with "%s" was not found on the page %s', $id ?: $label, $this->getSession()->getCurrentUrl()));
     }
     $value = $radiobutton->getAttribute('value');
-    $radioId = $radiobutton->getAttribute('id');
-    $labelonpage = $element->find('css', sprintf("label[for='%s']", $radioId))->getText();
+    $radio_id = $radiobutton->getAttribute('id');
+    $labelonpage = $element->find('css', sprintf("label[for='%s']", $radio_id))->getText();
     if ($label != $labelonpage) {
       throw new \Exception(sprintf("Button with id '%s' has label '%s' instead of '%s' on the page %s", $id, $labelonpage, $label, $this->getSession()->getCurrentUrl()));
     }
@@ -813,31 +826,31 @@ JS;
     $literal = $this->getSession()->getSelectorsHandler()->xpathLiteral($summary);
 
     if ($action === 'expand') {
-      $expandedState = "[not(@open)]";
+      $expanded_state = "[not(@open)]";
     }
     elseif ($action === 'collapse') {
-      $expandedState = "[@open]";
+      $expanded_state = "[@open]";
     }
     elseif ($action === 'click') {
-      $expandedState = '';
+      $expanded_state = '';
     }
     else {
       throw new \InvalidArgumentException(sprintf("Unknown action '%s'. Expected expand, collapse, or click.", $action));
     }
 
-    $xpath = sprintf('//details%s/summary[normalize-space()][contains(normalize-space(.), %s)]', $expandedState, $literal);
+    $xpath = sprintf('//details%s/summary[normalize-space()][contains(normalize-space(.), %s)]', $expanded_state, $literal);
 
     $element = $page->find('xpath', $xpath);
     if (!$element) {
-      throw new \Exception(sprintf('Unable to find details%s containing text %s for action %s', $expandedState, $summary, $action));
+      throw new \Exception(sprintf('Unable to find details%s containing text %s for action %s', $expanded_state, $summary, $action));
     }
 
-    $ajaxTimeout = $this->getMinkParameter('ajax_timeout') ?? 5;
+    $ajax_timeout = $this->getMinkParameter('ajax_timeout') ?? 5;
     // 1/10th of ajax_timeout, in microseconds.
-    $animateDelay = $ajaxTimeout * 100000;
+    $animate_delay = $ajax_timeout * 100000;
     try {
       $element->click();
-      usleep($animateDelay);
+      usleep($animate_delay);
     }
     catch (UnsupportedDriverActionException) {
       // Goutte etc only supports clicking link, submit, button;

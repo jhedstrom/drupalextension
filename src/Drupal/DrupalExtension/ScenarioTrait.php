@@ -12,7 +12,7 @@ use Behat\Behat\Hook\Scope\BeforeScenarioScope;
  *
  * @see https://github.com/Behat/Behat/issues/653
  * @see https://github.com/Behat/Behat/issues/650
- * The solution is documented in this issue: https://github.com/Behat/Behat/issues/703#issuecomment-86687563
+ * @see https://github.com/Behat/Behat/issues/703#issuecomment-86687563
  */
 trait ScenarioTrait {
 

@@ -26,39 +26,39 @@ if (empty($argv[1])) {
   exit(1);
 }
 
-$traitName = $argv[1];
-$defaultCoverageFile = file_exists('/var/www/html/.logs/coverage/merged/cobertura.xml')
+$trait_name = $argv[1];
+$default_coverage_file = file_exists('/var/www/html/.logs/coverage/merged/cobertura.xml')
   ? '/var/www/html/.logs/coverage/merged/cobertura.xml'
   : __DIR__ . '/../.logs/coverage/merged/cobertura.xml';
-$coverageFile = $argv[2] ?? $defaultCoverageFile;
+$coverage_file = $argv[2] ?? $default_coverage_file;
 
-if (!file_exists($coverageFile)) {
-  echo sprintf("Error: Coverage file not found: %s\n", $coverageFile);
+if (!file_exists($coverage_file)) {
+  echo sprintf("Error: Coverage file not found: %s\n", $coverage_file);
   exit(1);
 }
 
-$xml = simplexml_load_file($coverageFile);
+$xml = simplexml_load_file($coverage_file);
 if ($xml === FALSE) {
-  echo sprintf("Error: Failed to parse coverage file: %s\n", $coverageFile);
+  echo sprintf("Error: Failed to parse coverage file: %s\n", $coverage_file);
   exit(1);
 }
 
 $xml->registerXPathNamespace('c', 'http://cobertura.sourceforge.net/xml/coverage-04.dtd');
 
-$classes = $xml->xpath(sprintf('//class[contains(@name, "%s")]', $traitName));
+$classes = $xml->xpath(sprintf('//class[contains(@name, "%s")]', $trait_name));
 
 if (empty($classes)) {
-  echo sprintf("Error: Class '%s' not found in coverage report.\n", $traitName);
+  echo sprintf("Error: Class '%s' not found in coverage report.\n", $trait_name);
   exit(1);
 }
 
 foreach ($classes as $class) {
-  $className = (string) $class['name'];
-  $lineRate = (float) $class['line-rate'];
-  $percentage = number_format($lineRate * 100, 2);
+  $class_name = (string) $class['name'];
+  $line_rate = (float) $class['line-rate'];
+  $percentage = number_format($line_rate * 100, 2);
 
-  echo sprintf("Class: %s\n", $className);
-  echo sprintf("Line rate: %s (%s%%)\n\n", $lineRate, $percentage);
+  echo sprintf("Class: %s\n", $class_name);
+  echo sprintf("Line rate: %s (%s%%)\n\n", $line_rate, $percentage);
 
   $uncovered = [];
   if (property_exists($class->lines, 'line') && $class->lines->line !== NULL) {

@@ -23,12 +23,12 @@ trait RegionTrait {
    */
   public function getRegion(string $region) {
     $session = $this->getSession();
-    $regionObj = $session->getPage()->find('region', $region);
-    if (!$regionObj) {
+    $region_obj = $session->getPage()->find('region', $region);
+    if (!$region_obj) {
       throw new \Exception(sprintf('No region "%s" found on the page %s.', $region, $session->getCurrentUrl()));
     }
 
-    return $regionObj;
+    return $region_obj;
   }
 
 }

@@ -68,12 +68,12 @@ class RawMailContext extends RawDrupalContext {
    */
   protected function getMail(array $criteria = [], bool $new = FALSE, ?int $index = NULL, string $store = 'default') {
     $messages = $this->getMailManager()->getMail($store);
-    $previousCount = $this->getMailMessageCount($store);
+    $previous_count = $this->getMailMessageCount($store);
     $this->mailMessageCount[$store] = count($messages);
 
     // Ignore previously seen messages.
     if ($new) {
-      $messages = array_slice($messages, $previousCount);
+      $messages = array_slice($messages, $previous_count);
     }
 
     // Filter messages based on $matches; keep only mail where each field
@@ -138,20 +138,20 @@ class RawMailContext extends RawDrupalContext {
    */
   protected function compareMessages(array $actualMessages, array $expectedMessages) {
     // Make sure there is the same number of actual and expected.
-    $expectedCount = count($expectedMessages);
-    $this->assertMessageCount($actualMessages, $expectedCount);
+    $expected_count = count($expectedMessages);
+    $this->assertMessageCount($actualMessages, $expected_count);
 
     // For each row of expected mail, check the corresponding actual mail.
     // Make the comparison insensitive to the order mails were sent.
     $actualMessages = $this->sortMessages($actualMessages);
     $expectedMessages = $this->sortMessages($expectedMessages);
-    foreach ($expectedMessages as $index => $expectedMailItem) {
+    foreach ($expectedMessages as $index => $expected_mail_item) {
       // For each column of the expected, check the field of the actual mail.
-      foreach ($expectedMailItem as $fieldName => $fieldValue) {
-        $expectedField = [$fieldName => $fieldValue];
-        $isMatch = $this->matchMessage($actualMessages[$index], $expectedField);
-        if (!$isMatch) {
-          throw new \Exception(sprintf("The #%s mail did not have '%s' in its %s field. It had:\n'%s'", $index, $fieldValue, $fieldName, mb_strimwidth((string) $actualMessages[$index][$fieldName], 0, 30, "...")));
+      foreach ($expected_mail_item as $field_name => $field_value) {
+        $expected_field = [$field_name => $field_value];
+        $is_match = $this->matchMessage($actualMessages[$index], $expected_field);
+        if (!$is_match) {
+          throw new \Exception(sprintf("The #%s mail did not have '%s' in its %s field. It had:\n'%s'", $index, $field_value, $field_name, mb_strimwidth((string) $actualMessages[$index][$field_name], 0, 30, "...")));
         }
       }
     }
@@ -166,23 +166,23 @@ class RawMailContext extends RawDrupalContext {
    *   Optional. The number of mails expected.
    */
   protected function assertMessageCount(array $actualMessages, ?int $expectedCount = NULL) {
-    $actualCount = count($actualMessages);
+    $actual_count = count($actualMessages);
     if (is_null($expectedCount)) {
       // If number to expect is not specified, expect more than zero.
-      if ($actualCount === 0) {
+      if ($actual_count === 0) {
         throw new \Exception("Expected some mail, but none found.");
       }
     }
-    elseif ($expectedCount !== $actualCount) {
+    elseif ($expectedCount !== $actual_count) {
       // Prepare a simple list of actual mail.
-      $formattedActualMessages = [];
-      foreach ($actualMessages as $actualMessage) {
-        $formattedActualMessages[] = [
-          'to' => $actualMessage['to'],
-          'subject' => $actualMessage['subject'],
+      $formatted_actual_messages = [];
+      foreach ($actualMessages as $actual_message) {
+        $formatted_actual_messages[] = [
+          'to' => $actual_message['to'],
+          'subject' => $actual_message['subject'],
         ];
       }
-      throw new \Exception(sprintf("Expected %s mail, but %s found:\n\n%s", $expectedCount, $actualCount, print_r($formattedActualMessages, TRUE)));
+      throw new \Exception(sprintf("Expected %s mail, but %s found:\n\n%s", $expectedCount, $actual_count, print_r($formatted_actual_messages, TRUE)));
     }
   }
 
@@ -212,13 +212,13 @@ class RawMailContext extends RawDrupalContext {
    * Get the mink context, so we can visit pages using the mink session.
    */
   protected function getMinkContext(): object {
-    $minkContext = $this->getContext(RawMinkContext::class);
+    $mink_context = $this->getContext(RawMinkContext::class);
 
-    if ($minkContext === FALSE) {
+    if ($mink_context === FALSE) {
       throw new \Exception('No mink context found.');
     }
 
-    return $minkContext;
+    return $mink_context;
   }
 
 }

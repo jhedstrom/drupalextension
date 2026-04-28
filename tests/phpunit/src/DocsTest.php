@@ -43,11 +43,11 @@ class DocsTest extends TestCase {
     require_once __DIR__ . '/../../../scripts/docs.php';
 
     // Pre-load all fixture context classes.
-    $fixturesDir = __DIR__ . '/../fixtures/docs';
-    $fixtureFiles = glob($fixturesDir . '/*.php');
-    if ($fixtureFiles !== FALSE) {
-      foreach ($fixtureFiles as $fixtureFile) {
-        require_once $fixtureFile;
+    $fixtures_dir = __DIR__ . '/../fixtures/docs';
+    $fixture_files = glob($fixtures_dir . '/*.php');
+    if ($fixture_files !== FALSE) {
+      foreach ($fixture_files as $fixture_file) {
+        require_once $fixture_file;
       }
     }
 
@@ -430,18 +430,18 @@ EOD,
       $this->expectExceptionMessage($exception);
     }
 
-    $basePath = static::$tmp;
+    $base_path = static::$tmp;
 
     // Create temporary files for testing.
-    $srcDir = $basePath . DIRECTORY_SEPARATOR . 'src';
-    $featuresDir = $basePath . DIRECTORY_SEPARATOR . 'tests/behat/features';
+    $src_dir = $base_path . DIRECTORY_SEPARATOR . 'src';
+    $features_dir = $base_path . DIRECTORY_SEPARATOR . 'tests/behat/features';
 
     // Ensure directories exist.
-    if (!is_dir($srcDir)) {
-      mkdir($srcDir, 0777, TRUE);
+    if (!is_dir($src_dir)) {
+      mkdir($src_dir, 0777, TRUE);
     }
-    if (!is_dir($featuresDir)) {
-      mkdir($featuresDir, 0777, TRUE);
+    if (!is_dir($features_dir)) {
+      mkdir($features_dir, 0777, TRUE);
     }
 
     // Create sample files that the function will check for existence.
@@ -453,39 +453,39 @@ EOD,
 
       if ($class !== 'MissingContext') {
         // Create the source file.
-        $srcFile = sprintf('src/%s.php', $class);
-        $srcFilePath = $basePath . DIRECTORY_SEPARATOR . $srcFile;
-        file_put_contents($srcFilePath, '<?php');
+        $src_file = sprintf('src/%s.php', $class);
+        $src_file_path = $base_path . DIRECTORY_SEPARATOR . $src_file;
+        file_put_contents($src_file_path, '<?php');
       }
 
-      $exampleName = camel_to_snake(str_replace('Context', '', $class));
-      $exampleFile = sprintf('tests/behat/features/%s.feature', $exampleName);
-      $exampleFilePath = $basePath . DIRECTORY_SEPARATOR . $exampleFile;
-      file_put_contents($exampleFilePath, 'Feature: Test');
+      $example_name = camel_to_snake(str_replace('Context', '', $class));
+      $example_file = sprintf('tests/behat/features/%s.feature', $example_name);
+      $example_file_path = $base_path . DIRECTORY_SEPARATOR . $example_file;
+      file_put_contents($example_file_path, 'Feature: Test');
     }
 
     // For the missing file test.
     if (isset($info['MissingContext'])) {
-      $srcFilePath = $basePath . DIRECTORY_SEPARATOR . 'src/MissingContext.php';
-      @unlink($srcFilePath);
+      $src_file_path = $base_path . DIRECTORY_SEPARATOR . 'src/MissingContext.php';
+      @unlink($src_file_path);
     }
 
-    $actual = render_info($info, $basePath);
+    $actual = render_info($info, $base_path);
 
     // Only test for certain elements instead of exact formatting.
     if ($exception === NULL && !empty($info)) {
       // Verify index table exists.
       foreach ($info as $class => $data) {
-        $nameContextual = $data['name_contextual'] ?? $class;
-        $linkId = strtolower(preg_replace('/[^A-Za-z0-9_\-]/', '', $nameContextual));
-        $this->assertStringContainsString(sprintf("[%s](#%s)", $nameContextual, $linkId), $actual);
+        $name_contextual = $data['name_contextual'] ?? $class;
+        $link_id = strtolower(preg_replace('/[^A-Za-z0-9_\-]/', '', $name_contextual));
+        $this->assertStringContainsString(sprintf("[%s](#%s)", $name_contextual, $link_id), $actual);
         $this->assertStringContainsString($data['description'], $actual);
       }
 
       // Verify class sections exist.
       foreach ($info as $class => $data) {
-        $nameContextual = $data['name_contextual'] ?? $class;
-        $this->assertStringContainsString(sprintf("## %s", $nameContextual), $actual);
+        $name_contextual = $data['name_contextual'] ?? $class;
+        $this->assertStringContainsString(sprintf("## %s", $name_contextual), $actual);
         $this->assertStringContainsString("[Source](src", $actual);
 
         // Verify step details for each method.
@@ -509,8 +509,8 @@ EOD,
               else {
                 $example = is_string($method['example']) ? $method['example'] : (string) $method['example'];
                 if (!empty($example)) {
-                  $exampleLines = explode("\n", $example);
-                  foreach ($exampleLines as $line) {
+                  $example_lines = explode("\n", $example);
+                  foreach ($example_lines as $line) {
                     if (!empty(trim($line))) {
                       $this->assertStringContainsString($line, $actual);
                     }
@@ -628,18 +628,18 @@ EOD,
 
   #[DataProvider('dataProviderRenderInfoWithPathForLinks')]
   public function testRenderInfoWithPathForLinks(array $info, string $path_for_links): void {
-    $basePath = static::$tmp;
+    $base_path = static::$tmp;
 
     // Create temporary files for testing.
-    $srcDir = $basePath . DIRECTORY_SEPARATOR . 'src';
-    $featuresDir = $basePath . DIRECTORY_SEPARATOR . 'tests/behat/features';
+    $src_dir = $base_path . DIRECTORY_SEPARATOR . 'src';
+    $features_dir = $base_path . DIRECTORY_SEPARATOR . 'tests/behat/features';
 
     // Ensure directories exist.
-    if (!is_dir($srcDir)) {
-      mkdir($srcDir, 0777, TRUE);
+    if (!is_dir($src_dir)) {
+      mkdir($src_dir, 0777, TRUE);
     }
-    if (!is_dir($featuresDir)) {
-      mkdir($featuresDir, 0777, TRUE);
+    if (!is_dir($features_dir)) {
+      mkdir($features_dir, 0777, TRUE);
     }
 
     // Create sample files.
@@ -648,22 +648,22 @@ EOD,
         $info[$class]['name_contextual'] = $class;
       }
 
-      $srcFile = sprintf('src/%s.php', $class);
-      file_put_contents($basePath . DIRECTORY_SEPARATOR . $srcFile, '<?php');
+      $src_file = sprintf('src/%s.php', $class);
+      file_put_contents($base_path . DIRECTORY_SEPARATOR . $src_file, '<?php');
 
-      $exampleName = camel_to_snake(str_replace('Context', '', $class));
-      $exampleFile = sprintf('tests/behat/features/%s.feature', $exampleName);
-      file_put_contents($basePath . DIRECTORY_SEPARATOR . $exampleFile, 'Feature: Test');
+      $example_name = camel_to_snake(str_replace('Context', '', $class));
+      $example_file = sprintf('tests/behat/features/%s.feature', $example_name);
+      file_put_contents($base_path . DIRECTORY_SEPARATOR . $example_file, 'Feature: Test');
     }
 
-    $actual = render_info($info, $basePath, $path_for_links);
+    $actual = render_info($info, $base_path, $path_for_links);
 
     // Verify that the path_for_links is used in the index.
     foreach ($info as $class => $data) {
-      $nameContextual = $data['name_contextual'] ?? $class;
-      $linkId = strtolower(preg_replace('/[^A-Za-z0-9_\-]/', '', $nameContextual));
-      $expectedLink = sprintf("%s#%s", $path_for_links, $linkId);
-      $this->assertStringContainsString($expectedLink, $actual);
+      $name_contextual = $data['name_contextual'] ?? $class;
+      $link_id = strtolower(preg_replace('/[^A-Za-z0-9_\-]/', '', $name_contextual));
+      $expected_link = sprintf("%s#%s", $path_for_links, $link_id);
+      $this->assertStringContainsString($expected_link, $actual);
     }
 
     // When path_for_links is set, the actual content should not be rendered.
@@ -721,15 +721,15 @@ EOD,
       return;
     }
 
-    $className = array_key_first($info);
-    $this->assertArrayHasKey($className, $results);
+    $class_name = array_key_first($info);
+    $this->assertArrayHasKey($class_name, $results);
 
     if (empty($method_name)) {
       return;
     }
 
-    $this->assertArrayHasKey($method_name, $results[$className]['methods']);
-    $check = $results[$className]['methods'][$method_name][$check_key];
+    $this->assertArrayHasKey($method_name, $results[$class_name]['methods']);
+    $check = $results[$class_name]['methods'][$method_name][$check_key];
     $this->assertSame($expected_pass, $check['pass']);
     $this->assertSame($expected_messages, $check['messages']);
   }
@@ -1600,30 +1600,30 @@ EOD,
     array $exclude,
     array $expected_class_names,
   ): void {
-    $basePath = static::$tmp;
-    $contextDir = $basePath . DIRECTORY_SEPARATOR . 'src';
-    if (!is_dir($contextDir)) {
-      mkdir($contextDir, 0777, TRUE);
+    $base_path = static::$tmp;
+    $context_dir = $base_path . DIRECTORY_SEPARATOR . 'src';
+    if (!is_dir($context_dir)) {
+      mkdir($context_dir, 0777, TRUE);
     }
 
     // Copy fixture files to the context directory.
-    $fixturesDir = __DIR__ . '/../fixtures/docs';
-    foreach ($class_names as $className) {
-      $fixtureFile = $fixturesDir . DIRECTORY_SEPARATOR . $className . '.php';
-      if (file_exists($fixtureFile)) {
-        copy($fixtureFile, $contextDir . DIRECTORY_SEPARATOR . $className . '.php');
+    $fixtures_dir = __DIR__ . '/../fixtures/docs';
+    foreach ($class_names as $class_name) {
+      $fixture_file = $fixtures_dir . DIRECTORY_SEPARATOR . $class_name . '.php';
+      if (file_exists($fixture_file)) {
+        copy($fixture_file, $context_dir . DIRECTORY_SEPARATOR . $class_name . '.php');
       }
     }
 
-    $result = extract_info($contextDir, $exclude, $basePath, 'Drupal\\DrupalExtension\\Tests\\Fixtures');
+    $result = extract_info($context_dir, $exclude, $base_path, 'Drupal\\DrupalExtension\\Tests\\Fixtures');
 
-    foreach ($expected_class_names as $expectedClass) {
-      if (!in_array($expectedClass, $exclude, TRUE)) {
-        $this->assertArrayHasKey($expectedClass, $result);
-        $this->assertEquals($expectedClass, $result[$expectedClass]['name']);
+    foreach ($expected_class_names as $expected_class) {
+      if (!in_array($expected_class, $exclude, TRUE)) {
+        $this->assertArrayHasKey($expected_class, $result);
+        $this->assertEquals($expected_class, $result[$expected_class]['name']);
       }
       else {
-        $this->assertArrayNotHasKey($expectedClass, $result);
+        $this->assertArrayNotHasKey($expected_class, $result);
       }
     }
   }
@@ -1650,29 +1650,29 @@ EOD,
    * Test extract_info with context having multiple methods (tests sorting).
    */
   public function testExtractInfoMultipleMethods(): void {
-    $basePath = static::$tmp;
-    $contextDir = $basePath . DIRECTORY_SEPARATOR . 'src';
-    if (!is_dir($contextDir)) {
-      mkdir($contextDir, 0777, TRUE);
+    $base_path = static::$tmp;
+    $context_dir = $base_path . DIRECTORY_SEPARATOR . 'src';
+    if (!is_dir($context_dir)) {
+      mkdir($context_dir, 0777, TRUE);
     }
 
-    $className = 'MultiMethodContext';
-    $fixturesDir = __DIR__ . '/../fixtures/docs';
-    copy($fixturesDir . DIRECTORY_SEPARATOR . $className . '.php', $contextDir . DIRECTORY_SEPARATOR . $className . '.php');
+    $class_name = 'MultiMethodContext';
+    $fixtures_dir = __DIR__ . '/../fixtures/docs';
+    copy($fixtures_dir . DIRECTORY_SEPARATOR . $class_name . '.php', $context_dir . DIRECTORY_SEPARATOR . $class_name . '.php');
 
-    $result = extract_info($contextDir, [], $basePath, 'Drupal\\DrupalExtension\\Tests\\Fixtures');
+    $result = extract_info($context_dir, [], $base_path, 'Drupal\\DrupalExtension\\Tests\\Fixtures');
 
-    $this->assertArrayHasKey($className, $result);
-    $this->assertIsArray($result[$className]['methods']);
-    $this->assertCount(3, $result[$className]['methods']);
+    $this->assertArrayHasKey($class_name, $result);
+    $this->assertIsArray($result[$class_name]['methods']);
+    $this->assertCount(3, $result[$class_name]['methods']);
 
     // Check order: Given, When, Then.
-    $this->assertArrayHasKey('steps', $result[$className]['methods'][0]);
-    $this->assertStringContainsString('@Given', $result[$className]['methods'][0]['steps'][0]);
-    $this->assertArrayHasKey('steps', $result[$className]['methods'][1]);
-    $this->assertStringContainsString('@When', $result[$className]['methods'][1]['steps'][0]);
-    $this->assertArrayHasKey('steps', $result[$className]['methods'][2]);
-    $this->assertStringContainsString('@Then', $result[$className]['methods'][2]['steps'][0]);
+    $this->assertArrayHasKey('steps', $result[$class_name]['methods'][0]);
+    $this->assertStringContainsString('@Given', $result[$class_name]['methods'][0]['steps'][0]);
+    $this->assertArrayHasKey('steps', $result[$class_name]['methods'][1]);
+    $this->assertStringContainsString('@When', $result[$class_name]['methods'][1]['steps'][0]);
+    $this->assertArrayHasKey('steps', $result[$class_name]['methods'][2]);
+    $this->assertStringContainsString('@Then', $result[$class_name]['methods'][2]['steps'][0]);
   }
 
   /**
@@ -1682,17 +1682,17 @@ EOD,
     $this->expectException(\Exception::class);
     $this->expectExceptionMessage('Class comment for EmptyCommentContext is empty');
 
-    $basePath = static::$tmp;
-    $contextDir = $basePath . DIRECTORY_SEPARATOR . 'src';
-    if (!is_dir($contextDir)) {
-      mkdir($contextDir, 0777, TRUE);
+    $base_path = static::$tmp;
+    $context_dir = $base_path . DIRECTORY_SEPARATOR . 'src';
+    if (!is_dir($context_dir)) {
+      mkdir($context_dir, 0777, TRUE);
     }
 
-    $className = 'EmptyCommentContext';
-    $fixturesDir = __DIR__ . '/../fixtures/docs';
-    copy($fixturesDir . DIRECTORY_SEPARATOR . $className . '.php', $contextDir . DIRECTORY_SEPARATOR . $className . '.php');
+    $class_name = 'EmptyCommentContext';
+    $fixtures_dir = __DIR__ . '/../fixtures/docs';
+    copy($fixtures_dir . DIRECTORY_SEPARATOR . $class_name . '.php', $context_dir . DIRECTORY_SEPARATOR . $class_name . '.php');
 
-    extract_info($contextDir, [], $basePath, 'Drupal\\DrupalExtension\\Tests\\Fixtures');
+    extract_info($context_dir, [], $base_path, 'Drupal\\DrupalExtension\\Tests\\Fixtures');
   }
 
   /**
@@ -1709,34 +1709,34 @@ EOD,
    * Test extract_info excludes classes without step definitions.
    */
   public function testExtractInfoNoStepAnnotations(): void {
-    $basePath = static::$tmp;
-    $contextDir = $basePath . DIRECTORY_SEPARATOR . 'src';
-    if (!is_dir($contextDir)) {
-      mkdir($contextDir, 0777, TRUE);
+    $base_path = static::$tmp;
+    $context_dir = $base_path . DIRECTORY_SEPARATOR . 'src';
+    if (!is_dir($context_dir)) {
+      mkdir($context_dir, 0777, TRUE);
     }
 
-    $className = 'NoStepAnnotationContext';
-    $fixturesDir = __DIR__ . '/../fixtures/docs';
-    copy($fixturesDir . DIRECTORY_SEPARATOR . $className . '.php', $contextDir . DIRECTORY_SEPARATOR . $className . '.php');
+    $class_name = 'NoStepAnnotationContext';
+    $fixtures_dir = __DIR__ . '/../fixtures/docs';
+    copy($fixtures_dir . DIRECTORY_SEPARATOR . $class_name . '.php', $context_dir . DIRECTORY_SEPARATOR . $class_name . '.php');
 
-    $result = extract_info($contextDir, [], $basePath, 'Drupal\\DrupalExtension\\Tests\\Fixtures');
+    $result = extract_info($context_dir, [], $base_path, 'Drupal\\DrupalExtension\\Tests\\Fixtures');
 
     // Context should not appear since it has no step methods.
-    $this->assertArrayNotHasKey($className, $result);
+    $this->assertArrayNotHasKey($class_name, $result);
   }
 
   /**
    * Test find_source_file function.
    */
   public function testFindSourceFile(): void {
-    $basePath = static::$tmp;
+    $base_path = static::$tmp;
 
     // Test with file in Context directory.
-    $contextDir = $basePath . '/src/Drupal/DrupalExtension/Context';
-    mkdir($contextDir, 0777, TRUE);
-    file_put_contents($contextDir . '/TestContext.php', '<?php');
+    $context_dir = $base_path . '/src/Drupal/DrupalExtension/Context';
+    mkdir($context_dir, 0777, TRUE);
+    file_put_contents($context_dir . '/TestContext.php', '<?php');
 
-    $result = find_source_file('TestContext', $basePath);
+    $result = find_source_file('TestContext', $base_path);
     $this->assertEquals('src/Drupal/DrupalExtension/Context/TestContext.php', $result);
   }
 
@@ -1744,15 +1744,15 @@ EOD,
    * Test find_source_file with fallback to src root.
    */
   public function testFindSourceFileFallback(): void {
-    $basePath = static::$tmp;
+    $base_path = static::$tmp;
 
-    $srcDir = $basePath . '/src';
-    if (!is_dir($srcDir)) {
-      mkdir($srcDir, 0777, TRUE);
+    $src_dir = $base_path . '/src';
+    if (!is_dir($src_dir)) {
+      mkdir($src_dir, 0777, TRUE);
     }
-    file_put_contents($srcDir . '/TestContext.php', '<?php');
+    file_put_contents($src_dir . '/TestContext.php', '<?php');
 
-    $result = find_source_file('TestContext', $basePath);
+    $result = find_source_file('TestContext', $base_path);
     $this->assertEquals('src/TestContext.php', $result);
   }
 
@@ -1765,18 +1765,18 @@ EOD,
   }
 
   public function testExtractInfoSkipsInterfacesAndAbstract(): void {
-    $basePath = static::$tmp;
-    $contextDir = $basePath . DIRECTORY_SEPARATOR . 'src';
-    if (!is_dir($contextDir)) {
-      mkdir($contextDir, 0777, TRUE);
+    $base_path = static::$tmp;
+    $context_dir = $base_path . DIRECTORY_SEPARATOR . 'src';
+    if (!is_dir($context_dir)) {
+      mkdir($context_dir, 0777, TRUE);
     }
 
-    $fixturesDir = __DIR__ . '/../fixtures/docs';
-    foreach (['InterfaceContext', 'AbstractContext', 'SampleContext'] as $className) {
-      copy($fixturesDir . DIRECTORY_SEPARATOR . $className . '.php', $contextDir . DIRECTORY_SEPARATOR . $className . '.php');
+    $fixtures_dir = __DIR__ . '/../fixtures/docs';
+    foreach (['InterfaceContext', 'AbstractContext', 'SampleContext'] as $class_name) {
+      copy($fixtures_dir . DIRECTORY_SEPARATOR . $class_name . '.php', $context_dir . DIRECTORY_SEPARATOR . $class_name . '.php');
     }
 
-    $result = extract_info($contextDir, [], $basePath, 'Drupal\\DrupalExtension\\Tests\\Fixtures');
+    $result = extract_info($context_dir, [], $base_path, 'Drupal\\DrupalExtension\\Tests\\Fixtures');
 
     $this->assertArrayNotHasKey('InterfaceContext', $result);
     $this->assertArrayNotHasKey('AbstractContext', $result);
@@ -1784,16 +1784,16 @@ EOD,
   }
 
   public function testExtractInfoSkipsInheritedMethods(): void {
-    $basePath = static::$tmp;
-    $contextDir = $basePath . DIRECTORY_SEPARATOR . 'src';
-    if (!is_dir($contextDir)) {
-      mkdir($contextDir, 0777, TRUE);
+    $base_path = static::$tmp;
+    $context_dir = $base_path . DIRECTORY_SEPARATOR . 'src';
+    if (!is_dir($context_dir)) {
+      mkdir($context_dir, 0777, TRUE);
     }
 
-    $fixturesDir = __DIR__ . '/../fixtures/docs';
-    copy($fixturesDir . DIRECTORY_SEPARATOR . 'InheritedContext.php', $contextDir . DIRECTORY_SEPARATOR . 'InheritedContext.php');
+    $fixtures_dir = __DIR__ . '/../fixtures/docs';
+    copy($fixtures_dir . DIRECTORY_SEPARATOR . 'InheritedContext.php', $context_dir . DIRECTORY_SEPARATOR . 'InheritedContext.php');
 
-    $result = extract_info($contextDir, [], $basePath, 'Drupal\\DrupalExtension\\Tests\\Fixtures');
+    $result = extract_info($context_dir, [], $base_path, 'Drupal\\DrupalExtension\\Tests\\Fixtures');
 
     $this->assertArrayHasKey('InheritedContext', $result);
     // Should only have its own method, not the inherited one.
@@ -1802,33 +1802,33 @@ EOD,
   }
 
   public function testExtractInfoSkipsNonExistentClasses(): void {
-    $basePath = static::$tmp;
-    $contextDir = $basePath . DIRECTORY_SEPARATOR . 'src';
-    if (!is_dir($contextDir)) {
-      mkdir($contextDir, 0777, TRUE);
+    $base_path = static::$tmp;
+    $context_dir = $base_path . DIRECTORY_SEPARATOR . 'src';
+    if (!is_dir($context_dir)) {
+      mkdir($context_dir, 0777, TRUE);
     }
 
     // Create a PHP file whose class doesn't match the namespace.
-    file_put_contents($contextDir . DIRECTORY_SEPARATOR . 'NonExistent.php', '<?php');
+    file_put_contents($context_dir . DIRECTORY_SEPARATOR . 'NonExistent.php', '<?php');
 
-    $result = extract_info($contextDir, [], $basePath, 'Drupal\\DrupalExtension\\Tests\\Fixtures');
+    $result = extract_info($context_dir, [], $base_path, 'Drupal\\DrupalExtension\\Tests\\Fixtures');
 
     $this->assertArrayNotHasKey('NonExistent', $result);
   }
 
   public function testRenderInfoWithListDescription(): void {
-    $basePath = static::$tmp;
-    $srcDir = $basePath . '/src';
-    if (!is_dir($srcDir)) {
-      mkdir($srcDir, 0777, TRUE);
+    $base_path = static::$tmp;
+    $src_dir = $base_path . '/src';
+    if (!is_dir($src_dir)) {
+      mkdir($src_dir, 0777, TRUE);
     }
-    file_put_contents($srcDir . '/ListDescContext.php', '<?php');
+    file_put_contents($src_dir . '/ListDescContext.php', '<?php');
 
-    $featureDir = $basePath . '/tests/behat/features';
-    if (!is_dir($featureDir)) {
-      mkdir($featureDir, 0777, TRUE);
+    $feature_dir = $base_path . '/tests/behat/features';
+    if (!is_dir($feature_dir)) {
+      mkdir($feature_dir, 0777, TRUE);
     }
-    file_put_contents($featureDir . '/list_desc.feature', 'Feature: Test');
+    file_put_contents($feature_dir . '/list_desc.feature', 'Feature: Test');
 
     $info = [
       'ListDescContext' => [
@@ -1846,14 +1846,14 @@ EOD,
       ],
     ];
 
-    $output = render_info($info, $basePath);
+    $output = render_info($info, $base_path);
 
     $this->assertStringContainsString('- First item', $output);
     $this->assertStringContainsString('- Second item', $output);
   }
 
   public function testWriteValidationLogsWithWarnings(): void {
-    $logDir = static::$tmp . '/logs';
+    $log_dir = static::$tmp . '/logs';
 
     $results = [
       'TestContext' => [
@@ -1870,14 +1870,14 @@ EOD,
       ],
     ];
 
-    $treeOutput = render_validation_tree($results);
-    write_validation_logs($treeOutput, $logDir);
+    $tree_output = render_validation_tree($results);
+    write_validation_logs($tree_output, $log_dir);
 
-    $this->assertFileExists($logDir . '/validation-summary.txt');
-    $this->assertFileExists($logDir . '/validation-details.txt');
+    $this->assertFileExists($log_dir . '/validation-summary.txt');
+    $this->assertFileExists($log_dir . '/validation-details.txt');
 
-    $summary = file_get_contents($logDir . '/validation-summary.txt');
-    $details = file_get_contents($logDir . '/validation-details.txt');
+    $summary = file_get_contents($log_dir . '/validation-summary.txt');
+    $details = file_get_contents($log_dir . '/validation-details.txt');
 
     // Summary should contain the summary block without ANSI.
     $this->assertStringContainsString('Summary:', $summary);
@@ -1889,27 +1889,27 @@ EOD,
   }
 
   public function testWriteValidationLogsEmpty(): void {
-    $logDir = static::$tmp . '/logs-empty';
+    $log_dir = static::$tmp . '/logs-empty';
 
-    write_validation_logs('', $logDir);
+    write_validation_logs('', $log_dir);
 
-    $this->assertFileExists($logDir . '/validation-summary.txt');
-    $this->assertFileExists($logDir . '/validation-details.txt');
+    $this->assertFileExists($log_dir . '/validation-summary.txt');
+    $this->assertFileExists($log_dir . '/validation-details.txt');
 
-    $summary = file_get_contents($logDir . '/validation-summary.txt');
+    $summary = file_get_contents($log_dir . '/validation-summary.txt');
     $this->assertSame('No validation warnings.' . PHP_EOL, $summary);
 
-    $details = file_get_contents($logDir . '/validation-details.txt');
+    $details = file_get_contents($log_dir . '/validation-details.txt');
     $this->assertSame('', $details);
   }
 
   public function testWriteValidationLogsCreatesDirectory(): void {
-    $logDir = static::$tmp . '/nested/logs/dir';
+    $log_dir = static::$tmp . '/nested/logs/dir';
 
-    write_validation_logs('', $logDir);
+    write_validation_logs('', $log_dir);
 
-    $this->assertDirectoryExists($logDir);
-    $this->assertFileExists($logDir . '/validation-summary.txt');
+    $this->assertDirectoryExists($log_dir);
+    $this->assertFileExists($log_dir . '/validation-summary.txt');
   }
 
   public function testRegexToTurnipWithRemainingMetachars(): void {

@@ -52,7 +52,7 @@
         "dantleech/gherkin-lint": "^0.2.3",
         "dflydev/dot-access-data": "^3.0.3",
         "drevops/behat-screenshot": "^2.2",
-        "drevops/phpcs-standard": "^0.6.2",
+        "drevops/phpcs-standard": "^0.7.0",
         "drupal/coder": "^8.3.27",
         "drupal/core": "^11",
         "drupal/core-composer-scaffold": "^11",

@@ -73,19 +73,19 @@ class BrowserKitFactoryTest extends TestCase {
     $this->assertSame('%mink.base_url%', $args[1]);
 
     // Verify the test browser service definition.
-    $testBrowser = $args[0];
-    $this->assertInstanceOf(Definition::class, $testBrowser);
-    $this->assertSame('Drupal\Tests\DrupalTestBrowser', $testBrowser->getClass());
+    $test_browser = $args[0];
+    $this->assertInstanceOf(Definition::class, $test_browser);
+    $this->assertSame('Drupal\Tests\DrupalTestBrowser', $test_browser->getClass());
 
     // Verify the Guzzle client service definition.
-    $methodCalls = $testBrowser->getMethodCalls();
-    $this->assertCount(1, $methodCalls);
-    $this->assertSame('setClient', $methodCalls[0][0]);
+    $method_calls = $test_browser->getMethodCalls();
+    $this->assertCount(1, $method_calls);
+    $this->assertSame('setClient', $method_calls[0][0]);
 
-    $guzzleDefinition = $methodCalls[0][1][0];
-    $this->assertInstanceOf(Definition::class, $guzzleDefinition);
-    $this->assertSame(Client::class, $guzzleDefinition->getClass());
-    $this->assertSame($expected_guzzle_options, $guzzleDefinition->getArguments()[0]);
+    $guzzle_definition = $method_calls[0][1][0];
+    $this->assertInstanceOf(Definition::class, $guzzle_definition);
+    $this->assertSame(Client::class, $guzzle_definition->getClass());
+    $this->assertSame($expected_guzzle_options, $guzzle_definition->getArguments()[0]);
   }
 
   /**

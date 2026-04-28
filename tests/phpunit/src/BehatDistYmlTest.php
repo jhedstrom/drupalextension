@@ -32,9 +32,9 @@ class BehatDistYmlTest extends TestCase {
    */
   public static function setUpBeforeClass(): void {
     parent::setUpBeforeClass();
-    $distFile = dirname(__DIR__, 3) . '/behat.dist.yml';
-    self::assertFileExists($distFile);
-    self::$distConfig = Yaml::parseFile($distFile);
+    $dist_file = dirname(__DIR__, 3) . '/behat.dist.yml';
+    self::assertFileExists($dist_file);
+    self::$distConfig = Yaml::parseFile($dist_file);
   }
 
   /**
@@ -51,17 +51,17 @@ class BehatDistYmlTest extends TestCase {
    * Processes the dist file values through the actual config tree builder
    * to ensure all keys are recognized by the schema.
    */
-  #[DataProvider('dataProviderProfiles')]
+  #[DataProvider('dataProviderDrupalExtensionConfigIsValid')]
   public function testDrupalExtensionConfigIsValid(string $profile): void {
-    $distValues = self::$distConfig[$profile]['extensions']['Drupal\DrupalExtension'] ?? [];
-    if ($distValues === NULL) {
-      $distValues = [];
+    $dist_values = self::$distConfig[$profile]['extensions']['Drupal\DrupalExtension'] ?? [];
+    if ($dist_values === NULL) {
+      $dist_values = [];
     }
 
     $tree = $this->buildDrupalExtensionTree();
 
     // Process through the real config tree — throws on unknown keys.
-    $processed = $tree->finalize($tree->normalize($distValues));
+    $processed = $tree->finalize($tree->normalize($dist_values));
     $this->assertIsArray($processed);
   }
 
@@ -72,20 +72,20 @@ class BehatDistYmlTest extends TestCase {
    * in at least one profile's dist file section.
    */
   public function testDistCoversAllDrupalExtensionKeys(): void {
-    $allDistKeys = [];
+    $all_dist_keys = [];
     foreach (self::$distConfig as $profile) {
       $values = $profile['extensions']['Drupal\DrupalExtension'] ?? [];
       if (is_array($values)) {
-        $allDistKeys = array_merge($allDistKeys, array_keys($values));
+        $all_dist_keys = array_merge($all_dist_keys, array_keys($values));
       }
     }
-    $allDistKeys = array_unique($allDistKeys);
+    $all_dist_keys = array_unique($all_dist_keys);
 
     $tree = $this->buildDrupalExtensionTree();
 
-    $schemaKeys = array_keys($tree->getChildren());
-    foreach ($schemaKeys as $key) {
-      $this->assertContains($key, $allDistKeys, sprintf('behat.dist.yml missing DrupalExtension key "%s" in all profiles.', $key));
+    $schema_keys = array_keys($tree->getChildren());
+    foreach ($schema_keys as $key) {
+      $this->assertContains($key, $all_dist_keys, sprintf('behat.dist.yml missing DrupalExtension key "%s" in all profiles.', $key));
     }
   }
 
@@ -96,11 +96,11 @@ class BehatDistYmlTest extends TestCase {
    * The MinkExtension requires at least one session to be defined.
    */
   public function testMinkExtensionConfigIsValid(): void {
-    $distValues = self::$distConfig['default']['extensions']['Drupal\MinkExtension'] ?? [];
+    $dist_values = self::$distConfig['default']['extensions']['Drupal\MinkExtension'] ?? [];
 
     $tree = $this->buildMinkExtensionTree();
 
-    $processed = $tree->finalize($tree->normalize($distValues));
+    $processed = $tree->finalize($tree->normalize($dist_values));
     $this->assertIsArray($processed);
     $this->assertArrayHasKey('ajax_timeout', $processed);
   }
@@ -113,18 +113,18 @@ class BehatDistYmlTest extends TestCase {
    * (e.g., "browserkit_http: ~") and is excluded from this check.
    */
   public function testDistCoversAllMinkExtensionKeys(): void {
-    $distValues = self::$distConfig['default']['extensions']['Drupal\MinkExtension'] ?? [];
+    $dist_values = self::$distConfig['default']['extensions']['Drupal\MinkExtension'] ?? [];
 
     $tree = $this->buildMinkExtensionTree();
 
     // Sessions are populated via shortcut syntax normalization, so exclude
     // them from the direct key check. Also exclude internal keys that are
     // not meant for end-user configuration.
-    $skipKeys = ['sessions', 'mink_loader', 'default_session'];
-    $schemaKeys = array_diff(array_keys($tree->getChildren()), $skipKeys);
+    $skip_keys = ['sessions', 'mink_loader', 'default_session'];
+    $schema_keys = array_diff(array_keys($tree->getChildren()), $skip_keys);
 
-    foreach ($schemaKeys as $key) {
-      $this->assertArrayHasKey($key, $distValues, sprintf('behat.dist.yml default profile missing MinkExtension key "%s".', $key));
+    foreach ($schema_keys as $key) {
+      $this->assertArrayHasKey($key, $dist_values, sprintf('behat.dist.yml default profile missing MinkExtension key "%s".', $key));
     }
   }
 
@@ -153,7 +153,7 @@ class BehatDistYmlTest extends TestCase {
   /**
    * Data provider for profile-level tests.
    */
-  public static function dataProviderProfiles(): \Iterator {
+  public static function dataProviderDrupalExtensionConfigIsValid(): \Iterator {
     yield 'default profile' => ['default'];
     yield 'drupal profile' => ['drupal'];
   }
