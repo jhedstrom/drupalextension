@@ -188,7 +188,7 @@ final class Reader implements EnvironmentReader {
    * @return string[]
    *   An array of file paths keyed by real path.
    */
-  protected function findAvailableSubContexts(string $path, string $pattern = '/^.+\.behat\.inc/i') {
+  protected function findAvailableSubContexts(string $path, string $pattern = '/^.+\.behat\.inc/i'): array {
 
     if (isset(self::$subContexts[$pattern][$path])) {
       return self::$subContexts[$pattern][$path];
