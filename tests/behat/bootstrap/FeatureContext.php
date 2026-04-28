@@ -176,7 +176,8 @@ class FeatureContext extends RawDrupalContext {
    */
   #[AfterNodeCreate]
   public static function testAfterNodeCreate(EntityScope $scope): void {
-    if (!$node = $scope->getEntity()) {
+    $node = $scope->getEntity();
+    if (empty((array) $node)) {
       throw new \Exception('Failed to find a node in @afterNodeCreate hook.');
     }
   }
@@ -186,7 +187,8 @@ class FeatureContext extends RawDrupalContext {
    */
   #[AfterTermCreate]
   public static function testAfterTermCreate(EntityScope $scope): void {
-    if (!$term = $scope->getEntity()) {
+    $term = $scope->getEntity();
+    if (empty((array) $term)) {
       throw new \Exception('Failed to find a term in @afterTermCreate hook.');
     }
   }
@@ -196,7 +198,8 @@ class FeatureContext extends RawDrupalContext {
    */
   #[AfterUserCreate]
   public static function testAfterUserCreate(EntityScope $scope): void {
-    if (!$user = $scope->getEntity()) {
+    $user = $scope->getEntity();
+    if (empty((array) $user)) {
       throw new \Exception('Failed to find a user in @afterUserCreate hook.');
     }
   }
@@ -219,6 +222,10 @@ class FeatureContext extends RawDrupalContext {
     // The first row of the table contains the field names.
     $table = $user_table->getTable();
     $first_row = array_key_first($table);
+
+    if ($first_row === NULL) {
+      return new TableNode($table);
+    }
 
     // Replace the aliased field names with the actual ones.
     foreach ($table[$first_row] as $key => $alias) {
@@ -278,7 +285,7 @@ class FeatureContext extends RawDrupalContext {
    * d10.feature.
    */
   #[Given('I am logged in as a user with name :name and password :password')]
-  public function testAssertAuthenticatedByUsernameAndPassword($name, $password): void {
+  public function testAssertAuthenticatedByUsernameAndPassword(string $name, string $password): void {
     $user = (object) [
       'name' => $name,
       'pass' => $password,
@@ -292,7 +299,8 @@ class FeatureContext extends RawDrupalContext {
    */
   #[Then('I should be logged in on the backend')]
   public function testAssertBackendLogin(): void {
-    if (!$user = $this->getUserManager()->getCurrentUser()) {
+    $user = $this->getUserManager()->getCurrentUser();
+    if (!$user instanceof \stdClass) {
       throw new \LogicException('No current user in the user manager.');
     }
     if (!$account = \Drupal::entityTypeManager()->getStorage('user')->load($user->uid)) {
@@ -378,7 +386,7 @@ class FeatureContext extends RawDrupalContext {
   #[Given('I remember the current user name')]
   public function testRememberCurrentUserName(): void {
     $user = $this->getUserManager()->getCurrentUser();
-    if (!$user) {
+    if (!$user instanceof \stdClass) {
       throw new \LogicException('No current user in the user manager.');
     }
     $this->previousUserName = $user->name;
@@ -390,7 +398,7 @@ class FeatureContext extends RawDrupalContext {
   #[Then('the current user should be different from the remembered user')]
   public function testAssertDifferentUser(): void {
     $user = $this->getUserManager()->getCurrentUser();
-    if (!$user) {
+    if (!$user instanceof \stdClass) {
       throw new \LogicException('No current user in the user manager.');
     }
     if ($user->name === $this->previousUserName) {
@@ -587,7 +595,11 @@ class FeatureContext extends RawDrupalContext {
       throw new \RuntimeException(sprintf("Assertion exception class '%s' does not exist.", $name));
     }
 
-    throw new $name($message);
+    $exception = new $name($message);
+    if (!$exception instanceof \Throwable) {
+      throw new \RuntimeException(sprintf("Class '%s' is not throwable.", $name));
+    }
+    throw $exception;
   }
 
   /**

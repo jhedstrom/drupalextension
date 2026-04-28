@@ -18,17 +18,15 @@ trait MinkAwareTrait {
 
   /**
    * The Mink sessions manager.
-   *
-   * @var \Behat\Mink\Mink
    */
-  protected $mink;
+  protected Mink $mink;
 
   /**
    * The parameters for the Mink extension.
    *
-   * @var array
+   * @var array<string, mixed>
    */
-  protected $minkParameters;
+  protected array $minkParameters = [];
 
   /**
    * Sets the Mink sessions manager.
@@ -67,15 +65,18 @@ trait MinkAwareTrait {
   /**
    * Returns the parameters provided for Mink.
    *
-   * @return array
+   * @return array<string, mixed>
    *   An array of Mink parameters.
    */
-  public function getMinkParameters() {
+  public function getMinkParameters(): array {
     return $this->minkParameters;
   }
 
   /**
    * Sets parameters provided for Mink.
+   *
+   * @param array<string, mixed> $parameters
+   *   The Mink parameters to set.
    */
   public function setMinkParameters(array $parameters): void {
     $this->minkParameters = $parameters;
@@ -130,7 +131,7 @@ trait MinkAwareTrait {
    * Override to provide custom routing mechanism.
    */
   public function locatePath(string $path): string {
-    $start_url = rtrim($this->getMinkParameter('base_url'), '/') . '/';
+    $start_url = rtrim((string) $this->getMinkParameter('base_url'), '/') . '/';
 
     return str_starts_with($path, 'http') ? $path : $start_url . ltrim($path, '/');
   }
@@ -147,7 +148,7 @@ trait MinkAwareTrait {
   public function saveScreenshot(?string $filename = NULL, ?string $filepath = NULL): void {
     // Under Cygwin, uniqid with more_entropy must be set to true.
     // No effect in other environments.
-    $filename = $filename ?: sprintf('%s_%s_%s.%s', $this->getMinkParameter('browser_name'), date('c'), uniqid('', TRUE), 'png');
+    $filename = $filename ?: sprintf('%s_%s_%s.%s', (string) $this->getMinkParameter('browser_name'), date('c'), uniqid('', TRUE), 'png');
     $filepath = $filepath ?: ((ini_get('upload_tmp_dir') ?: sys_get_temp_dir()));
     file_put_contents($filepath . '/' . $filename, $this->getSession()->getScreenshot());
   }

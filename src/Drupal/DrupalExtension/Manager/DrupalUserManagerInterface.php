@@ -23,7 +23,7 @@ interface DrupalUserManagerInterface {
    * @param \stdClass|bool $user
    *   The user object, or FALSE if the user has been logged out.
    */
-  public function setCurrentUser(\stdClass|bool $user);
+  public function setCurrentUser(\stdClass|bool $user): void;
 
   /**
    * Adds a new user.
@@ -37,7 +37,7 @@ interface DrupalUserManagerInterface {
    *
    * @see \Drupal\DrupalExtension\Context\RawDrupalContext::cleanUsers()
    */
-  public function addUser(\stdClass $user);
+  public function addUser(\stdClass $user): void;
 
   /**
    * Removes a user from the list of users that were created in the test.
@@ -45,7 +45,7 @@ interface DrupalUserManagerInterface {
    * @param string $userName
    *   The name of the user to remove.
    */
-  public function removeUser(string $userName);
+  public function removeUser(string $userName): void;
 
   /**
    * Returns the list of users that were created in the test.
@@ -72,7 +72,7 @@ interface DrupalUserManagerInterface {
   /**
    * Clears the list of users that were created in the test.
    */
-  public function clearUsers();
+  public function clearUsers(): void;
 
   /**
    * Returns whether or not any users were created in the test.

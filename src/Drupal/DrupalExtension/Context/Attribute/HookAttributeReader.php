@@ -40,6 +40,11 @@ class HookAttributeReader implements AttributeReader {
 
   /**
    * {@inheritdoc}
+   *
+   * @param class-string<\Behat\Behat\Context\Context> $contextClass
+   *   The context class name.
+   * @param \ReflectionMethod $method
+   *   The reflected method.
    */
   public function readCallees(string $contextClass, \ReflectionMethod $method): array {
     $attributes = $method->getAttributes(DrupalHook::class, \ReflectionAttribute::IS_INSTANCEOF);

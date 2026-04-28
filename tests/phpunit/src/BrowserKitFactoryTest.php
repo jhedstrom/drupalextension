@@ -29,9 +29,14 @@ class BrowserKitFactoryTest extends TestCase {
 
   /**
    * Tests the configure method.
+   *
+   * @param array<string, mixed> $input
+   *   The configuration input.
+   * @param array<string, mixed> $expected
+   *   The expected guzzle request options.
    */
   #[DataProvider('dataProviderConfigure')]
-  public function testConfigure(array $input, mixed $expected): void {
+  public function testConfigure(array $input, array $expected): void {
     $builder = new ArrayNodeDefinition('test');
     $factory = new BrowserKitFactory();
     $factory->configure($builder);
@@ -59,6 +64,11 @@ class BrowserKitFactoryTest extends TestCase {
 
   /**
    * Tests the buildDriver method.
+   *
+   * @param array<string, mixed> $config
+   *   Driver configuration.
+   * @param array<string, mixed> $expected_guzzle_options
+   *   Expected guzzle options.
    */
   #[DataProvider('dataProviderBuildDriver')]
   public function testBuildDriver(array $config, array $expected_guzzle_options): void {

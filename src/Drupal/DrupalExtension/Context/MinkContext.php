@@ -29,11 +29,14 @@ class MinkContext extends MinkExtension implements TranslatableContext {
   /**
    * Returns list of definition translation resources paths.
    *
-   * @return array
+   * @return array<int, string>
    *   List of translation resource paths.
    */
-  public static function getTranslationResources() {
-    return self::getMinkTranslationResources() + glob(__DIR__ . '/../../../../i18n/*.xliff');
+  public static function getTranslationResources(): array {
+    return array_merge(
+      self::getMinkTranslationResources(),
+      glob(__DIR__ . '/../../../../i18n/*.xliff') ?: [],
+    );
   }
 
   /**
@@ -186,7 +189,7 @@ JS;
    * @endcode
    */
   #[When('I press the :button button')]
-  public function pressButton(mixed $button) {
+  public function pressButton(mixed $button): void {
     // Wait for any open autocomplete boxes to finish closing.  They block
     // form-submission if they are still open.
     // Use a step 'I press the "Esc" key in the "LABEL" field' to close
@@ -202,7 +205,7 @@ JS;
     }
 
     // Use the Mink Extension step definition.
-    return parent::pressButton($button);
+    parent::pressButton($button);
   }
 
   /**

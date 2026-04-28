@@ -394,8 +394,12 @@ class DrupalAuthenticationManagerTest extends TestCase {
 
   /**
    * Creates a mock for the AuthenticationCapability and DriverInterface.
+   *
+   * @return \Drupal\Driver\Capability\AuthenticationCapabilityInterface&\Drupal\Driver\DriverInterface&\PHPUnit\Framework\MockObject\MockObject
+   *   The mocked driver.
    */
-  private function createAuthDriverMock(): AuthenticationCapabilityInterface|DriverInterface|MockObject {
+  private function createAuthDriverMock(): AuthenticationCapabilityInterface&DriverInterface&MockObject {
+    /** @var \Drupal\Driver\Capability\AuthenticationCapabilityInterface&\Drupal\Driver\DriverInterface&\PHPUnit\Framework\MockObject\MockObject $driver */
     $driver = $this->createMockForIntersectionOfInterfaces([
       AuthenticationCapabilityInterface::class,
       DriverInterface::class,
@@ -437,9 +441,6 @@ class DrupalAuthenticationManagerTest extends TestCase {
 
     $manager = $this->createManager($session, NULL, NULL, $params);
     $manager->logIn((object) ['name' => 'admin', 'pass' => 'password']);
-
-    // If we get here without hanging, the wait was skipped.
-    $this->assertTrue(TRUE);
   }
 
   /**
@@ -520,6 +521,15 @@ class DrupalAuthenticationManagerTest extends TestCase {
 
   /**
    * Creates a DrupalAuthenticationManager with optional overrides.
+   *
+   * @param \Behat\Mink\Session|null $session
+   *   Optional Mink session override.
+   * @param \Drupal\DrupalExtension\Manager\DrupalUserManagerInterface|null $user_manager
+   *   Optional user manager override.
+   * @param \Drupal\DrupalDriverManagerInterface|null $driver_manager
+   *   Optional driver manager override.
+   * @param array<string, mixed>|null $drupal_params
+   *   Optional Drupal parameters override.
    */
   private function createManager(?Session $session = NULL, ?DrupalUserManagerInterface $user_manager = NULL, ?DrupalDriverManagerInterface $driver_manager = NULL, ?array $drupal_params = NULL): DrupalAuthenticationManager {
     $session ??= $this->createSessionMock();

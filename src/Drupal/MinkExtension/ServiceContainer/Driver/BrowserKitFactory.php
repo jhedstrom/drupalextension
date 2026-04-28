@@ -18,6 +18,9 @@ class BrowserKitFactory extends BrowserKitFactoryOriginal {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $config
+   *   Driver configuration.
    */
   public function buildDriver(array $config): Definition {
     if (!class_exists(BrowserKitDriver::class)) {
@@ -62,7 +65,13 @@ class BrowserKitFactory extends BrowserKitFactoryOriginal {
    * @codeCoverageIgnore
    */
   protected function getCwd(): string {
-    return getcwd();
+    $cwd = getcwd();
+
+    if ($cwd === FALSE) {
+      throw new \RuntimeException('Unable to determine the current working directory.');
+    }
+
+    return $cwd;
   }
 
   /**

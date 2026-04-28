@@ -4,7 +4,7 @@
 
 parameters:
 
-  level: 3
+  level: 7
 
   paths:
     - src
@@ -19,6 +19,9 @@ parameters:
     # This class is kept for backwards compatibility.
     - src/Drupal/DrupalExtension/Definition/Proposal/AnnotatedDefinitionProposal.php
     - tests/behat/bootstrap/BehatCliContext.php
+    # BehatCliTrait is only used by BehatCliContext (excluded above), so it
+    # cannot be analysed standalone.
+    - tests/behat/bootstrap/BehatCliTrait.php
 
   ignoreErrors:
     -

@@ -120,6 +120,11 @@ class DrupalUserManagerTest extends TestCase {
 
   /**
    * Tests the hasUsers method.
+   *
+   * @param array<int, \stdClass> $users
+   *   Users to add to the manager.
+   * @param bool $expected
+   *   Expected hasUsers() result.
    */
   #[DataProvider('dataProviderHasUsers')]
   public function testHasUsers(array $users, bool $expected): void {

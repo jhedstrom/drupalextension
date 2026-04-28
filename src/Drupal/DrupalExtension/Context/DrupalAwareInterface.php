@@ -19,12 +19,12 @@ interface DrupalAwareInterface extends Context {
   /**
    * Sets Drupal instance.
    */
-  public function setDrupal(DrupalDriverManagerInterface $drupal);
+  public function setDrupal(DrupalDriverManagerInterface $drupal): void;
 
   /**
    * Set event dispatcher.
    */
-  public function setDispatcher(HookDispatcher $dispatcher);
+  public function setDispatcher(HookDispatcher $dispatcher): void;
 
   /**
    * Gets Drupal instance.
@@ -36,13 +36,16 @@ interface DrupalAwareInterface extends Context {
 
   /**
    * Sets parameters provided for Drupal.
+   *
+   * @param array<string, mixed> $parameters
+   *   The Drupal parameters.
    */
-  public function setDrupalParameters(array $parameters);
+  public function setDrupalParameters(array $parameters): void;
 
   /**
    * Sets the Drupal user manager instance.
    */
-  public function setUserManager(DrupalUserManagerInterface $userManager);
+  public function setUserManager(DrupalUserManagerInterface $userManager): void;
 
   /**
    * Gets the Drupal user manager instance.
@@ -55,7 +58,7 @@ interface DrupalAwareInterface extends Context {
   /**
    * Sets the Drupal authentication manager instance.
    */
-  public function setAuthenticationManager(DrupalAuthenticationManagerInterface $authenticationManager);
+  public function setAuthenticationManager(DrupalAuthenticationManagerInterface $authenticationManager): void;
 
   /**
    * Gets the Drupal authentication manager instance.

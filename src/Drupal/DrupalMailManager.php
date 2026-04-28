@@ -64,7 +64,7 @@ class DrupalMailManager implements DrupalMailManagerInterface {
   /**
    * {@inheritdoc}
    */
-  public function clearMail($store = 'default'): void {
+  public function clearMail(string $store = 'default'): void {
     $this->assertDefaultStore($store);
 
     $this->driver->mailClear();

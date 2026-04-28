@@ -53,6 +53,13 @@ class RawMailContextTest extends TestCase {
 
   /**
    * Tests that matchMessage() returns expected results for various criteria.
+   *
+   * @param bool $expected
+   *   The expected match result.
+   * @param array<string, mixed> $message
+   *   The mail message data.
+   * @param array<string, mixed> $criteria
+   *   The criteria to match against.
    */
   #[DataProvider('dataProviderMatchMessage')]
   public function testMatchMessage(bool $expected, array $message, array $criteria): void {
@@ -96,6 +103,17 @@ class RawMailContextTest extends TestCase {
 
   /**
    * Tests that sortMessages() correctly sorts messages.
+   *
+   * @param array<int, array<string, string>> $input
+   *   The input mail messages.
+   * @param string $first_key
+   *   First message expected key to assert against.
+   * @param string $first_value
+   *   First message expected value.
+   * @param string $second_key
+   *   Second message expected key to assert against.
+   * @param string $second_value
+   *   Second message expected value.
    */
   #[DataProvider('dataProviderSortMessages')]
   public function testSortMessages(array $input, string $first_key, string $first_value, string $second_key, string $second_value): void {
@@ -152,6 +170,15 @@ class RawMailContextTest extends TestCase {
 
   /**
    * Tests that assertMessageCount() behaves as expected.
+   *
+   * @param array<int, array<string, string>> $messages
+   *   The mail messages to count.
+   * @param int|null $expected
+   *   Expected count.
+   * @param bool $should_throw
+   *   Whether the assertion should throw.
+   * @param string $exception_message
+   *   Expected exception message.
    */
   #[DataProvider('dataProviderAssertMessageCount')]
   public function testAssertMessageCount(array $messages, ?int $expected, bool $should_throw, string $exception_message = ''): void {
@@ -178,6 +205,15 @@ class RawMailContextTest extends TestCase {
 
   /**
    * Tests that compareMessages() compares messages as expected.
+   *
+   * @param array<int, array<string, string>> $actual
+   *   Actual messages.
+   * @param array<int, array<string, string>> $expected
+   *   Expected messages.
+   * @param bool $should_throw
+   *   Whether the assertion should throw.
+   * @param string $exception_message
+   *   Expected exception message.
    */
   #[DataProvider('dataProviderCompareMessages')]
   public function testCompareMessages(array $actual, array $expected, bool $should_throw, string $exception_message = ''): void {

@@ -69,30 +69,30 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
   /**
    * Keep track of nodes so they can be cleaned up.
    *
-   * @var array
+   * @var array<int, \stdClass>
    */
-  protected $nodes = [];
+  protected array $nodes = [];
 
   /**
    * Keep track of all terms that are created so they can easily be removed.
    *
-   * @var array
+   * @var array<int, \stdClass>
    */
-  protected $terms = [];
+  protected array $terms = [];
 
   /**
    * Keep track of any roles that are created so they can easily be removed.
    *
-   * @var array
+   * @var array<int, string>
    */
-  protected $roles = [];
+  protected array $roles = [];
 
   /**
    * Keep track of any languages that are created so they can easily be removed.
    *
-   * @var array
+   * @var array<int, \stdClass>
    */
-  protected $languages = [];
+  protected array $languages = [];
 
   /**
    * {@inheritdoc}
@@ -331,12 +331,12 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
   /**
    * Dispatch scope hooks.
    *
-   * @param class-string $scopeClass
+   * @param class-string<\Behat\Testwork\Hook\Scope\HookScope> $scopeClass
    *   The fully-qualified scope class name.
    * @param \stdClass $entity
    *   The entity.
    */
-  protected function dispatchHooks(string $scopeClass, \stdClass $entity) {
+  protected function dispatchHooks(string $scopeClass, \stdClass $entity): void {
     $scope = new $scopeClass($this->getDrupal()->getEnvironment(), $this, $entity);
     $call_results = $this->dispatcher->dispatchScopeHooks($scope);
 
@@ -352,10 +352,10 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
   /**
    * Create a node.
    *
-   * @return object
+   * @return \stdClass
    *   The created node.
    */
-  public function nodeCreate(\stdClass $node): object {
+  public function nodeCreate(\stdClass $node): \stdClass {
     $this->dispatchHooks(BeforeNodeCreateScope::class, $node);
     $this->parseEntityFields('node', $node, ['author']);
 
@@ -367,6 +367,11 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
 
     $scalars = $this->captureScalarBaseFields($node);
     $saved = $driver->nodeCreate($node);
+
+    if (!$saved instanceof \stdClass) {
+      throw new \RuntimeException(sprintf('The Drupal driver "%s" returned a non-stdClass object from nodeCreate().', $driver::class));
+    }
+
     $this->restoreScalarBaseFields($saved, $scalars);
 
     $this->dispatchHooks(AfterNodeCreateScope::class, $saved);
@@ -561,12 +566,11 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
       }
     }
 
-    // Add the multicolumn fields to the entity.
+    // Add the multicolumn fields to the entity. Each entry in
+    // 'multicolumn_fields' is only set when there is at least one non-blank
+    // cell (see the population logic above).
     foreach ($multicolumn_fields as $field_name => $columns) {
-      // Don't specify any value if the step author has left it blank.
-      if (count(array_filter($columns, fn($var): bool => $var !== '')) > 0) {
-        $entity->$field_name = $columns;
-      }
+      $entity->$field_name = $columns;
     }
   }
 
@@ -599,10 +603,10 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
   /**
    * Create a term.
    *
-   * @return object
+   * @return \stdClass
    *   The created term.
    */
-  public function termCreate(\stdClass $term): object {
+  public function termCreate(\stdClass $term): \stdClass {
     // The 3.x DrupalDriver only loads vocabularies by machine name. Allow
     // the Gherkin author to pass either the machine name or the human
     // label by resolving the label to a machine name when the literal
@@ -633,6 +637,11 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
 
     $scalars = $this->captureScalarBaseFields($term);
     $saved = $driver->termCreate($term);
+
+    if (!$saved instanceof \stdClass) {
+      throw new \RuntimeException(sprintf('The Drupal driver "%s" returned a non-stdClass object from termCreate().', $driver::class));
+    }
+
     $this->restoreScalarBaseFields($saved, $scalars);
 
     $this->dispatchHooks(AfterTermCreateScope::class, $saved);
@@ -818,7 +827,6 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    *   cannot yet be retrieved.
    */
   protected function getContext($class): object|false {
-    /** @var \Behat\Behat\Context\Environment\InitializedContextEnvironment $environment */
     $environment = $this->drupalDriverManager->getEnvironment();
     // Throw an exception if the environment is not yet initialized. To make
     // sure state doesn't leak between test scenarios, the environment is
@@ -840,11 +848,11 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
   /**
    * Returns the paths to the translation resources for the Drupal extension.
    *
-   * @return array
+   * @return array<int, string>
    *   List of translation resource paths.
    */
   protected static function getDrupalTranslationResources(): array {
-    return glob(__DIR__ . '/../../../../i18n/*.xliff');
+    return glob(__DIR__ . '/../../../../i18n/*.xliff') ?: [];
   }
 
 }

@@ -23,7 +23,7 @@ class DrupalAwareInitializer implements ContextInitializer {
    *
    * @param \Drupal\DrupalDriverManager $drupalDriverManager
    *   The Drupal driver manager.
-   * @param array $parameters
+   * @param array<string, mixed> $parameters
    *   Configuration parameters.
    * @param \Behat\Testwork\Hook\HookDispatcher $hookDispatcher
    *   The hook dispatcher.

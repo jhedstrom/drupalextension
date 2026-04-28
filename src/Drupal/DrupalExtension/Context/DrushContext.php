@@ -15,10 +15,9 @@ class DrushContext extends RawDrupalContext implements TranslatableContext {
 
   /**
    * Keep track of drush output.
-   *
-   * @var string|bool
    */
-  protected $drushOutput;
+  // phpcs:ignore DrevOps.NamingConventions.LocalVariableNaming.NotSnakeCase
+  protected string|bool|null $drushOutput = NULL;
 
   /**
    * {@inheritdoc}
@@ -30,10 +29,10 @@ class DrushContext extends RawDrupalContext implements TranslatableContext {
   /**
    * Return the most recent drush command output.
    *
-   * @return string
+   * @return string|bool
    *   The most recent drush command output.
    */
-  public function readDrushOutput() {
+  public function readDrushOutput(): string|bool {
     if ($this->drushOutput === NULL) {
       throw new \RuntimeException('No drush output was found.');
     }

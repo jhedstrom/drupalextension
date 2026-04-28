@@ -96,7 +96,7 @@ class MailContext extends RawMailContext {
     ];
 
     foreach ($fields->getRowsHash() as $field => $value) {
-      $mail[$field] = $value;
+      $mail[$field] = is_array($value) ? implode("\n", $value) : (string) $value;
     }
 
     $driver = $this->getDriver();
@@ -129,7 +129,7 @@ class MailContext extends RawMailContext {
   #[Then('(a )(an )(e)mail(s) has/have been sent to :to with the subject :subject:')]
   public function mailHasBeenSent(TableNode $expectedMailTable, string $to = '', string $subject = ''): void {
     $expected = $expectedMailTable->getHash();
-    $actual = $this->getMail(['to' => $to, 'subject' => $subject]);
+    $actual = array_values($this->getMail(['to' => $to, 'subject' => $subject]));
     $this->compareMessages($actual, $expected);
   }
 
@@ -151,7 +151,7 @@ class MailContext extends RawMailContext {
   #[Then('(a )(an )new (e)mail(s) is/are sent to :to with the subject :subject:')]
   public function newMailIsSent(TableNode $expectedMailTable, string $to = '', string $subject = ''): void {
     $expected = $expectedMailTable->getHash();
-    $actual = $this->getMail(['to' => $to, 'subject' => $subject], TRUE);
+    $actual = array_values($this->getMail(['to' => $to, 'subject' => $subject], TRUE));
     $this->compareMessages($actual, $expected);
   }
 
@@ -169,7 +169,7 @@ class MailContext extends RawMailContext {
   #[Then(':count (e)mail(s) has/have been sent with the subject :subject')]
   #[Then(':count (e)mail(s) has/have been sent to :to with the subject :subject')]
   public function noMailHasBeenSent(string $count, string $to = '', string $subject = ''): void {
-    $actual = $this->getMail(['to' => $to, 'subject' => $subject]);
+    $actual = array_values($this->getMail(['to' => $to, 'subject' => $subject]));
     $expected_count = match ($count) {
       'no' => 0,
             'a', 'an' => NULL,
@@ -191,7 +191,7 @@ class MailContext extends RawMailContext {
   #[Then(':count new (e)mail(s) is/are sent with the subject :subject')]
   #[Then(':count new (e)mail(s) is/are sent to :to with the subject :subject')]
   public function noNewMailIsSent(string $count, string $to = '', string $subject = ''): void {
-    $actual = $this->getMail(['to' => $to, 'subject' => $subject], TRUE);
+    $actual = array_values($this->getMail(['to' => $to, 'subject' => $subject], TRUE));
     $expected_count = match ($count) {
       'no' => 0,
             'a', 'an' => 1,

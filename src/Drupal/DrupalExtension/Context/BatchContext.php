@@ -54,10 +54,13 @@ class BatchContext extends RawMinkContext {
     // @see SystemQueue::createItem().
     /** @var \Drupal\Core\Database\Connection $connection */
     $connection = \Drupal::service('database');
+    /** @var \Drupal\Core\Password\PasswordGeneratorInterface $password_generator */
+    $password_generator = \Drupal::service('password_generator');
+    $data = is_string($fields['data']) ? $fields['data'] : (string) json_encode($fields['data']);
     $query = $connection->insert('queue')
       ->fields([
-        'name' => $fields['name'] ?: \Drupal::service('password_generator')->generate(),
-        'data' => serialize(json_decode((string) $fields['data'])),
+        'name' => (($fields['name'] ?? '') !== '') ? $fields['name'] : $password_generator->generate(),
+        'data' => serialize(json_decode($data)),
         'created' => $fields['created'] ?: $_SERVER['REQUEST_TIME'],
         'expire' => $fields['expire'] ?: 0,
       ]);

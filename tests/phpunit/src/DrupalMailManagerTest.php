@@ -18,6 +18,13 @@ class DrupalMailManagerTest extends TestCase {
 
   /**
    * Tests that manager methods delegate to the driver.
+   *
+   * @param string $method
+   *   The manager method to invoke.
+   * @param string $driver_method
+   *   The driver method expected to be called.
+   * @param array<int, string> $extra_driver_methods
+   *   Additional driver methods that should be called.
    */
   #[DataProvider('dataProviderDriverDelegation')]
   public function testDriverDelegation(string $method, string $driver_method, array $extra_driver_methods = []): void {

@@ -15,28 +15,26 @@ class RawMailContext extends RawDrupalContext {
 
   /**
    * The mail manager.
-   *
-   * @var \Drupal\DrupalMailManagerInterface
    */
-  protected $mailManager;
+  protected ?DrupalMailManager $mailManager = NULL;
 
   /**
    * The number of mails received so far in this scenario, for each mail store.
    *
-   * @var array
+   * @var array<string, int>
    */
-  protected $mailMessageCount = [];
+  protected array $mailMessageCount = [];
 
   /**
    * Get the mail manager service that handles stored test mail.
    *
-   * @return \Drupal\DrupalMailManagerInterface
+   * @return \Drupal\DrupalMailManager
    *   The mail manager service.
    */
-  protected function getMailManager() {
+  protected function getMailManager(): DrupalMailManager {
     // Persist the mail manager between invocations. This is necessary for
     // remembering and reinstating the original mail backend.
-    if (is_null($this->mailManager)) {
+    if (!$this->mailManager instanceof DrupalMailManager) {
       $driver = $this->getDriver();
 
       if (!$driver instanceof MailCapabilityInterface) {
@@ -52,7 +50,7 @@ class RawMailContext extends RawDrupalContext {
   /**
    * Get collected mail, matching certain specifications.
    *
-   * @param array $criteria
+   * @param array<string, string> $criteria
    *   Associative array of mail fields and the values to filter by.
    * @param bool $new
    *   Whether to ignore previously seen mail.
@@ -94,7 +92,7 @@ class RawMailContext extends RawDrupalContext {
    * @return int
    *   The number of mails received during this scenario.
    */
-  protected function getMailMessageCount(string $store) {
+  protected function getMailMessageCount(string $store): int {
     if (array_key_exists($store, $this->mailMessageCount)) {
       return $this->mailMessageCount[$store];
     }
@@ -105,9 +103,9 @@ class RawMailContext extends RawDrupalContext {
   /**
    * Determine if a mail meets criteria.
    *
-   * @param array $message
+   * @param array<string, mixed> $message
    *   The mail message as an associative array of mail fields.
-   * @param array $criteria
+   * @param array<string, mixed> $criteria
    *   The criteria: an associative array of mail fields and desired values.
    *
    * @return bool
@@ -115,7 +113,7 @@ class RawMailContext extends RawDrupalContext {
    */
   protected function matchMessage(array $message, array $criteria): bool {
     // Discard criteria that are just zero-length strings.
-    $criteria = array_filter($criteria, strlen(...));
+    $criteria = array_filter($criteria, static fn ($value): bool => (string) $value !== '');
 
     // For each criteria, check the specified mail field contains the value.
     foreach ($criteria as $field => $value) {
@@ -131,12 +129,12 @@ class RawMailContext extends RawDrupalContext {
   /**
    * Compare actual mail with expected mail.
    *
-   * @param array $actualMessages
+   * @param array<int, array<string, mixed>> $actualMessages
    *   An array of actual mail.
-   * @param array $expectedMessages
+   * @param array<int, array<string, mixed>> $expectedMessages
    *   An array of expected mail.
    */
-  protected function compareMessages(array $actualMessages, array $expectedMessages) {
+  protected function compareMessages(array $actualMessages, array $expectedMessages): void {
     // Make sure there is the same number of actual and expected.
     $expected_count = count($expectedMessages);
     $this->assertMessageCount($actualMessages, $expected_count);
@@ -160,12 +158,12 @@ class RawMailContext extends RawDrupalContext {
   /**
    * Assert there is the expected number of mail messages.
    *
-   * @param array $actualMessages
+   * @param array<int, array<string, mixed>> $actualMessages
    *   An array of actual mail.
    * @param int $expectedCount
    *   Optional. The number of mails expected.
    */
-  protected function assertMessageCount(array $actualMessages, ?int $expectedCount = NULL) {
+  protected function assertMessageCount(array $actualMessages, ?int $expectedCount = NULL): void {
     $actual_count = count($actualMessages);
     if (is_null($expectedCount)) {
       // If number to expect is not specified, expect more than zero.
@@ -189,10 +187,10 @@ class RawMailContext extends RawDrupalContext {
   /**
    * Sort mail by to, subject and body.
    *
-   * @param array $messages
+   * @param array<int, array<string, mixed>> $messages
    *   An array of mail messages to sort.
    *
-   * @return array
+   * @return array<int, array<string, mixed>>
    *   The same mail, but sorted.
    */
   protected function sortMessages(array $messages): array {
@@ -211,10 +209,10 @@ class RawMailContext extends RawDrupalContext {
   /**
    * Get the mink context, so we can visit pages using the mink session.
    */
-  protected function getMinkContext(): object {
+  protected function getMinkContext(): RawMinkContext {
     $mink_context = $this->getContext(RawMinkContext::class);
 
-    if ($mink_context === FALSE) {
+    if (!$mink_context instanceof RawMinkContext) {
       throw new \Exception('No mink context found.');
     }
 

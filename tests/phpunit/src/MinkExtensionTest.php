@@ -32,6 +32,11 @@ class MinkExtensionTest extends TestCase {
 
   /**
    * Tests the configure method with various inputs.
+   *
+   * @param array<string, mixed> $input
+   *   The input configuration.
+   * @param mixed $expected
+   *   The expected processed value.
    */
   #[DataProvider('dataProviderConfigure')]
   public function testConfigure(array $input, mixed $expected): void {

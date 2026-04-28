@@ -57,7 +57,7 @@ class DrupalExtension implements ExtensionInterface {
   /**
    * {@inheritdoc}
    */
-  public function initialize(ExtensionManager $extensionManager) {
+  public function initialize(ExtensionManager $extensionManager): void {
   }
 
   /**
@@ -223,6 +223,11 @@ class DrupalExtension implements ExtensionInterface {
 
   /**
    * Load test parameters.
+   *
+   * @param \Symfony\Component\DependencyInjection\ContainerBuilder $container
+   *   The container builder.
+   * @param array<string, mixed> $config
+   *   The extension configuration.
    */
   protected function loadParameters(ContainerBuilder $container, array $config): void {
     $container->setParameter('drupal.parameters', $config);
@@ -239,6 +244,13 @@ class DrupalExtension implements ExtensionInterface {
 
   /**
    * Load the Drupal driver.
+   *
+   * @param \Symfony\Component\DependencyInjection\Loader\FileLoader $loader
+   *   The file loader.
+   * @param \Symfony\Component\DependencyInjection\ContainerBuilder $container
+   *   The container builder.
+   * @param array<string, mixed> $config
+   *   The extension configuration.
    */
   protected function loadDrupal(FileLoader $loader, ContainerBuilder $container, array $config): void {
     if (isset($config['drupal'])) {
@@ -249,6 +261,13 @@ class DrupalExtension implements ExtensionInterface {
 
   /**
    * Load the Drush driver.
+   *
+   * @param \Symfony\Component\DependencyInjection\Loader\FileLoader $loader
+   *   The file loader.
+   * @param \Symfony\Component\DependencyInjection\ContainerBuilder $container
+   *   The container builder.
+   * @param array<string, mixed> $config
+   *   The extension configuration.
    */
   protected function loadDrush(FileLoader $loader, ContainerBuilder $container, array $config): void {
     if (isset($config['drush'])) {
@@ -312,6 +331,11 @@ class DrupalExtension implements ExtensionInterface {
 
   /**
    * Set global drush arguments.
+   *
+   * @param \Symfony\Component\DependencyInjection\ContainerBuilder $container
+   *   The container builder.
+   * @param array<string, mixed> $config
+   *   The extension configuration.
    */
   protected function setDrushOptions(ContainerBuilder $container, array $config): void {
     if (isset($config['drush']['global_options'])) {

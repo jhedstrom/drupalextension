@@ -23,10 +23,10 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
   /**
    * Returns list of definition translation resources paths.
    *
-   * @return array
+   * @return array<int, string>
    *   List of translation resource paths.
    */
-  public static function getTranslationResources() {
+  public static function getTranslationResources(): array {
     return self::getDrupalTranslationResources();
   }
 
@@ -81,7 +81,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    *
    * @param string $role
    *   A single role, or multiple comma-separated roles.
-   * @param array $extra_fields
+   * @param array<string, mixed> $extra_fields
    *   Optional associative array of additional fields to set on the user.
    */
   protected function createAndLoginUserWithRole(string $role, array $extra_fields = []): void {
@@ -111,7 +111,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    *
    * @param string $role
    *   The role to assign.
-   * @param array $extra_fields
+   * @param array<string, mixed> $extra_fields
    *   Optional additional fields.
    */
   protected function createUserStub(string $role, array $extra_fields = []): \stdClass {
@@ -380,11 +380,15 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
       throw new \Exception('There is no current logged in user to create a node for.');
     }
 
+    $current_user = $this->getUserManager()->getCurrentUser();
+    if (!$current_user instanceof \stdClass) {
+      throw new \Exception('There is no current logged in user to create a node for.');
+    }
     $node = (object) [
       'title' => $title,
       'type' => $type,
       'body' => $this->getRandom()->name(255),
-      'uid' => $this->getUserManager()->getCurrentUser()->uid,
+      'uid' => $current_user->uid,
     ];
     $saved = $this->nodeCreate($node);
 
@@ -584,7 +588,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
   public function iPutABreakpoint(): void {
     fwrite(STDOUT, "\033[s \033[93m[Breakpoint] Press \033[1;93m[RETURN]\033[0;93m to continue, or 'q' to quit...\033[0m");
     do {
-      $line = trim(fgets(STDIN, 1024));
+      $line = trim((string) fgets(STDIN, 1024));
       // Note: this assumes ASCII encoding.  Should probably be revamped to
       // handle other character sets.
       $char_code = ord($line);

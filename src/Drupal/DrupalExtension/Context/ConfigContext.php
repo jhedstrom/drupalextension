@@ -30,9 +30,9 @@ class ConfigContext extends RawDrupalContext implements TranslatableContext {
   /**
    * Keep track of any config that was changed so they can easily be reverted.
    *
-   * @var array
+   * @var array<string, array<string, mixed>>
    */
-  protected $config = [];
+  protected array $config = [];
 
   /**
    * Revert any changed config.
