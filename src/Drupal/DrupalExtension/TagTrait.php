@@ -17,9 +17,9 @@ trait TagTrait {
    *   An array of tag strings.
    */
   protected function getTags(): array {
-    $featureTags = $this->getFeature()->getTags();
-    $scenarioTags = $this->getScenario()->getTags();
-    return array_unique(array_merge($featureTags, $scenarioTags));
+    $feature_tags = $this->getFeature()->getTags();
+    $scenario_tags = $this->getScenario()->getTags();
+    return array_unique(array_merge($feature_tags, $scenario_tags));
   }
 
   /**

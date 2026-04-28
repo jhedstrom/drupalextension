@@ -324,16 +324,16 @@ class DrupalExtension implements ExtensionInterface {
    * Process the Driver Pass.
    */
   protected function processDriverPass(ContainerBuilder $container): void {
-    $driverPass = new DriverPass();
-    $driverPass->process($container);
+    $driver_pass = new DriverPass();
+    $driver_pass->process($container);
   }
 
   /**
    * Process the Event Subscriber Pass.
    */
   protected function processEventSubscriberPass(ContainerBuilder $container): void {
-    $eventSubscriberPass = new EventSubscriberPass();
-    $eventSubscriberPass->process($container);
+    $event_subscriber_pass = new EventSubscriberPass();
+    $event_subscriber_pass->process($container);
   }
 
   /**

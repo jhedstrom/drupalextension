@@ -21,12 +21,12 @@ class DriverPass implements CompilerPassInterface {
       return;
     }
 
-    $drupalDefinition = $container->getDefinition('drupal.drupal');
+    $drupal_definition = $container->getDefinition('drupal.drupal');
 
     foreach ($container->findTaggedServiceIds('drupal.driver') as $id => $attributes) {
       foreach ($attributes as $attribute) {
         if (isset($attribute['alias']) && $name = $attribute['alias']) {
-          $drupalDefinition->addMethodCall('registerDriver', [$name, new Reference($id)]);
+          $drupal_definition->addMethodCall('registerDriver', [$name, new Reference($id)]);
         }
       }
 
@@ -36,16 +36,16 @@ class DriverPass implements CompilerPassInterface {
         continue;
       }
 
-      $coreIds = array_keys($container->findTaggedServiceIds('drupal.core'));
+      $core_ids = array_keys($container->findTaggedServiceIds('drupal.core'));
 
-      if ($coreIds === []) {
+      if ($core_ids === []) {
         continue;
       }
 
-      $container->getDefinition($id)->addMethodCall('setCore', [new Reference($coreIds[0])]);
+      $container->getDefinition($id)->addMethodCall('setCore', [new Reference($core_ids[0])]);
     }
 
-    $drupalDefinition->addMethodCall('setDefaultDriverName', [$container->getParameter('drupal.drupal.default_driver')]);
+    $drupal_definition->addMethodCall('setDefaultDriverName', [$container->getParameter('drupal.drupal.default_driver')]);
   }
 
 }

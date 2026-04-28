@@ -30,11 +30,11 @@ class DrupalAwareInitializerSpec extends ObjectBehavior {
   private $dispatcher;
 
   public function let(DrupalDriverManager $drupal, DrupalAuthenticationManagerInterface $authenticationManager, DrupalUserManagerInterface $userManager) {
-    $callCenter = new CallCenter();
+    $call_center = new CallCenter();
     $manager = new EnvironmentManager();
     $repository = new HookRepository($manager);
     // Cannot mock this class as it is marked as final.
-    $this->dispatcher = new HookDispatcher($repository, $callCenter);
+    $this->dispatcher = new HookDispatcher($repository, $call_center);
     $this->beConstructedWith($drupal, [], $this->dispatcher, $authenticationManager, $userManager);
   }
 

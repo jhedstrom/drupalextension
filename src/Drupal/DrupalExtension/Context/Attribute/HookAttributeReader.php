@@ -46,14 +46,14 @@ class HookAttributeReader implements AttributeReader {
 
     $callees = [];
     foreach ($attributes as $attribute) {
-      $hookCallClass = self::ATTRIBUTE_MAP[$attribute->getName()] ?? NULL;
-      if ($hookCallClass === NULL) {
+      $hook_call_class = self::ATTRIBUTE_MAP[$attribute->getName()] ?? NULL;
+      if ($hook_call_class === NULL) {
         continue;
       }
 
       $hook = $attribute->newInstance();
       $callable = [$contextClass, $method->getName()];
-      $callees[] = new $hookCallClass($hook->getFilterString(), $callable);
+      $callees[] = new $hook_call_class($hook->getFilterString(), $callable);
     }
 
     return $callees;

@@ -45,8 +45,8 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
     $session = $this->getSession();
 
     // Navigate to the login page.
-    $loginUrl = $this->locatePath($this->getDrupalText('login_url'));
-    $session->visit($loginUrl);
+    $login_url = $this->locatePath($this->getDrupalText('login_url'));
+    $session->visit($login_url);
 
     // Fill in the login form credentials.
     $page = $session->getPage();
@@ -54,29 +54,29 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
     $page->fillField($this->getDrupalText('password_field'), $user->pass);
 
     // Submit the login form.
-    $loginElement = $this->getLoginElement($page);
-    if (empty($loginElement)) {
+    $login_element = $this->getLoginElement($page);
+    if (empty($login_element)) {
       throw new \Exception(sprintf('No submit button at %s', $session->getCurrentUrl()));
     }
-    $loginElement->click();
+    $login_element->click();
 
     // Wait for the browser to load after login, if configured.
-    $loginWait = $this->getDrupalParameter('login_wait');
-    if ($loginWait > 0) {
+    $login_wait = $this->getDrupalParameter('login_wait');
+    if ($login_wait > 0) {
       // Wait for URL change after login (redirect away from login form).
-      $timeout = microtime(TRUE) + $loginWait;
-      while (microtime(TRUE) < $timeout && $session->getCurrentUrl() === $loginUrl) {
+      $timeout = microtime(TRUE) + $login_wait;
+      while (microtime(TRUE) < $timeout && $session->getCurrentUrl() === $login_url) {
         usleep(100000);
       }
 
       // Wait for page body to render.
-      $timeout = microtime(TRUE) + $loginWait;
+      $timeout = microtime(TRUE) + $login_wait;
       while (microtime(TRUE) < $timeout && !$session->getPage()->find('css', 'body')) {
         usleep(100000);
       }
 
       // Wait for the logged-in selector to appear (may be added by JS/AJAX).
-      $timeout = microtime(TRUE) + $loginWait;
+      $timeout = microtime(TRUE) + $login_wait;
       while (microtime(TRUE) < $timeout && !$session->getPage()->has('css', $this->getDrupalSelector('logged_in_selector'))) {
         usleep(100000);
       }
@@ -102,20 +102,20 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
   public function logout(): void {
     $session = $this->getSession();
 
-    $logoutUrl = $this->locatePath($this->getDrupalText('logout_url'));
-    $logoutConfirmUrl = $this->locatePath($this->getDrupalText('logout_confirm_url'));
+    $logout_url = $this->locatePath($this->getDrupalText('logout_url'));
+    $logout_confirm_url = $this->locatePath($this->getDrupalText('logout_confirm_url'));
 
-    $session->visit($logoutUrl);
+    $session->visit($logout_url);
 
     // Check to see if the user is on the logout confirm page (10.3+).
-    if ($session->getCurrentUrl() === $logoutConfirmUrl) {
-      $logoutElement = $this->getLogoutConfirmElement($session->getPage());
+    if ($session->getCurrentUrl() === $logout_confirm_url) {
+      $logout_element = $this->getLogoutConfirmElement($session->getPage());
 
-      if (empty($logoutElement)) {
+      if (empty($logout_element)) {
         throw new \Exception(sprintf("Unable to determine if logged out because '%s' button cannot be found on the logout confirmation page at %s", $this->getDrupalText('log_out'), $session->getCurrentUrl()));
       }
 
-      $logoutElement->click();
+      $logout_element->click();
     }
 
     // Reset the currently tracked user.
@@ -156,8 +156,8 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
 
     // Some themes do not add that class to the body, so check if the login
     // form is displayed (defaults to /user/login).
-    $loginUrl = $this->locatePath($this->getDrupalText('login_url'));
-    $session->visit($loginUrl);
+    $login_url = $this->locatePath($this->getDrupalText('login_url'));
+    $session->visit($login_url);
     if ($page->has('css', $this->getDrupalSelector('login_form_selector'))) {
       $this->fastLogout();
       return FALSE;

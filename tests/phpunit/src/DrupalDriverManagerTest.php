@@ -119,15 +119,15 @@ class DrupalDriverManagerTest extends TestCase {
    * Tests that getDrivers returns all registered drivers.
    */
   public function testGetDriversReturnsAllRegistered(): void {
-    $driverA = $this->createDriverMock(TRUE);
-    $driverB = $this->createDriverMock(TRUE);
+    $driver_a = $this->createDriverMock(TRUE);
+    $driver_b = $this->createDriverMock(TRUE);
     $manager = new DrupalDriverManager();
-    $manager->registerDriver('a', $driverA);
-    $manager->registerDriver('b', $driverB);
+    $manager->registerDriver('a', $driver_a);
+    $manager->registerDriver('b', $driver_b);
     $drivers = $manager->getDrivers();
     $this->assertCount(2, $drivers);
-    $this->assertSame($driverA, $drivers['a']);
-    $this->assertSame($driverB, $drivers['b']);
+    $this->assertSame($driver_a, $drivers['a']);
+    $this->assertSame($driver_b, $drivers['b']);
   }
 
   /**

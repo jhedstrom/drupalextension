@@ -88,14 +88,14 @@ class DrupalUserManagerTest extends TestCase {
    */
   public function testGetUsersReturnsAll(): void {
     $manager = new DrupalUserManager();
-    $userA = (object) ['name' => 'alice'];
-    $userB = (object) ['name' => 'bob'];
-    $manager->addUser($userA);
-    $manager->addUser($userB);
+    $user_a = (object) ['name' => 'alice'];
+    $user_b = (object) ['name' => 'bob'];
+    $manager->addUser($user_a);
+    $manager->addUser($user_b);
     $users = $manager->getUsers();
     $this->assertCount(2, $users);
-    $this->assertSame($userA, $users['alice']);
-    $this->assertSame($userB, $users['bob']);
+    $this->assertSame($user_a, $users['alice']);
+    $this->assertSame($user_b, $users['bob']);
   }
 
   /**

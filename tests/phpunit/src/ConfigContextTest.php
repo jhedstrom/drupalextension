@@ -45,8 +45,8 @@ class ConfigContextTest extends TestCase {
    */
   #[DataProvider('dataProviderSetBasicConfigBackup')]
   public function testSetBasicConfigBackup(array $operations, array $expected_backup): void {
-    $getReturns = array_column($operations, 'original');
-    $this->driver->method('configGetOriginal')->willReturnOnConsecutiveCalls(...$getReturns);
+    $get_returns = array_column($operations, 'original');
+    $this->driver->method('configGetOriginal')->willReturnOnConsecutiveCalls(...$get_returns);
     $this->driver->method('configSet');
 
     foreach ($operations as $operation) {
@@ -100,17 +100,17 @@ class ConfigContextTest extends TestCase {
   public function testCleanConfigRestoresAllValues(): void {
     $this->driver->method('configGetOriginal')->willReturn('Original');
 
-    $setArgs = [];
+    $set_args = [];
     $this->driver->method('configSet')
-      ->willReturnCallback(function (string $name, string $key, mixed $value) use (&$setArgs): void {
-                $setArgs[] = [$name, $key, $value];
+      ->willReturnCallback(function (string $name, string $key, mixed $value) use (&$set_args): void {
+                $set_args[] = [$name, $key, $value];
       });
 
     $this->context->setBasicConfig('system.site', 'name', 'New Name');
     $this->context->cleanConfig();
 
-    $restoreCall = end($setArgs);
-    $this->assertSame(['system.site', 'name', 'Original'], $restoreCall);
+    $restore_call = end($set_args);
+    $this->assertSame(['system.site', 'name', 'Original'], $restore_call);
 
     $config = new \ReflectionProperty(ConfigContext::class, 'config');
     $this->assertSame([], $config->getValue($this->context));

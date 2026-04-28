@@ -106,9 +106,9 @@ class MarkupContext extends RawMinkContext {
    */
   #[Then('I( should) see :text in the :tag element in the :region( region)')]
   public function assertRegionElementText(string $text, string $tag, string $region): void {
-    $regionObj = $this->getRegion($region);
+    $region_obj = $this->getRegion($region);
 
-    foreach ($regionObj->findAll('css', $tag) as $result) {
+    foreach ($region_obj->findAll('css', $tag) as $result) {
       if ($result->getText() == $text) {
         return;
       }
@@ -127,9 +127,9 @@ class MarkupContext extends RawMinkContext {
    */
   #[Then('I( should) not see :text in the :tag element in the :region( region)')]
   public function assertNotRegionElementText(string $text, string $tag, string $region): void {
-    $regionObj = $this->getRegion($region);
+    $region_obj = $this->getRegion($region);
 
-    foreach ($regionObj->findAll('css', $tag) as $result) {
+    foreach ($region_obj->findAll('css', $tag) as $result) {
       if ($result->getText() == $text) {
         throw new \Exception(sprintf('The text "%s" was found in the "%s" element in the "%s" region on the page %s', $text, $tag, $region, $this->getSession()->getCurrentUrl()));
       }
@@ -155,19 +155,19 @@ class MarkupContext extends RawMinkContext {
       return;
     }
 
-    $attrFound = FALSE;
+    $attr_found = FALSE;
 
     foreach ($elements as $element) {
       $attr = $element->getAttribute($attribute);
       if (!empty($attr)) {
-        $attrFound = TRUE;
+        $attr_found = TRUE;
         if (str_contains($attr, $value)) {
           return;
         }
       }
     }
 
-    if (!$attrFound) {
+    if (!$attr_found) {
       throw new \Exception(sprintf('The "%s" attribute is not present on the element "%s" in the "%s" region on the page %s', $attribute, $tag, $region, $this->getSession()->getCurrentUrl()));
     }
 

@@ -12,12 +12,12 @@ use PhpSpec\ObjectBehavior;
 class RegionSelectorSpec extends ObjectBehavior {
 
   public function let(CssSelector $selector) {
-    $regionMap = [
+    $region_map = [
       'Left sidebar' => '#left-sidebar',
     ];
     $selector->translateToXPath('#left-sidebar')->willReturn('some xpath');
 
-    $this->beConstructedWith($selector, $regionMap);
+    $this->beConstructedWith($selector, $region_map);
   }
 
   public function it_is_initializable() {

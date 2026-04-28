@@ -338,12 +338,12 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    */
   protected function dispatchHooks(string $scopeClass, \stdClass $entity) {
     $scope = new $scopeClass($this->getDrupal()->getEnvironment(), $this, $entity);
-    $callResults = $this->dispatcher->dispatchScopeHooks($scope);
+    $call_results = $this->dispatcher->dispatchScopeHooks($scope);
 
     // The dispatcher suppresses exceptions, throw them here if there are any.
-    foreach ($callResults as $callResult) {
-      if ($callResult->hasException()) {
-        $exception = $callResult->getException();
+    foreach ($call_results as $call_result) {
+      if ($call_result->hasException()) {
+        $exception = $call_result->getException();
         throw $exception;
       }
     }
@@ -470,22 +470,22 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
 
     $classifier = $driver->getCore()->classifier();
 
-    $multicolumnField = '';
-    $multicolumnColumn = '';
-    $multicolumnFields = [];
+    $multicolumn_field = '';
+    $multicolumn_column = '';
+    $multicolumn_fields = [];
 
-    foreach ((array) (clone $entity) as $field => $fieldValue) {
-      // Reset the multicolumn field if the field name does not contain a column.
+    foreach ((array) (clone $entity) as $field => $field_value) {
+      // Reset the multicolumn field if the field name does not have a column.
       if (!str_contains((string) $field, ':')) {
-        $multicolumnField = '';
-        $multicolumnColumn = '';
+        $multicolumn_field = '';
+        $multicolumn_column = '';
       }
       elseif (str_contains(substr((string) $field, 1), ':')) {
-        // Start tracking a new multicolumn field if the field name contains a ':'
-        // which is preceded by at least 1 character.
-        [$multicolumnField, $multicolumnColumn] = explode(':', (string) $field);
+        // Start tracking a new multicolumn field if the field name contains a
+        // ':' which is preceded by at least 1 character.
+        [$multicolumn_field, $multicolumn_column] = explode(':', (string) $field);
       }
-      elseif (empty($multicolumnField)) {
+      elseif (empty($multicolumn_field)) {
         // If a field name starts with a ':' but we are not yet tracking a
         // multicolumn field we don't know to which field this belongs.
         throw new \RuntimeException('Field name missing for ' . $field);
@@ -493,15 +493,15 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
       else {
         // Update the column name if the field name starts with a ':' and we are
         // already tracking a multicolumn field.
-        $multicolumnColumn = substr((string) $field, 1);
+        $multicolumn_column = substr((string) $field, 1);
       }
 
-      $isMulticolumn = $multicolumnField && $multicolumnColumn;
-      $fieldName = $multicolumnField ?: $field;
-      if ($classifier->fieldIsConfigurable($entity_type, $fieldName)) {
+      $is_multicolumn = $multicolumn_field && $multicolumn_column;
+      $field_name = $multicolumn_field ?: $field;
+      if ($classifier->fieldIsConfigurable($entity_type, $field_name)) {
         // Split up multiple values in multi-value fields.
         $values = [];
-        foreach (str_getcsv((string) $fieldValue, escape: "\\") as $key => $value) {
+        foreach (str_getcsv((string) $field_value, escape: "\\") as $key => $value) {
           $value = trim((string) $value);
           $columns = $value;
           // Split up field columns if the ' - ' separator is present.
@@ -509,12 +509,12 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
           // field value, allowing values like "Alpha - Bravo" to pass
           // through as-is (e.g., entity reference titles with dashes).
           // @see https://github.com/jhedstrom/drupalextension/issues/642
-          $wasQuoted = str_contains((string) $fieldValue, '"' . $value . '"');
-          if (!$wasQuoted && str_contains($value, ' - ')) {
+          $was_quoted = str_contains((string) $field_value, '"' . $value . '"');
+          if (!$was_quoted && str_contains($value, ' - ')) {
             $columns = [];
             foreach (explode(' - ', $value) as $column) {
               // Check if it is an inline named column.
-              if (!$isMulticolumn && str_contains(substr($column, 1), ': ')) {
+              if (!$is_multicolumn && str_contains(substr($column, 1), ': ')) {
                 [$key, $column] = explode(': ', $column);
                 $columns[$key] = $column;
               }
@@ -525,8 +525,8 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
           }
 
           // Use the column name if we are tracking a multicolumn field.
-          if ($isMulticolumn) {
-            $multicolumnFields[$multicolumnField][$key][$multicolumnColumn] = $columns;
+          if ($is_multicolumn) {
+            $multicolumn_fields[$multicolumn_field][$key][$multicolumn_column] = $columns;
             unset($entity->$field);
           }
           else {
@@ -535,11 +535,11 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
         }
 
         // Replace regular fields inline in the entity after parsing.
-        if (!$isMulticolumn) {
-          $entity->$fieldName = $values;
+        if (!$is_multicolumn) {
+          $entity->$field_name = $values;
           // Don't specify any value if the step author has left it blank.
-          if ($fieldValue === '') {
-            unset($entity->$fieldName);
+          if ($field_value === '') {
+            unset($entity->$field_name);
           }
         }
       }
@@ -550,22 +550,22 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
         // custom storage), so the OR replaces the single v2 check and keeps
         // computed/custom-storage base fields like 'moderation_state' from
         // tripping the unknown-field guard.
-        $isBaseField = $classifier->fieldIsBaseStandard($entity_type, $fieldName)
-          || $classifier->fieldIsBaseComputedReadOnly($entity_type, $fieldName)
-          || $classifier->fieldIsBaseComputedWritable($entity_type, $fieldName)
-          || $classifier->fieldIsBaseCustomStorage($entity_type, $fieldName);
+        $is_base_field = $classifier->fieldIsBaseStandard($entity_type, $field_name)
+          || $classifier->fieldIsBaseComputedReadOnly($entity_type, $field_name)
+          || $classifier->fieldIsBaseComputedWritable($entity_type, $field_name)
+          || $classifier->fieldIsBaseCustomStorage($entity_type, $field_name);
 
-        if (!$isBaseField && !in_array($fieldName, $ignored_properties, TRUE)) {
-          throw new \RuntimeException(sprintf('Field "%s" does not exist on entity type "%s".', $fieldName, $entity_type));
+        if (!$is_base_field && !in_array($field_name, $ignored_properties, TRUE)) {
+          throw new \RuntimeException(sprintf('Field "%s" does not exist on entity type "%s".', $field_name, $entity_type));
         }
       }
     }
 
     // Add the multicolumn fields to the entity.
-    foreach ($multicolumnFields as $fieldName => $columns) {
+    foreach ($multicolumn_fields as $field_name => $columns) {
       // Don't specify any value if the step author has left it blank.
       if (count(array_filter($columns, fn($var): bool => $var !== '')) > 0) {
-        $entity->$fieldName = $columns;
+        $entity->$field_name = $columns;
       }
     }
   }
@@ -796,7 +796,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    *   current user's role before creating a new user.
    */
   public function loggedInWithRole($role): bool {
-    @trigger_error("loggedInWithRole() is deprecated in drupalextension:5.3.0 and is removed from drupalextension:6.0.0. Role-based login steps no longer check the current user's role before creating a new user.", E_USER_DEPRECATED);
+    @trigger_error("loggedInWithRole() is deprecated in drupalextension:5.3.0 and is removed from drupalextension:6.0.0. Role-based login steps no longer check the current user's role before creating a new user. See https://www.drupal.org/project/drupalextension/issues/676", E_USER_DEPRECATED);
     return $this->loggedIn() && $this->getUserManager()->currentUserHasRole($role);
   }
 

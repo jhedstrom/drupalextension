@@ -120,8 +120,8 @@ trait MinkAwareTrait {
   /**
    * Visits provided relative path using provided or default session.
    */
-  public function visitPath(string $path, ?string $sessionName = NULL): void {
-    $this->getSession($sessionName)->visit($this->locatePath($path));
+  public function visitPath(string $path, ?string $session_name = NULL): void {
+    $this->getSession($session_name)->visit($this->locatePath($path));
   }
 
   /**
@@ -130,9 +130,9 @@ trait MinkAwareTrait {
    * Override to provide custom routing mechanism.
    */
   public function locatePath(string $path): string {
-    $startUrl = rtrim($this->getMinkParameter('base_url'), '/') . '/';
+    $start_url = rtrim($this->getMinkParameter('base_url'), '/') . '/';
 
-    return str_starts_with($path, 'http') ? $path : $startUrl . ltrim($path, '/');
+    return str_starts_with($path, 'http') ? $path : $start_url . ltrim($path, '/');
   }
 
   /**

@@ -51,16 +51,16 @@ class RawDrupalContextTest extends TestCase {
   #[DataProvider('dataProviderParseEntityFields')]
   public function testParseEntityFields(array $input, array $expected, ?array $fields = NULL, ?array $baseFields = NULL, ?string $exception = NULL, array $ignored_properties = []): void {
     if ($fields !== NULL) {
-      $isBaseField = fn(string $entityType, string $fieldName): bool => in_array($fieldName, $baseFields ?? [], TRUE);
+      $is_base_field = fn(string $entity_type, string $field_name): bool => in_array($field_name, $baseFields ?? [], TRUE);
 
       $classifier = $this->createMock(FieldClassifierInterface::class);
       $classifier->method('fieldIsConfigurable')->willReturnCallback(
-        fn(string $entityType, string $fieldName): bool => in_array($fieldName, $fields, TRUE)
+        fn(string $entity_type, string $field_name): bool => in_array($field_name, $fields, TRUE)
       );
-      $classifier->method('fieldIsBaseStandard')->willReturnCallback($isBaseField);
-      $classifier->method('fieldIsBaseComputedReadOnly')->willReturnCallback($isBaseField);
-      $classifier->method('fieldIsBaseComputedWritable')->willReturnCallback($isBaseField);
-      $classifier->method('fieldIsBaseCustomStorage')->willReturnCallback($isBaseField);
+      $classifier->method('fieldIsBaseStandard')->willReturnCallback($is_base_field);
+      $classifier->method('fieldIsBaseComputedReadOnly')->willReturnCallback($is_base_field);
+      $classifier->method('fieldIsBaseComputedWritable')->willReturnCallback($is_base_field);
+      $classifier->method('fieldIsBaseCustomStorage')->willReturnCallback($is_base_field);
 
       $core = $this->createMock(CoreInterface::class);
       $core->method('classifier')->willReturn($classifier);
@@ -248,9 +248,9 @@ class RawDrupalContextTest extends TestCase {
    * F-rows, so computed-writable base fields like 'moderation_state' (F3)
    * must not trigger the unknown-field error in v3.
    */
-  #[DataProvider('dataProviderNonStandardBaseFields')]
+  #[DataProvider('dataProviderParseEntityFieldsAcceptsNonStandardBaseFields')]
   public function testParseEntityFieldsAcceptsNonStandardBaseFields(string $truePredicate): void {
-    $basePredicates = [
+    $base_predicates = [
       'fieldIsBaseStandard',
       'fieldIsBaseComputedReadOnly',
       'fieldIsBaseComputedWritable',
@@ -260,7 +260,7 @@ class RawDrupalContextTest extends TestCase {
     $classifier = $this->createMock(FieldClassifierInterface::class);
     $classifier->method('fieldIsConfigurable')->willReturn(FALSE);
 
-    foreach ($basePredicates as $predicate) {
+    foreach ($base_predicates as $predicate) {
       $classifier->method($predicate)->willReturn($predicate === $truePredicate);
     }
 
@@ -285,7 +285,7 @@ class RawDrupalContextTest extends TestCase {
   /**
    * Provides data for testParseEntityFieldsAcceptsNonStandardBaseFields().
    */
-  public static function dataProviderNonStandardBaseFields(): \Iterator {
+  public static function dataProviderParseEntityFieldsAcceptsNonStandardBaseFields(): \Iterator {
     yield 'F1 base standard' => ['fieldIsBaseStandard'];
     yield 'F2 base computed read-only' => ['fieldIsBaseComputedReadOnly'];
     yield 'F3 base computed writable' => ['fieldIsBaseComputedWritable'];

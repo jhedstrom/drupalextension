@@ -24,8 +24,8 @@ class DrupalMailManagerTest extends TestCase {
     $driver = $this->createMock(MailCapabilityInterface::class);
     $driver->expects($this->once())->method($driver_method);
 
-    foreach ($extra_driver_methods as $extraDriverMethod) {
-      $driver->expects($this->once())->method($extraDriverMethod);
+    foreach ($extra_driver_methods as $extra_driver_method) {
+      $driver->expects($this->once())->method($extra_driver_method);
     }
 
     $manager = new DrupalMailManager($driver);

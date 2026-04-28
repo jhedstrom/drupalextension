@@ -87,7 +87,7 @@ class MessageContextTest extends TestCase {
   /**
    * Tests that all message types are accepted.
    */
-  #[DataProvider('dataProviderMessageTypes')]
+  #[DataProvider('dataProviderValidMessageTableAcceptsAllTypes')]
   public function testValidMessageTableAcceptsAllTypes(string $header, string $type): void {
     $table = new TableNode([
           [$header],
@@ -100,7 +100,7 @@ class MessageContextTest extends TestCase {
   /**
    * Provides data for testValidMessageTableAcceptsAllTypes().
    */
-  public static function dataProviderMessageTypes(): \Iterator {
+  public static function dataProviderValidMessageTableAcceptsAllTypes(): \Iterator {
     yield 'error messages' => ['Error messages', 'error messages'];
     yield 'success messages' => ['Success messages', 'success messages'];
     yield 'warning messages' => ['Warning messages', 'warning messages'];

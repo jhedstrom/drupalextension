@@ -89,11 +89,11 @@ trait BehatCliTrait {
     $content = strtr((string) $content, ["'''" => '"""']);
 
     // Make sure that indentation in provided content is accurate.
-    $contentLines = explode(PHP_EOL, $content);
-    foreach ($contentLines as $k => $contentLine) {
-      $contentLines[$k] = str_repeat(' ', 4) . trim($contentLine);
+    $content_lines = explode(PHP_EOL, $content);
+    foreach ($content_lines as $k => $content_line) {
+      $content_lines[$k] = str_repeat(' ', 4) . trim($content_line);
     }
-    $content = implode(PHP_EOL, $contentLines);
+    $content = implode(PHP_EOL, $content_lines);
 
     $tokens = [
       '{{SCENARIO_CONTENT}}' => $content,
@@ -157,7 +157,7 @@ EOL;
       // Update the code coverage configuration to use an alternative
       // coverage report target. This report is merged into a single report
       // with scripts/merge-coverage.php.
-      $coverageId = md5($this->workingDir);
+      $coverage_id = md5($this->workingDir);
       $yaml['default']['extensions'][Extension::class] = [
         'filter' => [
           'include' => [
@@ -172,7 +172,7 @@ EOL;
             'showOnlySummary' => TRUE,
           ],
           'php' => [
-            'target' => '/var/www/html/.logs/coverage/behat_cli/phpcov/' . $coverageId . '.php',
+            'target' => '/var/www/html/.logs/coverage/behat_cli/phpcov/' . $coverage_id . '.php',
           ],
         ],
       ];
@@ -186,12 +186,12 @@ EOL;
     // Resolve the drush binary to an absolute path so subprocess tests
     // can find it regardless of their working directory.
     // The source behat.yml is at /var/www/html, so resolve relative to that.
-    $projectRoot = dirname($source);
-    $drushBinary = $projectRoot . '/vendor/bin/drush';
-    if (file_exists($drushBinary)) {
+    $project_root = dirname($source);
+    $drush_binary = $project_root . '/vendor/bin/drush';
+    if (file_exists($drush_binary)) {
       foreach (['default', 'drupal', 'drupal_https'] as $profile) {
         if (isset($yaml[$profile]['extensions']['Drupal\DrupalExtension']['drush'])) {
-          $yaml[$profile]['extensions']['Drupal\DrupalExtension']['drush']['binary'] = $drushBinary;
+          $yaml[$profile]['extensions']['Drupal\DrupalExtension']['drush']['binary'] = $drush_binary;
         }
       }
     }
@@ -207,7 +207,7 @@ EOL;
   }
 
   /**
-   * Asserts that behat failed with an assertion error matching the given message.
+   * Asserts that behat failed with the given assertion error.
    */
   #[Then('it should fail with an error:')]
   public function behatCliAssertFailWithError(PyStringNode $message): void {
@@ -215,9 +215,9 @@ EOL;
 
     $output = $this->getOutput();
 
-    $hasValidException = str_contains((string) $output, ' (Exception)') || str_contains((string) $output, ' (Behat\Mink\Exception');
+    $has_valid_exception = str_contains((string) $output, ' (Exception)') || str_contains((string) $output, ' (Behat\Mink\Exception');
 
-    if (!$hasValidException) {
+    if (!$has_valid_exception) {
       throw new \RuntimeException('The output does not contain an assertion exception string as expected.');
     }
 
@@ -248,15 +248,15 @@ EOL;
    */
   #[When('I run behat with drupal profile and :key set to :value')]
   public function behatCliRunWithDrupalProfileAndConfig(string $key, string $value):void {
-    $configFile = $this->workingDir . DIRECTORY_SEPARATOR . 'behat.yml';
-    $yaml = Yaml::parse(file_get_contents($configFile));
+    $config_file = $this->workingDir . DIRECTORY_SEPARATOR . 'behat.yml';
+    $yaml = Yaml::parse(file_get_contents($config_file));
     $yaml['drupal']['extensions']['Drupal\DrupalExtension'][$key] = is_numeric($value) ? (int) $value : $value;
-    file_put_contents($configFile, Yaml::dump($yaml, 4, 2));
+    file_put_contents($config_file, Yaml::dump($yaml, 4, 2));
     $this->iRunBehat('--profile=drupal --no-colors');
   }
 
   /**
-   * Asserts that behat failed with a RuntimeException matching the given message.
+   * Asserts that behat failed with the given RuntimeException.
    */
   #[Then('it should fail with an exception:')]
   public function behatCliAssertFailWithException(PyStringNode $message): void {
@@ -268,7 +268,7 @@ EOL;
   }
 
   /**
-   * Asserts that behat failed with a specific exception class matching the given message.
+   * Asserts that behat failed with the given exception class.
    */
   #[Then('it should fail with a :exception exception:')]
   public function behatCliAssertFailWithCustomException(string $exception, PyStringNode $message): void {
@@ -342,16 +342,16 @@ EOL;
    * Copy fixtures to the working directory.
    */
   protected function behatCliCopyFixtures() {
-    $fixturePathRel = 'tests/behat/fixtures';
+    $fixture_path_rel = 'tests/behat/fixtures';
 
     // @note Hardcoded path to the fixture directory.
-    $fixturePathAbs = '/var/www/html/' . DIRECTORY_SEPARATOR . $fixturePathRel;
+    $fixture_path_abs = '/var/www/html/' . DIRECTORY_SEPARATOR . $fixture_path_rel;
 
-    if (is_dir($fixturePathAbs)) {
-      $dst = $this->workingDir . DIRECTORY_SEPARATOR . $fixturePathRel;
+    if (is_dir($fixture_path_abs)) {
+      $dst = $this->workingDir . DIRECTORY_SEPARATOR . $fixture_path_rel;
       mkdir($dst, 0777, TRUE);
 
-      foreach (glob($fixturePathAbs . '/*') as $file) {
+      foreach (glob($fixture_path_abs . '/*') as $file) {
         // @note Only copy files for speed.
         if (is_file($file)) {
           $filename = basename($file);
