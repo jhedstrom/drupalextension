@@ -21,14 +21,16 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class DriverListener implements EventSubscriberInterface {
 
+  /**
+   * Constructs a DriverListener.
+   *
+   * @param \Drupal\DrupalDriverManager $drupalDriverManager
+   *   Drupal driver manager.
+   * @param array<string, mixed> $parameters
+   *   Test parameters.
+   */
   public function __construct(
-    /**
-     * Drupal driver manager.
-     */
     private readonly DrupalDriverManager $drupalDriverManager,
-    /**
-     * Test parameters.
-     */
     private array $parameters,
   ) {
   }

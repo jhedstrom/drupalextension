@@ -12,22 +12,22 @@ interface DrupalMailManagerInterface {
   /**
    * Collect outbound mail for analysis.
    */
-  public function startCollectingMail();
+  public function startCollectingMail(): void;
 
   /**
    * Stop collecting outbound mail.
    */
-  public function stopCollectingMail();
+  public function stopCollectingMail(): void;
 
   /**
    * Allow mail to be actually sent out.
    */
-  public function enableMail();
+  public function enableMail(): void;
 
   /**
    * Prevent mail from being actually sent out.
    */
-  public function disableMail();
+  public function disableMail(): void;
 
   /**
    * Get all collected mail.
@@ -40,11 +40,14 @@ interface DrupalMailManagerInterface {
    *   array as produced by 'MailInterface::mail()' - the keys include
    *   'to', 'subject', 'body', 'headers', etc.
    */
-  public function getMail($store);
+  public function getMail(string $store);
 
   /**
    * Empty the store of collected mail.
+   *
+   * @param string $store
+   *   The name of the mail store to clear.
    */
-  public function clearMail($store);
+  public function clearMail(string $store): void;
 
 }

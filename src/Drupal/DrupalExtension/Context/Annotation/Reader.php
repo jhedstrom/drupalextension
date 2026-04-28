@@ -30,7 +30,7 @@ class Reader implements AnnotationReader {
   /**
    * Map of annotation names to their hook call class names.
    *
-   * @var string[]
+   * @var array<string, class-string<\Drupal\DrupalExtension\Hook\Call\EntityHook>>
    */
   private static array $classes = [
     'afternodecreate' => AfterNodeCreate::class,

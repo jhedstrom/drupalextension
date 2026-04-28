@@ -18,6 +18,9 @@ class BrowserKitFactory extends BrowserKitFactoryOriginal {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $config
+   *   Driver configuration.
    */
   public function buildDriver(array $config): Definition {
     if (!class_exists(BrowserKitDriver::class)) {
@@ -62,7 +65,7 @@ class BrowserKitFactory extends BrowserKitFactoryOriginal {
    * @codeCoverageIgnore
    */
   protected function getCwd(): string {
-    return getcwd();
+    return (string) getcwd();
   }
 
   /**

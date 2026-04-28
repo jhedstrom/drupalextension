@@ -24,6 +24,8 @@ class BehatDistYmlTest extends TestCase {
 
   /**
    * Parsed behat.dist.yml contents.
+   *
+   * @var array<string, mixed>
    */
   private static array $distConfig;
 
@@ -54,9 +56,6 @@ class BehatDistYmlTest extends TestCase {
   #[DataProvider('dataProviderDrupalExtensionConfigIsValid')]
   public function testDrupalExtensionConfigIsValid(string $profile): void {
     $dist_values = self::$distConfig[$profile]['extensions']['Drupal\DrupalExtension'] ?? [];
-    if ($dist_values === NULL) {
-      $dist_values = [];
-    }
 
     $tree = $this->buildDrupalExtensionTree();
 

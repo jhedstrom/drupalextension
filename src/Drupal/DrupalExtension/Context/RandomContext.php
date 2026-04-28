@@ -17,9 +17,9 @@ class RandomContext extends RawDrupalContext {
   /**
    * Tracks variable names for consistent replacement during a given scenario.
    *
-   * @var array
+   * @var array<string, string>
    */
-  protected $values = [];
+  protected array $values = [];
 
   /**
    * The regex to use for variable replacement.
@@ -30,6 +30,9 @@ class RandomContext extends RawDrupalContext {
 
   /**
    * Transform random variables.
+   *
+   * @return string|array<int, string>|null
+   *   The transformed message.
    */
   #[Transform('#([^<]*\<\?.*\>[^>]*)#')]
   public function transformVariables(string $message): string|array|null {
@@ -52,7 +55,8 @@ class RandomContext extends RawDrupalContext {
   public function transformTable(TableNode $table): TableNode {
     $rows = [];
     foreach ($table->getRows() as $row) {
-      $rows[] = array_map($this->transformVariables(...), $row);
+      $transformed = array_map($this->transformVariables(...), $row);
+      $rows[] = array_map(static fn (array|string|null $v): string => is_array($v) ? implode(',', $v) : (string) $v, $transformed);
     }
     return new TableNode($rows);
   }

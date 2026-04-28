@@ -15,12 +15,12 @@ interface DrupalAuthenticationManagerInterface {
    * @param \stdClass $user
    *   The user to log in.
    */
-  public function logIn(\stdClass $user);
+  public function logIn(\stdClass $user): void;
 
   /**
    * Logs the current user out.
    */
-  public function logOut();
+  public function logOut(): void;
 
   /**
    * Determine if a user is already logged in.

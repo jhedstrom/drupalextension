@@ -11,22 +11,20 @@ class DrupalUserManager implements DrupalUserManagerInterface {
 
   /**
    * The user object representing the currently logged in user.
-   *
-   * @var \stdClass|false
    */
-  protected $user = FALSE;
+  protected \stdClass|bool $user = FALSE;
 
   /**
    * An array of user objects representing users created during the test.
    *
    * @var \stdClass[]
    */
-  protected $users = [];
+  protected array $users = [];
 
   /**
    * {@inheritdoc}
    */
-  public function getCurrentUser() {
+  public function getCurrentUser(): \stdClass|bool {
     return $this->user;
   }
 
@@ -64,7 +62,7 @@ class DrupalUserManager implements DrupalUserManagerInterface {
   /**
    * {@inheritdoc}
    */
-  public function getUsers() {
+  public function getUsers(): array {
     return $this->users;
   }
 

@@ -18,10 +18,8 @@ class DrupalDriverManager implements DrupalDriverManagerInterface {
 
   /**
    * The name of the default driver.
-   *
-   * @var string
    */
-  private $defaultDriverName;
+  private ?string $defaultDriverName = NULL;
 
   /**
    * All registered drivers.

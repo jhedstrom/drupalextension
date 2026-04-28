@@ -91,6 +91,12 @@ class DocsTest extends TestCase {
     rmdir($dir);
   }
 
+  /**
+   * Tests parse_method_comment().
+   *
+   * @param array<string, mixed>|null $expected
+   *   The expected parsed result.
+   */
   #[DataProvider('dataProviderParseMethodComment')]
   public function testParseMethodComment(string $comment, ?array $expected, ?string $exception = NULL): void {
     if ($exception) {
@@ -365,6 +371,14 @@ EOD,
     ];
   }
 
+  /**
+   * Tests array_to_markdown_table().
+   *
+   * @param array<int, string> $headers
+   *   Table headers.
+   * @param array<string, array<int, string>> $rows
+   *   Table rows.
+   */
   #[DataProvider('dataProviderArrayToMarkdownTable')]
   public function testArrayToMarkdownTable(array $headers, array $rows, string $expected): void {
     $actual = array_to_markdown_table($headers, $rows);
@@ -422,6 +436,12 @@ EOD,
     ];
   }
 
+  /**
+   * Tests render_info().
+   *
+   * @param array<string, mixed> $info
+   *   Class info to render.
+   */
   #[DataProvider('dataProviderRenderInfo')]
   public function testRenderInfo(array $info, string $expected, ?string $exception = NULL): void {
     if ($exception) {
@@ -477,7 +497,7 @@ EOD,
       // Verify index table exists.
       foreach ($info as $class => $data) {
         $name_contextual = $data['name_contextual'] ?? $class;
-        $link_id = strtolower(preg_replace('/[^A-Za-z0-9_\-]/', '', $name_contextual));
+        $link_id = strtolower((string) preg_replace('/[^A-Za-z0-9_\-]/', '', (string) $name_contextual));
         $this->assertStringContainsString(sprintf("[%s](#%s)", $name_contextual, $link_id), $actual);
         $this->assertStringContainsString($data['description'], $actual);
       }
@@ -626,6 +646,12 @@ EOD,
     ];
   }
 
+  /**
+   * Tests render_info() with path for links.
+   *
+   * @param array<string, mixed> $info
+   *   Class info to render.
+   */
   #[DataProvider('dataProviderRenderInfoWithPathForLinks')]
   public function testRenderInfoWithPathForLinks(array $info, string $path_for_links): void {
     $base_path = static::$tmp;
@@ -661,7 +687,7 @@ EOD,
     // Verify that the path_for_links is used in the index.
     foreach ($info as $class => $data) {
       $name_contextual = $data['name_contextual'] ?? $class;
-      $link_id = strtolower(preg_replace('/[^A-Za-z0-9_\-]/', '', $name_contextual));
+      $link_id = strtolower((string) preg_replace('/[^A-Za-z0-9_\-]/', '', (string) $name_contextual));
       $expected_link = sprintf("%s#%s", $path_for_links, $link_id);
       $this->assertStringContainsString($expected_link, $actual);
     }
@@ -712,6 +738,14 @@ EOD,
     ];
   }
 
+  /**
+   * Tests validate().
+   *
+   * @param array<string, mixed> $info
+   *   Class info to validate.
+   * @param array<int, string> $expected_messages
+   *   The expected validation messages.
+   */
   #[DataProvider('dataProviderValidate')]
   public function testValidate(array $info, string $method_name, string $check_key, bool $expected_pass, array $expected_messages): void {
     $results = validate($info, static::$tmp);
@@ -1177,6 +1211,12 @@ EOD,
     $this->assertSame('tests/behat/features/test.feature', $results['TestContext']['file']['path']);
   }
 
+  /**
+   * Tests has_validation_errors().
+   *
+   * @param array<string, array{file: array{pass: bool, path: string}, methods: array<string, array<string, array{pass: bool, messages: array<int, string>}>>}> $results
+   *   Validation results.
+   */
   #[DataProvider('dataProviderHasValidationErrors')]
   public function testHasValidationErrors(array $results, bool $expected): void {
     $this->assertSame($expected, has_validation_errors($results));
@@ -1478,6 +1518,12 @@ EOD,
     ];
   }
 
+  /**
+   * Tests parse_class_comment().
+   *
+   * @param array<string, mixed> $expected
+   *   Expected parsed result.
+   */
   #[DataProvider('dataProviderParseClassComment')]
   public function testParseClassComment(string $class_name, string $comment, array $expected, ?string $exception = NULL): void {
     if ($exception) {
@@ -1593,6 +1639,13 @@ EOD,
 
   /**
    * Test the extract_info function with actual reflection.
+   *
+   * @param array<int, string> $class_names
+   *   The fixture class names to test with.
+   * @param array<int, string> $exclude
+   *   Class names to exclude.
+   * @param array<int, string> $expected_class_names
+   *   The expected class names that should be extracted.
    */
   #[DataProvider('dataProviderExtractInfo')]
   public function testExtractInfo(
@@ -1663,7 +1716,6 @@ EOD,
     $result = extract_info($context_dir, [], $base_path, 'Drupal\\DrupalExtension\\Tests\\Fixtures');
 
     $this->assertArrayHasKey($class_name, $result);
-    $this->assertIsArray($result[$class_name]['methods']);
     $this->assertCount(3, $result[$class_name]['methods']);
 
     // Check order: Given, When, Then.
@@ -1876,8 +1928,8 @@ EOD,
     $this->assertFileExists($log_dir . '/validation-summary.txt');
     $this->assertFileExists($log_dir . '/validation-details.txt');
 
-    $summary = file_get_contents($log_dir . '/validation-summary.txt');
-    $details = file_get_contents($log_dir . '/validation-details.txt');
+    $summary = (string) file_get_contents($log_dir . '/validation-summary.txt');
+    $details = (string) file_get_contents($log_dir . '/validation-details.txt');
 
     // Summary should contain the summary block without ANSI.
     $this->assertStringContainsString('Summary:', $summary);

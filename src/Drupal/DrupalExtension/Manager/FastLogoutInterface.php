@@ -17,6 +17,6 @@ interface FastLogoutInterface {
    *
    * @todo v6: Rename to logoutFast().
    */
-  public function fastLogout();
+  public function fastLogout(): void;
 
 }

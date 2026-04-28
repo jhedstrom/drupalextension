@@ -47,6 +47,19 @@ class RawDrupalContextTest extends TestCase {
 
   /**
    * Tests parsing entity fields.
+   *
+   * @param array<string, mixed> $input
+   *   The input entity fields.
+   * @param array<string, mixed> $expected
+   *   The expected entity fields after parsing.
+   * @param array<int, string>|null $fields
+   *   The configurable fields.
+   * @param array<int, string>|null $baseFields
+   *   The base fields.
+   * @param string|null $exception
+   *   Expected exception message.
+   * @param array<int, string> $ignored_properties
+   *   The ignored properties.
    */
   #[DataProvider('dataProviderParseEntityFields')]
   public function testParseEntityFields(array $input, array $expected, ?array $fields = NULL, ?array $baseFields = NULL, ?string $exception = NULL, array $ignored_properties = []): void {

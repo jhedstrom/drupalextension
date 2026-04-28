@@ -27,12 +27,12 @@ abstract class DrupalSubContextBase extends RawDrupalContext implements DrupalSu
    *
    * @see \Drupal\DrupalExtension\Context\RawDrupalContext::getUserManager()
    */
-  protected function getUser() {
+  protected function getUser(): \stdClass {
     @trigger_error('DrupalSubContextBase::getUser() is deprecated in drupalextension:4.0.0 and is removed from drupalextension:5.0.0. Use RawDrupalContext::getUserManager()->getCurrentUser() instead. See https://www.drupal.org/project/drupalextension/issues/676', E_USER_DEPRECATED);
 
     $user = $this->getUserManager()->getCurrentUser();
 
-    if (empty($user)) {
+    if (!$user instanceof \stdClass) {
       throw new \Exception('No user is logged in.');
     }
 

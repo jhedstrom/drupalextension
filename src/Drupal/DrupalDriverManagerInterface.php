@@ -20,7 +20,7 @@ interface DrupalDriverManagerInterface {
    * @param \Drupal\Driver\DriverInterface $driver
    *   An instance of a DriverInterface.
    */
-  public function registerDriver($name, DriverInterface $driver);
+  public function registerDriver($name, DriverInterface $driver): void;
 
   /**
    * Return a registered driver by name, or the default driver.
@@ -54,7 +54,7 @@ interface DrupalDriverManagerInterface {
    * @throws \InvalidArgumentException
    *   Thrown when the driver is not registered.
    */
-  public function setDefaultDriverName($name);
+  public function setDefaultDriverName($name): void;
 
   /**
    * Returns the Behat Environment.
@@ -70,6 +70,6 @@ interface DrupalDriverManagerInterface {
    * @param \Behat\Testwork\Environment\Environment $environment
    *   The Behat Environment to set.
    */
-  public function setEnvironment(Environment $environment);
+  public function setEnvironment(Environment $environment): void;
 
 }

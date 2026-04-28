@@ -127,8 +127,10 @@ function main(array $options = []): void {
  * @param string $base_path
  *   Base path for the repository.
  *
- * @return array<string,array<string, array<int, array<string, array<int,string>|string>>|string>>
- *   Array of info with 'name', 'steps', 'description', and 'example' keys.
+ * @return array<string, array<string, mixed>>
+ *   Array of info keyed by class name. Each entry has 'name', 'methods'
+ *   (array of method info with 'name', 'steps', 'description', 'example'
+ *   keys), and class-level 'description' / 'description_full' keys.
  *
  * @throws \ReflectionException
  */
@@ -458,7 +460,7 @@ function extract_step_attributes(\ReflectionMethod $method): array {
 /**
  * Convert info to content.
  *
- * @param array<string,array<string, array<int, array<string, array<int,string>|string>>|string>> $info
+ * @param array<string, array<string, mixed>> $info
  *   Array of info items with 'name', 'from', and 'to' keys.
  * @param string $base_path
  *   Base path for the repository.
@@ -494,12 +496,12 @@ function render_info(array $info, string $base_path = '', ?string $path_for_link
       $example_link = sprintf(', [Example](%s)', $example_file);
     }
 
-    $content_output .= sprintf('## %s', $class_info['name_contextual']) . PHP_EOL . PHP_EOL;
+    $content_output .= sprintf('## %s', (string) $class_info['name_contextual']) . PHP_EOL . PHP_EOL;
     $content_output .= sprintf('[Source](%s)%s', $src_file, $example_link) . PHP_EOL . PHP_EOL;
 
     // Add description as markdown-safe accommodating for lists.
     $description_full = '';
-    $lines = explode(PHP_EOL, $class_info['description_full']);
+    $lines = explode(PHP_EOL, (string) $class_info['description_full']);
     $was_list = FALSE;
     $in_code_block = FALSE;
     $code_block = '';
@@ -550,7 +552,7 @@ function render_info(array $info, string $base_path = '', ?string $path_for_link
       }
     }
 
-    $description_full = preg_replace('/^/m', '>  ', $description_full);
+    $description_full = (string) preg_replace('/^/m', '>  ', $description_full);
     $content_output .= $description_full . PHP_EOL . PHP_EOL;
 
     // Add to index.
@@ -559,9 +561,13 @@ function render_info(array $info, string $base_path = '', ?string $path_for_link
       $index_rows_path = $path_for_links . $index_rows_path;
     }
     $index_rows[] = [
-      sprintf('[%s](%s)', $class_info['name_contextual'], $index_rows_path),
-      $class_info['description'],
+      sprintf('[%s](%s)', (string) $class_info['name_contextual'], (string) $index_rows_path),
+      (string) $class_info['description'],
     ];
+
+    if (!is_array($class_info['methods'])) {
+      continue;
+    }
 
     foreach ($class_info['methods'] as $method) {
       $method['steps'] = is_array($method['steps']) ? $method['steps'] : [$method['steps']];
@@ -569,7 +575,7 @@ function render_info(array $info, string $base_path = '', ?string $path_for_link
       $method['example'] = is_string($method['example']) ? $method['example'] : '';
 
       $method['steps'] = array_reduce($method['steps'], fn(string $carry, string $item): string => $carry . sprintf("%s\n", $item), '');
-      $method['steps'] = rtrim((string) $method['steps'], "\n");
+      $method['steps'] = rtrim($method['steps'], "\n");
 
       $method['description'] = rtrim((string) $method['description'], '.');
 
@@ -657,7 +663,7 @@ function find_source_file(string $class_name, string $base_path): ?string {
  * @param string $base_path
  *   Base path for the repository.
  *
- * @return array<string, array<string, array<string, bool|string|array<string, array<string, bool|array<int, string>>>>>>
+ * @return array<string, array{file: array{pass: bool, path: string}, methods: array<string, array<string, array{pass: bool, messages: array<int, string>}>>}>
  *   Structured validation results per class and method.
  */
 function validate(array $info, string $base_path = ''): array {
@@ -683,6 +689,11 @@ function validate(array $info, string $base_path = ''): array {
       ],
       'methods' => [],
     ];
+
+    if (!is_array($class_info['methods'])) {
+      $results[$class_name] = $class_result;
+      continue;
+    }
 
     foreach ($class_info['methods'] as $method) {
       $method['steps'] = is_array($method['steps']) ? $method['steps'] : [$method['steps']];
@@ -767,7 +778,7 @@ function validate(array $info, string $base_path = ''): array {
 /**
  * Check if validation results contain any errors.
  *
- * @param array<string, array<string, array<string, bool|string|array<string, array<string, bool|array<int, string>>>>>> $results
+ * @param array<string, array{file: array{pass: bool, path: string}, methods: array<string, array<string, array{pass: bool, messages: array<int, string>}>>}> $results
  *   Structured validation results from validate().
  *
  * @return bool
@@ -790,7 +801,7 @@ function has_validation_errors(array $results): bool {
 /**
  * Render validation results as a tree with ANSI colors.
  *
- * @param array<string, array<string, array<string, bool|string|array<string, array<string, bool|array<int, string>>>>>> $results
+ * @param array<string, array{file: array{pass: bool, path: string}, methods: array<string, array<string, array{pass: bool, messages: array<int, string>}>>}> $results
  *   Structured validation results from validate().
  *
  * @return string
@@ -1121,7 +1132,7 @@ function replace_content(string $haystack, string $start, string $end, string $r
  *
  * @param array<int, string> $headers
  *   The headers for the table.
- * @param array<string, array<int, string>> $rows
+ * @param array<string|int, array<int|string, string>> $rows
  *   The rows for the table.
  *
  * @return string

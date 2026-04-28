@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\DrupalExtension\Context\Environment\Reader;
 
+use Behat\Behat\Context\Context;
 use Behat\Behat\Context\Environment\UninitializedContextEnvironment;
 use Behat\Behat\Context\Environment\ContextEnvironment;
 use Behat\Behat\Context\Reader\ContextReader;
@@ -31,21 +32,20 @@ final class Reader implements EnvironmentReader {
   /**
    * Statically cached lists of subcontexts by path.
    *
-   * @var array
+   * @var array<string, array<string, array<string, string>>>
    */
-  protected static $subContexts;
+  protected static array $subContexts = [];
 
   /**
    * Register the Drupal driver manager.
+   *
+   * @param \Drupal\DrupalDriverManager $drupalDriverManager
+   *   Drupal driver manager.
+   * @param array<string, mixed> $parameters
+   *   Configuration parameters for this suite.
    */
   public function __construct(
-    /**
-     * Drupal driver manager.
-     */
     private readonly DrupalDriverManager $drupalDriverManager,
-    /**
-     * Configuration parameters for this suite.
-     */
     private array $parameters,
   ) {
   }
@@ -127,7 +127,7 @@ final class Reader implements EnvironmentReader {
   /**
    * Finds and loads available subcontext classes.
    *
-   * @return class-string[]
+   * @return array<int, class-string<Context>>
    *   An array of fully-qualified class names.
    */
   protected function findSubContextClasses(): array {
@@ -167,7 +167,7 @@ final class Reader implements EnvironmentReader {
       $classes = get_declared_classes();
       foreach ($classes as $class) {
         $reflect = new \ReflectionClass($class);
-        if (!$reflect->isAbstract() && $reflect->implementsInterface(DrupalSubContextInterface::class)) {
+        if (!$reflect->isAbstract() && $reflect->implementsInterface(DrupalSubContextInterface::class) && is_subclass_of($class, Context::class)) {
           @trigger_error('Sub-context support is deprecated in drupalextension:4.0.0 and is removed from drupalextension:4.1.0. Class ' . $class . ' is a sub-context. This logic should be moved to a normal Behat context and loaded via behat.yml. See https://www.drupal.org/project/drupalextension/issues/676', E_USER_DEPRECATED);
           $class_names[] = $class;
         }
@@ -213,10 +213,10 @@ final class Reader implements EnvironmentReader {
   /**
    * Load each subcontext file.
    *
-   * @param array $subcontexts
+   * @param array<string, string> $subcontexts
    *   An array of files to include.
    */
-  protected function loadSubContexts($subcontexts): void {
+  protected function loadSubContexts(array $subcontexts): void {
     foreach ($subcontexts as $path => $subcontext) {
       if (!file_exists($path)) {
         throw new \RuntimeException(sprintf('Subcontext path %s path does not exist.', $path));

@@ -42,6 +42,11 @@ class ConfigContextTest extends TestCase {
 
   /**
    * Tests that setBasicConfig stores backup values correctly.
+   *
+   * @param array<int, array<string, mixed>> $operations
+   *   The operations to perform.
+   * @param array<string, array<string, mixed>> $expected_backup
+   *   The expected backup state.
    */
   #[DataProvider('dataProviderSetBasicConfigBackup')]
   public function testSetBasicConfigBackup(array $operations, array $expected_backup): void {

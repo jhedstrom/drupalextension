@@ -336,7 +336,7 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
    * @param string $expected_header
    *   The header that should be present in the list.
    */
-  protected function assertValidMessageTable(TableNode $messages, string $expected_header) {
+  protected function assertValidMessageTable(TableNode $messages, string $expected_header): void {
     // Check that the table only contains a single column.
     $header_row = $messages->getRow(0);
 
@@ -347,7 +347,7 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
 
     // Check that the correct header is used.
     $actual_header = reset($header_row);
-    if (strtolower(trim($actual_header)) !== $expected_header) {
+    if (strtolower(trim((string) $actual_header)) !== $expected_header) {
       $capitalized_header = ucfirst($expected_header);
       throw new \RuntimeException(sprintf("The list of %s should have the header '%s', but found '%s'.", $expected_header, $capitalized_header, $actual_header));
     }

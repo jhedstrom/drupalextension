@@ -12,6 +12,14 @@ use Behat\Mink\Selector\CssSelector;
  */
 class RegionSelector implements SelectorInterface {
 
+  /**
+   * Constructs a RegionSelector.
+   *
+   * @param \Behat\Mink\Selector\CssSelector $cssSelector
+   *   The CSS selector.
+   * @param array<string, string> $regionMap
+   *   Map of region names to CSS selectors.
+   */
   public function __construct(private readonly CssSelector $cssSelector, private array $regionMap) {
   }
 

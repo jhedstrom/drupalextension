@@ -16,14 +16,14 @@ trait DrupalParametersTrait {
   /**
    * Test parameters.
    *
-   * @var array
+   * @var array<string, mixed>
    */
-  protected $drupalParameters;
+  protected array $drupalParameters = [];
 
   /**
    * Set parameters provided for Drupal.
    *
-   * @param array $parameters
+   * @param array<string, mixed> $parameters
    *   The parameters to set.
    */
   public function setDrupalParameters(array $parameters): void {

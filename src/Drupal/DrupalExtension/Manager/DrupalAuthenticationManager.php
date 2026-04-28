@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\DrupalExtension\Manager;
 
+use Behat\Mink\Element\NodeElement;
 use Behat\Mink\Element\DocumentElement;
 use Behat\Mink\Exception\DriverException;
 use Behat\Mink\Mink;
@@ -22,6 +23,17 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
 
   /**
    * Constructs a DrupalAuthenticationManager object.
+   *
+   * @param \Behat\Mink\Mink $mink
+   *   The Mink instance.
+   * @param \Drupal\DrupalExtension\Manager\DrupalUserManagerInterface $userManager
+   *   The Drupal user manager.
+   * @param \Drupal\DrupalDriverManagerInterface $driverManager
+   *   The Drupal driver manager.
+   * @param array<string, mixed> $minkParameters
+   *   Mink configuration parameters.
+   * @param array<string, mixed> $drupalParameters
+   *   Drupal configuration parameters.
    */
   public function __construct(
     Mink $mink,
@@ -55,7 +67,7 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
 
     // Submit the login form.
     $login_element = $this->getLoginElement($page);
-    if (empty($login_element)) {
+    if (!$login_element instanceof NodeElement) {
       throw new \Exception(sprintf('No submit button at %s', $session->getCurrentUrl()));
     }
     $login_element->click();
@@ -111,7 +123,7 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
     if ($session->getCurrentUrl() === $logout_confirm_url) {
       $logout_element = $this->getLogoutConfirmElement($session->getPage());
 
-      if (empty($logout_element)) {
+      if (!$logout_element instanceof NodeElement) {
         throw new \Exception(sprintf("Unable to determine if logged out because '%s' button cannot be found on the logout confirmation page at %s", $this->getDrupalText('log_out'), $session->getCurrentUrl()));
       }
 
@@ -137,8 +149,12 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
     }
 
     // If the page is not available, then there is no user logged in.
+    // Using a nullsafe call here so PHPStan does not flag the non-nullable
+    // 'getPage()' return type while still allowing test doubles that return
+    // 'NULL' to short-circuit safely.
     $page = $session->getPage();
-    if (!$page) {
+    // @phpstan-ignore identical.alwaysFalse
+    if ($page === NULL) {
       return FALSE;
     }
 
@@ -167,7 +183,7 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
     // While not perfect, this is how Drupal SimpleTests currently work as
     // well.
     $session->visit($this->locatePath('/'));
-    if ($this->getLogoutElement()) {
+    if ($this->getLogoutElement() instanceof NodeElement) {
       return TRUE;
     }
 
@@ -198,7 +214,7 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
   /**
    * Get the login element from the page.
    */
-  protected function getLoginElement(DocumentElement $element) {
+  protected function getLoginElement(DocumentElement $element): ?NodeElement {
     // @todo v6: Rename `log_in` to `login_text`.
     return $element->findButton($this->getDrupalText('log_in'));
   }
@@ -206,7 +222,7 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
   /**
    * Get the logout element from the page.
    */
-  public function getLogoutElement() {
+  public function getLogoutElement(): ?NodeElement {
     // @todo v6: Rename `log_out` to `logout_text`.
     return $this->getSession()->getPage()->findLink($this->getDrupalText('log_out'));
   }
@@ -214,7 +230,7 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
   /**
    * Get the logout confirm element from the page.
    */
-  protected function getLogoutConfirmElement(DocumentElement $element) {
+  protected function getLogoutConfirmElement(DocumentElement $element): ?NodeElement {
     // @todo v6: Rename `log_out` to `logout_text`.
     return $element->findButton($this->getDrupalText('log_out'));
   }
