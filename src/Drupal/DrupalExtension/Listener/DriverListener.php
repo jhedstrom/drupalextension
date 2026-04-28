@@ -8,6 +8,7 @@ use Behat\Behat\EventDispatcher\Event\ExampleTested;
 use Behat\Behat\EventDispatcher\Event\ScenarioLikeTested;
 use Behat\Behat\EventDispatcher\Event\ScenarioTested;
 
+use Behat\Gherkin\Node\TaggedNodeInterface;
 use Behat\Testwork\EventDispatcher\Event\LifecycleEvent;
 use Drupal\DrupalDriverManager;
 
@@ -59,7 +60,12 @@ class DriverListener implements EventSubscriberInterface {
     // Get the default driver.
     $driver = $this->parameters['default_driver'];
 
-    foreach (array_merge($feature->getTags(), $scenario->getTags()) as $tag) {
+    $tags = $feature->getTags();
+    if ($scenario instanceof TaggedNodeInterface) {
+      $tags = array_merge($tags, $scenario->getTags());
+    }
+
+    foreach ($tags as $tag) {
       if (!empty($this->parameters[$tag . '_driver'])) {
         $driver = $this->parameters[$tag . '_driver'];
       }
