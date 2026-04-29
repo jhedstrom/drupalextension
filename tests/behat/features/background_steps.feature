@@ -5,17 +5,17 @@ Feature: DrupalContext with background steps
   So that I can share common setup across multiple test examples
 
   Background:
-    Given "tags" terms:
+    Given the following "tags" terms:
       | name    |
       | Tag one |
       | Tag two |
 
-    And users:
+    And the following users:
       | name     |
       | User one |
       | User two |
 
-    And "article" content:
+    And the following "article" content:
       | title    |
       | Node one |
       | Node two |

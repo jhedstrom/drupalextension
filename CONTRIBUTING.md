@@ -374,6 +374,28 @@ Every negative test follows the same four-step pattern:
 | `Then it should fail with a "<Class>" exception:` | Step threw a specific exception class (e.g., `InvalidArgumentException`). |
 | `Then it should fail` | Step failed (any reason, no message check). |
 
+## Step definition conventions
+
+`scripts/docs.php` validates step definitions against the conventions enforced
+in 6.0. CI fails on any violation. Before pushing, run `ahoy docs` to
+regenerate `STEPS.md` and surface any issues.
+
+| Rule | Applies to |
+|------|------------|
+| `@Given` steps ending with `:` must contain `following`. | Table-form Givens |
+| `@When` steps must contain `I` followed by a space. | All Whens |
+| `@Then` steps must contain `should`. | All Thens |
+| `@Then` steps must contain `the`, `a`, or `no`. | All Thens |
+| `@Then` method names must contain `Assert`. | All Then methods |
+| `@Then` method names must NOT contain `Should`. | All Then methods |
+| Each method declares one step annotation. | All steps |
+| Each step has an `@code/@endcode` example in the docblock. | All steps |
+| Steps use turnip syntax instead of unnecessary regex. | All steps |
+
+`@Then` method names follow `<concern>Assert<action>` (concern first, then
+`Assert`, then action) so the validator can statically verify intent —
+e.g. `errorMessageAssertIsVisible` rather than `assertErrorVisible`.
+
 ## Before submitting a change
 
 - Check the changes from `composer require` are not included in
@@ -383,3 +405,5 @@ Every negative test follows the same four-step pattern:
 - Run `ahoy lint` to check for coding standard violations.
 - Run `ahoy lint-fix` to automatically fix coding standard
   violations.
+- Run `ahoy docs` to regenerate `STEPS.md` and `README.md` whenever
+  step definitions change. CI will fail if these files are out of date.

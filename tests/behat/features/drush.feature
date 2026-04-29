@@ -6,25 +6,25 @@ Feature: DrushContext
   @test-drupal @api
   Scenario: Assert "Given I run drush :command" passes
     Given I run drush "status"
-    Then drush output should contain "Drupal version"
+    Then the drush output should contain "Drupal version"
 
   @test-drupal @api
   Scenario: Assert "Given I run drush :command :arguments" passes
     Given I run drush "pm:list" "--status=enabled"
-    Then drush output should contain "Enabled"
+    Then the drush output should contain "Enabled"
 
   @test-drupal @api
-  Scenario: Assert "Then drush output should contain :output" passes
+  Scenario: Assert "Then the drush output should contain :output" passes
     Given I run drush "status"
-    Then drush output should contain "Drupal version"
+    Then the drush output should contain "Drupal version"
 
   @test-drupal @api
-  Scenario: Assert "Then drush output should contain :output" fails when text not found
+  Scenario: Assert "Then the drush output should contain :output" fails when text not found
     Given some behat configuration
     And scenario steps tagged with "@test-drupal @api":
       """
       Given I run drush "status"
-      Then drush output should contain "DOES_NOT_EXIST_xyz"
+      Then the drush output should contain "DOES_NOT_EXIST_xyz"
       """
     When I run behat with drupal profile
     Then it should fail with an error:
@@ -33,17 +33,17 @@ Feature: DrushContext
       """
 
   @test-drupal @api
-  Scenario: Assert "Then drush output should match :regex" passes
+  Scenario: Assert "Then the drush output should match :regex" passes
     Given I run drush "status"
-    Then drush output should match "/Drupal version/"
+    Then the drush output should match "/Drupal version/"
 
   @test-drupal @api
-  Scenario: Assert "Then drush output should match :regex" fails when pattern not found
+  Scenario: Assert "Then the drush output should match :regex" fails when pattern not found
     Given some behat configuration
     And scenario steps tagged with "@test-drupal @api":
       """
       Given I run drush "status"
-      Then drush output should match "/^WILL_NOT_MATCH_[0-9]+$/"
+      Then the drush output should match "/^WILL_NOT_MATCH_[0-9]+$/"
       """
     When I run behat with drupal profile
     Then it should fail with an error:
@@ -52,17 +52,17 @@ Feature: DrushContext
       """
 
   @test-drupal @api
-  Scenario: Assert "Then drush output should not contain :output" passes
+  Scenario: Assert "Then the drush output should not contain :output" passes
     Given I run drush "status"
-    Then drush output should not contain "DOES_NOT_EXIST_xyz"
+    Then the drush output should not contain "DOES_NOT_EXIST_xyz"
 
   @test-drupal @api
-  Scenario: Assert "Then drush output should not contain :output" fails when text is present
+  Scenario: Assert "Then the drush output should not contain :output" fails when text is present
     Given some behat configuration
     And scenario steps tagged with "@test-drupal @api":
       """
       Given I run drush "status"
-      Then drush output should not contain "Drupal version"
+      Then the drush output should not contain "Drupal version"
       """
     When I run behat with drupal profile
     Then it should fail with an error:
@@ -71,16 +71,16 @@ Feature: DrushContext
       """
 
   @test-drupal @api
-  Scenario: Assert "Then print last drush output" passes
+  Scenario: Assert "When I print the last drush output" passes
     Given I run drush "status"
-    Then print last drush output
+    When I print the last drush output
 
   @test-drupal @api
-  Scenario: Assert "Then print last drush output" fails when no command has been run
+  Scenario: Assert "When I print the last drush output" fails when no command has been run
     Given some behat configuration
     And scenario steps tagged with "@test-drupal @api":
       """
-      Then print last drush output
+      When I print the last drush output
       """
     When I run behat with drupal profile
     Then it should fail with an exception:
