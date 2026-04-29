@@ -111,7 +111,7 @@ class MailContext extends RawMailContext {
    *     | user@example.com | Welcome to the site |
    * @endcode
    */
-  #[Then('the following (e)mail should have been sent:')]
+  #[Then('the following (e)mail(s) should have been sent:')]
   public function mailAssertHasBeenSent(TableNode $expectedMailTable): void {
     $this->assertMailMatches($expectedMailTable, '', '');
   }
@@ -125,7 +125,7 @@ class MailContext extends RawMailContext {
    *     | Welcome to the site |
    * @endcode
    */
-  #[Then('the following (e)mail should have been sent to :to:')]
+  #[Then('the following (e)mail(s) should have been sent to :to:')]
   public function mailAssertHasBeenSentTo(string $to, TableNode $expectedMailTable): void {
     $this->assertMailMatches($expectedMailTable, $to, '');
   }
@@ -139,7 +139,7 @@ class MailContext extends RawMailContext {
    *     | Welcome to the site |
    * @endcode
    */
-  #[Then('the following (e)mail should have been sent with the subject :subject:')]
+  #[Then('the following (e)mail(s) should have been sent with the subject :subject:')]
   public function mailAssertHasBeenSentWithSubject(string $subject, TableNode $expectedMailTable): void {
     $this->assertMailMatches($expectedMailTable, '', $subject);
   }
@@ -153,7 +153,7 @@ class MailContext extends RawMailContext {
    *     | Welcome to the site |
    * @endcode
    */
-  #[Then('the following (e)mail should have been sent to :to with the subject :subject:')]
+  #[Then('the following (e)mail(s) should have been sent to :to with the subject :subject:')]
   public function mailAssertHasBeenSentToWithSubject(string $to, string $subject, TableNode $expectedMailTable): void {
     $this->assertMailMatches($expectedMailTable, $to, $subject);
   }
@@ -167,7 +167,7 @@ class MailContext extends RawMailContext {
    *     | Greetings |
    * @endcode
    */
-  #[Then('the following new (e)mail should have been sent:')]
+  #[Then('the following new (e)mail(s) should have been sent:')]
   public function newMailAssertIsSent(TableNode $expectedMailTable): void {
     $this->assertNewMailMatches($expectedMailTable, '', '');
   }
@@ -181,7 +181,7 @@ class MailContext extends RawMailContext {
    *     | Greetings |
    * @endcode
    */
-  #[Then('the following new (e)mail should have been sent to :to:')]
+  #[Then('the following new (e)mail(s) should have been sent to :to:')]
   public function newMailAssertIsSentTo(string $to, TableNode $expectedMailTable): void {
     $this->assertNewMailMatches($expectedMailTable, $to, '');
   }
@@ -195,7 +195,7 @@ class MailContext extends RawMailContext {
    *     | Hello |
    * @endcode
    */
-  #[Then('the following new (e)mail should have been sent with the subject :subject:')]
+  #[Then('the following new (e)mail(s) should have been sent with the subject :subject:')]
   public function newMailAssertIsSentWithSubject(string $subject, TableNode $expectedMailTable): void {
     $this->assertNewMailMatches($expectedMailTable, '', $subject);
   }
@@ -209,7 +209,7 @@ class MailContext extends RawMailContext {
    *     | Hello |
    * @endcode
    */
-  #[Then('the following new (e)mail should have been sent to :to with the subject :subject:')]
+  #[Then('the following new (e)mail(s) should have been sent to :to with the subject :subject:')]
   public function newMailAssertIsSentToWithSubject(string $to, string $subject, TableNode $expectedMailTable): void {
     $this->assertNewMailMatches($expectedMailTable, $to, $subject);
   }

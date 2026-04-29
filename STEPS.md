@@ -831,7 +831,7 @@ When I follow the link to "user/reset" from the email to "user@example.com" with
 </details>
 
 <details>
-  <summary><code>@Then the following (e)mail should have been sent:</code></summary>
+  <summary><code>@Then the following (e)mail(s) should have been sent:</code></summary>
 
 <br/>
 Assert mail has been sent during the scenario. 
@@ -847,7 +847,7 @@ Assert mail has been sent during the scenario.
 </details>
 
 <details>
-  <summary><code>@Then the following (e)mail should have been sent to :to:</code></summary>
+  <summary><code>@Then the following (e)mail(s) should have been sent to :to:</code></summary>
 
 <br/>
 Assert mail has been sent to a recipient during the scenario. 
@@ -863,7 +863,7 @@ Assert mail has been sent to a recipient during the scenario.
 </details>
 
 <details>
-  <summary><code>@Then the following (e)mail should have been sent with the subject :subject:</code></summary>
+  <summary><code>@Then the following (e)mail(s) should have been sent with the subject :subject:</code></summary>
 
 <br/>
 Assert mail with a subject has been sent during the scenario. 
@@ -879,7 +879,7 @@ Assert mail with a subject has been sent during the scenario.
 </details>
 
 <details>
-  <summary><code>@Then the following (e)mail should have been sent to :to with the subject :subject:</code></summary>
+  <summary><code>@Then the following (e)mail(s) should have been sent to :to with the subject :subject:</code></summary>
 
 <br/>
 Assert mail to a recipient with a subject has been sent. 
@@ -895,7 +895,7 @@ Assert mail to a recipient with a subject has been sent.
 </details>
 
 <details>
-  <summary><code>@Then the following new (e)mail should have been sent:</code></summary>
+  <summary><code>@Then the following new (e)mail(s) should have been sent:</code></summary>
 
 <br/>
 Assert new mail has been sent since the last mail check. 
@@ -911,7 +911,7 @@ Assert new mail has been sent since the last mail check.
 </details>
 
 <details>
-  <summary><code>@Then the following new (e)mail should have been sent to :to:</code></summary>
+  <summary><code>@Then the following new (e)mail(s) should have been sent to :to:</code></summary>
 
 <br/>
 Assert new mail to a recipient has been sent since the last mail check. 
@@ -927,7 +927,7 @@ Assert new mail to a recipient has been sent since the last mail check.
 </details>
 
 <details>
-  <summary><code>@Then the following new (e)mail should have been sent with the subject :subject:</code></summary>
+  <summary><code>@Then the following new (e)mail(s) should have been sent with the subject :subject:</code></summary>
 
 <br/>
 Assert new mail with a subject has been sent since the last mail check. 
@@ -943,7 +943,7 @@ Assert new mail with a subject has been sent since the last mail check.
 </details>
 
 <details>
-  <summary><code>@Then the following new (e)mail should have been sent to :to with the subject :subject:</code></summary>
+  <summary><code>@Then the following new (e)mail(s) should have been sent to :to with the subject :subject:</code></summary>
 
 <br/>
 Assert new mail to a recipient with a subject has been sent. 
