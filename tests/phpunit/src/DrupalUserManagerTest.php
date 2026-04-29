@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\DrupalExtension\Tests;
 
+use Drupal\Driver\Entity\EntityStub;
+use Drupal\Driver\Entity\EntityStubInterface;
 use Drupal\DrupalExtension\Manager\DrupalUserManager;
 use Drupal\DrupalExtension\Manager\DrupalUserManagerInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -15,6 +17,16 @@ use PHPUnit\Framework\TestCase;
  */
 #[CoversClass(DrupalUserManager::class)]
 class DrupalUserManagerTest extends TestCase {
+
+  /**
+   * Builds a user stub with the given values.
+   *
+   * @param array<string, mixed> $values
+   *   The values to seed the stub with.
+   */
+  protected static function userStub(array $values): EntityStubInterface {
+    return new EntityStub('user', NULL, $values);
+  }
 
   /**
    * Tests that the manager implements the interface.
@@ -37,7 +49,7 @@ class DrupalUserManagerTest extends TestCase {
    */
   public function testSetAndGetCurrentUser(): void {
     $manager = new DrupalUserManager();
-    $user = (object) ['name' => 'admin'];
+    $user = self::userStub(['name' => 'admin']);
     $manager->setCurrentUser($user);
     $this->assertSame($user, $manager->getCurrentUser());
   }
@@ -47,7 +59,7 @@ class DrupalUserManagerTest extends TestCase {
    */
   public function testSetCurrentUserToFalse(): void {
     $manager = new DrupalUserManager();
-    $manager->setCurrentUser((object) ['name' => 'admin']);
+    $manager->setCurrentUser(self::userStub(['name' => 'admin']));
     $manager->setCurrentUser(FALSE);
     $this->assertFalse($manager->getCurrentUser());
   }
@@ -57,7 +69,7 @@ class DrupalUserManagerTest extends TestCase {
    */
   public function testAddAndGetUser(): void {
     $manager = new DrupalUserManager();
-    $user = (object) ['name' => 'editor'];
+    $user = self::userStub(['name' => 'editor']);
     $manager->addUser($user);
     $this->assertSame($user, $manager->getUser('editor'));
   }
@@ -77,7 +89,7 @@ class DrupalUserManagerTest extends TestCase {
    */
   public function testRemoveUser(): void {
     $manager = new DrupalUserManager();
-    $manager->addUser((object) ['name' => 'editor']);
+    $manager->addUser(self::userStub(['name' => 'editor']));
     $manager->removeUser('editor');
     $this->expectException(\InvalidArgumentException::class);
     $manager->getUser('editor');
@@ -88,8 +100,8 @@ class DrupalUserManagerTest extends TestCase {
    */
   public function testGetUsersReturnsAll(): void {
     $manager = new DrupalUserManager();
-    $user_a = (object) ['name' => 'alice'];
-    $user_b = (object) ['name' => 'bob'];
+    $user_a = self::userStub(['name' => 'alice']);
+    $user_b = self::userStub(['name' => 'bob']);
     $manager->addUser($user_a);
     $manager->addUser($user_b);
     $users = $manager->getUsers();
@@ -111,8 +123,8 @@ class DrupalUserManagerTest extends TestCase {
    */
   public function testClearUsers(): void {
     $manager = new DrupalUserManager();
-    $manager->setCurrentUser((object) ['name' => 'admin']);
-    $manager->addUser((object) ['name' => 'editor']);
+    $manager->setCurrentUser(self::userStub(['name' => 'admin']));
+    $manager->addUser(self::userStub(['name' => 'editor']));
     $manager->clearUsers();
     $this->assertFalse($manager->getCurrentUser());
     $this->assertSame([], $manager->getUsers());
@@ -121,7 +133,7 @@ class DrupalUserManagerTest extends TestCase {
   /**
    * Tests the hasUsers method.
    *
-   * @param array<int, \stdClass> $users
+   * @param array<int, \Drupal\Driver\Entity\EntityStubInterface> $users
    *   Users to add to the manager.
    * @param bool $expected
    *   Expected hasUsers() result.
@@ -140,15 +152,15 @@ class DrupalUserManagerTest extends TestCase {
    */
   public static function dataProviderHasUsers(): \Iterator {
     yield 'no users' => [[], FALSE];
-    yield 'one user' => [[(object) ['name' => 'alice']], TRUE];
-    yield 'multiple users' => [[(object) ['name' => 'alice'], (object) ['name' => 'bob']], TRUE];
+    yield 'one user' => [[self::userStub(['name' => 'alice'])], TRUE];
+    yield 'multiple users' => [[self::userStub(['name' => 'alice']), self::userStub(['name' => 'bob'])], TRUE];
   }
 
   /**
    * Tests the currentUserIsAnonymous method.
    */
   #[DataProvider('dataProviderCurrentUserIsAnonymous')]
-  public function testCurrentUserIsAnonymous(\stdClass|bool $user, bool $expected): void {
+  public function testCurrentUserIsAnonymous(EntityStubInterface|false $user, bool $expected): void {
     $manager = new DrupalUserManager();
     $manager->setCurrentUser($user);
     $this->assertSame($expected, $manager->currentUserIsAnonymous());
@@ -159,14 +171,14 @@ class DrupalUserManagerTest extends TestCase {
    */
   public static function dataProviderCurrentUserIsAnonymous(): \Iterator {
     yield 'false is anonymous' => [FALSE, TRUE];
-    yield 'user object is not anonymous' => [(object) ['name' => 'admin'], FALSE];
+    yield 'user stub is not anonymous' => [self::userStub(['name' => 'admin']), FALSE];
   }
 
   /**
    * Tests the currentUserHasRole method.
    */
   #[DataProvider('dataProviderCurrentUserHasRole')]
-  public function testCurrentUserHasRole(\stdClass|bool $user, string $role, bool $expected): void {
+  public function testCurrentUserHasRole(EntityStubInterface|false $user, string $role, bool $expected): void {
     $manager = new DrupalUserManager();
     $manager->setCurrentUser($user);
     $this->assertSame($expected, $manager->currentUserHasRole($role));
@@ -177,10 +189,10 @@ class DrupalUserManagerTest extends TestCase {
    */
   public static function dataProviderCurrentUserHasRole(): \Iterator {
     yield 'anonymous has no role' => [FALSE, 'admin', FALSE];
-    yield 'user without role property' => [(object) ['name' => 'alice'], 'editor', FALSE];
-    yield 'user with matching role' => [(object) ['name' => 'alice', 'role' => 'editor'], 'editor', TRUE];
-    yield 'user with non-matching role' => [(object) ['name' => 'alice', 'role' => 'editor'], 'admin', FALSE];
-    yield 'user with empty role' => [(object) ['name' => 'alice', 'role' => ''], 'editor', FALSE];
+    yield 'user without role property' => [self::userStub(['name' => 'alice']), 'editor', FALSE];
+    yield 'user with matching role' => [self::userStub(['name' => 'alice', 'role' => 'editor']), 'editor', TRUE];
+    yield 'user with non-matching role' => [self::userStub(['name' => 'alice', 'role' => 'editor']), 'admin', FALSE];
+    yield 'user with empty role' => [self::userStub(['name' => 'alice', 'role' => '']), 'editor', FALSE];
   }
 
 }

@@ -11,6 +11,7 @@ use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\Mink\Exception\ExpectationException;
 use Behat\Mink\Mink;
 use Drupal\Driver\Capability\AuthenticationCapabilityInterface;
+use Drupal\Driver\Entity\EntityStubInterface;
 use Drupal\DrupalDriverManagerInterface;
 use Drupal\DrupalExtension\DrupalParametersTrait;
 use Drupal\DrupalExtension\MinkAwareTrait;
@@ -52,7 +53,7 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
   /**
    * {@inheritdoc}
    */
-  public function logIn(\stdClass $user): void {
+  public function logIn(EntityStubInterface $user): void {
     // Log out any existing user before logging in a new user.
     $this->fastLogout();
 
@@ -62,10 +63,13 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
     $login_url = $this->locatePath($this->getDrupalText('login_url'));
     $session->visit($login_url);
 
+    $name = (string) $user->getValue('name');
+    $pass = (string) $user->getValue('pass');
+
     // Fill in the login form credentials.
     $page = $session->getPage();
-    $page->fillField($this->getDrupalText('username_field'), $user->name);
-    $page->fillField($this->getDrupalText('password_field'), $user->pass);
+    $page->fillField($this->getDrupalText('username_field'), $name);
+    $page->fillField($this->getDrupalText('password_field'), $pass);
 
     // Submit the login form.
     $login_element = $this->getLoginElement($page);
@@ -98,7 +102,8 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
 
     // Verify the login was successful.
     if (!$this->loggedIn()) {
-      $message = isset($user->role) ? sprintf("Unable to determine if logged in because '%s' ('log_out') link cannot be found for user '%s' with role '%s'", $this->getDrupalText('log_out'), $user->name, $user->role) : sprintf("Unable to determine if logged in because '%s' ('log_out') link cannot be found for user '%s'", $this->getDrupalText('log_out'), $user->name);
+      $role = $user->getValue('role');
+      $message = $role !== NULL ? sprintf("Unable to determine if logged in because '%s' ('log_out') link cannot be found for user '%s' with role '%s'", $this->getDrupalText('log_out'), $name, $role) : sprintf("Unable to determine if logged in because '%s' ('log_out') link cannot be found for user '%s'", $this->getDrupalText('log_out'), $name);
       throw new ExpectationException($message, $session->getDriver());
     }
 
@@ -239,7 +244,7 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
   /**
    * Log in on the backend driver if it supports authentication.
    */
-  protected function backendLogin(\stdClass $user): void {
+  protected function backendLogin(EntityStubInterface $user): void {
     $driver = $this->driverManager->getDriver();
     if ($driver instanceof AuthenticationCapabilityInterface) {
       $driver->login($user);

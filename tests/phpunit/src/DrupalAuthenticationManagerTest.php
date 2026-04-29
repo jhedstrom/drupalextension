@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Drupal\DrupalExtension\Tests;
 
 use Drupal\Driver\DriverInterface;
+use Drupal\Driver\Entity\EntityStub;
+use Drupal\Driver\Entity\EntityStubInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use Behat\Mink\Driver\DriverInterface as MinkDriverInterface;
 use Behat\Mink\Element\DocumentElement;
@@ -77,7 +79,7 @@ class DrupalAuthenticationManagerTest extends TestCase {
     $driver_manager = $this->createDriverManagerMock();
     $manager = $this->createManager($session, $user_manager, $driver_manager);
 
-    $user = (object) ['name' => 'admin', 'pass' => 'password'];
+    $user = new EntityStub('user', NULL, ['name' => 'admin', 'pass' => 'password']);
     $manager->logIn($user);
     $this->assertSame($user, $user_manager->getCurrentUser());
   }
@@ -99,14 +101,14 @@ class DrupalAuthenticationManagerTest extends TestCase {
 
     $this->expectException(\Exception::class);
     $this->expectExceptionMessage('Submit button matching css "login form" not found.');
-    $manager->logIn((object) ['name' => 'admin', 'pass' => 'pass']);
+    $manager->logIn(new EntityStub('user', NULL, ['name' => 'admin', 'pass' => 'pass']));
   }
 
   /**
    * Tests that logIn() throws when the user is not actually logged in.
    */
   #[DataProvider('dataProviderLogInThrowsWhenNotLoggedIn')]
-  public function testLogInThrowsWhenNotLoggedIn(\stdClass $user, string $expected_message): void {
+  public function testLogInThrowsWhenNotLoggedIn(EntityStubInterface $user, string $expected_message): void {
     $submit = $this->createMock(NodeElement::class);
 
     $page = $this->createMock(DocumentElement::class);
@@ -130,11 +132,11 @@ class DrupalAuthenticationManagerTest extends TestCase {
    */
   public static function dataProviderLogInThrowsWhenNotLoggedIn(): \Iterator {
     yield 'user without role' => [
-      (object) ['name' => 'admin', 'pass' => 'pass'],
+      new EntityStub('user', NULL, ['name' => 'admin', 'pass' => 'pass']),
       "Unable to determine if logged in because 'Log out' ('log_out') link cannot be found for user 'admin'",
     ];
     yield 'user with role' => [
-      (object) ['name' => 'admin', 'pass' => 'pass', 'role' => 'administrator'],
+      new EntityStub('user', NULL, ['name' => 'admin', 'pass' => 'pass', 'role' => 'administrator']),
       "Unable to determine if logged in because 'Log out' ('log_out') link cannot be found for user 'admin' with role 'administrator'",
     ];
   }
@@ -160,7 +162,7 @@ class DrupalAuthenticationManagerTest extends TestCase {
     $driver_manager->method('getDriver')->willReturn($auth_driver);
 
     $manager = $this->createManager($session, NULL, $driver_manager);
-    $manager->logIn((object) ['name' => 'admin', 'pass' => 'pass']);
+    $manager->logIn(new EntityStub('user', NULL, ['name' => 'admin', 'pass' => 'pass']));
   }
 
   /**
@@ -176,7 +178,7 @@ class DrupalAuthenticationManagerTest extends TestCase {
     $session->method('getCurrentUrl')->willReturn('http://localhost/user/logout');
 
     $user_manager = new DrupalUserManager();
-    $user_manager->setCurrentUser((object) ['name' => 'admin']);
+    $user_manager->setCurrentUser(new EntityStub('user', NULL, ['name' => 'admin']));
 
     $driver_manager = $this->createDriverManagerMock();
     $manager = $this->createManager($session, $user_manager, $driver_manager);
@@ -326,7 +328,7 @@ class DrupalAuthenticationManagerTest extends TestCase {
     $mink->setDefaultSessionName('default');
 
     $user_manager = new DrupalUserManager();
-    $user_manager->setCurrentUser((object) ['name' => 'admin']);
+    $user_manager->setCurrentUser(new EntityStub('user', NULL, ['name' => 'admin']));
 
     $driver_manager = $this->createDriverManagerMock();
     $manager = new DrupalAuthenticationManager($mink, $user_manager, $driver_manager, self::MINK_PARAMS, self::DRUPAL_PARAMS);
@@ -442,7 +444,7 @@ class DrupalAuthenticationManagerTest extends TestCase {
     $params['login_wait'] = 0;
 
     $manager = $this->createManager($session, NULL, NULL, $params);
-    $manager->logIn((object) ['name' => 'admin', 'pass' => 'password']);
+    $manager->logIn(new EntityStub('user', NULL, ['name' => 'admin', 'pass' => 'password']));
   }
 
   /**
@@ -487,7 +489,7 @@ class DrupalAuthenticationManagerTest extends TestCase {
 
     $user_manager = new DrupalUserManager();
     $manager = $this->createManager($session, $user_manager, NULL, $params);
-    $manager->logIn((object) ['name' => 'admin', 'pass' => 'password']);
+    $manager->logIn(new EntityStub('user', NULL, ['name' => 'admin', 'pass' => 'password']));
 
     $this->assertNotFalse($user_manager->getCurrentUser());
   }
@@ -518,7 +520,7 @@ class DrupalAuthenticationManagerTest extends TestCase {
 
     $this->expectException(\Exception::class);
     $this->expectExceptionMessage("Unable to determine if logged in");
-    $manager->logIn((object) ['name' => 'admin', 'pass' => 'password']);
+    $manager->logIn(new EntityStub('user', NULL, ['name' => 'admin', 'pass' => 'password']));
   }
 
   /**

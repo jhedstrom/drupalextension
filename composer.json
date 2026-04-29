@@ -39,7 +39,7 @@
         "behat/gherkin": "^4.13",
         "behat/mink": "^1.12",
         "behat/mink-browserkit-driver": "^2.1.0",
-        "drupal/drupal-driver": "dev-master as 3.0.0",
+        "drupal/drupal-driver": "dev-feature/362-entity-stub as 3.0.0",
         "friends-of-behat/mink-extension": "^2.7.1",
         "lullabot/mink-selenium2-driver": "^1.7.4",
         "symfony/css-selector": "^6.4.3 || ^7",

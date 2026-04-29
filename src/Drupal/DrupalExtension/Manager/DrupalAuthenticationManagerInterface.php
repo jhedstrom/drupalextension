@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\DrupalExtension\Manager;
 
+use Drupal\Driver\Entity\EntityStubInterface;
+
 /**
  * Interface for classes that authenticate users during tests.
  */
@@ -12,10 +14,10 @@ interface DrupalAuthenticationManagerInterface {
   /**
    * Logs in as the given user.
    *
-   * @param \stdClass $user
-   *   The user to log in.
+   * @param \Drupal\Driver\Entity\EntityStubInterface $user
+   *   The user stub to log in.
    */
-  public function logIn(\stdClass $user): void;
+  public function logIn(EntityStubInterface $user): void;
 
   /**
    * Logs the current user out.
