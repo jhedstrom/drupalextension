@@ -23,6 +23,8 @@ use Drupal\DrupalDriverManagerInterface;
 use Drupal\DrupalExtension\DrupalParametersTrait;
 use Drupal\DrupalExtension\Manager\DrupalAuthenticationManagerInterface;
 use Drupal\DrupalExtension\Manager\DrupalUserManagerInterface;
+use Drupal\DrupalExtension\Parser\LegacyEntityFieldsParser;
+use Drupal\DrupalExtension\Parser\ParserInterface;
 
 use Drupal\DrupalExtension\Hook\Scope\AfterLanguageCreateScope;
 use Drupal\DrupalExtension\Hook\Scope\AfterNodeCreateScope;
@@ -78,6 +80,11 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    * @var array<int, \Drupal\Driver\Entity\EntityStubInterface>
    */
   protected array $createdStubs = [];
+
+  /**
+   * Field-value parser, lazily instantiated on first use.
+   */
+  protected ?ParserInterface $fieldParser = NULL;
 
   /**
    * Keep track of any roles that are created so they can easily be removed.
@@ -442,6 +449,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
 
     $entity_type = $stub->getEntityType();
     $classifier = $driver->getCore()->getFieldClassifier();
+    $parser = $this->getFieldParser();
 
     $multicolumn_field = '';
     $multicolumn_column = '';
@@ -477,52 +485,19 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
       $field_name = $multicolumn_field !== '' ? $multicolumn_field : $field;
 
       if ($classifier->fieldIsConfigurable($entity_type, $field_name)) {
-        // Split up multiple values in multi-value fields.
-        $parsed_values = [];
+        $records = $parser->parse((string) $field_value, $is_multicolumn);
 
-        foreach (str_getcsv((string) $field_value, escape: "\\") as $key => $value) {
-          $value = trim((string) $value);
-          $columns = $value;
-          // Split up field columns if the ' - ' separator is present.
-          // Skip splitting if the value was double-quoted in the original
-          // field value, allowing values like "Alpha - Bravo" to pass
-          // through as-is (e.g., entity reference titles with dashes).
-          // @see https://github.com/jhedstrom/drupalextension/issues/642
-          $was_quoted = str_contains((string) $field_value, '"' . $value . '"');
-
-          if (!$was_quoted && str_contains($value, ' - ')) {
-            $columns = [];
-
-            foreach (explode(' - ', $value) as $column) {
-              // Check if it is an inline named column.
-              if (!$is_multicolumn && str_contains(substr($column, 1), ': ')) {
-                [$key, $column] = explode(': ', $column);
-                $columns[$key] = $column;
-              }
-              else {
-                $columns[] = $column;
-              }
-            }
-          }
-
-          // Use the column name if we are tracking a multicolumn field.
-          if ($is_multicolumn) {
+        if ($is_multicolumn) {
+          foreach ($records as $key => $columns) {
             $multicolumn_fields[$multicolumn_field][$key][$multicolumn_column] = $columns;
           }
-          else {
-            $parsed_values[] = $columns;
-          }
         }
-
-        // Replace regular fields inline in the stub after parsing.
-        if (!$is_multicolumn) {
+        elseif ($field_value === '' || $field_value === NULL) {
           // Don't specify any value if the step author has left it blank.
-          if ($field_value === '' || $field_value === NULL) {
-            unset($parsed[$field_name]);
-          }
-          else {
-            $parsed[$field_name] = $parsed_values;
-          }
+          unset($parsed[$field_name]);
+        }
+        else {
+          $parsed[$field_name] = $records;
         }
       }
       else {
@@ -552,6 +527,17 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
     }
 
     $stub->setValues($parsed);
+  }
+
+  /**
+   * Returns the active field-value parser, instantiating it on first use.
+   *
+   * Override in a subclass or replace via the protected setter to swap in
+   * a different parser implementation (e.g. the v6 modern parser, when it
+   * lands in 6.0).
+   */
+  protected function getFieldParser(): ParserInterface {
+    return $this->fieldParser ??= new LegacyEntityFieldsParser();
   }
 
   /**
