@@ -108,7 +108,7 @@ class DrushContext extends RawDrupalContext implements TranslatableContext {
   #[Then('the drush output should not contain :output')]
   public function drushOutputAssertNotContains(string $output): void {
     if (str_contains((string) $this->readDrushOutput(), $this->fixStepArgument($output))) {
-      throw new ExpectationException(sprintf("The last drush command output did contain '%s' although it should not.\nOutput:\n\n%s'", $output, $this->drushOutput), $this->getSession()->getDriver());
+      throw new ExpectationException(sprintf("The last drush command output did contain '%s' although it should not.\nOutput:\n\n%s", $output, $this->drushOutput), $this->getSession()->getDriver());
     }
   }
 

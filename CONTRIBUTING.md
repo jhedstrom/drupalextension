@@ -397,7 +397,7 @@ used.
 
 Example messages:
 
-```
+```text
 Element matching css "#my-element" not found.
 Link with id|title|alt|text "About us" not found.
 Field with id|name|label|value|placeholder "Search" not found.
