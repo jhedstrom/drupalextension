@@ -31,7 +31,7 @@ class MailContext extends RawMailContext {
     // Always reset mail count, in case the default mail manager is being used
     // which enables mail collecting automatically when mail is disabled, making
     // the use of the @mail tag optional in this case.
-    $this->mailMessageCount = [];
+    $this->mailMessageCount = 0;
   }
 
   /**
