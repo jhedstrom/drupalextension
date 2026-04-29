@@ -7,6 +7,8 @@ namespace Drupal\DrupalExtension\Manager;
 use Behat\Mink\Element\NodeElement;
 use Behat\Mink\Element\DocumentElement;
 use Behat\Mink\Exception\DriverException;
+use Behat\Mink\Exception\ElementNotFoundException;
+use Behat\Mink\Exception\ExpectationException;
 use Behat\Mink\Mink;
 use Drupal\Driver\Capability\AuthenticationCapabilityInterface;
 use Drupal\DrupalDriverManagerInterface;
@@ -68,7 +70,7 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
     // Submit the login form.
     $login_element = $this->getLoginElement($page);
     if (!$login_element instanceof NodeElement) {
-      throw new \Exception(sprintf('No submit button at %s', $session->getCurrentUrl()));
+      throw new ElementNotFoundException($session->getDriver(), 'submit button', 'css', 'login form');
     }
     $login_element->click();
 
@@ -96,9 +98,8 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
 
     // Verify the login was successful.
     if (!$this->loggedIn()) {
-      throw new \Exception(isset($user->role)
-            ? sprintf("Unable to determine if logged in because '%s' ('log_out') link cannot be found for user '%s' with role '%s'", $this->getDrupalText('log_out'), $user->name, $user->role)
-            : sprintf("Unable to determine if logged in because '%s' ('log_out') link cannot be found for user '%s'", $this->getDrupalText('log_out'), $user->name));
+      $message = isset($user->role) ? sprintf("Unable to determine if logged in because '%s' ('log_out') link cannot be found for user '%s' with role '%s'", $this->getDrupalText('log_out'), $user->name, $user->role) : sprintf("Unable to determine if logged in because '%s' ('log_out') link cannot be found for user '%s'", $this->getDrupalText('log_out'), $user->name);
+      throw new ExpectationException($message, $session->getDriver());
     }
 
     // Track the logged-in user.
@@ -124,7 +125,7 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
       $logout_element = $this->getLogoutConfirmElement($session->getPage());
 
       if (!$logout_element instanceof NodeElement) {
-        throw new \Exception(sprintf("Unable to determine if logged out because '%s' button cannot be found on the logout confirmation page at %s", $this->getDrupalText('log_out'), $session->getCurrentUrl()));
+        throw new ElementNotFoundException($session->getDriver(), 'logout button', 'css', 'logout confirmation page');
       }
 
       $logout_element->click();

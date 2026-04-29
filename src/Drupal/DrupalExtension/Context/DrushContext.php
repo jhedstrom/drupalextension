@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\DrupalExtension\Context;
 
+use Behat\Mink\Exception\ExpectationException;
 use Behat\Step\Given;
 use Behat\Step\Then;
 use Behat\Step\When;
@@ -79,7 +80,7 @@ class DrushContext extends RawDrupalContext implements TranslatableContext {
   #[Then('the drush output should contain :output')]
   public function drushOutputAssertContains(string $output): void {
     if (!str_contains((string) $this->readDrushOutput(), $this->fixStepArgument($output))) {
-      throw new \Exception(sprintf("The last drush command output did not contain '%s'.\nInstead, it was:\n\n%s'", $output, $this->drushOutput));
+      throw new ExpectationException(sprintf("The last drush command output did not contain '%s'.\nInstead, it was:\n\n%s'", $output, $this->drushOutput), $this->getSession()->getDriver());
     }
   }
 
@@ -93,7 +94,7 @@ class DrushContext extends RawDrupalContext implements TranslatableContext {
   #[Then('the drush output should match :regex')]
   public function drushOutputAssertMatches(string $regex): void {
     if (!preg_match($regex, (string) $this->readDrushOutput())) {
-      throw new \Exception(sprintf("The pattern %s was not found anywhere in the drush output.\nOutput:\n\n%s", $regex, $this->drushOutput));
+      throw new ExpectationException(sprintf("The pattern %s was not found anywhere in the drush output.\nOutput:\n\n%s", $regex, $this->drushOutput), $this->getSession()->getDriver());
     }
   }
 
@@ -107,7 +108,7 @@ class DrushContext extends RawDrupalContext implements TranslatableContext {
   #[Then('the drush output should not contain :output')]
   public function drushOutputAssertNotContains(string $output): void {
     if (str_contains((string) $this->readDrushOutput(), $this->fixStepArgument($output))) {
-      throw new \Exception(sprintf("The last drush command output did contain '%s' although it should not.\nOutput:\n\n%s'", $output, $this->drushOutput));
+      throw new ExpectationException(sprintf("The last drush command output did contain '%s' although it should not.\nOutput:\n\n%s", $output, $this->drushOutput), $this->getSession()->getDriver());
     }
   }
 

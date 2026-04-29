@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\DrupalExtension\Context;
 
+use Behat\Mink\Exception\ExpectationException;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Drupal\Driver\Capability\MailCapabilityInterface;
 use Drupal\DrupalMailManager;
@@ -149,7 +150,7 @@ class RawMailContext extends RawDrupalContext {
         $expected_field = [$field_name => $field_value];
         $is_match = $this->matchMessage($actualMessages[$index], $expected_field);
         if (!$is_match) {
-          throw new \Exception(sprintf("The #%s mail did not have '%s' in its %s field. It had:\n'%s'", $index, $field_value, $field_name, mb_strimwidth((string) $actualMessages[$index][$field_name], 0, 30, "...")));
+          throw new ExpectationException(sprintf("The #%s mail did not have '%s' in its %s field. It had:\n'%s'", $index, $field_value, $field_name, mb_strimwidth((string) $actualMessages[$index][$field_name], 0, 30, "...")), $this->getSession()->getDriver());
         }
       }
     }
@@ -168,7 +169,7 @@ class RawMailContext extends RawDrupalContext {
     if (is_null($expectedCount)) {
       // If number to expect is not specified, expect more than zero.
       if ($actual_count === 0) {
-        throw new \Exception("Expected some mail, but none found.");
+        throw new ExpectationException("Expected some mail, but none found.", $this->getSession()->getDriver());
       }
     }
     elseif ($expectedCount !== $actual_count) {
@@ -180,7 +181,7 @@ class RawMailContext extends RawDrupalContext {
           'subject' => $actual_message['subject'],
         ];
       }
-      throw new \Exception(sprintf("Expected %s mail, but %s found:\n\n%s", $expectedCount, $actual_count, print_r($formatted_actual_messages, TRUE)));
+      throw new ExpectationException(sprintf("Expected %s mail, but %s found:\n\n%s", $expectedCount, $actual_count, print_r($formatted_actual_messages, TRUE)), $this->getSession()->getDriver());
     }
   }
 
@@ -213,7 +214,7 @@ class RawMailContext extends RawDrupalContext {
     $mink_context = $this->getContext(RawMinkContext::class);
 
     if (!$mink_context instanceof RawMinkContext) {
-      throw new \Exception('No mink context found.');
+      throw new \RuntimeException('No mink context found.');
     }
 
     return $mink_context;

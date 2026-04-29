@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Drupal\DrupalExtension\Context;
 
 use Behat\Mink\Element\NodeElement;
+use Behat\Mink\Exception\ElementNotFoundException;
+use Behat\Mink\Exception\ExpectationException;
 use Behat\Step\Then;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Drupal\DrupalExtension\RegionTrait;
@@ -111,7 +113,7 @@ class MarkupContext extends RawMinkContext {
   #[Then('I should see the :tag element in the :region( region)')]
   public function regionElementAssertExists(string $tag, string $region): void {
     if (!$this->getRegion($region)->findAll('css', $tag)) {
-      throw new \Exception(sprintf('The element "%s" was not found in the "%s" region on the page %s', $tag, $region, $this->getSession()->getCurrentUrl()));
+      throw new ElementNotFoundException($this->getSession()->getDriver(), sprintf('element in the "%s" region', $region), 'css', $tag);
     }
   }
 
@@ -126,7 +128,7 @@ class MarkupContext extends RawMinkContext {
   #[Then('I should not see the :tag element in the :region( region)')]
   public function regionElementAssertNotExists(string $tag, string $region): void {
     if ($this->getRegion($region)->findAll('css', $tag)) {
-      throw new \Exception(sprintf('The element "%s" was found in the "%s" region on the page %s', $tag, $region, $this->getSession()->getCurrentUrl()));
+      throw new ExpectationException(sprintf('The element "%s" was found in the "%s" region on the page %s', $tag, $region, $this->getSession()->getCurrentUrl()), $this->getSession()->getDriver());
     }
   }
 
@@ -148,7 +150,7 @@ class MarkupContext extends RawMinkContext {
       }
     }
 
-    throw new \Exception(sprintf('The text "%s" was not found in the "%s" element in the "%s" region on the page %s', $text, $tag, $region, $this->getSession()->getCurrentUrl()));
+    throw new ExpectationException(sprintf('The text "%s" was not found in the "%s" element in the "%s" region on the page %s', $text, $tag, $region, $this->getSession()->getCurrentUrl()), $this->getSession()->getDriver());
   }
 
   /**
@@ -165,7 +167,7 @@ class MarkupContext extends RawMinkContext {
 
     foreach ($region_obj->findAll('css', $tag) as $result) {
       if ($result->getText() == $text) {
-        throw new \Exception(sprintf('The text "%s" was found in the "%s" element in the "%s" region on the page %s', $text, $tag, $region, $this->getSession()->getCurrentUrl()));
+        throw new ExpectationException(sprintf('The text "%s" was found in the "%s" element in the "%s" region on the page %s', $text, $tag, $region, $this->getSession()->getCurrentUrl()), $this->getSession()->getDriver());
       }
     }
   }
@@ -182,7 +184,7 @@ class MarkupContext extends RawMinkContext {
   public function regionElementAttributeAssertEquals(string $tag, string $attribute, string $value, string $region): void {
     $elements = $this->getRegion($region)->findAll('css', $tag);
     if (empty($elements)) {
-      throw new \Exception(sprintf('The element "%s" was not found in the "%s" region on the page %s', $tag, $region, $this->getSession()->getCurrentUrl()));
+      throw new ElementNotFoundException($this->getSession()->getDriver(), sprintf('element in the "%s" region', $region), 'css', $tag);
     }
 
     if (empty($attribute)) {
@@ -202,10 +204,10 @@ class MarkupContext extends RawMinkContext {
     }
 
     if (!$attr_found) {
-      throw new \Exception(sprintf('The "%s" attribute is not present on the element "%s" in the "%s" region on the page %s', $attribute, $tag, $region, $this->getSession()->getCurrentUrl()));
+      throw new ExpectationException(sprintf('The "%s" attribute is not present on the element "%s" in the "%s" region on the page %s', $attribute, $tag, $region, $this->getSession()->getCurrentUrl()), $this->getSession()->getDriver());
     }
 
-    throw new \Exception(sprintf('The "%s" attribute does not equal "%s" on the element "%s" in the "%s" region on the page %s', $attribute, $value, $tag, $region, $this->getSession()->getCurrentUrl()));
+    throw new ExpectationException(sprintf('The "%s" attribute does not equal "%s" on the element "%s" in the "%s" region on the page %s', $attribute, $value, $tag, $region, $this->getSession()->getCurrentUrl()), $this->getSession()->getDriver());
   }
 
   /**
@@ -223,11 +225,11 @@ class MarkupContext extends RawMinkContext {
     if (!empty($attribute)) {
       $attr = $matched->getAttribute($attribute);
       if (empty($attr)) {
-        throw new \Exception(sprintf('The "%s" attribute is not present on the element "%s" in the "%s" region on the page %s', $attribute, $tag, $region, $this->getSession()->getCurrentUrl()));
+        throw new ExpectationException(sprintf('The "%s" attribute is not present on the element "%s" in the "%s" region on the page %s', $attribute, $tag, $region, $this->getSession()->getCurrentUrl()), $this->getSession()->getDriver());
       }
 
       if (!str_contains($attr, $value)) {
-        throw new \Exception(sprintf('The "%s" attribute does not equal "%s" on the element "%s" in the "%s" region on the page %s', $attribute, $value, $tag, $region, $this->getSession()->getCurrentUrl()));
+        throw new ExpectationException(sprintf('The "%s" attribute does not equal "%s" on the element "%s" in the "%s" region on the page %s', $attribute, $value, $tag, $region, $this->getSession()->getCurrentUrl()), $this->getSession()->getDriver());
       }
     }
   }
@@ -251,13 +253,13 @@ class MarkupContext extends RawMinkContext {
       foreach ($rules as $rule) {
         if (str_contains($rule, $property)) {
           if (!str_contains($rule, $value)) {
-            throw new \Exception(sprintf('The "%s" style property does not equal "%s" on the element "%s" in the "%s" region on the page %s', $property, $value, $tag, $region, $this->getSession()->getCurrentUrl()));
+            throw new ExpectationException(sprintf('The "%s" style property does not equal "%s" on the element "%s" in the "%s" region on the page %s', $property, $value, $tag, $region, $this->getSession()->getCurrentUrl()), $this->getSession()->getDriver());
           }
           return;
         }
       }
 
-      throw new \Exception(sprintf('The "%s" style property was not found in the "%s" element in the "%s" region on the page %s', $property, $tag, $region, $this->getSession()->getCurrentUrl()));
+      throw new ExpectationException(sprintf('The "%s" style property was not found in the "%s" element in the "%s" region on the page %s', $property, $tag, $region, $this->getSession()->getCurrentUrl()), $this->getSession()->getDriver());
     }
   }
 
@@ -274,7 +276,7 @@ class MarkupContext extends RawMinkContext {
    */
   protected function assertRegionContainsButton(string $button, string $region): void {
     if (!$this->getRegion($region)->findButton($button)) {
-      throw new \Exception(sprintf("The button '%s' was not found in the region '%s' on the page %s", $button, $region, $this->getSession()->getCurrentUrl()));
+      throw new ElementNotFoundException($this->getSession()->getDriver(), sprintf('button in the "%s" region', $region), 'id|name|title|alt|value', $button);
     }
   }
 
@@ -291,7 +293,7 @@ class MarkupContext extends RawMinkContext {
    */
   protected function assertRegionDoesNotContainButton(string $button, string $region): void {
     if ($this->getRegion($region)->findButton($button)) {
-      throw new \Exception(sprintf("The button '%s' was found in the region '%s' on the page %s but should not", $button, $region, $this->getSession()->getCurrentUrl()));
+      throw new ExpectationException(sprintf("The button '%s' was found in the region '%s' on the page %s but should not", $button, $region, $this->getSession()->getCurrentUrl()), $this->getSession()->getDriver());
     }
   }
 
@@ -317,7 +319,7 @@ class MarkupContext extends RawMinkContext {
     $elements = $regionObj->findAll('css', $tag);
 
     if (empty($elements)) {
-      throw new \Exception(sprintf('The element "%s" was not found in the "%s" region on the page %s', $tag, $region, $this->getSession()->getCurrentUrl()));
+      throw new ElementNotFoundException($this->getSession()->getDriver(), sprintf('element in the "%s" region', $region), 'css', $tag);
     }
 
     foreach ($elements as $element) {
@@ -326,7 +328,7 @@ class MarkupContext extends RawMinkContext {
       }
     }
 
-    throw new \Exception(sprintf('The text "%s" was not found in the "%s" element in the "%s" region on the page %s', $text, $tag, $region, $this->getSession()->getCurrentUrl()));
+    throw new ExpectationException(sprintf('The text "%s" was not found in the "%s" element in the "%s" region on the page %s', $text, $tag, $region, $this->getSession()->getCurrentUrl()), $this->getSession()->getDriver());
   }
 
 }

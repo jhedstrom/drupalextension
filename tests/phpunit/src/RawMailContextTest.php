@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\DrupalExtension\Tests;
 
+use Behat\Mink\Driver\DriverInterface as MinkDriverInterface;
+use Behat\Mink\Mink;
+use Behat\Mink\Session;
 use Drupal\DrupalExtension\Context\RawMailContext;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -45,6 +48,13 @@ class RawMailContextTest extends TestCase {
    */
   protected function setUp(): void {
     $this->context = new RawMailContext();
+
+    $session = $this->createMock(Session::class);
+    $session->method('getDriver')->willReturn($this->createMock(MinkDriverInterface::class));
+    $mink = new Mink(['default' => $session]);
+    $mink->setDefaultSessionName('default');
+    $this->context->setMink($mink);
+
     $this->matchMessage = new \ReflectionMethod(RawMailContext::class, 'matchMessage');
     $this->sortMessages = new \ReflectionMethod(RawMailContext::class, 'sortMessages');
     $this->compareMessages = new \ReflectionMethod(RawMailContext::class, 'compareMessages');

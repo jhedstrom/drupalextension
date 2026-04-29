@@ -6,6 +6,7 @@ namespace Drupal\DrupalExtension\Context;
 
 use Behat\Hook\BeforeScenario;
 use Behat\Hook\AfterScenario;
+use Behat\Mink\Exception\ExpectationException;
 use Behat\Step\When;
 use Behat\Step\Then;
 use Behat\Behat\Hook\Scope\ScenarioScope;
@@ -489,7 +490,7 @@ class MailContext extends RawMailContext {
     $filters = ['to' => $to, 'subject' => $subject];
     $mail = $this->getMail($filters, FALSE, -1);
     if (count($mail) === 0) {
-      throw new \Exception('No such mail found.');
+      throw new ExpectationException('No such mail found.', $this->getSession()->getDriver());
     }
     $body = $mail['body'];
 
@@ -502,10 +503,10 @@ class MailContext extends RawMailContext {
         }
       }
 
-      throw new \Exception(sprintf('No URL in mail body contained "%s".', $urlFragment));
+      throw new ExpectationException(sprintf('No URL in mail body contained "%s".', $urlFragment), $this->getSession()->getDriver());
     }
 
-    throw new \Exception('No URL found in mail body.');
+    throw new ExpectationException('No URL found in mail body.', $this->getSession()->getDriver());
   }
 
 }
