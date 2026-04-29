@@ -44,7 +44,7 @@ jobs:
 
       - name: Run linting
         run: |
-          docker compose exec -T php vendor/bin/parallel-lint src spec scripts tests
+          docker compose exec -T php vendor/bin/parallel-lint src scripts tests
           docker compose exec -T php vendor/bin/phpcs
           docker compose exec -T php vendor/bin/phpstan
           docker compose exec -T php vendor/bin/rector process --dry-run
@@ -152,9 +152,6 @@ jobs:
 
       - name: Copy Drush configuration
         run: docker compose exec -T php cp -r tests/behat/fixtures/drupal/drush build/drush
-
-      - name: Run PHPSpec tests
-        run: docker compose exec -T php vendor/bin/phpspec run -f pretty --no-interaction
 
       - name: Run PHPUnit tests
         if: ${{ matrix.coverage }}

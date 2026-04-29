@@ -67,7 +67,6 @@
         "league/container": "^4.2",
         "masterminds/html5": "^2.8",
         "php-parallel-lint/php-parallel-lint": "^1.4",
-        "phpspec/phpspec": "^7.0 || ^8.0",
         "phpstan/phpstan": "^2.1",
         "phpunit/php-code-coverage": "^11.0 || ^12.0",
         "phpunit/phpunit": "^10.5 || ^11.0",
