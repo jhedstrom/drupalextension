@@ -296,7 +296,7 @@ Given I am viewing an "article" content with the title "Test article"
   <summary><code>@Given a/an :type with the title :title</code></summary>
 
 <br/>
-Create content of the given type without visiting it. 
+Create content of the given type and visit it. 
 <br/><br/>
 
 ```gherkin
@@ -310,7 +310,7 @@ Given a "page" with the title "About us"
   <summary><code>@Given a/an :type content with the title :title</code></summary>
 
 <br/>
-Create content (with the explicit "content" word) without visiting. 
+Create content (with the explicit "content" word) and visit it. 
 <br/><br/>
 
 ```gherkin
