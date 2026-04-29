@@ -323,14 +323,6 @@
         <source><![CDATA[I should see the button :button]]></source>
         <target><![CDATA[debo ver el botón :button]]></target>
       </trans-unit>
-      <trans-unit id="I-should-see-the-button-button-by-label">
-        <source><![CDATA[I should see the :button button]]></source>
-        <target><![CDATA[debo ver el botón :button]]></target>
-      </trans-unit>
-      <trans-unit id="I-should-not-see-the-button-button-by-label">
-        <source><![CDATA[I should not see the :button button]]></source>
-        <target><![CDATA[no debo ver el botón :button]]></target>
-      </trans-unit>
       <trans-unit id="I-should-not-see-the-button-button">
         <source><![CDATA[I should not see the button :button]]></source>
         <target><![CDATA[no debo ver el botón :button]]></target>
@@ -339,16 +331,8 @@
         <source><![CDATA[I should see the button :button in the :region( region)]]></source>
         <target><![CDATA[debo ver el botón :button en (la zona ):region]]></target>
       </trans-unit>
-      <trans-unit id="I-should-see-the-button-button-in-the-region-region-by-label">
-        <source><![CDATA[I should see the :button button in the :region( region)]]></source>
-        <target><![CDATA[debo ver el botón :button en (la zona ):region]]></target>
-      </trans-unit>
       <trans-unit id="I-should-not-see-the-button-button-in-the-region-region">
         <source><![CDATA[I should not see the button :button in the :region( region)]]></source>
-        <target><![CDATA[no debo ver el botón :button en (la zona ):region]]></target>
-      </trans-unit>
-      <trans-unit id="I-should-not-see-the-button-button-in-the-region-region-by-label">
-        <source><![CDATA[I should not see the :button button in the :region( region)]]></source>
         <target><![CDATA[no debo ver el botón :button en (la zona ):region]]></target>
       </trans-unit>
       <trans-unit id="I-should-see-the-tag-element-in-the-region-region">
