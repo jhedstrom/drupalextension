@@ -20,11 +20,9 @@ class RawMailContext extends RawDrupalContext {
   protected ?DrupalMailManager $mailManager = NULL;
 
   /**
-   * The number of mails received so far in this scenario, for each mail store.
-   *
-   * @var array<string, int>
+   * The number of mails received so far in this scenario.
    */
-  protected array $mailMessageCount = [];
+  protected int $mailMessageCount = 0;
 
   /**
    * Get the mail manager service that handles stored test mail.
@@ -57,18 +55,16 @@ class RawMailContext extends RawDrupalContext {
    *   Whether to ignore previously seen mail.
    * @param null|int $index
    *   A particular mail to return, e.g. 0 for first or -1 for last.
-   * @param string $store
-   *   The name of the mail store to get mail from.
    *
    * @return array<int, array<string, mixed>>|array<string, mixed>
    *   An array of mail messages keyed by index, or a single mail message
    *   array when '$index' is specified. Each item follows Drupal's
    *   'MailInterface::mail()' shape ('to', 'subject', 'body', etc.).
    */
-  protected function getMail(array $criteria = [], bool $new = FALSE, ?int $index = NULL, string $store = 'default') {
-    $messages = $this->getMailManager()->getMail($store);
-    $previous_count = $this->getMailMessageCount($store);
-    $this->mailMessageCount[$store] = count($messages);
+  protected function getMail(array $criteria = [], bool $new = FALSE, ?int $index = NULL) {
+    $messages = $this->getMailManager()->getMail();
+    $previous_count = $this->mailMessageCount;
+    $this->mailMessageCount = count($messages);
 
     // Ignore previously seen messages.
     if ($new) {
@@ -85,20 +81,6 @@ class RawMailContext extends RawDrupalContext {
     }
 
     return array_slice($messages, $index, 1)[0];
-  }
-
-  /**
-   * Get the number of mails received in a particular mail store.
-   *
-   * @return int
-   *   The number of mails received during this scenario.
-   */
-  protected function getMailMessageCount(string $store): int {
-    if (array_key_exists($store, $this->mailMessageCount)) {
-      return $this->mailMessageCount[$store];
-    }
-
-    return 0;
   }
 
   /**

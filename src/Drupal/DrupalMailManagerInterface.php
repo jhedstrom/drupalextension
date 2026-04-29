@@ -32,22 +32,16 @@ interface DrupalMailManagerInterface {
   /**
    * Get all collected mail.
    *
-   * @param string $store
-   *   The name of the mail store to get mail from.
-   *
    * @return array<int, array<string, mixed>>
    *   An array of collected emails. Each item is a Drupal mail message
    *   array as produced by 'MailInterface::mail()' - the keys include
    *   'to', 'subject', 'body', 'headers', etc.
    */
-  public function getMail(string $store);
+  public function getMail(): array;
 
   /**
    * Empty the store of collected mail.
-   *
-   * @param string $store
-   *   The name of the mail store to clear.
    */
-  public function clearMail(string $store): void;
+  public function clearMail(): void;
 
 }

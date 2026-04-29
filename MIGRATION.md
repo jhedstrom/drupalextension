@@ -84,6 +84,25 @@ Several multi-step methods have also been split, so that each step
 annotation lives on its own method. See [`STEPS.md`](STEPS.md) for the full
 list of methods and their step patterns.
 
+## Service interface changes
+
+`DrupalMailManagerInterface::getMail()` and `::clearMail()` no longer accept
+a `$store` argument. The v3 driver's `MailCapabilityInterface` exposes a
+single implicit collector, so the multi-store concept inherited from
+drupal-driver v2 has been removed.
+
+| 5.x signature                              | 6.0 signature                  |
+|--------------------------------------------|--------------------------------|
+| `getMail(string $store)`                   | `getMail(): array`             |
+| `clearMail(string $store): void`           | `clearMail(): void`            |
+
+If you implement `DrupalMailManagerInterface` directly, drop the `$store`
+parameter from your overrides. If you subclass `RawMailContext`, the
+protected `getMail()` helper has lost its `$store` argument and the
+`getMailMessageCount()` helper has been removed; the
+`$mailMessageCount` property is now an `int` rather than an array keyed by
+store name.
+
 ## Recommended upgrade flow
 
 1. Update your `composer.json` to `drupal/drupal-extension:^6.0`.
