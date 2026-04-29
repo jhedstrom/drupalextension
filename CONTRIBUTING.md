@@ -374,6 +374,36 @@ Every negative test follows the same four-step pattern:
 | `Then it should fail with a "<Class>" exception:` | Step threw a specific exception class (e.g., `InvalidArgumentException`). |
 | `Then it should fail` | Step failed (any reason, no message check). |
 
+## Exception conventions
+
+Step definitions and helper classes throw exceptions in a consistent,
+typed way so callers can distinguish assertion failures from runtime
+problems and so feature tests can assert on the failure mode without
+parsing free-form messages.
+
+| Exception                                         | When thrown                                          |
+|---------------------------------------------------|------------------------------------------------------|
+| `Behat\Mink\Exception\ElementNotFoundException`   | Element, field, link, button, or selector not found  |
+| `Behat\Mink\Exception\ExpectationException`       | Assertion fails (value mismatch, state verification) |
+| `Behat\Mink\Exception\UnsupportedDriverActionException` | Feature requires a specific driver (e.g. JavaScript) |
+| `\RuntimeException`                               | Invalid input or processing error (not an assertion) |
+| `\InvalidArgumentException`                       | Invalid argument value passed to an API method       |
+
+`ElementNotFoundException` extends `ExpectationException`, so catching
+`ExpectationException` covers both. The Mink classes auto-render the
+URL and a snippet of the page in their `__toString()`, so do not embed
+the URL in the message when an `ExpectationException`-based class is
+used.
+
+Example messages:
+
+```
+Element matching css "#my-element" not found.
+Link with id|title|alt|text "About us" not found.
+Field with id|name|label|value|placeholder "Search" not found.
+Region with name "footer" not found.
+```
+
 ## Step definition conventions
 
 `scripts/docs.php` validates step definitions against the conventions enforced

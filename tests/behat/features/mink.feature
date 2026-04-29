@@ -19,7 +19,7 @@ Feature: MinkContext coverage gaps
     When I run behat
     Then it should fail with an error:
       """
-      The text 'Does Not Exist' was not found in any heading
+      Heading with text "Does Not Exist" not found.
       """
 
   @test-blackbox
@@ -52,7 +52,7 @@ Feature: MinkContext coverage gaps
     When I run behat
     Then it should fail with an error:
       """
-      The button 'Missing Button' was not found on the page
+      Button with id|name|title|alt|value "Missing Button" not found.
       """
 
   @test-blackbox
@@ -80,7 +80,7 @@ Feature: MinkContext coverage gaps
     When I run behat
     Then it should fail with an error:
       """
-      No link to 'Nonexistent link'
+      Link with id|title|alt|text "Nonexistent link" not found.
       """
 
   @test-blackbox
@@ -113,7 +113,7 @@ Feature: MinkContext coverage gaps
     When I run behat
     Then it should fail with an error:
       """
-      The link 'Totally missing link' was not loaded on the page
+      Link with id|title|alt|text "Totally missing link" not found.
       """
 
   @test-blackbox
@@ -153,7 +153,7 @@ Feature: MinkContext coverage gaps
     When I run behat
     Then it should fail with an error:
       """
-      The radio button with "Nonexistent Option" was not found on the page
+      Radio button with label "Nonexistent Option" not found.
       """
 
   @test-blackbox
@@ -224,7 +224,7 @@ Feature: MinkContext coverage gaps
     When I run behat
     Then it should fail with an error:
       """
-      No link to "Missing" in the "static content" region
+      Link in the "static content" region with id|title|alt|text "Missing" not found.
       """
 
   @test-blackbox
@@ -252,7 +252,7 @@ Feature: MinkContext coverage gaps
     When I run behat
     Then it should fail with an error:
       """
-      The heading "Nonexistent Heading" was not found in the "static content" region
+      Heading in the "static content" region with text "Nonexistent Heading" not found.
       """
 
   @test-blackbox
@@ -266,7 +266,7 @@ Feature: MinkContext coverage gaps
     When I run behat
     Then it should fail with an error:
       """
-      The link "Nonexistent link" was not found in the region "static content"
+      Link in the "static content" region with id|title|alt|text "Nonexistent link" not found.
       """
 
   @test-blackbox
@@ -280,7 +280,7 @@ Feature: MinkContext coverage gaps
     When I run behat
     Then it should fail with an error:
       """
-      The button 'Nonexistent' was not found in the region 'static footer'
+      Button in the "static footer" region with id|name|title|alt|value "Nonexistent" not found.
       """
 
   @test-blackbox
@@ -294,7 +294,7 @@ Feature: MinkContext coverage gaps
     When I run behat
     Then it should fail with an error:
       """
-      Unable to find details
+      Details element for "click" action with summary text "Nonexistent details" not found.
       """
 
   @test-blackbox @javascript

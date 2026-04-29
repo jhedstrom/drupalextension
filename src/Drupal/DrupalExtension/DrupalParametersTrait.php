@@ -53,13 +53,13 @@ trait DrupalParametersTrait {
    * @return string
    *   The text value.
    *
-   * @throws \Exception
+   * @throws \RuntimeException
    *   Thrown when the text is not present in the list of parameters.
    */
   public function getDrupalText(string $name) {
     $text = $this->getDrupalParameter('text');
     if (!isset($text[$name])) {
-      throw new \Exception(sprintf('No such Drupal string: %s', $name));
+      throw new \RuntimeException(sprintf('No such Drupal string: %s', $name));
     }
     return $text[$name];
   }
@@ -73,13 +73,13 @@ trait DrupalParametersTrait {
    * @return string
    *   The CSS selector.
    *
-   * @throws \Exception
+   * @throws \RuntimeException
    *   Thrown when the selector is not present in the list of parameters.
    */
   public function getDrupalSelector(string $name) {
     $text = $this->getDrupalParameter('selectors');
     if (!isset($text[$name])) {
-      throw new \Exception(sprintf('No such selector configured: %s', $name));
+      throw new \RuntimeException(sprintf('No such selector configured: %s', $name));
     }
     return $text[$name];
   }

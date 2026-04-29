@@ -9,6 +9,8 @@ use Behat\Step\Then;
 use Behat\Step\When;
 use Behat\Behat\Context\TranslatableContext;
 use Behat\Mink\Element\Element;
+use Behat\Mink\Exception\ElementNotFoundException;
+use Behat\Mink\Exception\ExpectationException;
 
 use Behat\Gherkin\Node\TableNode;
 use Drupal\Driver\Capability\CacheCapabilityInterface;
@@ -215,14 +217,14 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
   public function getTableRow(Element $element, string $search) {
     $rows = $element->findAll('css', 'tr');
     if (empty($rows)) {
-      throw new \Exception(sprintf('No rows found on the page %s', $this->getSession()->getCurrentUrl()));
+      throw new ElementNotFoundException($this->getSession()->getDriver(), 'row', 'css', 'tr');
     }
     foreach ($rows as $row) {
       if (str_contains($row->getText(), $search)) {
         return $row;
       }
     }
-    throw new \Exception(sprintf('Failed to find a row containing "%s" on the page %s', $search, $this->getSession()->getCurrentUrl()));
+    throw new ElementNotFoundException($this->getSession()->getDriver(), 'row', 'text', $search);
   }
 
   /**
@@ -236,7 +238,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
   public function tableRowTextAssertIsVisible(string $text, string $rowText): void {
     $row = $this->getTableRow($this->getSession()->getPage(), $rowText);
     if (!str_contains($row->getText(), $text)) {
-      throw new \Exception(sprintf('Found a row containing "%s", but it did not contain the text "%s".', $rowText, $text));
+      throw new ExpectationException(sprintf('Found a row containing "%s", but it did not contain the text "%s".', $rowText, $text), $this->getSession()->getDriver());
     }
   }
 
@@ -251,7 +253,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
   public function tableRowTextAssertIsNotVisible(string $text, string $rowText): void {
     $row = $this->getTableRow($this->getSession()->getPage(), $rowText);
     if (str_contains($row->getText(), $text)) {
-      throw new \Exception(sprintf('Found a row containing "%s", but it contained the text "%s".', $rowText, $text));
+      throw new ExpectationException(sprintf('Found a row containing "%s", but it contained the text "%s".', $rowText, $text), $this->getSession()->getDriver());
     }
   }
 
@@ -271,7 +273,12 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
     if ($this->getTableRow($page, $rowText)->findLink($link)) {
       return;
     }
-    throw new \Exception(sprintf('Found a row containing "%s", but no "%s" link on the page %s', $rowText, $link, $this->getSession()->getCurrentUrl()));
+    throw new ElementNotFoundException(
+      $this->getSession()->getDriver(),
+      sprintf('link in the "%s" row', $rowText),
+      'id|title|alt|text',
+      $link
+    );
   }
 
   /**
@@ -288,7 +295,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
   public function tableRowLinkAssertNotExists(string $link, string $rowText): void {
     $page = $this->getSession()->getPage();
     if ($this->getTableRow($page, $rowText)->findLink($link)) {
-      throw new \Exception(sprintf('Found a row containing "%s" with a "%s" link on the page %s', $rowText, $link, $this->getSession()->getCurrentUrl()));
+      throw new ExpectationException(sprintf('Found a row containing "%s" with a "%s" link on the page %s', $rowText, $link, $this->getSession()->getCurrentUrl()), $this->getSession()->getDriver());
     }
   }
 
@@ -310,7 +317,12 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
       $link_element->click();
       return;
     }
-    throw new \Exception(sprintf('Found a row containing "%s", but no "%s" link on the page %s', $rowText, $link, $this->getSession()->getCurrentUrl()));
+    throw new ElementNotFoundException(
+      $this->getSession()->getDriver(),
+      sprintf('link in the "%s" row', $rowText),
+      'id|title|alt|text',
+      $link
+    );
   }
 
   /**
@@ -332,7 +344,12 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
       $button_element->press();
       return;
     }
-    throw new \Exception(sprintf('Found a row containing "%s", but no "%s" button on the page %s', $rowText, $button, $this->getSession()->getCurrentUrl()));
+    throw new ElementNotFoundException(
+      $this->getSession()->getDriver(),
+      sprintf('button in the "%s" row', $rowText),
+      'id|name|title|alt|value',
+      $button
+    );
   }
 
   /**
@@ -653,7 +670,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
         case 113:
           // Q.
         case 81:
-          throw new \Exception("Exiting test intentionally.");
+          throw new \RuntimeException("Exiting test intentionally.");
 
         default:
           fwrite(STDOUT, sprintf("\nInvalid entry '%s'.  Please enter 'y', 'q', or the enter key.\n", $line));
@@ -680,12 +697,12 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    */
   protected function createAndVisitMyNode(string $type, string $title): void {
     if ($this->getUserManager()->currentUserIsAnonymous()) {
-      throw new \Exception('There is no current logged in user to create a node for.');
+      throw new \RuntimeException('There is no current logged in user to create a node for.');
     }
 
     $current_user = $this->getUserManager()->getCurrentUser();
     if (!$current_user instanceof \stdClass) {
-      throw new \Exception('There is no current logged in user to create a node for.');
+      throw new \RuntimeException('There is no current logged in user to create a node for.');
     }
     $node = (object) [
       'title' => $title,

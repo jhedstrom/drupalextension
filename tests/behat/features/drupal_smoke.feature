@@ -25,7 +25,7 @@ Feature: Drupal driver smoke test
     When I run behat with drupal profile
     Then it should fail with an error:
       """
-      No rows found on the page
+      Row matching css "tr" not found.
       """
 
   @test-drupal @api

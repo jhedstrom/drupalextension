@@ -66,7 +66,7 @@ class BatchContext extends RawMinkContext {
       ]);
 
     if (!$query->execute()) {
-      throw new \Exception('Unable to create the queue item.');
+      throw new \RuntimeException('Unable to create the queue item.');
     }
   }
 

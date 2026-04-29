@@ -24,7 +24,7 @@ Feature: DrupalContext coverage gaps
       Given I am viewing my "article" content with the title "Anon content"
       """
     When I run behat with drupal profile
-    Then it should fail with an error:
+    Then it should fail with an exception:
       """
       There is no current logged in user to create a node for.
       """
@@ -111,7 +111,7 @@ Feature: DrupalContext coverage gaps
     When I run behat with drupal profile
     Then it should fail with an error:
       """
-      Failed to find a row containing "NONEXISTENT_ROW"
+      Row with text "NONEXISTENT_ROW" not found.
       """
 
   @test-drupal @api
@@ -174,7 +174,7 @@ Feature: DrupalContext coverage gaps
     When I run behat with drupal profile
     Then it should fail with an error:
       """
-      no "Nonexistent link" link
+      Link in the "Link row test" row with id|title|alt|text "Nonexistent link" not found.
       """
 
   @test-drupal @api
@@ -219,7 +219,7 @@ Feature: DrupalContext coverage gaps
     When I run behat with drupal profile
     Then it should fail with an error:
       """
-      no "Nonexistent link" link
+      Link in the "Click target" row with id|title|alt|text "Nonexistent link" not found.
       """
 
   @test-drupal @api
@@ -237,7 +237,7 @@ Feature: DrupalContext coverage gaps
     When I run behat with drupal profile
     Then it should fail with an error:
       """
-      no "Nonexistent button" button
+      Button in the "Button target" row with id|name|title|alt|value "Nonexistent button" not found.
       """
 
   @test-drupal @api

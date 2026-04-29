@@ -14,7 +14,7 @@ Feature: MarkupContext
     When I run behat
     Then it should fail with an error:
       """
-      The button 'Nonexistent' was not found in the region 'static content'
+      Button in the "static content" region with id|name|title|alt|value "Nonexistent" not found.
       """
 
   @test-blackbox
@@ -42,7 +42,7 @@ Feature: MarkupContext
     When I run behat
     Then it should fail with an error:
       """
-      The element "h99" was not found in the "static content" region
+      Element in the "static content" region matching css "h99" not found.
       """
 
   @test-blackbox

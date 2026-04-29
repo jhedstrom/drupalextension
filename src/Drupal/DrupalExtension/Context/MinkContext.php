@@ -13,6 +13,7 @@ use Behat\Behat\Hook\Scope\BeforeStepScope;
 use Behat\Behat\Hook\Scope\AfterStepScope;
 use Behat\Behat\Context\TranslatableContext;
 use Behat\Mink\Exception\ElementNotFoundException;
+use Behat\Mink\Exception\ExpectationException;
 use Behat\Mink\Exception\UnsupportedDriverActionException;
 use Behat\Mink\Selector\Xpath\Escaper;
 use Behat\MinkExtension\Context\MinkContext as MinkExtension;
@@ -177,7 +178,7 @@ JS;
     $result = $this->getSession()->wait(1000 * $ajax_timeout, $condition);
     if (!$result) {
       if ($ajax_timeout === NULL) {
-        throw new \Exception('No AJAX timeout has been defined. Please verify that "Drupal\MinkExtension" is configured in behat.yml (and not "Behat\MinkExtension").');
+        throw new \RuntimeException('No AJAX timeout has been defined. Please verify that "Drupal\MinkExtension" is configured in behat.yml (and not "Behat\MinkExtension").');
       }
       if ($event) {
         /** @var \Behat\Behat\Hook\Scope\BeforeStepScope $event */
@@ -264,7 +265,7 @@ JS;
 
     if (is_string($char)) {
       if (strlen($char) < 1) {
-        throw new \Exception('FeatureContext->keyPress($char, $field) was invoked but the $char parameter was empty.');
+        throw new \RuntimeException('FeatureContext->keyPress($char, $field) was invoked but the $char parameter was empty.');
       }
       if (strlen($char) > 1) {
         // Support for all variations, e.g. ESC, Esc, page up, pageup.
@@ -274,7 +275,7 @@ JS;
 
     $element = $this->getSession()->getPage()->findField($field);
     if (!$element) {
-      throw new \Exception(sprintf("Field '%s' not found", $field));
+      throw new ElementNotFoundException($this->getSession()->getDriver(), 'field', 'id|name|label|value|placeholder', $field);
     }
 
     $driver = $this->getSession()->getDriver();
@@ -322,10 +323,11 @@ JS;
   public function linkAssertIsVisible(string $link): void {
     $element = $this->getSession()->getPage();
     $result = $element->findLink($link);
+    $driver = $this->getSession()->getDriver();
 
     try {
       if ($result && !$result->isVisible()) {
-        throw new \Exception(sprintf("No link to '%s' on the page %s", $link, $this->getSession()->getCurrentUrl()));
+        throw new ElementNotFoundException($driver, 'link', 'id|title|alt|text', $link);
       }
     }
     catch (UnsupportedDriverActionException) {
@@ -335,7 +337,7 @@ JS;
     }
 
     if (empty($result)) {
-      throw new \Exception(sprintf("No link to '%s' on the page %s", $link, $this->getSession()->getCurrentUrl()));
+      throw new ElementNotFoundException($driver, 'link', 'id|title|alt|text', $link);
     }
   }
 
@@ -350,10 +352,11 @@ JS;
   public function linkAssertIsNotVisible(string $link): void {
     $element = $this->getSession()->getPage();
     $result = $element->findLink($link);
+    $driver = $this->getSession()->getDriver();
 
     try {
       if ($result && $result->isVisible()) {
-        throw new \Exception(sprintf("The link '%s' was present on the page %s and was not supposed to be", $link, $this->getSession()->getCurrentUrl()));
+        throw new ExpectationException(sprintf("The link '%s' was present on the page %s and was not supposed to be", $link, $this->getSession()->getCurrentUrl()), $driver);
       }
     }
     catch (UnsupportedDriverActionException) {
@@ -363,7 +366,7 @@ JS;
     }
 
     if ($result) {
-      throw new \Exception(sprintf("The link '%s' was present on the page %s and was not supposed to be", $link, $this->getSession()->getCurrentUrl()));
+      throw new ExpectationException(sprintf("The link '%s' was present on the page %s and was not supposed to be", $link, $this->getSession()->getCurrentUrl()), $driver);
     }
   }
 
@@ -380,10 +383,11 @@ JS;
   public function linkAssertIsNotVisuallyVisible(string $link): void {
     $element = $this->getSession()->getPage();
     $result = $element->findLink($link);
+    $driver = $this->getSession()->getDriver();
 
     try {
       if ($result && $result->isVisible()) {
-        throw new \Exception(sprintf("The link '%s' was visually visible on the page %s and was not supposed to be", $link, $this->getSession()->getCurrentUrl()));
+        throw new ExpectationException(sprintf("The link '%s' was visually visible on the page %s and was not supposed to be", $link, $this->getSession()->getCurrentUrl()), $driver);
       }
     }
     catch (UnsupportedDriverActionException) {
@@ -393,7 +397,7 @@ JS;
     }
 
     if (!$result) {
-      throw new \Exception(sprintf("The link '%s' was not loaded on the page %s at all", $link, $this->getSession()->getCurrentUrl()));
+      throw new ElementNotFoundException($driver, 'link', 'id|title|alt|text', $link);
     }
   }
 
@@ -412,7 +416,7 @@ JS;
         return;
       }
     }
-    throw new \Exception(sprintf("The text '%s' was not found in any heading on the page %s", $heading, $this->getSession()->getCurrentUrl()));
+    throw new ElementNotFoundException($this->getSession()->getDriver(), 'heading', 'text', $heading);
   }
 
   /**
@@ -427,7 +431,7 @@ JS;
     $element = $this->getSession()->getPage();
     foreach ($element->findAll('css', 'h1, h2, h3, h4, h5, h6') as $result) {
       if ($result->getText() == $heading) {
-        throw new \Exception(sprintf("The text '%s' was found in a heading on the page %s", $heading, $this->getSession()->getCurrentUrl()));
+        throw new ExpectationException(sprintf("The text '%s' was found in a heading on the page %s", $heading, $this->getSession()->getCurrentUrl()), $this->getSession()->getDriver());
       }
     }
   }
@@ -499,12 +503,12 @@ JS;
     // Find the link within the region.
     $link_obj = $region_obj->findLink($link);
     if (empty($link_obj)) {
-      throw new \Exception(sprintf(
-        'The link "%s" was not found in the region "%s" on the page %s',
-        $link,
-        $region,
-        $this->getSession()->getCurrentUrl()
-      ));
+      throw new ElementNotFoundException(
+        $this->getSession()->getDriver(),
+        sprintf('link in the "%s" region', $region),
+        'id|title|alt|text',
+        $link
+      );
     }
     $link_obj->click();
   }
@@ -533,7 +537,12 @@ JS;
 
     $button_obj = $region_obj->findButton($button);
     if (empty($button_obj)) {
-      throw new \Exception(sprintf("The button '%s' was not found in the region '%s' on the page %s", $button, $region, $this->getSession()->getCurrentUrl()));
+      throw new ElementNotFoundException(
+        $this->getSession()->getDriver(),
+        sprintf('button in the "%s" region', $region),
+        'id|name|title|alt|value',
+        $button
+      );
     }
     $button_obj->press();
   }
@@ -666,7 +675,12 @@ JS;
 
     $result = $region_obj->findLink($link);
     if (empty($result)) {
-      throw new \Exception(sprintf('No link to "%s" in the "%s" region on the page %s', $link, $region, $this->getSession()->getCurrentUrl()));
+      throw new ElementNotFoundException(
+        $this->getSession()->getDriver(),
+        sprintf('link in the "%s" region', $region),
+        'id|title|alt|text',
+        $link
+      );
     }
   }
 
@@ -687,7 +701,7 @@ JS;
 
     $result = $region_obj->findLink($link);
     if (!empty($result)) {
-      throw new \Exception(sprintf('Link to "%s" in the "%s" region on the page %s', $link, $region, $this->getSession()->getCurrentUrl()));
+      throw new ExpectationException(sprintf('Link to "%s" in the "%s" region on the page %s', $link, $region, $this->getSession()->getCurrentUrl()), $this->getSession()->getDriver());
     }
   }
 
@@ -861,7 +875,12 @@ JS;
 
     $element = $page->find('xpath', $xpath);
     if (!$element) {
-      throw new \Exception(sprintf('Unable to find details%s containing text %s for action %s', $expanded_state, $summary, $action));
+      throw new ElementNotFoundException(
+        $this->getSession()->getDriver(),
+        sprintf('details element for "%s" action', $action),
+        'summary text',
+        $summary
+      );
     }
 
     $ajax_timeout = $this->getMinkParameter('ajax_timeout') ?? 5;
@@ -900,7 +919,7 @@ JS;
     $element = $this->getSession()->getPage();
     $button_obj = $element->findButton($button);
     if (empty($button_obj)) {
-      throw new \Exception(sprintf("The button '%s' was not found on the page %s", $button, $this->getSession()->getCurrentUrl()));
+      throw new ElementNotFoundException($this->getSession()->getDriver(), 'button', 'id|name|title|alt|value', $button);
     }
   }
 
@@ -911,7 +930,7 @@ JS;
     $element = $this->getSession()->getPage();
     $button_obj = $element->findButton($button);
     if (!empty($button_obj)) {
-      throw new \Exception(sprintf("The button '%s' was found on the page %s", $button, $this->getSession()->getCurrentUrl()));
+      throw new ExpectationException(sprintf("The button '%s' was found on the page %s", $button, $this->getSession()->getCurrentUrl()), $this->getSession()->getDriver());
     }
   }
 
@@ -927,7 +946,12 @@ JS;
       }
     }
 
-    throw new \Exception(sprintf('The heading "%s" was not found in the "%s" region on the page %s', $heading, $region, $this->getSession()->getCurrentUrl()));
+    throw new ElementNotFoundException(
+      $this->getSession()->getDriver(),
+      sprintf('heading in the "%s" region', $region),
+      'text',
+      $heading
+    );
   }
 
   /**
@@ -938,7 +962,7 @@ JS;
 
     $region_text = $region_obj->getText();
     if (!str_contains($region_text, $text)) {
-      throw new \Exception(sprintf("The text '%s' was not found in the region '%s' on the page %s", $text, $region, $this->getSession()->getCurrentUrl()));
+      throw new ExpectationException(sprintf("The text '%s' was not found in the region '%s' on the page %s", $text, $region, $this->getSession()->getCurrentUrl()), $this->getSession()->getDriver());
     }
   }
 
@@ -950,7 +974,7 @@ JS;
 
     $region_text = $region_obj->getText();
     if (str_contains($region_text, $text)) {
-      throw new \Exception(sprintf('The text "%s" was found in the region "%s" on the page %s', $text, $region, $this->getSession()->getCurrentUrl()));
+      throw new ExpectationException(sprintf('The text "%s" was found in the region "%s" on the page %s', $text, $region, $this->getSession()->getCurrentUrl()), $this->getSession()->getDriver());
     }
   }
 
@@ -974,7 +998,12 @@ JS;
       $label,
     ]);
     if ($radiobutton === NULL) {
-      throw new \Exception(sprintf('The radio button with "%s" was not found on the page %s', $id ?: $label, $this->getSession()->getCurrentUrl()));
+      throw new ElementNotFoundException(
+        $this->getSession()->getDriver(),
+        'radio button',
+        $id !== '' && $id !== '0' ? 'id' : 'label',
+        $id ?: $label
+      );
     }
     $value = $radiobutton->getAttribute('value');
     $radio_id = $radiobutton->getAttribute('id');
@@ -982,7 +1011,7 @@ JS;
     if ($label_element !== NULL) {
       $labelonpage = $label_element->getText();
       if ($label != $labelonpage) {
-        throw new \Exception(sprintf("Button with id '%s' has label '%s' instead of '%s' on the page %s", $id, $labelonpage, $label, $this->getSession()->getCurrentUrl()));
+        throw new ExpectationException(sprintf("Button with id '%s' has label '%s' instead of '%s' on the page %s", $id, $labelonpage, $label, $this->getSession()->getCurrentUrl()), $this->getSession()->getDriver());
       }
     }
     $radiobutton->selectOption($value, FALSE);

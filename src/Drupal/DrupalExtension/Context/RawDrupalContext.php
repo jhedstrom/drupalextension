@@ -816,7 +816,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
     // before a test scenario starts (e.g. in a `@BeforeScenario` hook) then the
     // contexts cannot yet be retrieved.
     if (!$environment instanceof InitializedContextEnvironment) {
-      throw new \Exception('Cannot retrieve contexts when the environment is not yet initialized.');
+      throw new \RuntimeException('Cannot retrieve contexts when the environment is not yet initialized.');
     }
     foreach ($environment->getContexts() as $context) {
       if ($context instanceof $class) {

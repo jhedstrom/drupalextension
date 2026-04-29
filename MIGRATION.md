@@ -41,6 +41,27 @@ Update each occurrence in your `.feature` files.
 | ------------------- | ------------------------------------------------------ | ---------------------------------------------------------------------- |
 | `When I visit :path` | Implicitly asserted HTTP 200 on the response.          | Plain navigation. Use `Then I should get a :code HTTP response` to assert status. |
 
+## Exception classes
+
+6.0 narrows the exceptions thrown by bundled contexts. Generic `\Exception`
+throws have been replaced with typed exceptions so callers can distinguish
+"element not found" from "assertion failed" from "runtime error".
+
+| Situation                                            | 5.x                | 6.0                                              |
+|------------------------------------------------------|--------------------|--------------------------------------------------|
+| Element / field / link / button / region not found   | `\Exception`       | `Behat\Mink\Exception\ElementNotFoundException`  |
+| Assertion fails (value mismatch, state verification) | `\Exception`       | `Behat\Mink\Exception\ExpectationException`      |
+| Configuration / processing error (non-assertion)     | `\Exception`       | `\RuntimeException`                              |
+
+The auto-generated `ElementNotFoundException` messages are different from
+the 5.x free-form text — for example
+`No link to "About" on the page <url>` becomes
+`Link with id|title|alt|text "About" not found.`. Update any feature
+tests or `try`/`catch` blocks that rely on the 5.x message text.
+
+See [`CONTRIBUTING.md`](CONTRIBUTING.md#exception-conventions) for the
+full convention.
+
 ## Method renames
 
 If you subclass any of the bundled contexts and override an `@Then` method,
