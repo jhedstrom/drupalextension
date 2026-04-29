@@ -103,11 +103,11 @@
       </trans-unit>
       <trans-unit id="the-following-users">
         <source><![CDATA[the following users:]]></source>
-        <target><![CDATA[los siguientes usuarios:]]></target>
+        <target><![CDATA[usuarios:]]></target>
       </trans-unit>
       <trans-unit id="the-following-vocabulary-terms">
         <source><![CDATA[the following :vocabulary terms:]]></source>
-        <target><![CDATA[los siguientes términos de :vocabulary:]]></target>
+        <target><![CDATA[:vocabulary términos:]]></target>
       </trans-unit>
       <trans-unit id="i-break">
         <source><![CDATA[(I )break]]></source>
