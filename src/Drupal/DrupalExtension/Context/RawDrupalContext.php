@@ -804,7 +804,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    * @return \Behat\Behat\Context\Context|false
    *   The requested context, or FALSE if the context is not registered.
    *
-   * @throws \Exception
+   * @throws \RuntimeException
    *   Thrown when the environment is not yet initialized, meaning that contexts
    *   cannot yet be retrieved.
    */
