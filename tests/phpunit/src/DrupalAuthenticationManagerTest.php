@@ -6,6 +6,7 @@ namespace Drupal\DrupalExtension\Tests;
 
 use Drupal\Driver\DriverInterface;
 use PHPUnit\Framework\MockObject\MockObject;
+use Behat\Mink\Driver\DriverInterface as MinkDriverInterface;
 use Behat\Mink\Element\DocumentElement;
 use Behat\Mink\Element\NodeElement;
 use Behat\Mink\Exception\DriverException;
@@ -97,7 +98,7 @@ class DrupalAuthenticationManagerTest extends TestCase {
     $manager = $this->createManager($session);
 
     $this->expectException(\Exception::class);
-    $this->expectExceptionMessage('No submit button at http://localhost/user/login');
+    $this->expectExceptionMessage('Submit button matching css "login form" not found.');
     $manager->logIn((object) ['name' => 'admin', 'pass' => 'pass']);
   }
 
@@ -218,7 +219,7 @@ class DrupalAuthenticationManagerTest extends TestCase {
     $manager = $this->createManager($session);
 
     $this->expectException(\Exception::class);
-    $this->expectExceptionMessage("Unable to determine if logged out because 'Log out' button cannot be found on the logout confirmation page");
+    $this->expectExceptionMessage('Logout button matching css "logout confirmation page" not found.');
     $manager->logout();
   }
 
@@ -389,6 +390,7 @@ class DrupalAuthenticationManagerTest extends TestCase {
   private function createSessionMock(?DocumentElement $page = NULL): Session {
     $session = $this->createMock(Session::class);
     $session->method('getPage')->willReturn($page ?? $this->createMock(DocumentElement::class));
+    $session->method('getDriver')->willReturn($this->createMock(MinkDriverInterface::class));
     return $session;
   }
 
