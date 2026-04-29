@@ -792,16 +792,10 @@ JS;
   #[When('I select the radio button :label')]
   public function assertSelectRadioById(string $label, string $id = ''): void {
     $element = $this->getSession()->getPage();
-    if ($id !== '' && $id !== '0') {
-      $radiobutton = $element->findById($id);
-    }
-    else {
-      $escaper = new Escaper();
-      $radiobutton = $element->find('named', [
-        'radio',
-        $escaper->escapeLiteral($label),
-      ]);
-    }
+    $radiobutton = $id !== '' && $id !== '0' ? $element->findById($id) : $element->find('named', [
+      'radio',
+      $label,
+    ]);
     if ($radiobutton === NULL) {
       throw new \Exception(sprintf('The radio button with "%s" was not found on the page %s', $id ?: $label, $this->getSession()->getCurrentUrl()));
     }
