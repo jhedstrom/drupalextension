@@ -12,6 +12,7 @@ use Drupal\Driver\Capability\LanguageCapabilityInterface;
 use Drupal\Driver\Capability\RoleCapabilityInterface;
 use Drupal\Driver\Capability\UserCapabilityInterface;
 use Drupal\Driver\DrupalDriver;
+use Drupal\Driver\Entity\EntityStubInterface;
 use Drupal\DrupalExtension\Hook\Attribute\BeforeNodeCreate;
 use Drupal\taxonomy\Entity\Vocabulary;
 use Behat\MinkExtension\Context\RawMinkContext;
@@ -67,18 +68,16 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
   protected $userManager;
 
   /**
-   * Keep track of nodes so they can be cleaned up.
+   * Tracks every entity stub created during a scenario for cleanup.
    *
-   * @var array<int, \stdClass>
-   */
-  protected array $nodes = [];
-
-  /**
-   * Keep track of all terms that are created so they can easily be removed.
+   * Users are tracked separately via the user manager because they need
+   * lookup-by-name. Everything else (nodes, terms, languages, generic
+   * entities) lives here and is removed in reverse order so dependent
+   * entities come down before their dependencies.
    *
-   * @var array<int, \stdClass>
+   * @var array<int, \Drupal\Driver\Entity\EntityStubInterface>
    */
-  protected array $terms = [];
+  protected array $createdStubs = [];
 
   /**
    * Keep track of any roles that are created so they can easily be removed.
@@ -86,13 +85,6 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    * @var array<int, string>
    */
   protected array $roles = [];
-
-  /**
-   * Keep track of any languages that are created so they can easily be removed.
-   *
-   * @var array<int, \stdClass>
-   */
-  protected array $languages = [];
 
   /**
    * {@inheritdoc}
@@ -165,7 +157,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    */
   #[BeforeNodeCreate]
   public static function alterNodeParameters(BeforeNodeCreateScope $scope): void {
-    $node = $scope->getEntity();
+    $stub = $scope->getStub();
 
     // Convert string dates on timestamp fields when the in-process Drupal
     // driver is active. Blackbox and Drush drivers route around this entity
@@ -182,32 +174,58 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
     }
 
     foreach (['changed', 'created', 'revision_timestamp'] as $field) {
-      if (!empty($node->$field) && !is_numeric($node->$field)) {
-        $node->$field = strtotime((string) $node->$field);
+      $value = $stub->getValue($field);
+
+      if ($value !== NULL && $value !== '' && !is_numeric($value)) {
+        $stub->setValue($field, strtotime((string) $value));
       }
     }
   }
 
   /**
-   * Remove any created nodes.
+   * Remove every entity created during the scenario.
+   *
+   * Walks 'createdStubs' in reverse order so dependent entities (e.g. nodes
+   * referencing terms) come down before the entities they reference.
    */
   #[AfterScenario]
-  public function cleanNodes(): void {
-    if ($this->nodes === []) {
+  public function cleanEntities(): void {
+    if ($this->createdStubs === []) {
       return;
     }
 
     $driver = $this->getDriver();
 
+    foreach (array_reverse($this->createdStubs) as $stub) {
+      $this->deleteStub($stub, $driver);
+    }
+
+    $this->createdStubs = [];
+  }
+
+  /**
+   * Routes a stub to the right per-type driver delete method.
+   */
+  protected function deleteStub(EntityStubInterface $stub, object $driver): void {
+    $type = $stub->getEntityType();
+
+    if (in_array($type, ['language', 'configurable_language'], TRUE)) {
+      if ($driver instanceof LanguageCapabilityInterface) {
+        $driver->languageDelete($stub);
+      }
+
+      return;
+    }
+
     if (!$driver instanceof ContentCapabilityInterface) {
       return;
     }
 
-    foreach ($this->nodes as $node) {
-      $driver->nodeDelete($node);
-    }
-
-    $this->nodes = [];
+    match ($type) {
+      'node' => $driver->nodeDelete($stub),
+      'taxonomy_term' => $driver->termDelete($stub),
+      default => $driver->entityDelete($stub),
+    };
   }
 
   /**
@@ -252,28 +270,6 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
   }
 
   /**
-   * Remove any created terms.
-   */
-  #[AfterScenario]
-  public function cleanTerms(): void {
-    if ($this->terms === []) {
-      return;
-    }
-
-    $driver = $this->getDriver();
-
-    if (!$driver instanceof ContentCapabilityInterface) {
-      return;
-    }
-
-    foreach (array_reverse($this->terms) as $term) {
-      $driver->termDelete($term);
-    }
-
-    $this->terms = [];
-  }
-
-  /**
    * Remove any created roles.
    */
   #[AfterScenario]
@@ -296,27 +292,6 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
   }
 
   /**
-   * Remove any created languages.
-   */
-  #[AfterScenario]
-  public function cleanLanguages(): void {
-    if ($this->languages === []) {
-      return;
-    }
-
-    $driver = $this->getDriver();
-
-    if (!$driver instanceof LanguageCapabilityInterface) {
-      return;
-    }
-
-    foreach ($this->languages as $language) {
-      $driver->languageDelete($language);
-      unset($this->languages[$language->langcode]);
-    }
-  }
-
-  /**
    * Clear static caches.
    */
   #[AfterScenario('@api')]
@@ -333,11 +308,11 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    *
    * @param class-string<\Behat\Testwork\Hook\Scope\HookScope> $scopeClass
    *   The fully-qualified scope class name.
-   * @param \stdClass $entity
-   *   The entity.
+   * @param \Drupal\Driver\Entity\EntityStubInterface $stub
+   *   The entity stub flowing through the create pipeline.
    */
-  protected function dispatchHooks(string $scopeClass, \stdClass $entity): void {
-    $scope = new $scopeClass($this->getDrupal()->getEnvironment(), $this, $entity);
+  protected function dispatchHooks(string $scopeClass, EntityStubInterface $stub): void {
+    $scope = new $scopeClass($this->getDrupal()->getEnvironment(), $this, $stub);
     $call_results = $this->dispatcher->dispatchScopeHooks($scope);
 
     // The dispatcher suppresses exceptions, throw them here if there are any.
@@ -352,32 +327,26 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
   /**
    * Create a node.
    *
-   * @return \stdClass
-   *   The created node.
+   * @param \Drupal\Driver\Entity\EntityStubInterface $stub
+   *   The node stub.
+   *
+   * @return \Drupal\Driver\Entity\EntityStubInterface
+   *   The same stub, now flagged as saved.
    */
-  public function nodeCreate(\stdClass $node): \stdClass {
-    $this->dispatchHooks(BeforeNodeCreateScope::class, $node);
-    $this->parseEntityFields('node', $node, ['author']);
+  public function nodeCreate(EntityStubInterface $stub): EntityStubInterface {
+    $this->dispatchHooks(BeforeNodeCreateScope::class, $stub);
+    $this->parseEntityFields($stub, ['author']);
 
-    $driver = $this->getDriver();
+    $driver = $this->getContentDriver();
 
-    if (!$driver instanceof ContentCapabilityInterface) {
-      throw new \RuntimeException(sprintf('The active Drupal driver "%s" does not support content creation.', $driver::class));
-    }
+    $scalars = $this->captureScalarBaseFields($stub);
+    $driver->nodeCreate($stub);
+    $this->restoreScalarBaseFields($stub, $scalars);
 
-    $scalars = $this->captureScalarBaseFields($node);
-    $saved = $driver->nodeCreate($node);
+    $this->dispatchHooks(AfterNodeCreateScope::class, $stub);
+    $this->createdStubs[] = $stub;
 
-    if (!$saved instanceof \stdClass) {
-      throw new \RuntimeException(sprintf('The Drupal driver "%s" returned a non-stdClass object from nodeCreate().', $driver::class));
-    }
-
-    $this->restoreScalarBaseFields($saved, $scalars);
-
-    $this->dispatchHooks(AfterNodeCreateScope::class, $saved);
-    $this->nodes[] = $saved;
-
-    return $saved;
+    return $stub;
   }
 
   /**
@@ -448,14 +417,12 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    *   ['uri' => '/contact', 'title' => 'Contact'],
    * ].
    *
-   * Blank values remove the field from the entity so Drupal applies its
+   * Blank values remove the field from the stub so Drupal applies its
    * default.
    *
-   * @param string $entity_type
-   *   The entity type (e.g. 'node', 'taxonomy_term', 'user').
-   * @param \stdClass $entity
-   *   The entity object. Recognised field properties are replaced in-place
-   *   with structured arrays; other properties are left unchanged.
+   * @param \Drupal\Driver\Entity\EntityStubInterface $stub
+   *   The entity stub. Recognised field values are replaced in-place with
+   *   structured arrays; other values are left unchanged.
    * @param string[] $ignored_properties
    *   Property names to skip during validation. Use this for properties that
    *   are consumed by the driver (e.g. 'role', 'vocabulary_machine_name') but
@@ -466,29 +433,34 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    *   preceding 'field:column' header, or when a property is neither a
    *   configurable field, a base field, nor in the ignored list.
    */
-  public function parseEntityFields(string $entity_type, \stdClass $entity, array $ignored_properties = []): void {
+  public function parseEntityFields(EntityStubInterface $stub, array $ignored_properties = []): void {
     $driver = $this->getDriver();
 
     if (!$driver instanceof DrupalDriver) {
       throw new \RuntimeException(sprintf('The active Drupal driver "%s" does not support field inspection.', $driver::class));
     }
 
+    $entity_type = $stub->getEntityType();
     $classifier = $driver->getCore()->classifier();
 
     $multicolumn_field = '';
     $multicolumn_column = '';
     $multicolumn_fields = [];
+    $values = $stub->getValues();
+    $parsed = [];
 
-    foreach ((array) (clone $entity) as $field => $field_value) {
+    foreach ($values as $field => $field_value) {
+      $field = (string) $field;
+
       // Reset the multicolumn field if the field name does not have a column.
-      if (!str_contains((string) $field, ':')) {
+      if (!str_contains($field, ':')) {
         $multicolumn_field = '';
         $multicolumn_column = '';
       }
-      elseif (str_contains(substr((string) $field, 1), ':')) {
+      elseif (str_contains(substr($field, 1), ':')) {
         // Start tracking a new multicolumn field if the field name contains a
         // ':' which is preceded by at least 1 character.
-        [$multicolumn_field, $multicolumn_column] = explode(':', (string) $field);
+        [$multicolumn_field, $multicolumn_column] = explode(':', $field);
       }
       elseif (empty($multicolumn_field)) {
         // If a field name starts with a ':' but we are not yet tracking a
@@ -498,14 +470,16 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
       else {
         // Update the column name if the field name starts with a ':' and we are
         // already tracking a multicolumn field.
-        $multicolumn_column = substr((string) $field, 1);
+        $multicolumn_column = substr($field, 1);
       }
 
-      $is_multicolumn = $multicolumn_field && $multicolumn_column;
-      $field_name = $multicolumn_field ?: $field;
+      $is_multicolumn = $multicolumn_field !== '' && $multicolumn_column !== '';
+      $field_name = $multicolumn_field !== '' ? $multicolumn_field : $field;
+
       if ($classifier->fieldIsConfigurable($entity_type, $field_name)) {
         // Split up multiple values in multi-value fields.
-        $values = [];
+        $parsed_values = [];
+
         foreach (str_getcsv((string) $field_value, escape: "\\") as $key => $value) {
           $value = trim((string) $value);
           $columns = $value;
@@ -515,8 +489,10 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
           // through as-is (e.g., entity reference titles with dashes).
           // @see https://github.com/jhedstrom/drupalextension/issues/642
           $was_quoted = str_contains((string) $field_value, '"' . $value . '"');
+
           if (!$was_quoted && str_contains($value, ' - ')) {
             $columns = [];
+
             foreach (explode(' - ', $value) as $column) {
               // Check if it is an inline named column.
               if (!$is_multicolumn && str_contains(substr($column, 1), ': ')) {
@@ -532,19 +508,20 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
           // Use the column name if we are tracking a multicolumn field.
           if ($is_multicolumn) {
             $multicolumn_fields[$multicolumn_field][$key][$multicolumn_column] = $columns;
-            unset($entity->$field);
           }
           else {
-            $values[] = $columns;
+            $parsed_values[] = $columns;
           }
         }
 
-        // Replace regular fields inline in the entity after parsing.
+        // Replace regular fields inline in the stub after parsing.
         if (!$is_multicolumn) {
-          $entity->$field_name = $values;
           // Don't specify any value if the step author has left it blank.
-          if ($field_value === '') {
-            unset($entity->$field_name);
+          if ($field_value === '' || $field_value === NULL) {
+            unset($parsed[$field_name]);
+          }
+          else {
+            $parsed[$field_name] = $parsed_values;
           }
         }
       }
@@ -563,26 +540,32 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
         if (!$is_base_field && !in_array($field_name, $ignored_properties, TRUE)) {
           throw new \RuntimeException(sprintf('Field "%s" does not exist on entity type "%s".', $field_name, $entity_type));
         }
+
+        $parsed[$field] = $field_value;
       }
     }
 
-    // Add the multicolumn fields to the entity. Each entry in
-    // 'multicolumn_fields' is only set when there is at least one non-blank
-    // cell (see the population logic above).
+    // Add the multicolumn fields. Each entry in 'multicolumn_fields' is only
+    // set when there is at least one non-blank cell.
     foreach ($multicolumn_fields as $field_name => $columns) {
-      $entity->$field_name = $columns;
+      $parsed[$field_name] = $columns;
     }
+
+    $stub->setValues($parsed);
   }
 
   /**
    * Create a user.
    *
-   * @return \stdClass
-   *   The created user.
+   * @param \Drupal\Driver\Entity\EntityStubInterface $stub
+   *   The user stub.
+   *
+   * @return \Drupal\Driver\Entity\EntityStubInterface
+   *   The same stub, now flagged as saved.
    */
-  public function userCreate(\stdClass $user): \stdClass {
-    $this->dispatchHooks(BeforeUserCreateScope::class, $user);
-    $this->parseEntityFields('user', $user, ['role']);
+  public function userCreate(EntityStubInterface $stub): EntityStubInterface {
+    $this->dispatchHooks(BeforeUserCreateScope::class, $stub);
+    $this->parseEntityFields($stub, ['role']);
 
     $driver = $this->getDriver();
 
@@ -590,31 +573,36 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
       throw new \RuntimeException(sprintf('The active Drupal driver "%s" does not support user creation.', $driver::class));
     }
 
-    $scalars = $this->captureScalarBaseFields($user);
-    $driver->userCreate($user);
-    $this->restoreScalarBaseFields($user, $scalars);
+    $scalars = $this->captureScalarBaseFields($stub);
+    $driver->userCreate($stub);
+    $this->restoreScalarBaseFields($stub, $scalars);
 
-    $this->dispatchHooks(AfterUserCreateScope::class, $user);
-    $this->userManager->addUser($user);
+    $this->dispatchHooks(AfterUserCreateScope::class, $stub);
+    $this->userManager->addUser($stub);
 
-    return $user;
+    return $stub;
   }
 
   /**
    * Create a term.
    *
-   * @return \stdClass
-   *   The created term.
+   * @param \Drupal\Driver\Entity\EntityStubInterface $stub
+   *   The term stub.
+   *
+   * @return \Drupal\Driver\Entity\EntityStubInterface
+   *   The same stub, now flagged as saved.
    */
-  public function termCreate(\stdClass $term): \stdClass {
+  public function termCreate(EntityStubInterface $stub): EntityStubInterface {
     // The 3.x DrupalDriver only loads vocabularies by machine name. Allow
     // the Gherkin author to pass either the machine name or the human
     // label by resolving the label to a machine name when the literal
     // string does not match a vocabulary id. Resolution is best-effort -
     // the driver throws a clearer error than we could when the lookup
     // ultimately fails.
-    if (!empty($term->vocabulary_machine_name)) {
-      $term->vocabulary_machine_name = $this->resolveVocabularyMachineName($term->vocabulary_machine_name);
+    $vocabulary = $stub->getValue('vocabulary_machine_name');
+
+    if (!empty($vocabulary)) {
+      $stub->setValue('vocabulary_machine_name', $this->resolveVocabularyMachineName((string) $vocabulary));
     }
 
     // The 3.x DrupalDriver resolves a 'parent' property as a term name
@@ -622,32 +610,23 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
     // pass the name through unchanged. An empty 'parent' must be removed
     // so the field-handler pipeline does not try to expand the empty
     // string as an entity reference.
-    if (empty($term->parent)) {
-      unset($term->parent);
+    if ($stub->hasValue('parent') && empty($stub->getValue('parent'))) {
+      $stub->removeValue('parent');
     }
 
-    $this->dispatchHooks(BeforeTermCreateScope::class, $term);
-    $this->parseEntityFields('taxonomy_term', $term, ['vocabulary_machine_name']);
+    $this->dispatchHooks(BeforeTermCreateScope::class, $stub);
+    $this->parseEntityFields($stub, ['vocabulary_machine_name']);
 
-    $driver = $this->getDriver();
+    $driver = $this->getContentDriver();
 
-    if (!$driver instanceof ContentCapabilityInterface) {
-      throw new \RuntimeException(sprintf('The active Drupal driver "%s" does not support term creation.', $driver::class));
-    }
+    $scalars = $this->captureScalarBaseFields($stub);
+    $driver->termCreate($stub);
+    $this->restoreScalarBaseFields($stub, $scalars);
 
-    $scalars = $this->captureScalarBaseFields($term);
-    $saved = $driver->termCreate($term);
+    $this->dispatchHooks(AfterTermCreateScope::class, $stub);
+    $this->createdStubs[] = $stub;
 
-    if (!$saved instanceof \stdClass) {
-      throw new \RuntimeException(sprintf('The Drupal driver "%s" returned a non-stdClass object from termCreate().', $driver::class));
-    }
-
-    $this->restoreScalarBaseFields($saved, $scalars);
-
-    $this->dispatchHooks(AfterTermCreateScope::class, $saved);
-    $this->terms[] = $saved;
-
-    return $saved;
+    return $stub;
   }
 
   /**
@@ -673,36 +652,36 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
   }
 
   /**
-   * Captures scalar properties on an entity stub.
+   * Captures scalar values on an entity stub.
    *
    * The 3.x DrupalDriver runs base fields through the field-handler
-   * pipeline during create, which casts scalar properties such as
-   * 'title', 'name', 'mail' or 'pass' to single-element arrays. Most
-   * drupalextension downstream code (user manager indexing, login flow,
-   * stub matching) expects scalars, so callers snapshot the scalars
-   * before the driver call and restore them after.
+   * pipeline during create, which casts scalar values such as 'title',
+   * 'name', 'mail' or 'pass' to single-element arrays. Most drupalextension
+   * downstream code (user manager indexing, login flow, stub matching)
+   * expects scalars, so callers snapshot the scalars before the driver
+   * call and restore them after.
    *
-   * @param object $entity
+   * @param \Drupal\Driver\Entity\EntityStubInterface $stub
    *   The entity stub to inspect.
    *
    * @return array<string, scalar>
-   *   The scalar properties keyed by name.
+   *   The scalar values keyed by name.
    */
-  protected function captureScalarBaseFields(object $entity): array {
-    return array_filter((array) $entity, is_scalar(...));
+  protected function captureScalarBaseFields(EntityStubInterface $stub): array {
+    return array_filter($stub->getValues(), is_scalar(...));
   }
 
   /**
-   * Restores scalar properties previously captured.
+   * Restores scalar values previously captured.
    *
-   * @param object $entity
+   * @param \Drupal\Driver\Entity\EntityStubInterface $stub
    *   The entity stub to mutate.
    * @param array<string, scalar> $scalars
-   *   Map of property name to original scalar value.
+   *   Map of value name to original scalar value.
    */
-  protected function restoreScalarBaseFields(object $entity, array $scalars): void {
+  protected function restoreScalarBaseFields(EntityStubInterface $stub, array $scalars): void {
     foreach ($scalars as $field => $value) {
-      $entity->$field = $value;
+      $stub->setValue($field, $value);
     }
   }
 
@@ -714,13 +693,17 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    * @param string $vocabulary
    *   The vocabulary machine name.
    *
-   * @return \stdClass|null
-   *   The term object or NULL if no matching term was found.
+   * @return \Drupal\Driver\Entity\EntityStubInterface|null
+   *   The term stub or NULL if no matching term was found.
    */
-  protected function getExistingTerm(string $name, string $vocabulary): ?\stdClass {
-    foreach ($this->terms as $term) {
-      if ($term->name === $name && $term->vocabulary_machine_name === $vocabulary) {
-        return $term;
+  protected function getExistingTerm(string $name, string $vocabulary): ?EntityStubInterface {
+    foreach ($this->createdStubs as $stub) {
+      if ($stub->getEntityType() !== 'taxonomy_term') {
+        continue;
+      }
+
+      if ($stub->getValue('name') === $name && $stub->getValue('vocabulary_machine_name') === $vocabulary) {
+        return $stub;
       }
     }
 
@@ -730,15 +713,15 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
   /**
    * Creates a language.
    *
-   * @param \stdClass $language
-   *   An object with the following properties:
-   *   - langcode: the langcode of the language to create.
+   * @param \Drupal\Driver\Entity\EntityStubInterface $stub
+   *   Language stub. Must carry a 'langcode' value.
    *
-   * @return \stdClass|false
-   *   The created language, or FALSE if the language was already created.
+   * @return \Drupal\Driver\Entity\EntityStubInterface|false
+   *   The created language stub, or FALSE if the language was already
+   *   created.
    */
-  public function languageCreate(\stdClass $language): \stdClass|false {
-    $this->dispatchHooks(BeforeLanguageCreateScope::class, $language);
+  public function languageCreate(EntityStubInterface $stub): EntityStubInterface|false {
+    $this->dispatchHooks(BeforeLanguageCreateScope::class, $stub);
 
     $driver = $this->getDriver();
 
@@ -746,23 +729,25 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
       throw new \RuntimeException(sprintf('The active Drupal driver "%s" does not support language management.', $driver::class));
     }
 
-    $language = $driver->languageCreate($language);
+    $result = $driver->languageCreate($stub);
 
-    if ($language) {
-      $this->dispatchHooks(AfterLanguageCreateScope::class, $language);
-      $this->languages[$language->langcode] = $language;
+    if ($result === FALSE) {
+      return FALSE;
     }
 
-    return $language;
+    $this->dispatchHooks(AfterLanguageCreateScope::class, $result);
+    $this->createdStubs[] = $result;
+
+    return $result;
   }
 
   /**
    * Log-in the given user.
    *
-   * @param \stdClass $user
-   *   The user to log in.
+   * @param \Drupal\Driver\Entity\EntityStubInterface $user
+   *   The user stub to log in.
    */
-  public function login(\stdClass $user): void {
+  public function login(EntityStubInterface $user): void {
     $this->getAuthenticationManager()->logIn($user);
   }
 
@@ -789,6 +774,23 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    */
   public function loggedIn() {
     return $this->getAuthenticationManager()->loggedIn();
+  }
+
+  /**
+   * Resolves the active driver as a content-capable instance.
+   *
+   * @throws \RuntimeException
+   *   When the active driver does not implement
+   *   'ContentCapabilityInterface'.
+   */
+  protected function getContentDriver(): ContentCapabilityInterface {
+    $driver = $this->getDriver();
+
+    if (!$driver instanceof ContentCapabilityInterface) {
+      throw new \RuntimeException(sprintf('The active Drupal driver "%s" does not support content creation.', $driver::class));
+    }
+
+    return $driver;
   }
 
   /**

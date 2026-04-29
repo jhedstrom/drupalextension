@@ -4,42 +4,45 @@ declare(strict_types=1);
 
 namespace Drupal\DrupalExtension\Manager;
 
+use Drupal\Driver\Entity\EntityStubInterface;
+
 /**
  * Default implementation of the Drupal user manager service.
  */
 class DrupalUserManager implements DrupalUserManagerInterface {
 
   /**
-   * The user object representing the currently logged in user.
+   * The user stub representing the currently logged in user.
    */
-  protected \stdClass|bool $user = FALSE;
+  protected EntityStubInterface|false $user = FALSE;
 
   /**
-   * An array of user objects representing users created during the test.
+   * An array of user stubs representing users created during the test.
    *
-   * @var \stdClass[]
+   * @var array<string, \Drupal\Driver\Entity\EntityStubInterface>
    */
   protected array $users = [];
 
   /**
    * {@inheritdoc}
    */
-  public function getCurrentUser(): \stdClass|bool {
+  public function getCurrentUser(): EntityStubInterface|false {
     return $this->user;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function setCurrentUser(\stdClass|bool $user): void {
+  public function setCurrentUser(EntityStubInterface|false $user): void {
     $this->user = $user;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function addUser(\stdClass $user): void {
-    $this->users[$user->name] = $user;
+  public function addUser(EntityStubInterface $user): void {
+    $name = (string) $user->getValue('name');
+    $this->users[$name] = $user;
   }
 
   /**
@@ -52,10 +55,11 @@ class DrupalUserManager implements DrupalUserManagerInterface {
   /**
    * {@inheritdoc}
    */
-  public function getUser(string $userName) {
+  public function getUser(string $userName): EntityStubInterface {
     if (!isset($this->users[$userName])) {
       throw new \InvalidArgumentException(sprintf('No user with %s name is registered with the driver.', $userName));
     }
+
     return $this->users[$userName];
   }
 
@@ -85,14 +89,20 @@ class DrupalUserManager implements DrupalUserManagerInterface {
    * {@inheritdoc}
    */
   public function currentUserIsAnonymous(): bool {
-    return empty($this->user);
+    return $this->user === FALSE;
   }
 
   /**
    * {@inheritdoc}
    */
   public function currentUserHasRole(string $role): bool {
-    return !$this->currentUserIsAnonymous() && !empty($this->user->role) && $this->user->role == $role;
+    if (!$this->user instanceof EntityStubInterface) {
+      return FALSE;
+    }
+
+    $current_role = $this->user->getValue('role');
+
+    return $current_role !== NULL && $current_role === $role;
   }
 
 }

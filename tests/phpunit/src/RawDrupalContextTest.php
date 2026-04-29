@@ -7,6 +7,7 @@ namespace Drupal\DrupalExtension\Tests;
 use Drupal\Driver\Core\CoreInterface;
 use Drupal\Driver\Core\Field\FieldClassifierInterface;
 use Drupal\Driver\DrupalDriver;
+use Drupal\Driver\Entity\EntityStub;
 use Drupal\DrupalDriverManagerInterface;
 use Drupal\DrupalExtension\Context\RawDrupalContext;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -96,9 +97,9 @@ class RawDrupalContextTest extends TestCase {
       $this->expectExceptionMessage($exception);
     }
 
-    $entity = (object) $input;
-    $context->parseEntityFields('node', $entity, $ignored_properties);
-    $this->assertSame($expected, (array) $entity);
+    $stub = new EntityStub('node', NULL, $input);
+    $context->parseEntityFields($stub, $ignored_properties);
+    $this->assertSame($expected, $stub->getValues());
   }
 
   /**
@@ -289,10 +290,10 @@ class RawDrupalContextTest extends TestCase {
     $context = new RawDrupalContext();
     $context->setDrupal($drupal);
 
-    $entity = (object) ['moderation_state' => 'draft'];
-    $context->parseEntityFields('node', $entity);
+    $stub = new EntityStub('node', NULL, ['moderation_state' => 'draft']);
+    $context->parseEntityFields($stub);
 
-    $this->assertSame(['moderation_state' => 'draft'], (array) $entity);
+    $this->assertSame(['moderation_state' => 'draft'], $stub->getValues());
   }
 
   /**
@@ -327,8 +328,8 @@ class RawDrupalContextTest extends TestCase {
     $context = new RawDrupalContext();
     $context->setDrupal($drupal);
 
-    $entity = (object) ['field_test' => 'value'];
-    $context->parseEntityFields('taxonomy_term', $entity);
+    $stub = new EntityStub('taxonomy_term', NULL, ['field_test' => 'value']);
+    $context->parseEntityFields($stub);
   }
 
 }

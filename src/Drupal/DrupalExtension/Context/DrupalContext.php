@@ -17,6 +17,8 @@ use Drupal\Driver\Capability\CacheCapabilityInterface;
 use Drupal\Driver\Capability\CronCapabilityInterface;
 use Drupal\Driver\Capability\RoleCapabilityInterface;
 use Drupal\Driver\Capability\UserCapabilityInterface;
+use Drupal\Driver\Entity\EntityStub;
+use Drupal\Driver\Entity\EntityStubInterface;
 
 /**
  * Provides pre-built step definitions for interacting with Drupal.
@@ -146,20 +148,20 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    * @param array<string, mixed> $extra_fields
    *   Optional additional fields.
    */
-  protected function createUserStub(string $role, array $extra_fields = []): \stdClass {
-    $user = (object) [
-      'name' => $this->getRandom()->name(8),
+  protected function createUserStub(string $role, array $extra_fields = []): EntityStubInterface {
+    $name = $this->getRandom()->name(8);
+    $stub = new EntityStub('user', NULL, [
+      'name' => $name,
       'pass' => $this->getRandom()->name(16),
       'role' => $role,
-    ];
-
-    $user->mail = $user->name . '@example.com';
+      'mail' => $name . '@example.com',
+    ]);
 
     foreach ($extra_fields as $field => $value) {
-      $user->{$field} = $value;
+      $stub->setValue($field, $value);
     }
 
-    return $user;
+    return $stub;
   }
 
   /**
@@ -457,9 +459,8 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
   #[Given('the following :type content:')]
   public function createNodes(string $type, TableNode $nodesTable): void {
     foreach ($nodesTable->getHash() as $node_hash) {
-      $node = (object) $node_hash;
-      $node->type = $type;
-      $this->nodeCreate($node);
+      $stub = new EntityStub('node', $type, $node_hash);
+      $this->nodeCreate($stub);
     }
   }
 
@@ -566,16 +567,16 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
         unset($user_hash['roles']);
       }
 
-      $user = (object) $user_hash;
-      // Set a password.
-      if (!isset($user->pass)) {
-        $user->pass = $this->getRandom()->name();
+      // Set a password if none was supplied.
+      if (!isset($user_hash['pass'])) {
+        $user_hash['pass'] = $this->getRandom()->name();
       }
 
-      $this->userCreate($user);
+      $stub = new EntityStub('user', NULL, $user_hash);
+      $this->userCreate($stub);
 
       foreach ($roles as $role) {
-        $driver->userAddRole($user, $role);
+        $driver->userAddRole($stub, $role);
       }
     }
   }
@@ -592,10 +593,12 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    */
   #[Given('the following :vocabulary terms:')]
   public function createTerms(string $vocabulary, TableNode $termsTable): void {
+    $machine_name = $this->resolveVocabularyMachineName($vocabulary);
+
     foreach ($termsTable->getHash() as $terms_hash) {
-      $term = (object) $terms_hash;
-      $term->vocabulary_machine_name = $vocabulary;
-      $this->termCreate($term);
+      $terms_hash['vocabulary_machine_name'] = $machine_name;
+      $stub = new EntityStub('taxonomy_term', $machine_name, $terms_hash);
+      $this->termCreate($stub);
     }
   }
 
@@ -615,10 +618,10 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
   #[Given('the/these (following )languages are available:')]
   public function createLanguages(TableNode $langcodesTable): void {
     foreach ($langcodesTable->getHash() as $row) {
-      $language = (object) [
+      $stub = new EntityStub('language', NULL, [
         'langcode' => $row['languages'],
-      ];
-      $this->languageCreate($language);
+      ]);
+      $this->languageCreate($stub);
     }
   }
 
@@ -669,12 +672,9 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    * Create a node and visit its detail page.
    */
   protected function createAndVisitNode(string $type, string $title): void {
-    $node = (object) [
-      'title' => $title,
-      'type' => $type,
-    ];
-    $saved = $this->nodeCreate($node);
-    $this->getSession()->visit($this->locatePath('/node/' . $saved->nid));
+    $stub = new EntityStub('node', $type, ['title' => $title]);
+    $this->nodeCreate($stub);
+    $this->getSession()->visit($this->locatePath('/node/' . $stub->getId()));
   }
 
   /**
@@ -686,61 +686,54 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
     }
 
     $current_user = $this->getUserManager()->getCurrentUser();
-    if (!$current_user instanceof \stdClass) {
+
+    if (!$current_user instanceof EntityStubInterface) {
       throw new \RuntimeException('There is no current logged in user to create a node for.');
     }
-    $node = (object) [
-      'title' => $title,
-      'type' => $type,
-      'body' => $this->getRandom()->name(255),
-      'uid' => $current_user->uid,
-    ];
-    $saved = $this->nodeCreate($node);
 
-    $this->getSession()->visit($this->locatePath('/node/' . $saved->nid));
+    $stub = new EntityStub('node', $type, [
+      'title' => $title,
+      'body' => $this->getRandom()->name(255),
+      'uid' => $current_user->getValue('uid') ?? $current_user->getId(),
+    ]);
+    $this->nodeCreate($stub);
+
+    $this->getSession()->visit($this->locatePath('/node/' . $stub->getId()));
   }
 
   /**
    * Create a node from a TableNode of fields and visit it.
    */
   protected function createAndVisitNodeFromTable(string $type, TableNode $fields): void {
-    $node = (object) [
-      'type' => $type,
-    ];
-    foreach ($fields->getRowsHash() as $field => $value) {
-      $node->{$field} = $value;
-    }
+    $stub = new EntityStub('node', $type, $fields->getRowsHash());
+    $this->nodeCreate($stub);
 
-    $saved = $this->nodeCreate($node);
-
-    $this->getSession()->visit($this->locatePath('/node/' . $saved->nid));
+    $this->getSession()->visit($this->locatePath('/node/' . $stub->getId()));
   }
 
   /**
    * Create a term on an existing vocabulary and visit it.
    */
   protected function createAndVisitTerm(string $vocabulary, string $name): void {
-    $term = (object) [
+    $machine_name = $this->resolveVocabularyMachineName($vocabulary);
+    $stub = new EntityStub('taxonomy_term', $machine_name, [
       'name' => $name,
-      'vocabulary_machine_name' => $vocabulary,
+      'vocabulary_machine_name' => $machine_name,
       'description' => $this->getRandom()->name(255),
-    ];
-    $saved = $this->termCreate($term);
+    ]);
+    $this->termCreate($stub);
 
-    $this->getSession()->visit($this->locatePath('/taxonomy/term/' . $saved->tid));
+    $this->getSession()->visit($this->locatePath('/taxonomy/term/' . $stub->getId()));
   }
 
   /**
    * Create a node of the given type and verify its edit page returns 200.
    */
   protected function assertNodeTypeIsEditable(string $type): void {
-    $node = (object) [
-      'type' => $type,
-      'title' => 'Test ' . $type,
-    ];
-    $saved = $this->nodeCreate($node);
+    $stub = new EntityStub('node', $type, ['title' => 'Test ' . $type]);
+    $this->nodeCreate($stub);
 
-    $this->getSession()->visit($this->locatePath('/node/' . $saved->nid . '/edit'));
+    $this->getSession()->visit($this->locatePath('/node/' . $stub->getId() . '/edit'));
 
     $this->assertSession()->statusCodeEquals(200);
   }

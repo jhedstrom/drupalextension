@@ -22,6 +22,8 @@ use Behat\Mink\Exception\ExpectationException;
 use Drupal\Core\Database\Database;
 use Drupal\Driver\Core\Field\AbstractHandler;
 use Drupal\Driver\DrupalDriver;
+use Drupal\Driver\Entity\EntityStub;
+use Drupal\Driver\Entity\EntityStubInterface;
 use Drupal\DrupalExtension\Hook\Attribute\AfterNodeCreate;
 use Drupal\DrupalExtension\Hook\Attribute\AfterTermCreate;
 use Drupal\DrupalExtension\Hook\Attribute\AfterUserCreate;
@@ -129,10 +131,11 @@ class FeatureContext extends RawDrupalContext {
     parent::alterNodeParameters($scope);
     // @see `tests/behat/features/api.feature`
     // Change 'published on' to the expected 'created'.
-    $node = $scope->getEntity();
-    if (isset($node->{"published on"})) {
-      $node->created = $node->{"published on"};
-      unset($node->{"published on"});
+    $stub = $scope->getStub();
+
+    if ($stub->hasValue('published on')) {
+      $stub->setValue('created', $stub->getValue('published on'));
+      $stub->removeValue('published on');
     }
   }
 
@@ -143,10 +146,11 @@ class FeatureContext extends RawDrupalContext {
   public static function testAlterTermParameters(EntityScope $scope): void {
     // @see `tests/behat/features/api.feature`
     // Change 'Label' to expected 'name'.
-    $term = $scope->getEntity();
-    if (isset($term->{'Label'})) {
-      $term->name = $term->{'Label'};
-      unset($term->{'Label'});
+    $stub = $scope->getStub();
+
+    if ($stub->hasValue('Label')) {
+      $stub->setValue('name', $stub->getValue('Label'));
+      $stub->removeValue('Label');
     }
   }
 
@@ -157,17 +161,18 @@ class FeatureContext extends RawDrupalContext {
   public static function testAlterUserParameters(EntityScope $scope): void {
     // @see `tests/behat/features/api.feature`
     // Concatenate 'First name' and 'Last name' to form user name.
-    $user = $scope->getEntity();
+    $stub = $scope->getStub();
 
-    if (isset($user->{"First name"}) && isset($user->{"Last name"})) {
-      $user->name = $user->{"First name"} . ' ' . $user->{"Last name"};
-      unset($user->{"First name"}, $user->{"Last name"});
+    if ($stub->hasValue('First name') && $stub->hasValue('Last name')) {
+      $stub->setValue('name', $stub->getValue('First name') . ' ' . $stub->getValue('Last name'));
+      $stub->removeValue('First name');
+      $stub->removeValue('Last name');
     }
 
     // Transform custom 'E-mail' to 'mail'.
-    if (isset($user->{"E-mail"})) {
-      $user->mail = $user->{"E-mail"};
-      unset($user->{"E-mail"});
+    if ($stub->hasValue('E-mail')) {
+      $stub->setValue('mail', $stub->getValue('E-mail'));
+      $stub->removeValue('E-mail');
     }
   }
 
@@ -176,8 +181,7 @@ class FeatureContext extends RawDrupalContext {
    */
   #[AfterNodeCreate]
   public static function testAfterNodeCreate(EntityScope $scope): void {
-    $node = $scope->getEntity();
-    if (empty((array) $node)) {
+    if ($scope->getStub()->getValues() === []) {
       throw new \Exception('Failed to find a node in @afterNodeCreate hook.');
     }
   }
@@ -187,8 +191,7 @@ class FeatureContext extends RawDrupalContext {
    */
   #[AfterTermCreate]
   public static function testAfterTermCreate(EntityScope $scope): void {
-    $term = $scope->getEntity();
-    if (empty((array) $term)) {
+    if ($scope->getStub()->getValues() === []) {
       throw new \Exception('Failed to find a term in @afterTermCreate hook.');
     }
   }
@@ -198,8 +201,7 @@ class FeatureContext extends RawDrupalContext {
    */
   #[AfterUserCreate]
   public static function testAfterUserCreate(EntityScope $scope): void {
-    $user = $scope->getEntity();
-    if (empty((array) $user)) {
+    if ($scope->getStub()->getValues() === []) {
       throw new \Exception('Failed to find a user in @afterUserCreate hook.');
     }
   }
@@ -286,12 +288,12 @@ class FeatureContext extends RawDrupalContext {
    */
   #[Given('I am logged in as a user with name :name and password :password')]
   public function testAssertAuthenticatedByUsernameAndPassword(string $name, string $password): void {
-    $user = (object) [
+    $stub = new EntityStub('user', NULL, [
       'name' => $name,
       'pass' => $password,
-    ];
-    $this->userCreate($user);
-    $this->login($user);
+    ]);
+    $this->userCreate($stub);
+    $this->login($stub);
   }
 
   /**
@@ -300,10 +302,11 @@ class FeatureContext extends RawDrupalContext {
   #[Then('I should be logged in on the backend')]
   public function testAssertBackendLogin(): void {
     $user = $this->getUserManager()->getCurrentUser();
-    if (!$user instanceof \stdClass) {
+    if (!$user instanceof EntityStubInterface) {
       throw new \LogicException('No current user in the user manager.');
     }
-    if (!$account = \Drupal::entityTypeManager()->getStorage('user')->load($user->uid)) {
+    $uid = $user->getValue('uid') ?? $user->getId();
+    if (!$account = \Drupal::entityTypeManager()->getStorage('user')->load($uid)) {
       throw new \LogicException('No user found in the system.');
     }
     if (!$account->id()) {
@@ -386,10 +389,10 @@ class FeatureContext extends RawDrupalContext {
   #[Given('I remember the current user name')]
   public function testRememberCurrentUserName(): void {
     $user = $this->getUserManager()->getCurrentUser();
-    if (!$user instanceof \stdClass) {
+    if (!$user instanceof EntityStubInterface) {
       throw new \LogicException('No current user in the user manager.');
     }
-    $this->previousUserName = $user->name;
+    $this->previousUserName = (string) $user->getValue('name');
   }
 
   /**
@@ -398,12 +401,13 @@ class FeatureContext extends RawDrupalContext {
   #[Then('the current user should be different from the remembered user')]
   public function testAssertDifferentUser(): void {
     $user = $this->getUserManager()->getCurrentUser();
-    if (!$user instanceof \stdClass) {
+    if (!$user instanceof EntityStubInterface) {
       throw new \LogicException('No current user in the user manager.');
     }
-    if ($user->name === $this->previousUserName) {
+    $name = (string) $user->getValue('name');
+    if ($name === $this->previousUserName) {
       throw new ExpectationException(
-        sprintf('Expected a different user but got the same user "%s".', $user->name),
+        sprintf('Expected a different user but got the same user "%s".', $name),
         $this->getSession()->getDriver()
       );
     }
@@ -569,12 +573,18 @@ class FeatureContext extends RawDrupalContext {
   public function testDeleteCurrentUserFromDatabase(): void {
     $user = $this->getUserManager()->getCurrentUser();
 
-    if (!$user || empty($user->uid)) {
+    if (!$user instanceof EntityStubInterface) {
+      throw new \RuntimeException('No current user to delete.');
+    }
+
+    $uid = $user->getValue('uid') ?? $user->getId();
+
+    if (empty($uid)) {
       throw new \RuntimeException('No current user to delete.');
     }
 
     // Delete the user entity from the database.
-    $account = \Drupal::entityTypeManager()->getStorage('user')->load($user->uid);
+    $account = \Drupal::entityTypeManager()->getStorage('user')->load($uid);
 
     if ($account) {
       $account->delete();
@@ -583,7 +593,7 @@ class FeatureContext extends RawDrupalContext {
     // Remove the user from the tracked list so cleanUsers() won't attempt
     // to delete it again (which would trigger a PHP warning). The current
     // user reference is intentionally left set to simulate stale auth state.
-    $this->getUserManager()->removeUser($user->name);
+    $this->getUserManager()->removeUser((string) $user->getValue('name'));
   }
 
   /**

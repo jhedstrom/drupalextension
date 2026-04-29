@@ -2,6 +2,7 @@
 
 namespace spec\Drupal\DrupalExtension\Manager;
 
+use Drupal\Driver\Entity\EntityStub;
 use Drupal\DrupalExtension\Manager\DrupalUserManager;
 use PhpSpec\ObjectBehavior;
 
@@ -15,15 +16,13 @@ class DrupalUserManagerSpec extends ObjectBehavior {
   }
 
   public function it_can_set_and_get_the_current_user() {
-    $user = new \stdClass();
-    $user->name = 'some_name';
+    $user = new EntityStub('user', NULL, ['name' => 'some_name']);
     $this->setCurrentUser($user);
     $this->getCurrentUser()->shouldBe($user);
   }
 
   public function it_can_add_and_remove_users() {
-    $user = new \stdClass();
-    $user->name = 'some_name';
+    $user = new EntityStub('user', NULL, ['name' => 'some_name']);
     $this->addUser($user);
     $this->getUser('some_name')->shouldBe($user);
     $this->removeUser('some_name');
@@ -32,8 +31,7 @@ class DrupalUserManagerSpec extends ObjectBehavior {
 
   public function it_can_get_all_registered_users() {
     $this->hasUsers()->shouldBe(FALSE);
-    $user = new \stdClass();
-    $user->name = 'some_name';
+    $user = new EntityStub('user', NULL, ['name' => 'some_name']);
     $this->addUser($user);
     $this->hasUsers()->shouldBe(TRUE);
     $this->getUsers()->shouldBe(['some_name' => $user]);
@@ -41,17 +39,14 @@ class DrupalUserManagerSpec extends ObjectBehavior {
 
   public function it_can_determine_anonymous_users() {
     $this->currentUserIsAnonymous()->shouldBe(TRUE);
-    $user = new \stdClass();
-    $user->name = 'some_name';
+    $user = new EntityStub('user', NULL, ['name' => 'some_name']);
     $this->setCurrentUser($user);
     $this->currentUserIsAnonymous()->shouldBe(FALSE);
   }
 
   public function it_can_check_roles() {
     $this->currentUserHasRole('some_role')->shouldBe(FALSE);
-    $user = new \stdClass();
-    $user->name = 'some_name';
-    $user->role = 'some_role';
+    $user = new EntityStub('user', NULL, ['name' => 'some_name', 'role' => 'some_role']);
     $this->setCurrentUser($user);
     $this->currentUserHasRole('some_role')->shouldBe(TRUE);
   }

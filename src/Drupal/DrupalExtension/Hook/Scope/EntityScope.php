@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace Drupal\DrupalExtension\Hook\Scope;
 
 use Behat\Testwork\Hook\Scope\HookScope;
+use Drupal\Driver\Entity\EntityStubInterface;
 
 /**
  * Represents an Entity hook scope.
@@ -28,11 +29,11 @@ interface EntityScope extends HookScope {
   public function getContext();
 
   /**
-   * Returns scope entity.
+   * Returns the entity stub.
    *
-   * @return \stdClass
-   *   The entity object.
+   * @return \Drupal\Driver\Entity\EntityStubInterface
+   *   The entity stub flowing through the create hooks.
    */
-  public function getEntity();
+  public function getStub(): EntityStubInterface;
 
 }

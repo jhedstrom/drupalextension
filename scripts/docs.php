@@ -66,19 +66,24 @@ function main(array $options = []): void {
 
   $lenient = isset($options['warning-on-invalid']);
   $results = validate($info, $base_path);
+  $has_errors = has_validation_errors($results);
 
-  $tree_output = '';
-  if (has_validation_errors($results)) {
-    $tree_output = render_validation_tree($results);
+  // Always render the tree so the validation logs (and the CI comment) show
+  // the per-context outcome even on a clean run. The CLI only prints the
+  // tree when there is something to action.
+  $tree_output = render_validation_tree($results, $has_errors);
+
+  if ($has_errors) {
     echo $tree_output;
-    if (!$lenient) {
-      exit(1);
-    }
   }
 
   $log_dir = is_string($options['log-dir'] ?? NULL) ? $options['log-dir'] : NULL;
   if ($log_dir !== NULL) {
     write_validation_logs($tree_output, $log_dir);
+  }
+
+  if ($has_errors && !$lenient) {
+    exit(1);
   }
 
   $steps_markdown = PHP_EOL . render_info($info, $base_path) . PHP_EOL;
@@ -803,11 +808,14 @@ function has_validation_errors(array $results): bool {
  *
  * @param array<string, array{file: array{pass: bool, path: string}, methods: array<string, array<string, array{pass: bool, messages: array<int, string>}>>}> $results
  *   Structured validation results from validate().
+ * @param bool $has_errors
+ *   Whether the result set contains any validation errors. Drives the
+ *   header label so a clean run reads as a report instead of a warning.
  *
  * @return string
  *   The rendered tree output.
  */
-function render_validation_tree(array $results): string {
+function render_validation_tree(array $results, bool $has_errors = TRUE): string {
   $bold = "\033[1m";
   $green = "\033[32m";
   $yellow = "\033[33m";
@@ -851,7 +859,9 @@ function render_validation_tree(array $results): string {
   }
 
   $output = '';
-  $output .= $yellow . 'Validation warnings:' . $reset . PHP_EOL . PHP_EOL;
+  $header_label = $has_errors ? 'Validation warnings:' : 'Validation report:';
+  $header_color = $has_errors ? $yellow : $green;
+  $output .= $header_color . $header_label . $reset . PHP_EOL . PHP_EOL;
 
   $class_names = array_keys($results);
 

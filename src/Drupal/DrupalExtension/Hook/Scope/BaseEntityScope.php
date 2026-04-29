@@ -10,6 +10,7 @@ namespace Drupal\DrupalExtension\Hook\Scope;
 
 use Behat\Behat\Context\Context;
 use Behat\Testwork\Environment\Environment;
+use Drupal\Driver\Entity\EntityStubInterface;
 
 /**
  * Represents an Entity hook scope.
@@ -26,9 +27,9 @@ abstract class BaseEntityScope implements EntityScope {
      */
     private readonly Context $context,
     /**
-     * Entity object.
+     * Entity stub.
      */
-    private readonly \stdClass $entity,
+    private readonly EntityStubInterface $entityStub,
   ) {
   }
 
@@ -43,10 +44,10 @@ abstract class BaseEntityScope implements EntityScope {
   }
 
   /**
-   * Returns the entity object.
+   * {@inheritdoc}
    */
-  public function getEntity(): \stdClass {
-    return $this->entity;
+  public function getStub(): EntityStubInterface {
+    return $this->entityStub;
   }
 
   /**
