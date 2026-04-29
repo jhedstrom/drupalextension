@@ -55,17 +55,17 @@ class MinkContext extends MinkExtension implements TranslatableContext {
   }
 
   /**
-   * Visit a given path, and additionally check for HTTP response code 200.
+   * Visit a given path without asserting any HTTP status.
+   *
+   * Use 'Then I should get a :code HTTP response' to assert status separately.
    *
    * @code
    * When I visit "/node/1"
    * @endcode
-   *
-   * @throws \Behat\Mink\Exception\UnsupportedDriverActionException
    */
   #[When('I visit :path')]
   public function iVisitPath(string $path): void {
-    $this->visitPathWithStatusCheck($path);
+    $this->getSession()->visit($this->locatePath($path));
   }
 
   /**
@@ -978,9 +978,12 @@ JS;
     }
     $value = $radiobutton->getAttribute('value');
     $radio_id = $radiobutton->getAttribute('id');
-    $labelonpage = $element->find('css', sprintf("label[for='%s']", $radio_id))->getText();
-    if ($label != $labelonpage) {
-      throw new \Exception(sprintf("Button with id '%s' has label '%s' instead of '%s' on the page %s", $id, $labelonpage, $label, $this->getSession()->getCurrentUrl()));
+    $label_element = $radio_id !== NULL ? $element->find('css', sprintf("label[for='%s']", $radio_id)) : NULL;
+    if ($label_element !== NULL) {
+      $labelonpage = $label_element->getText();
+      if ($label != $labelonpage) {
+        throw new \Exception(sprintf("Button with id '%s' has label '%s' instead of '%s' on the page %s", $id, $labelonpage, $label, $this->getSession()->getCurrentUrl()));
+      }
     }
     $radiobutton->selectOption($value, FALSE);
   }

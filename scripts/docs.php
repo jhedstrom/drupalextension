@@ -552,7 +552,7 @@ function render_info(array $info, string $base_path = '', ?string $path_for_link
       }
     }
 
-    $description_full = (string) preg_replace('/^/m', '>  ', $description_full);
+    $description_full = (string) preg_replace('/^/m', '> ', $description_full);
     $content_output .= $description_full . PHP_EOL . PHP_EOL;
 
     // Add to index.

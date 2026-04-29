@@ -18,7 +18,7 @@
 
 [Source](src/Drupal/DrupalExtension/Context/BatchContext.php), [Example](tests/behat/features/batch.feature)
 
->  Extensions to the Mink Extension.
+> Extensions to the Mink Extension.
 
 
 <details>
@@ -57,7 +57,7 @@ Creates a queue item. Defaults inputs if none are available.
 
 [Source](src/Drupal/DrupalExtension/Context/ConfigContext.php), [Example](tests/behat/features/config.feature)
 
->  Provides pre-built step definitions for interacting with Drupal config.
+> Provides pre-built step definitions for interacting with Drupal config.
 
 
 <details>
@@ -103,7 +103,7 @@ Sets complex configuration.
 
 [Source](src/Drupal/DrupalExtension/Context/DrupalContext.php), [Example](tests/behat/features/drupal.feature)
 
->  Provides pre-built step definitions for interacting with Drupal.
+> Provides pre-built step definitions for interacting with Drupal.
 
 
 <details>
@@ -590,7 +590,7 @@ Then I should be able to edit the :type content
 
 [Source](src/Drupal/DrupalExtension/Context/DrushContext.php), [Example](tests/behat/features/drush.feature)
 
->  Provides step definitions for interacting directly with Drush commands.
+> Provides step definitions for interacting directly with Drush commands.
 
 
 <details>
@@ -681,7 +681,7 @@ Then the drush output should not contain "error"
 
 [Source](src/Drupal/DrupalExtension/Context/MailContext.php), [Example](tests/behat/features/mail.feature)
 
->  Provides pre-built step definitions for interacting with mail.
+> Provides pre-built step definitions for interacting with mail.
 
 
 <details>
@@ -1082,7 +1082,7 @@ Then there should be a total of 1 new mail sent to "user@example.com" with the s
 
 [Source](src/Drupal/DrupalExtension/Context/MarkupContext.php), [Example](tests/behat/features/markup.feature)
 
->  Extensions to the Mink Extension.
+> Extensions to the Mink Extension.
 
 
 <details>
@@ -1254,7 +1254,7 @@ Then I should see "Notice" in the "div" element with the "color" CSS property se
 
 [Source](src/Drupal/DrupalExtension/Context/MessageContext.php), [Example](tests/behat/features/message.feature)
 
->  Provides step-definitions for interacting with Drupal messages.
+> Provides step-definitions for interacting with Drupal messages.
 
 
 <details>
@@ -1478,7 +1478,7 @@ Checks if the current page does not contain the given message.
 
 [Source](src/Drupal/DrupalExtension/Context/MinkContext.php), [Example](tests/behat/features/mink.feature)
 
->  Extensions to the Mink Extension.
+> Extensions to the Mink Extension.
 
 
 <details>
@@ -1657,7 +1657,7 @@ Given I uncheck the box "Promoted to front page"
   <summary><code>@When I visit :path</code></summary>
 
 <br/>
-Visit a given path, and additionally check for HTTP response code 200. 
+Visit a given path without asserting any HTTP status. 
 <br/><br/>
 
 ```gherkin

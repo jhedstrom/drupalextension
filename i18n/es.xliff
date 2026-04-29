@@ -51,7 +51,7 @@
       </trans-unit>
       <trans-unit id="i-am-viewing-a-an-type-with-the-title-title">
         <source><![CDATA[I am viewing a/an :type with the title :title]]></source>
-        <target><![CDATA[(que )estoy viendo un contenido de tipo :type con el título :title]]></target>
+        <target><![CDATA[(que )estoy viendo un(a) :type con el título :title]]></target>
       </trans-unit>
       <trans-unit id="i-am-viewing-a-an-type-content-with-the-title-title">
         <source><![CDATA[I am viewing a/an :type content with the title :title]]></source>
@@ -59,7 +59,7 @@
       </trans-unit>
       <trans-unit id="a-an-type-with-the-title-title">
         <source><![CDATA[a/an :type with the title :title]]></source>
-        <target><![CDATA[un contenido de tipo :type con el título :title]]></target>
+        <target><![CDATA[un(a) :type con el título :title]]></target>
       </trans-unit>
       <trans-unit id="a-an-type-content-with-the-title-title">
         <source><![CDATA[a/an :type content with the title :title]]></source>
@@ -67,7 +67,7 @@
       </trans-unit>
       <trans-unit id="i-am-viewing-my-type-with-the-title-title">
         <source><![CDATA[I am viewing my :type with the title :title]]></source>
-        <target><![CDATA[(que )estoy viendo mi contenido de tipo :type con el título :title]]></target>
+        <target><![CDATA[(que )estoy viendo mi :type con el título :title]]></target>
       </trans-unit>
       <trans-unit id="i-am-viewing-my-type-content-with-the-title-title">
         <source><![CDATA[I am viewing my :type content with the title :title]]></source>
