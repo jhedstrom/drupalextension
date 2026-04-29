@@ -383,7 +383,7 @@ regenerate `STEPS.md` and surface any issues.
 | Rule | Applies to |
 |------|------------|
 | `@Given` steps ending with `:` must contain `following`. | Table-form Givens |
-| `@When` steps must contain `I `. | All Whens |
+| `@When` steps must contain `I` followed by a space. | All Whens |
 | `@Then` steps must contain `should`. | All Thens |
 | `@Then` steps must contain `the`, `a`, or `no`. | All Thens |
 | `@Then` method names must contain `Assert`. | All Then methods |

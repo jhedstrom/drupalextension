@@ -396,7 +396,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
   }
 
   /**
-   * Create content of the given type without visiting it.
+   * Create content of the given type and visit it.
    *
    * @code
    * Given a "page" with the title "About us"
@@ -408,7 +408,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
   }
 
   /**
-   * Create content (with the explicit "content" word) without visiting.
+   * Create content (with the explicit "content" word) and visit it.
    *
    * @code
    * Given a "page" content with the title "About us"
