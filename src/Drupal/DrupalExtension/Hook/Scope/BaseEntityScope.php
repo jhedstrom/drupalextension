@@ -29,7 +29,7 @@ abstract class BaseEntityScope implements EntityScope {
     /**
      * Entity stub.
      */
-    private readonly EntityStubInterface $stub,
+    private readonly EntityStubInterface $entityStub,
   ) {
   }
 
@@ -47,7 +47,7 @@ abstract class BaseEntityScope implements EntityScope {
    * {@inheritdoc}
    */
   public function getStub(): EntityStubInterface {
-    return $this->stub;
+    return $this->entityStub;
   }
 
   /**
