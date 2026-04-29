@@ -463,7 +463,7 @@ class MailContext extends RawMailContext {
     $actual = array_values($this->getMail(['to' => $to, 'subject' => $subject]));
     $expected_count = match ($count) {
       'no' => 0,
-            'a', 'an' => NULL,
+            'a', 'an' => 1,
             default => (int) $count,
     };
     $this->assertMessageCount($actual, $expected_count);
