@@ -14,6 +14,7 @@ use Behat\Behat\Hook\Scope\AfterStepScope;
 use Behat\Behat\Context\TranslatableContext;
 use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\Mink\Exception\UnsupportedDriverActionException;
+use Behat\Mink\Selector\Xpath\Escaper;
 use Behat\MinkExtension\Context\MinkContext as MinkExtension;
 use Drupal\DrupalExtension\RegionTrait;
 use Drupal\DrupalExtension\TagTrait;
@@ -791,15 +792,10 @@ JS;
   #[When('I select the radio button :label')]
   public function assertSelectRadioById(string $label, string $id = ''): void {
     $element = $this->getSession()->getPage();
-    if ($id !== '' && $id !== '0') {
-      $radiobutton = $element->findById($id);
-    }
-    else {
-      $radiobutton = $element->find('named', [
-        'radio',
-        $this->getSession()->getSelectorsHandler()->xpathLiteral($label),
-      ]);
-    }
+    $radiobutton = $id !== '' && $id !== '0' ? $element->findById($id) : $element->find('named', [
+      'radio',
+      $label,
+    ]);
     if ($radiobutton === NULL) {
       throw new \Exception(sprintf('The radio button with "%s" was not found on the page %s', $id ?: $label, $this->getSession()->getCurrentUrl()));
     }
@@ -826,7 +822,8 @@ JS;
     $page = $this->getSession()->getPage();
 
     $action = strtolower(trim($action));
-    $literal = $this->getSession()->getSelectorsHandler()->xpathLiteral($summary);
+    $escaper = new Escaper();
+    $literal = $escaper->escapeLiteral($summary);
 
     if ($action === 'expand') {
       $expanded_state = "[not(@open)]";

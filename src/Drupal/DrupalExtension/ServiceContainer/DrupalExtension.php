@@ -7,7 +7,6 @@ namespace Drupal\DrupalExtension\ServiceContainer;
 use Behat\Behat\Context\ServiceContainer\ContextExtension;
 use Behat\Testwork\ServiceContainer\Extension as ExtensionInterface;
 use Behat\Testwork\ServiceContainer\ExtensionManager;
-use Behat\Testwork\ServiceContainer\ServiceProcessor;
 use Drupal\DrupalExtension\Compiler\DriverPass;
 use Drupal\DrupalExtension\Compiler\EventSubscriberPass;
 use Drupal\DrupalExtension\Context\ContextClass\ClassGenerator;
@@ -34,18 +33,6 @@ class DrupalExtension implements ExtensionInterface {
    * Selectors handler ID.
    */
   const SELECTORS_HANDLER_ID = 'drupal.selectors_handler';
-
-  /**
-   * Service processor for finding and sorting tagged services.
-   */
-  private readonly ServiceProcessor $serviceProcessor;
-
-  /**
-   * Initializes compiler pass.
-   */
-  public function __construct(?ServiceProcessor $processor = NULL) {
-    $this->serviceProcessor = $processor ?: new ServiceProcessor();
-  }
 
   /**
    * {@inheritdoc}
@@ -88,7 +75,6 @@ class DrupalExtension implements ExtensionInterface {
   public function process(ContainerBuilder $container): void {
     $this->processDriverPass($container);
     $this->processEventSubscriberPass($container);
-    $this->processEnvironmentReaderPass($container);
     $this->processClassGenerator($container);
   }
 
@@ -190,29 +176,6 @@ class DrupalExtension implements ExtensionInterface {
             ->scalarNode('binary')->defaultValue('vendor/bin/drush')->end()
             ->scalarNode('root')->end()
             ->scalarNode('global_options')->end()
-          ->end()
-        ->end()
-        // Subcontext paths.
-        ->arrayNode('subcontexts')
-          ->info(
-            'The Drupal Extension is capable of discovering additional step-definitions provided by subcontexts.' . PHP_EOL
-            . 'Module authors can provide these in files following the naming convention of foo.behat.inc. Once that module is enabled, the Drupal Extension will load these.' . PHP_EOL
-            . PHP_EOL
-            . 'Additional subcontexts can be loaded by either placing them in the bootstrap directory (typically features/bootstrap) or by adding them to behat.yml.'
-          )
-          ->addDefaultsIfNotSet()
-          ->children()
-            ->arrayNode('paths')
-              ->info(
-                '- /path/to/additional/subcontexts' . PHP_EOL
-                . '- /another/path'
-              )
-              ->useAttributeAsKey('key')
-              ->prototype('variable')->end()
-            ->end()
-            ->scalarNode('autoload')
-              ->defaultValue(TRUE)
-            ->end()
           ->end()
         ->end()
       ->end()
@@ -358,19 +321,6 @@ class DrupalExtension implements ExtensionInterface {
   protected function processEventSubscriberPass(ContainerBuilder $container): void {
     $event_subscriber_pass = new EventSubscriberPass();
     $event_subscriber_pass->process($container);
-  }
-
-  /**
-   * Process the Environment Reader pass.
-   */
-  protected function processEnvironmentReaderPass(ContainerBuilder $container): void {
-    // Register Behat context readers.
-    $references = $this->serviceProcessor->findAndSortTaggedServices($container, ContextExtension::READER_TAG);
-    $definition = $container->getDefinition('drupal.context.environment.reader');
-
-    foreach ($references as $reference) {
-      $definition->addMethodCall('registerContextReader', [$reference]);
-    }
   }
 
   /**

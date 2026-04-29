@@ -21,4 +21,3 @@ Contents:
    drush
    drupalapi
    contexts
-   subcontexts
