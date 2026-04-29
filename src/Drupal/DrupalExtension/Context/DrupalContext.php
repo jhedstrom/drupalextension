@@ -273,12 +273,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
     if ($this->getTableRow($page, $rowText)->findLink($link)) {
       return;
     }
-    throw new ElementNotFoundException(
-      $this->getSession()->getDriver(),
-      sprintf('link in the "%s" row', $rowText),
-      'id|title|alt|text',
-      $link
-    );
+    throw new ElementNotFoundException($this->getSession()->getDriver(), sprintf('link in the "%s" row', $rowText), 'id|title|alt|text', $link);
   }
 
   /**
@@ -317,12 +312,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
       $link_element->click();
       return;
     }
-    throw new ElementNotFoundException(
-      $this->getSession()->getDriver(),
-      sprintf('link in the "%s" row', $rowText),
-      'id|title|alt|text',
-      $link
-    );
+    throw new ElementNotFoundException($this->getSession()->getDriver(), sprintf('link in the "%s" row', $rowText), 'id|title|alt|text', $link);
   }
 
   /**
@@ -344,12 +334,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
       $button_element->press();
       return;
     }
-    throw new ElementNotFoundException(
-      $this->getSession()->getDriver(),
-      sprintf('button in the "%s" row', $rowText),
-      'id|name|title|alt|value',
-      $button
-    );
+    throw new ElementNotFoundException($this->getSession()->getDriver(), sprintf('button in the "%s" row', $rowText), 'id|name|title|alt|value', $button);
   }
 
   /**

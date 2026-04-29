@@ -98,12 +98,8 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
 
     // Verify the login was successful.
     if (!$this->loggedIn()) {
-      throw new ExpectationException(
-        isset($user->role)
-              ? sprintf("Unable to determine if logged in because '%s' ('log_out') link cannot be found for user '%s' with role '%s'", $this->getDrupalText('log_out'), $user->name, $user->role)
-              : sprintf("Unable to determine if logged in because '%s' ('log_out') link cannot be found for user '%s'", $this->getDrupalText('log_out'), $user->name),
-        $session->getDriver()
-      );
+      $message = isset($user->role) ? sprintf("Unable to determine if logged in because '%s' ('log_out') link cannot be found for user '%s' with role '%s'", $this->getDrupalText('log_out'), $user->name, $user->role) : sprintf("Unable to determine if logged in because '%s' ('log_out') link cannot be found for user '%s'", $this->getDrupalText('log_out'), $user->name);
+      throw new ExpectationException($message, $session->getDriver());
     }
 
     // Track the logged-in user.

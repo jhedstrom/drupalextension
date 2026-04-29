@@ -503,12 +503,7 @@ JS;
     // Find the link within the region.
     $link_obj = $region_obj->findLink($link);
     if (empty($link_obj)) {
-      throw new ElementNotFoundException(
-        $this->getSession()->getDriver(),
-        sprintf('link in the "%s" region', $region),
-        'id|title|alt|text',
-        $link
-      );
+      throw new ElementNotFoundException($this->getSession()->getDriver(), sprintf('link in the "%s" region', $region), 'id|title|alt|text', $link);
     }
     $link_obj->click();
   }
@@ -537,12 +532,7 @@ JS;
 
     $button_obj = $region_obj->findButton($button);
     if (empty($button_obj)) {
-      throw new ElementNotFoundException(
-        $this->getSession()->getDriver(),
-        sprintf('button in the "%s" region', $region),
-        'id|name|title|alt|value',
-        $button
-      );
+      throw new ElementNotFoundException($this->getSession()->getDriver(), sprintf('button in the "%s" region', $region), 'id|name|title|alt|value', $button);
     }
     $button_obj->press();
   }
@@ -675,12 +665,7 @@ JS;
 
     $result = $region_obj->findLink($link);
     if (empty($result)) {
-      throw new ElementNotFoundException(
-        $this->getSession()->getDriver(),
-        sprintf('link in the "%s" region', $region),
-        'id|title|alt|text',
-        $link
-      );
+      throw new ElementNotFoundException($this->getSession()->getDriver(), sprintf('link in the "%s" region', $region), 'id|title|alt|text', $link);
     }
   }
 
@@ -875,12 +860,7 @@ JS;
 
     $element = $page->find('xpath', $xpath);
     if (!$element) {
-      throw new ElementNotFoundException(
-        $this->getSession()->getDriver(),
-        sprintf('details element for "%s" action', $action),
-        'summary text',
-        $summary
-      );
+      throw new ElementNotFoundException($this->getSession()->getDriver(), sprintf('details element for "%s" action', $action), 'summary text', $summary);
     }
 
     $ajax_timeout = $this->getMinkParameter('ajax_timeout') ?? 5;
@@ -946,12 +926,7 @@ JS;
       }
     }
 
-    throw new ElementNotFoundException(
-      $this->getSession()->getDriver(),
-      sprintf('heading in the "%s" region', $region),
-      'text',
-      $heading
-    );
+    throw new ElementNotFoundException($this->getSession()->getDriver(), sprintf('heading in the "%s" region', $region), 'text', $heading);
   }
 
   /**
@@ -998,12 +973,7 @@ JS;
       $label,
     ]);
     if ($radiobutton === NULL) {
-      throw new ElementNotFoundException(
-        $this->getSession()->getDriver(),
-        'radio button',
-        $id !== '' && $id !== '0' ? 'id' : 'label',
-        $id ?: $label
-      );
+      throw new ElementNotFoundException($this->getSession()->getDriver(), 'radio button', $id !== '' && $id !== '0' ? 'id' : 'label', $id ?: $label);
     }
     $value = $radiobutton->getAttribute('value');
     $radio_id = $radiobutton->getAttribute('id');

@@ -113,12 +113,7 @@ class MarkupContext extends RawMinkContext {
   #[Then('I should see the :tag element in the :region( region)')]
   public function regionElementAssertExists(string $tag, string $region): void {
     if (!$this->getRegion($region)->findAll('css', $tag)) {
-      throw new ElementNotFoundException(
-        $this->getSession()->getDriver(),
-        sprintf('element in the "%s" region', $region),
-        'css',
-        $tag
-      );
+      throw new ElementNotFoundException($this->getSession()->getDriver(), sprintf('element in the "%s" region', $region), 'css', $tag);
     }
   }
 
@@ -189,12 +184,7 @@ class MarkupContext extends RawMinkContext {
   public function regionElementAttributeAssertEquals(string $tag, string $attribute, string $value, string $region): void {
     $elements = $this->getRegion($region)->findAll('css', $tag);
     if (empty($elements)) {
-      throw new ElementNotFoundException(
-        $this->getSession()->getDriver(),
-        sprintf('element in the "%s" region', $region),
-        'css',
-        $tag
-      );
+      throw new ElementNotFoundException($this->getSession()->getDriver(), sprintf('element in the "%s" region', $region), 'css', $tag);
     }
 
     if (empty($attribute)) {
@@ -286,12 +276,7 @@ class MarkupContext extends RawMinkContext {
    */
   protected function assertRegionContainsButton(string $button, string $region): void {
     if (!$this->getRegion($region)->findButton($button)) {
-      throw new ElementNotFoundException(
-        $this->getSession()->getDriver(),
-        sprintf('button in the "%s" region', $region),
-        'id|name|title|alt|value',
-        $button
-      );
+      throw new ElementNotFoundException($this->getSession()->getDriver(), sprintf('button in the "%s" region', $region), 'id|name|title|alt|value', $button);
     }
   }
 
@@ -334,12 +319,7 @@ class MarkupContext extends RawMinkContext {
     $elements = $regionObj->findAll('css', $tag);
 
     if (empty($elements)) {
-      throw new ElementNotFoundException(
-        $this->getSession()->getDriver(),
-        sprintf('element in the "%s" region', $region),
-        'css',
-        $tag
-      );
+      throw new ElementNotFoundException($this->getSession()->getDriver(), sprintf('element in the "%s" region', $region), 'css', $tag);
     }
 
     foreach ($elements as $element) {
