@@ -18,6 +18,5 @@
 /recipes             export-ignore
 /rector.php          export-ignore
 /scripts             export-ignore
-/spec                export-ignore
 /tests               export-ignore
 /vendor              export-ignore

@@ -7,7 +7,6 @@
     <arg value="sp"/>
 
     <file>src</file>
-    <file>spec</file>
     <file>scripts</file>
     <file>tests/behat/bootstrap</file>
     <file>tests/behat/fixtures/drupal</file>
@@ -18,28 +17,5 @@
     </rule>
     <rule ref="DrevOps"/>
     <rule ref="Generic.PHP.RequireStrictTypes" />
-
-    <!-- PHPSpec uses snake_case methods without visibility keywords and does
-         not follow Drupal commenting conventions. -->
-    <rule ref="Drupal.NamingConventions.ValidFunctionName.ScopeNotCamelCaps">
-        <exclude-pattern>*/spec/*</exclude-pattern>
-    </rule>
-    <rule ref="Squiz.Scope.MethodScope">
-        <exclude-pattern>*/spec/*</exclude-pattern>
-    </rule>
-
-    <rule ref="Drupal.Commenting.FunctionComment">
-        <exclude-pattern>*/spec/*</exclude-pattern>
-    </rule>
-    <rule ref="Drupal.Commenting.DocComment">
-        <exclude-pattern>*/spec/*</exclude-pattern>
-    </rule>
-    <rule ref="Drupal.Commenting.VariableComment">
-        <exclude-pattern>*/spec/*</exclude-pattern>
-    </rule>
-
-    <rule ref="Generic.PHP.RequireStrictTypes">
-        <exclude-pattern>*/spec/*</exclude-pattern>
-    </rule>
 
 </ruleset>

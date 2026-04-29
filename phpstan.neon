@@ -19,12 +19,3 @@ parameters:
     # BehatCliTrait is only used by BehatCliContext (excluded above), so it
     # cannot be analysed standalone.
     - tests/behat/bootstrap/BehatCliTrait.php
-
-  ignoreErrors:
-    -
-      # Since tests and data providers do not have to have parameter docblocks,
-      # it is not possible to specify the type of the parameter, so we ignore
-      # this error.
-      message: '#.*no value type specified in iterable type array.#'
-      path: spec/*
-      reportUnmatched: false

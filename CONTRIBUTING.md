@@ -58,9 +58,6 @@ The test suites are organized by driver:
   Drush drivers. These run against a real Drupal installation.
 - `test-bdd-drupal-https` — Tests HTTPS-specific functionality.
 
-Unit tests (PHPSpec) cover the internal logic of context classes
-and annotation parsing without needing a running Drupal site.
-
 ## Setting up the local environment
 
 The local development environment uses Docker Compose to run
@@ -151,7 +148,6 @@ ahoy lint                   # Check coding standards
 ahoy lint-fix               # Fix coding standards
 
 ahoy test                   # Run all tests without coverage
-ahoy test-phpspec           # Run PHPSpec unit tests
 ahoy test-unit              # Run PHPUnit tests
 ahoy test-bdd               # Run all Behat tests (all profiles)
 ahoy test-bdd-blackbox      # Blackbox tests only

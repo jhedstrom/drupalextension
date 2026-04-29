@@ -146,7 +146,7 @@ commands:
     usage: Lint code.
     cmd: |
       ahoy title "Running PHP Parallel Lint"
-      ahoy cli "vendor/bin/parallel-lint src spec scripts tests"
+      ahoy cli "vendor/bin/parallel-lint src scripts tests"
 
       ahoy title "Running PHP Code Sniffer"
       ahoy cli "vendor/bin/phpcs"
@@ -175,17 +175,10 @@ commands:
   test:
     usage: Run all tests without coverage.
     cmd: |
-      ahoy title "Running PHPSpec"
-      ahoy test-phpspec
-
       ahoy title "Running PHPUnit"
       ahoy test-unit
 
       ahoy test-bdd
-
-  test-phpspec:
-    usage: Run PHPSpec unit tests.
-    cmd: ahoy cli "vendor/bin/phpspec run -f pretty --no-interaction"
 
   test-unit:
     usage: Run PHPUnit tests.
