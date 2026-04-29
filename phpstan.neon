@@ -15,9 +15,6 @@ parameters:
   excludePaths:
     - vendor/*
     - node_modules/*
-    # The AnnotatedDefinitionProposal base class was removed in newer versions of Behat.
-    # This class is kept for backwards compatibility.
-    - src/Drupal/DrupalExtension/Definition/Proposal/AnnotatedDefinitionProposal.php
     - tests/behat/bootstrap/BehatCliContext.php
     # BehatCliTrait is only used by BehatCliContext (excluded above), so it
     # cannot be analysed standalone.

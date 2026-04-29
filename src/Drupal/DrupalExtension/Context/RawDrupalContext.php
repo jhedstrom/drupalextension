@@ -792,24 +792,6 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
   }
 
   /**
-   * User with a given role is already logged in.
-   *
-   * @param string $role
-   *   A single role, or multiple comma-separated roles in a single string.
-   *
-   * @return bool
-   *   Returns TRUE if the current logged in user has this role (or roles).
-   *
-   * @deprecated in drupalextension:5.3.0 and is removed from
-   *   drupalextension:6.0.0. Role-based login steps no longer check the
-   *   current user's role before creating a new user.
-   */
-  public function loggedInWithRole($role): bool {
-    @trigger_error("loggedInWithRole() is deprecated in drupalextension:5.3.0 and is removed from drupalextension:6.0.0. Role-based login steps no longer check the current user's role before creating a new user. See https://www.drupal.org/project/drupalextension/issues/676", E_USER_DEPRECATED);
-    return $this->loggedIn() && $this->getUserManager()->currentUserHasRole($role);
-  }
-
-  /**
    * Returns the Behat context that corresponds with the given class name.
    *
    * This is inspired by InitializedContextEnvironment::getContext() but also

@@ -14,6 +14,7 @@ use Behat\Behat\Hook\Scope\AfterStepScope;
 use Behat\Behat\Context\TranslatableContext;
 use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\Mink\Exception\UnsupportedDriverActionException;
+use Behat\Mink\Selector\Xpath\Escaper;
 use Behat\MinkExtension\Context\MinkContext as MinkExtension;
 use Drupal\DrupalExtension\RegionTrait;
 use Drupal\DrupalExtension\TagTrait;
@@ -795,9 +796,10 @@ JS;
       $radiobutton = $element->findById($id);
     }
     else {
+      $escaper = new Escaper();
       $radiobutton = $element->find('named', [
         'radio',
-        $this->getSession()->getSelectorsHandler()->xpathLiteral($label),
+        $escaper->escapeLiteral($label),
       ]);
     }
     if ($radiobutton === NULL) {
@@ -826,7 +828,8 @@ JS;
     $page = $this->getSession()->getPage();
 
     $action = strtolower(trim($action));
-    $literal = $this->getSession()->getSelectorsHandler()->xpathLiteral($summary);
+    $escaper = new Escaper();
+    $literal = $escaper->escapeLiteral($summary);
 
     if ($action === 'expand') {
       $expanded_state = "[not(@open)]";

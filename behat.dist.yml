@@ -82,10 +82,6 @@ default:
         warning_message_selector: '.messages--warning'
         login_form_selector: 'form#user-login,form#user-login-form'
         logged_in_selector: 'body.logged-in,body.user-logged-in'
-      # Subcontext discovery settings.
-      subcontexts:
-        autoload: true
-        paths: []
 
 # Drupal API profile: tests that bootstrap Drupal.
 drupal:

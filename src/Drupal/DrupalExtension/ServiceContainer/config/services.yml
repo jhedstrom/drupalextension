@@ -1,7 +1,4 @@
 parameters:
-  # This overrides the class for the core version of this class
-  behat.definition.proposal.annotated.class: Drupal\DrupalExtension\Definition\Proposal\AnnotatedDefinitionProposal
-
   # Drupal driver manager.
   drupal.drupal.class: Drupal\DrupalDriverManager
   drupal.drupal.default_session: blackbox
@@ -26,7 +23,6 @@ parameters:
   drupal.listener.drivers.class: Drupal\DrupalExtension\Listener\DriverListener
 
   # Hook loaders.
-  drupal.context.annotation.reader.class: Drupal\DrupalExtension\Context\Annotation\Reader
   drupal.context.attribute.reader.class: Drupal\DrupalExtension\Context\Attribute\HookAttributeReader
 
   # Region selector class.
@@ -66,16 +62,8 @@ services:
       - { name: context.initializer }
   drupal.context.environment.reader:
     class: "%drupal.context.environment.reader.class%"
-    arguments:
-      - "@drupal.drupal"
-      - "%drupal.parameters%"
     tags:
       - { name: environment.reader }
-  drupal.context.loader.annotated:
-    class: "%drupal.context.annotation.reader.class%"
-    arguments:
-    tags:
-      - { name: context.annotation_reader }
   drupal.context.loader.attribute:
     class: "%drupal.context.attribute.reader.class%"
     tags:

@@ -3,9 +3,8 @@ Environment specific settings
 
 Some of the settings in ``behat.yml`` are environment specific. For example the
 base URL may be ``http://mysite.localhost`` on your local development
-environment, while on a test server it might be ``http://127.0.0.1:8080``. Some
-other environment specific settings are the Drupal root path and the paths to
-search for subcontexts.
+environment, while on a test server it might be ``http://127.0.0.1:8080``.
+Another environment specific setting is the Drupal root path.
 
 If you intend to run your tests on different environments these settings should
 not be committed to ``behat.yml``. Instead they should be exported in an
