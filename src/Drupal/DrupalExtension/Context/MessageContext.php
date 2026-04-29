@@ -34,7 +34,7 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
    * @endcode
    */
   #[Then('I should see the error message( containing) :message')]
-  public function assertErrorVisible(string $message): void {
+  public function errorMessageAssertIsVisible(string $message): void {
     $this->assert(
           $message,
           'error_message_selector',
@@ -58,12 +58,12 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
    * @endcode
    */
   #[Then('I should see the following error message(s):')]
-  public function assertMultipleErrors(TableNode $messages): void {
+  public function errorMessagesAssertAreVisible(TableNode $messages): void {
     $this->assertValidMessageTable($messages, 'error messages');
     foreach ($messages->getHash() as $value) {
       $value = array_change_key_case($value);
       $message = trim($value['error messages']);
-      $this->assertErrorVisible($message);
+      $this->errorMessageAssertIsVisible($message);
     }
   }
 
@@ -101,7 +101,7 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
    * @endcode
    */
   #[Then('I should not see the following error messages:')]
-  public function assertNotMultipleErrors(TableNode $messages): void {
+  public function errorMessagesAssertAreNotVisible(TableNode $messages): void {
     $this->assertValidMessageTable($messages, 'error messages');
     foreach ($messages->getHash() as $value) {
       $value = array_change_key_case($value);
@@ -122,7 +122,7 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
    * @endcode
    */
   #[Then('I should see the success message( containing) :message')]
-  public function assertSuccessMessage(string $message): void {
+  public function successMessageAssertIsVisible(string $message): void {
     $this->assert(
           $message,
           'success_message_selector',
@@ -145,12 +145,12 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
    * @endcode
    */
   #[Then('I should see the following success messages:')]
-  public function assertMultipleSuccessMessage(TableNode $messages): void {
+  public function successMessagesAssertAreVisible(TableNode $messages): void {
     $this->assertValidMessageTable($messages, 'success messages');
     foreach ($messages->getHash() as $value) {
       $value = array_change_key_case($value);
       $message = trim($value['success messages']);
-      $this->assertSuccessMessage($message);
+      $this->successMessageAssertIsVisible($message);
     }
   }
 
@@ -188,7 +188,7 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
    * @endcode
    */
   #[Then('I should not see the following success messages:')]
-  public function assertNotMultipleSuccessMessage(TableNode $messages): void {
+  public function successMessagesAssertAreNotVisible(TableNode $messages): void {
     $this->assertValidMessageTable($messages, 'success messages');
     foreach ($messages->getHash() as $value) {
       $value = array_change_key_case($value);
@@ -209,7 +209,7 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
    * @endcode
    */
   #[Then('I should see the warning message( containing) :message')]
-  public function assertWarningMessage(string $message): void {
+  public function warningMessageAssertIsVisible(string $message): void {
     $this->assert(
           $message,
           'warning_message_selector',
@@ -232,12 +232,12 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
    * @endcode
    */
   #[Then('I should see the following warning messages:')]
-  public function assertMultipleWarningMessage(TableNode $messages): void {
+  public function warningMessagesAssertAreVisible(TableNode $messages): void {
     $this->assertValidMessageTable($messages, 'warning messages');
     foreach ($messages->getHash() as $value) {
       $value = array_change_key_case($value);
       $message = trim($value['warning messages']);
-      $this->assertWarningMessage($message);
+      $this->warningMessageAssertIsVisible($message);
     }
   }
 
@@ -275,7 +275,7 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
    * @endcode
    */
   #[Then('I should not see the following warning messages:')]
-  public function assertNotMultipleWarningMessage(TableNode $messages): void {
+  public function warningMessagesAssertAreNotVisible(TableNode $messages): void {
     $this->assertValidMessageTable($messages, 'warning messages');
     foreach ($messages->getHash() as $value) {
       $value = array_change_key_case($value);
@@ -296,7 +296,7 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
    * @endcode
    */
   #[Then('I should see the message( containing) :message')]
-  public function assertMessage(string $message): void {
+  public function messageAssertIsVisible(string $message): void {
     $this->assert(
           $message,
           'message_selector',
@@ -317,7 +317,7 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
    * @endcode
    */
   #[Then('I should not see the message( containing) :message')]
-  public function assertNotMessage(string $message): void {
+  public function messageAssertIsNotVisible(string $message): void {
     $this->assertNot(
           $message,
           'message_selector',

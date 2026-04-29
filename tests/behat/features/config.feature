@@ -13,8 +13,8 @@ Feature: ConfigContext
     Then  the "Site name" field should contain "Test config update"
 
   @test-drupal @api
-  Scenario: Assert "Given I set the configuration item :name with key :key with values:" passes
-    Given I set the configuration item "system.performance" with key "css" with values:
+  Scenario: Assert "Given I set the configuration item :name with key :key with the following values:" passes
+    Given I set the configuration item "system.performance" with key "css" with the following values:
       | key        | value |
       | preprocess | true  |
     When I go to "admin/config/development/performance"

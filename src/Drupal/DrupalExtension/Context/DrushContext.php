@@ -6,6 +6,7 @@ namespace Drupal\DrupalExtension\Context;
 
 use Behat\Step\Given;
 use Behat\Step\Then;
+use Behat\Step\When;
 use Behat\Behat\Context\TranslatableContext;
 
 /**
@@ -69,42 +70,42 @@ class DrushContext extends RawDrupalContext implements TranslatableContext {
   }
 
   /**
-   * Assert Drush output contains a string.
+   * Assert the Drush output contains a string.
    *
    * @code
-   * Then drush output should contain "Drupal version"
+   * Then the drush output should contain "Drupal version"
    * @endcode
    */
-  #[Then('drush output should contain :output')]
-  public function assertDrushOutput(string $output): void {
+  #[Then('the drush output should contain :output')]
+  public function drushOutputAssertContains(string $output): void {
     if (!str_contains((string) $this->readDrushOutput(), $this->fixStepArgument($output))) {
       throw new \Exception(sprintf("The last drush command output did not contain '%s'.\nInstead, it was:\n\n%s'", $output, $this->drushOutput));
     }
   }
 
   /**
-   * Assert Drush output matches a regular expression.
+   * Assert the Drush output matches a regular expression.
    *
    * @code
-   * Then drush output should match "/Drupal [0-9]+/"
+   * Then the drush output should match "/Drupal [0-9]+/"
    * @endcode
    */
-  #[Then('drush output should match :regex')]
-  public function assertDrushOutputMatches(string $regex): void {
+  #[Then('the drush output should match :regex')]
+  public function drushOutputAssertMatches(string $regex): void {
     if (!preg_match($regex, (string) $this->readDrushOutput())) {
       throw new \Exception(sprintf("The pattern %s was not found anywhere in the drush output.\nOutput:\n\n%s", $regex, $this->drushOutput));
     }
   }
 
   /**
-   * Assert Drush output does not contain a string.
+   * Assert the Drush output does not contain a string.
    *
    * @code
-   * Then drush output should not contain "error"
+   * Then the drush output should not contain "error"
    * @endcode
    */
-  #[Then('drush output should not contain :output')]
-  public function drushOutputShouldNotContain(string $output): void {
+  #[Then('the drush output should not contain :output')]
+  public function drushOutputAssertNotContains(string $output): void {
     if (str_contains((string) $this->readDrushOutput(), $this->fixStepArgument($output))) {
       throw new \Exception(sprintf("The last drush command output did contain '%s' although it should not.\nOutput:\n\n%s'", $output, $this->drushOutput));
     }
@@ -114,11 +115,11 @@ class DrushContext extends RawDrupalContext implements TranslatableContext {
    * Print the last Drush output.
    *
    * @code
-   * Then print last drush output
+   * When I print the last drush output
    * @endcode
    */
-  #[Then('print last drush output')]
-  public function printLastDrushOutput(): void {
+  #[When('I print the last drush output')]
+  public function iPrintLastDrushOutput(): void {
     echo $this->readDrushOutput();
   }
 

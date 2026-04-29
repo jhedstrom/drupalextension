@@ -104,18 +104,18 @@ class ConfigContext extends RawDrupalContext implements TranslatableContext {
    *   The table listing configuration keys and values.
    *
    * @code
-   *   Given I set the configuration item "system.site" with key "page" with values:
+   *   Given I set the configuration item "system.site" with key "page" with the following values:
    *     | key   | value  |
    *     | front | /node  |
    *     | 403   | /error |
-   *   Given I set the configuration item "some.config" with key "settings" with values:
+   *   Given I set the configuration item "some.config" with key "settings" with the following values:
    *     | key     | value                    |
    *     | enabled | true                     |
    *     | count   | 5                        |
    *     | nested  | {"foo": "bar", "baz": 1} |
    * @endcode
    */
-  #[Given('I set the configuration item :name with key :key with values:')]
+  #[Given('I set the configuration item :name with key :key with the following values:')]
   public function setComplexConfig(string $name, string $key, TableNode $config_table): void {
     $value = [];
     foreach ($config_table->getHash() as $row) {

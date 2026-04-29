@@ -11,11 +11,11 @@
     Then I should see the link "Cron run completed"
 
   Scenario: Create many nodes
-    Given "page" content:
+    Given the following "page" content:
     | title    |
     | Page one |
     | Page two |
-    And "article" content:
+    And the following "article" content:
     | title          |
     | First article  |
     | Second article |
@@ -27,7 +27,7 @@
     And I should see "Second article"
 
   Scenario: Create nodes with fields
-    Given "article" content:
+    Given the following "article" content:
     | title                     | promote | body             |
     | First article with fields |       1 | PLACEHOLDER BODY |
     When I am on the homepage
@@ -35,14 +35,14 @@
     Then I should see the text "PLACEHOLDER BODY"
 
   Scenario: Create and view a node with fields
-    Given I am viewing an "Article" content:
+    Given I am viewing an "Article" content with the following fields:
     | title | My article with fields! |
     | body  | A placeholder           |
     Then I should see the heading "My article with fields!"
     And I should see the text "A placeholder"
 
   Scenario: Create users
-    Given users:
+    Given the following users:
     | name     | mail            | status |
     | Joe User | joe@example.com | 1      |
     And I am logged in as a user with the "administrator" role
@@ -50,7 +50,7 @@
     Then I should see the link "Joe User"
 
   Scenario: Login as a user created during this scenario
-    Given users:
+    Given the following users:
     | name      | status |
     | Test user |      1 |
     When I am logged in as "Test user"
@@ -62,7 +62,7 @@
     Then I should see the heading "My tag"
 
   Scenario: Create many terms
-    Given "tags" terms:
+    Given the following "tags" terms:
     | name    |
     | Tag one |
     | Tag two |
@@ -72,10 +72,10 @@
     And I should see "Tag two"
 
   Scenario: Create nodes with specific authorship
-    Given users:
+    Given the following users:
     | name     | mail            | status |
     | Joe User | joe@example.com | 1      |
-    And "article" content:
+    And the following "article" content:
     | title          | author   | body             | promote |
     | Article by Joe | Joe User | PLACEHOLDER BODY | 1       |
     When I am logged in as a user with the "administrator" role
@@ -84,13 +84,13 @@
     Then I should see the link "Joe User"
 
   Scenario: Create an article with multiple term references
-    Given "tags" terms:
+    Given the following "tags" terms:
     | name      |
     | Tag one   |
     | Tag two   |
     | Tag three |
     | Tag four  |
-    And "article" content:
+    And the following "article" content:
     | title             | field_tags                   |
     | My first article  | Tag one                      |
     | My second article | Tag two, Tag three           |

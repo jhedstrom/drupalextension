@@ -6,6 +6,48 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Changed
+ * Enforced step-definition conventions across all bundled contexts in
+   preparation for 6.0. The `scripts/docs.php` validator now hard-fails CI
+   on any violation.
+   > [!WARNING]
+   > **Breaking change:** Step text and `@Then` method names have been
+   > updated to comply with the new conventions. Feature files that use
+   > the old step text must be updated. Subclasses that override the
+   > renamed methods must rename their overrides.
+   >
+   > **Step text migration table:**
+   >
+   > | Old step text                                                              | New step text                                                                            |
+   > | -------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+   > | `Given there is an item in the system queue:`                              | `Given the following item is in the system queue:`                                       |
+   > | `Given I set ... with key X with values:`                                  | `Given I set ... with key X with the following values:`                                  |
+   > | `Then drush output should contain X`                                       | `Then the drush output should contain X`                                                 |
+   > | `Then drush output should match X`                                         | `Then the drush output should match X`                                                   |
+   > | `Then drush output should not contain X`                                   | `Then the drush output should not contain X`                                             |
+   > | `Then print last drush output`                                             | `When I print the last drush output` (re-categorised from `Then`)                        |
+   > | `When Drupal sends a/an mail:`                                             | `When I send the following mail:` / `When I send the following email:`                  |
+   > | `Then a/an mail has been sent:` (and variants with `to` / `subject`)       | `Then the following mail should have been sent:` (and variants)                          |
+   > | `Then a/an new mail is sent:` (and variants)                               | `Then the following new mail should have been sent:` (and variants)                      |
+   > | `Then N mail(s) have been sent` / `Then no mail has been sent`             | `Then there should be a total of N mail(s) sent` / `... no mail(s) sent`                 |
+   > | `Then N new mail(s) is/are sent`                                           | `Then there should be a total of N new mail(s) sent`                                     |
+   > | `Given users:`                                                             | `Given the following users:`                                                             |
+   > | `Given :type content:`                                                     | `Given the following :type content:`                                                     |
+   > | `Given :vocabulary terms:`                                                 | `Given the following :vocabulary terms:`                                                 |
+   > | `Given I am viewing a/an :type:` (table form)                              | `Given I am viewing a/an :type with the following fields:`                               |
+   > | `Given I am viewing a/an :type content:` (table form)                      | `Given I am viewing a/an :type content with the following fields:`                       |
+   > | `Then I should be able to edit a/an :type`                                 | `Then I should be able to edit the :type`                                                |
+   > | `Then I should be able to edit a/an :type content`                         | `Then I should be able to edit the :type content`                                        |
+   > | `Then break` / `Then I break`                                              | `When break` / `When I break` (re-categorised from `Then`)                               |
+   > | `Then I log out`                                                           | `When I log out` (re-categorised from `Then`)                                            |
+   >
+   > **Method renames** (relevant to subclasses that override these methods):
+   > all `@Then` methods now follow `<concern>Assert<action>` (e.g.
+   > `MessageContext::assertErrorVisible` → `errorMessageAssertIsVisible`,
+   > `MailContext::mailHasBeenSent` → `mailAssertHasBeenSent`,
+   > `DrushContext::drushOutputShouldNotContain` → `drushOutputAssertNotContains`).
+   > Multi-step methods have been split — see `STEPS.md` for the full list.
+
 ## [5.3.0]
 ### Added
  * [#776](https://github.com/jhedstrom/drupalextension/pull/776) - Added table header validation and improved error message in `assertValidMessageTable()`.

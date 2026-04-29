@@ -4,7 +4,7 @@ Feature: MarkupContext
   So that I can trust markup assertions and error messages
 
   @test-blackbox
-  Scenario: Assert "Then I should see the button :button in the :region" fails when button not found in region
+  Scenario: Assert "Then I should see the button :button in the :region region" fails when button not found in region
     Given some behat configuration
     And scenario steps tagged with "@test-blackbox":
       """
@@ -18,7 +18,7 @@ Feature: MarkupContext
       """
 
   @test-blackbox
-  Scenario: Assert "Then I should not see the button :button in the :region" fails when button is present
+  Scenario: Assert "Then I should not see the button :button in the :region region" fails when button is present
     Given some behat configuration
     And scenario steps tagged with "@test-blackbox":
       """
@@ -32,7 +32,7 @@ Feature: MarkupContext
       """
 
   @test-blackbox
-  Scenario: Assert "Then I should see the :tag element in the :region" fails when element not found
+  Scenario: Assert "Then I should see the :tag element in the :region region" fails when element not found
     Given some behat configuration
     And scenario steps tagged with "@test-blackbox":
       """
@@ -46,7 +46,7 @@ Feature: MarkupContext
       """
 
   @test-blackbox
-  Scenario: Assert "Then I should not see the :tag element in the :region" fails when element is present
+  Scenario: Assert "Then I should not see the :tag element in the :region region" fails when element is present
     Given some behat configuration
     And scenario steps tagged with "@test-blackbox":
       """
@@ -60,7 +60,7 @@ Feature: MarkupContext
       """
 
   @test-blackbox
-  Scenario: Assert "Then I should see :text in the :tag element in the :region" fails when text not found
+  Scenario: Assert "Then I should see :text in the :tag element in the :region region" fails when text not found
     Given some behat configuration
     And scenario steps tagged with "@test-blackbox":
       """
@@ -74,7 +74,7 @@ Feature: MarkupContext
       """
 
   @test-blackbox
-  Scenario: Assert "Then I should not see :text in the :tag element in the :region" fails when text is present
+  Scenario: Assert "Then I should not see :text in the :tag element in the :region region" fails when text is present
     Given some behat configuration
     And scenario steps tagged with "@test-blackbox":
       """
@@ -88,7 +88,7 @@ Feature: MarkupContext
       """
 
   @test-blackbox
-  Scenario: Assert "Then I should see the :tag element with the :attribute attribute set to :value in the :region" fails when attribute value does not match
+  Scenario: Assert "Then I should see the :tag element with the :attribute attribute set to :value in the :region region" fails when attribute value does not match
     Given some behat configuration
     And scenario steps tagged with "@test-blackbox":
       """
@@ -102,7 +102,7 @@ Feature: MarkupContext
       """
 
   @test-blackbox
-  Scenario: Assert "Then I should see :text in the :tag element with the :attribute attribute set to :value in the :region" fails when text not found
+  Scenario: Assert "Then I should see :text in the :tag element with the :attribute attribute set to :value in the :region region" fails when text not found
     Given some behat configuration
     And scenario steps tagged with "@test-blackbox":
       """
@@ -116,7 +116,7 @@ Feature: MarkupContext
       """
 
   @test-blackbox
-  Scenario: Assert "Then I should see :text in the :tag element with the :property CSS property set to :value in the :region" fails when CSS value does not match
+  Scenario: Assert "Then I should see :text in the :tag element with the :property CSS property set to :value in the :region region" fails when CSS value does not match
     Given some behat configuration
     And scenario steps tagged with "@test-blackbox":
       """

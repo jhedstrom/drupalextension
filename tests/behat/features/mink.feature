@@ -172,12 +172,12 @@ Feature: MinkContext coverage gaps
     When for "Name" I enter "Jane"
 
   @test-blackbox
-  Scenario: Assert "Then I should see :text in the :region" fails when text not found in region
+  Scenario: Assert "Then I should see the text :text in the :region region" fails when text not found in region
     Given some behat configuration
     And scenario steps tagged with "@test-blackbox":
       """
       Given I am at "form_controls.html"
-      Then I should see "NONEXISTENT_TEXT_xyz" in the "static content" region
+      Then I should see the text "NONEXISTENT_TEXT_xyz" in the "static content" region
       """
     When I run behat
     Then it should fail with an error:
@@ -186,12 +186,12 @@ Feature: MinkContext coverage gaps
       """
 
   @test-blackbox
-  Scenario: Assert "Then I should not see :text in the :region" fails when text is present in region
+  Scenario: Assert "Then I should not see the text :text in the :region region" fails when text is present in region
     Given some behat configuration
     And scenario steps tagged with "@test-blackbox":
       """
       Given I am at "form_controls.html"
-      Then I should not see "Some content text." in the "static content" region
+      Then I should not see the text "Some content text." in the "static content" region
       """
     When I run behat
     Then it should fail with an error:
@@ -205,7 +205,7 @@ Feature: MinkContext coverage gaps
     And scenario steps tagged with "@test-blackbox":
       """
       Given I am at "form_controls.html"
-      Then I should see "something" in the "nonexistent_region" region
+      Then I should see the text "something" in the "nonexistent_region" region
       """
     When I run behat
     Then it should fail with a "InvalidArgumentException" exception:

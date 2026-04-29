@@ -49,7 +49,7 @@ Feature: DrupalContext coverage gaps
     Then I should see the text "Log in"
 
   @test-drupal @api
-  Scenario: Assert "Then I log out" passes
+  Scenario: Assert "When I log out" passes
     Given I am logged in as a user with the "authenticated user" role
     When I log out
     And I visit "/user/login"
@@ -78,7 +78,7 @@ Feature: DrupalContext coverage gaps
     Given some behat configuration
     And scenario steps tagged with "@test-drupal @api":
       """
-      Given users:
+      Given the following users:
         | name      | status |
         | Test user | 1      |
       When I am logged in as "Nonexistent user"
@@ -90,23 +90,23 @@ Feature: DrupalContext coverage gaps
       """
 
   @test-drupal @api
-  Scenario: Assert "Then I should see :text in the :rowText row" passes
+  Scenario: Assert "Then I should see the text :text in the :rowText row" passes
     Given I am logged in as a user with the "administrator" role
-    And "article" content:
+    And the following "article" content:
       | title         | status |
       | Row text test | 1      |
     When I go to "admin/content"
-    Then I should see "Article" in the "Row text test" row
+    Then I should see the text "Article" in the "Row text test" row
     And I should not see the text "Nonexistent Type" in the "Row text test" row
 
   @test-drupal @api
-  Scenario: Assert "Then I should see :text in the :rowText row" fails when row not found
+  Scenario: Assert "Then I should see the text :text in the :rowText row" fails when row not found
     Given some behat configuration
     And scenario steps tagged with "@test-drupal @api":
       """
       Given I am logged in as a user with the "administrator" role
       When I go to "admin/content"
-      Then I should see "something" in the "NONEXISTENT_ROW" row
+      Then I should see the text "something" in the "NONEXISTENT_ROW" row
       """
     When I run behat with drupal profile
     Then it should fail with an error:
@@ -115,16 +115,16 @@ Feature: DrupalContext coverage gaps
       """
 
   @test-drupal @api
-  Scenario: Assert "Then I should see :text in the :rowText row" fails when text not in row
+  Scenario: Assert "Then I should see the text :text in the :rowText row" fails when text not in row
     Given some behat configuration
     And scenario steps tagged with "@test-drupal @api":
       """
       Given I am logged in as a user with the "administrator" role
-      And "article" content:
+      And the following "article" content:
         | title         | status |
         | Row text test | 1      |
       When I go to "admin/content"
-      Then I should see "NONEXISTENT_xyz" in the "Row text test" row
+      Then I should see the text "NONEXISTENT_xyz" in the "Row text test" row
       """
     When I run behat with drupal profile
     Then it should fail with an error:
@@ -133,16 +133,16 @@ Feature: DrupalContext coverage gaps
       """
 
   @test-drupal @api
-  Scenario: Assert "Then I should not see :text in the :rowText row" fails when text is in row
+  Scenario: Assert "Then I should not see the text :text in the :rowText row" fails when text is in row
     Given some behat configuration
     And scenario steps tagged with "@test-drupal @api":
       """
       Given I am logged in as a user with the "administrator" role
-      And "article" content:
+      And the following "article" content:
         | title         | status |
         | Row text test | 1      |
       When I go to "admin/content"
-      Then I should not see "Article" in the "Row text test" row
+      Then I should not see the text "Article" in the "Row text test" row
       """
     When I run behat with drupal profile
     Then it should fail with an error:
@@ -153,7 +153,7 @@ Feature: DrupalContext coverage gaps
   @test-drupal @api
   Scenario: Assert "Then I should see the :link in the :rowText row" passes
     Given I am logged in as a user with the "administrator" role
-    And "article" content:
+    And the following "article" content:
       | title         | status |
       | Link row test | 1      |
     When I go to "admin/content"
@@ -165,7 +165,7 @@ Feature: DrupalContext coverage gaps
     And scenario steps tagged with "@test-drupal @api":
       """
       Given I am logged in as a user with the "administrator" role
-      And "article" content:
+      And the following "article" content:
         | title         | status |
         | Link row test | 1      |
       When I go to "admin/content"
@@ -180,7 +180,7 @@ Feature: DrupalContext coverage gaps
   @test-drupal @api
   Scenario: Assert "Then I should not see the :link in the :rowText row" passes
     Given I am logged in as a user with the "administrator" role
-    And "article" content:
+    And the following "article" content:
       | title         | status |
       | Link row test | 1      |
     When I go to "admin/content"
@@ -192,7 +192,7 @@ Feature: DrupalContext coverage gaps
     And scenario steps tagged with "@test-drupal @api":
       """
       Given I am logged in as a user with the "administrator" role
-      And "article" content:
+      And the following "article" content:
         | title         | status |
         | Link row test | 1      |
       When I go to "admin/content"
@@ -210,7 +210,7 @@ Feature: DrupalContext coverage gaps
     And scenario steps tagged with "@test-drupal @api":
       """
       Given I am logged in as a user with the "administrator" role
-      And "article" content:
+      And the following "article" content:
         | title        |
         | Click target |
       When I go to "admin/content"
@@ -228,7 +228,7 @@ Feature: DrupalContext coverage gaps
     And scenario steps tagged with "@test-drupal @api":
       """
       Given I am logged in as a user with the "administrator" role
-      And "article" content:
+      And the following "article" content:
         | title         |
         | Button target |
       When I go to "admin/content"
@@ -241,11 +241,11 @@ Feature: DrupalContext coverage gaps
       """
 
   @test-drupal @api
-  Scenario: Assert "Given :type content:" fails for orphaned multicolumn continuation
+  Scenario: Assert "Given the following :type content:" fails for orphaned multicolumn continuation
     Given some behat configuration
     And scenario steps tagged with "@test-drupal @api":
       """
-      Given "article" content:
+      Given the following "article" content:
         | :orphan |
         | value   |
       """
@@ -256,11 +256,11 @@ Feature: DrupalContext coverage gaps
       """
 
   @test-drupal @api
-  Scenario: Assert "Given :type content:" fails for non-existent field
+  Scenario: Assert "Given the following :type content:" fails for non-existent field
     Given some behat configuration
     And scenario steps tagged with "@test-drupal @api":
       """
-      Given "article" content:
+      Given the following "article" content:
         | title | field_does_not_exist |
         | test  | some value           |
       """
@@ -275,11 +275,11 @@ Feature: DrupalContext coverage gaps
   # has no field storage definition). Re-enable this scenario once the
   # driver is updated to skip computed fields gracefully.
   @test-drupal @api @skipped
-  Scenario: Assert "Given :type content:" passes for moderation_state field
+  Scenario: Assert "Given the following :type content:" passes for moderation_state field
     Given some behat configuration
     And scenario steps tagged with "@test-drupal @api":
       """
-      Given "article" content:
+      Given the following "article" content:
         | title                  | moderation_state |
         | Moderated test content | draft            |
       """
@@ -287,14 +287,14 @@ Feature: DrupalContext coverage gaps
     Then it should pass
 
   @test-drupal @api
-  Scenario: Assert "Given :type content:" passes for author property
+  Scenario: Assert "Given the following :type content:" passes for author property
     Given some behat configuration
     And scenario steps tagged with "@test-drupal @api":
       """
-      Given users:
+      Given the following users:
         | name     | mail            | status |
         | Joe User | joe@example.com | 1      |
-      And "article" content:
+      And the following "article" content:
         | title          | author   | status |
         | Article by Joe | Joe User | 1      |
       """

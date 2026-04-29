@@ -39,11 +39,11 @@ Feature: DrupalContext general testing
 
   @test-drupal @api
   Scenario: Create many nodes
-    Given "page" content:
+    Given the following "page" content:
       | title    |
       | Page one |
       | Page two |
-    And "article" content:
+    And the following "article" content:
       | title          |
       | First article  |
       | Second article |
@@ -56,7 +56,7 @@ Feature: DrupalContext general testing
 
   @test-drupal @api
   Scenario: Create nodes with fields
-    Given "article" content:
+    Given the following "article" content:
       | title                     | promote | body             |
       | First article with fields | 1       | PLACEHOLDER BODY |
     And I am logged in as a user with the "authenticated user" role
@@ -66,7 +66,7 @@ Feature: DrupalContext general testing
 
   @test-drupal @api
   Scenario: Create and view a node with fields
-    Given I am viewing an "article":
+    Given I am viewing an "article" with the following fields:
       | title | My article with fields! |
       | body  | A placeholder           |
     Then I should see the heading "My article with fields!"
@@ -74,7 +74,7 @@ Feature: DrupalContext general testing
 
   @test-drupal @api
   Scenario: Create users
-    Given users:
+    Given the following users:
       | name     | mail            | status |
       | Joe User | joe@example.com | 1      |
     And I am logged in as a user with the "administrator" role
@@ -83,7 +83,7 @@ Feature: DrupalContext general testing
 
   @test-drupal @api
   Scenario: Login as a user created during this scenario
-    Given users:
+    Given the following users:
       | name      | status |
       | Test user | 1      |
     When I am logged in as "Test user"
@@ -97,7 +97,7 @@ Feature: DrupalContext general testing
 
   @test-drupal @api
   Scenario: Create many taxonomy terms
-    Given "tags" terms:
+    Given the following "tags" terms:
       | name    |
       | Tag one |
       | Tag two |
@@ -108,7 +108,7 @@ Feature: DrupalContext general testing
 
   @test-drupal @api
   Scenario: Create taxonomy terms with parent hierarchy
-    Given "tags" terms:
+    Given the following "tags" terms:
       | name          | parent        |
       | Root term     |               |
       | Child term    | Root term     |
@@ -119,11 +119,11 @@ Feature: DrupalContext general testing
     And the "tags" term "Great-grandch" should have parent "Grandchild"
 
   @test-drupal @api
-  Scenario: Assert "Given :vocabulary terms:" fails for non-existent parent term
+  Scenario: Assert "Given the following :vocabulary terms:" fails for non-existent parent term
     Given some behat configuration
     And scenario steps tagged with "@test-drupal @api":
       """
-      Given "tags" terms:
+      Given the following "tags" terms:
         | name   | parent              |
         | Orphan | NonExistentParent99 |
       """
@@ -135,7 +135,7 @@ Feature: DrupalContext general testing
 
   @test-drupal @api
   Scenario: Create terms using vocabulary title rather than machine name
-    Given "Tags" terms:
+    Given the following "Tags" terms:
       | name    |
       | Tag one |
       | Tag two |
@@ -148,10 +148,10 @@ Feature: DrupalContext general testing
   # TODO: This doesn't work on Drupal 8/9/10 yet. For nodes the 'author' field
   # is called 'uid' and only accepts numerical IDs.
   Scenario: Create nodes with specific authorship
-    Given users:
+    Given the following users:
       | name     | mail            | status |
       | Joe User | joe@example.com | 1      |
-    And "article" content:
+    And the following "article" content:
       | title          | author   | body             | promote |
       | Article by Joe | Joe User | PLACEHOLDER BODY | 1       |
     When I am logged in as a user with the "administrator" role
@@ -161,13 +161,13 @@ Feature: DrupalContext general testing
 
   @test-drupal @api
   Scenario: Create an article with multiple term references
-    Given "tags" terms:
+    Given the following "tags" terms:
       | name      |
       | Tag one   |
       | Tag two   |
       | Tag,three |
       | Tag four  |
-    And "article" content:
+    And the following "article" content:
       | title           | body             | promote | field_tags                    |
     # Field values containing commas should be escaped with double quotes.
       | Article by Joe  | PLACEHOLDER BODY | 1       | Tag one, Tag two, "Tag,three" |
@@ -180,7 +180,7 @@ Feature: DrupalContext general testing
 
   @test-drupal @api
   Scenario: Readable created dates
-    Given "article" content:
+    Given the following "article" content:
       | title        | body             | created            | status | promote |
       | Test article | PLACEHOLDER BODY | 07/27/2014 12:03am | 1      | 1       |
     When I am on the homepage
@@ -188,7 +188,7 @@ Feature: DrupalContext general testing
 
   @test-drupal @api
   Scenario: Node hooks are functioning
-    Given "article" content:
+    Given the following "article" content:
       | title        | body        | published on       | status | promote |
       | Test article | PLACEHOLDER | 04/27/2013 11:11am | 1      | 1       |
     When I am on the homepage
@@ -197,11 +197,11 @@ Feature: DrupalContext general testing
   @test-drupal @api
   Scenario: Node edit access by administrator
     Given I am logged in as a user with the "administrator" role
-    Then I should be able to edit an "article"
+    Then I should be able to edit the "article"
 
   @test-drupal @api
   Scenario: User hooks are functioning
-    Given users:
+    Given the following users:
       | First name | Last name | E-mail               |
       | Joe        | User      | joe.user@example.com |
     And I am logged in as a user with the "administrator" role
@@ -210,7 +210,7 @@ Feature: DrupalContext general testing
 
   @test-drupal @api
   Scenario: Term hooks are functioning
-    Given "tags" terms:
+    Given the following "tags" terms:
       | Label   |
       | Tag one |
       | Tag two |

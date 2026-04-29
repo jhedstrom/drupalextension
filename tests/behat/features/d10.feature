@@ -13,7 +13,7 @@ Feature: DrupalContext
 
   @test-drupal @api
   Scenario: Create users with roles
-    Given users:
+    Given the following users:
       | name     | mail             | roles         |
       | Joe User | joe@example.com  | Administrator |
       | Jane Doe | jane@example.com |               |

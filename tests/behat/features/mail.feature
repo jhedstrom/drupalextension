@@ -4,38 +4,38 @@ Feature: MailContext
   So that I can verify mail recipients, subjects, and content
 
   @test-drupal @api
-  Scenario: Assert "When Drupal sends a/an (e)mail:" passes
-    When Drupal sends an email:
+  Scenario: Assert "When I send the following mail:" passes
+    When I send the following email:
       | to      | fred@example.com |
       | subject | test             |
       | body    | test body        |
-    And Drupal sends a mail:
+    And I send the following mail:
       | to      | jane@example.com |
       | subject | test             |
       | body    | test body 2      |
-    Then 2 mails have been sent
+    Then there should be a total of 2 mails sent
 
   @test-drupal @api
-  Scenario: Assert "Then mail has been sent:" passes
-    When Drupal sends an email:
+  Scenario: Assert "Then the following mail should have been sent:" passes
+    When I send the following email:
       | to      | fred@example.com |
       | subject | test             |
       | body    | test body        |
-    And Drupal sends a mail:
+    And I send the following mail:
       | to      | jane@example.com |
       | subject | test             |
       | body    | test body 2      |
-    Then mails have been sent:
+    Then the following mails should have been sent:
       | to   | subject | body      |
       | fred |         | test body |
       | jane | test    | body 2    |
 
   @test-drupal @api
-  Scenario: Assert "Then mail has been sent:" fails when no mail sent
+  Scenario: Assert "Then the following mail should have been sent:" fails when no mail sent
     Given some behat configuration
     And scenario steps tagged with "@test-drupal @api":
       """
-      Then mail has been sent:
+      Then the following mails should have been sent:
         | to               |
         | user@example.com |
       """
@@ -46,14 +46,14 @@ Feature: MailContext
       """
 
   @test-drupal @api
-  Scenario: Assert "Then mail has been sent:" fails when content does not match
+  Scenario: Assert "Then the following mail should have been sent:" fails when content does not match
     Given some behat configuration
     And scenario steps tagged with "@test-drupal @api":
       """
-      When Drupal sends a mail:
+      When I send the following mail:
         | to      | fred@example.com |
         | subject | actual subject   |
-      Then mail has been sent:
+      Then the following mail should have been sent:
         | subject          |
         | wrong subject    |
       """
@@ -64,71 +64,68 @@ Feature: MailContext
       """
 
   @test-drupal @api
-  Scenario: Assert "Then mail has been sent:" with filter variants passes
-    When Drupal sends an email:
+  Scenario: Assert "Then the following mail should have been sent:" with filter variants passes
+    When I send the following email:
       | to      | fred@example.com |
       | subject | test             |
       | body    | test body        |
-    And Drupal sends a mail:
+    And I send the following mail:
       | to      | jane@example.com |
       | subject | test             |
       | body    | test body 2      |
-    Then a mail has been sent to "jane@example.com"
-    And a mail has been sent to "jane@example.com":
+    Then the following mail should have been sent to "jane@example.com":
       | subject |
       | test    |
-    And an email has been sent with the subject "test"
-    And emails have been sent with the subject "test":
+    And the following emails should have been sent with the subject "test":
       | to   |
       | fred |
       | jane |
-    And a mail has been sent to "fred" with the subject "test"
-    And emails have been sent to "fred" with the subject "test":
+    And the following emails should have been sent to "fred" with the subject "test":
       | body      |
       | test body |
 
   @test-drupal @api
-  Scenario: Assert "Then new mail is sent:" passes
-    When Drupal sends an email:
+  Scenario: Assert "Then the following new mail should have been sent:" passes
+    When I send the following email:
       | to      | fred@example.com |
       | subject | test             |
       | body    | test body        |
-    Then new email is sent:
+    Then the following new email should have been sent:
       | to   | body      |
       | fred | test body |
-    When Drupal sends a mail:
+    When I send the following mail:
       | to      | jack@example.com          |
       | subject | for jack                  |
       | body    | test body with many words |
-    Then new email is sent:
+    Then the following new email should have been sent:
       | to   | body       |
       | jack | many words |
 
   @test-drupal @api
-  Scenario: Assert "Then new mail is sent to :to:" passes
-    When Drupal sends a mail:
+  Scenario: Assert "Then the following new mail should have been sent to :to:" passes
+    When I send the following mail:
       | to      | fred@example.com |
       | subject | test 1           |
-    And Drupal sends a mail:
+    And I send the following mail:
       | to      | jane@example.com |
       | subject | test 2           |
-    Then new mail is sent to fred:
+    Then the following new mail should have been sent to "fred":
       | subject |
       | test 1  |
 
   @test-drupal @api
-  Scenario: Assert "Then :count mail has been sent" passes
-    Then no mail has been sent
+  Scenario: Assert "Then there should be a total of :count mail sent" passes
+    Then there should be a total of no mails sent
 
   @test-drupal @api
-  Scenario: Assert "Then :count mail has been sent" fails when count does not match
+  Scenario: Assert "Then there should be a total of :count mail sent" fails when count does not match
     Given some behat configuration
     And scenario steps tagged with "@test-drupal @api":
       """
-      When Drupal sends a mail:
+      When I send the following mail:
         | to      | fred@example.com |
         | subject | test             |
-      Then 2 mails have been sent
+      Then there should be a total of 2 mails sent
       """
     When I run behat with drupal profile
     Then it should fail with an error:
@@ -137,30 +134,30 @@ Feature: MailContext
       """
 
   @test-drupal @api
-  Scenario: Assert "Then :count mail has been sent" with filter variants passes
-    When Drupal sends an email:
+  Scenario: Assert "Then there should be a total of :count mail sent" with filter variants passes
+    When I send the following email:
       | to      | fred@example.com |
       | subject | test             |
-    And Drupal sends a mail:
+    And I send the following mail:
       | to      | jane@example.com |
       | subject | test             |
-    And Drupal sends a mail:
+    And I send the following mail:
       | to      | jane@example.com |
       | subject | something else   |
-    Then 2 new emails are sent with the subject "test"
-    And 1 mail has been sent to "jane" with the subject "something else"
-    And no new emails are sent
-    And no mail has been sent to "hans"
+    Then there should be a total of 2 new emails sent with the subject "test"
+    And there should be a total of 1 mail sent to "jane" with the subject "something else"
+    And there should be a total of no new emails sent
+    And there should be a total of no mails sent to "hans"
 
   @test-drupal @api
-  Scenario: Assert "Then :count new mail is sent" fails when count does not match
+  Scenario: Assert "Then there should be a total of :count new mail sent" fails when count does not match
     Given some behat configuration
     And scenario steps tagged with "@test-drupal @api":
       """
-      When Drupal sends a mail:
+      When I send the following mail:
         | to      | fred@example.com |
         | subject | test             |
-      Then 5 new emails are sent
+      Then there should be a total of 5 new emails sent
       """
     When I run behat with drupal profile
     Then it should fail with an error:
@@ -170,7 +167,7 @@ Feature: MailContext
 
   @test-drupal @api
   Scenario: Assert "When I follow the link to :urlFragment from the mail" passes
-    When Drupal sends a mail:
+    When I send the following mail:
       | to      | fred@example.com                        |
       | subject | test link                               |
       | body    | A link to Google: http://www.Google.com |
@@ -179,7 +176,7 @@ Feature: MailContext
 
   @test-drupal @api
   Scenario: Assert "When I follow the link to :urlFragment from the mail" passes without filters
-    When Drupal sends a mail:
+    When I send the following mail:
       | to      | fred@example.com                             |
       | subject | plain link                                   |
       | body    | Click here: http://www.Google.com for search |
@@ -188,7 +185,7 @@ Feature: MailContext
 
   @test-drupal @api
   Scenario: Assert "When I follow the link to :urlFragment from the mail to :to" passes
-    When Drupal sends a mail:
+    When I send the following mail:
       | to      | specific@example.com                      |
       | subject | link for specific                         |
       | body    | Visit http://www.Google.com for more info |
@@ -197,7 +194,7 @@ Feature: MailContext
 
   @test-drupal @api
   Scenario: Assert "When I follow the link to :urlFragment from the mail to :to with the subject :subject" passes
-    When Drupal sends a mail:
+    When I send the following mail:
       | to      | combo@example.com           |
       | subject | combo test                  |
       | body    | Link: http://www.Google.com |
@@ -222,7 +219,7 @@ Feature: MailContext
     Given some behat configuration
     And scenario steps tagged with "@test-drupal @api":
       """
-      When Drupal sends a mail:
+      When I send the following mail:
         | to      | fred@example.com |
         | subject | no link          |
         | body    | No URLs here     |
@@ -239,7 +236,7 @@ Feature: MailContext
     Given some behat configuration
     And scenario steps tagged with "@test-drupal @api":
       """
-      When Drupal sends a mail:
+      When I send the following mail:
         | to      | fred@example.com                    |
         | subject | wrong fragment                      |
         | body    | Visit http://www.Google.com for fun |
@@ -253,32 +250,32 @@ Feature: MailContext
 
   @test-drupal @api
   Scenario: Assert mail comparison is order insensitive
-    When Drupal sends an email:
+    When I send the following email:
       | to      | fred@example.com |
       | subject | test             |
       | body    | test body        |
-    And Drupal sends a mail:
+    And I send the following mail:
       | to      | jane@example.com |
       | subject | test             |
       | body    | test body 2      |
-    Then mails have been sent:
+    Then the following mails should have been sent:
       | to   | subject | body      |
       | jane | test    | body 2    |
       | fred |         | test body |
 
   @test-drupal @api
   Scenario: Assert new mail sent with subject and body filter passes
-    When Drupal sends a mail:
+    When I send the following mail:
       | to      | alice@example.com |
       | subject | new mail test     |
       | body    | first body        |
-    Then a mail has been sent to "alice@example.com" with the subject "new mail test":
+    Then the following mail should have been sent to "alice@example.com" with the subject "new mail test":
       | body       |
       | first body |
-    When Drupal sends a mail:
+    When I send the following mail:
       | to      | alice@example.com |
       | subject | new mail test     |
       | body    | second body       |
-    Then new email is sent:
+    Then the following new email should have been sent:
       | body        |
       | second body |

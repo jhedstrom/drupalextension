@@ -10,7 +10,7 @@ Feature: RandomContext functionality
     And I fill in "Email address" with "<?user>@example.com"
     And I fill in "Username" with "<?user>"
     When I press "Create new account"
-    Then an email has been sent to "<?user>@example.com" with the subject "Account details for <?user>"
+    Then there should be a total of 1 email sent to "<?user>@example.com" with the subject "Account details for <?user>"
 
   @test-drupal @api @random
   Scenario: Assert random variable transform passes for second user
@@ -18,11 +18,11 @@ Feature: RandomContext functionality
     And I fill in "Email address" with "<?user>@example.com"
     And I fill in "Username" with "<?user>"
     When I press "Create new account"
-    Then an email has been sent to "<?user>@example.com" with the subject "Account details for <?user>"
+    Then there should be a total of 1 email sent to "<?user>@example.com" with the subject "Account details for <?user>"
 
   @test-drupal @api @random
   Scenario: Assert random variable transform in tables passes
-    Given I am viewing a page:
+    Given I am viewing a page with the following fields:
       | title | <?random_page> |
     Then I should see the text "<?random_page>"
 

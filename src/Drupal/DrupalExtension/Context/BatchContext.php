@@ -34,14 +34,14 @@ class BatchContext extends RawMinkContext {
    * Expects the `data` to be a json encoded string.
    *
    * @code
-   *   Given there is an item in the system queue:
+   *   Given the following item is in the system queue:
    *     | name    | my_queue              |
    *     | data    | {"key":"value"}       |
    *     | created | 1700000000            |
    *     | expire  | 0                     |
    * @endcode
    */
-  #[Given('there is an item in the system queue:')]
+  #[Given('the following item is in the system queue:')]
   public function thereIsAnItemInTheSystemQueue(TableNode $table): void {
     // Gather the data.
     $fields = $table->getRowsHash();

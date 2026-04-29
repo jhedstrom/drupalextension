@@ -6,6 +6,7 @@ namespace Drupal\DrupalExtension\Context;
 
 use Behat\Step\Given;
 use Behat\Step\Then;
+use Behat\Step\When;
 use Behat\Behat\Context\TranslatableContext;
 use Behat\Mink\Element\Element;
 
@@ -31,19 +32,38 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
   }
 
   /**
-   * Assert the user is anonymous or log out.
+   * Assert the user is anonymous.
    *
    * @code
    * Given I am an anonymous user
-   * Given I am not logged in
-   * Then I log out
    * @endcode
    */
   #[Given('I am an anonymous user')]
+  public function iAmAnonymous(): void {
+    $this->logout(TRUE);
+  }
+
+  /**
+   * Assert the user is not logged in.
+   *
+   * @code
+   * Given I am not logged in
+   * @endcode
+   */
   #[Given('I am not logged in')]
-  #[Then('I log out')]
-  public function assertAnonymousUser(): void {
-    // Verify the user is logged out.
+  public function iAmNotLoggedIn(): void {
+    $this->logout(TRUE);
+  }
+
+  /**
+   * Log out the current user.
+   *
+   * @code
+   * When I log out
+   * @endcode
+   */
+  #[When('I log out')]
+  public function iLogOut(): void {
     $this->logout(TRUE);
   }
 
@@ -53,12 +73,22 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    * @code
    * Given I am logged in as a user with the "editor" role
    * Given I am logged in as a user with the "editor, admin" roles
-   * Given I am logged in as an "editor"
    * @endcode
    */
   #[Given('I am logged in as a user with the :role role(s)')]
-  #[Given('I am logged in as a/an :role')]
   public function assertAuthenticatedByRole(string $role): void {
+    $this->createAndLoginUserWithRole($role);
+  }
+
+  /**
+   * Creates and authenticates a user with the given single role.
+   *
+   * @code
+   * Given I am logged in as an "editor"
+   * @endcode
+   */
+  #[Given('I am logged in as a/an :role')]
+  public function assertAuthenticatedByRoleShort(string $role): void {
     $this->createAndLoginUserWithRole($role);
   }
 
@@ -199,12 +229,11 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    * Find text in a table row containing given text.
    *
    * @code
-   * Then I should see "Edit" in the "My article" row
-   * Then I should see the text "Edit" in the "My article" row
+   * Then I should see the text :text in the :rowText row
    * @endcode
    */
-  #[Then('I should see (the text ):text in the :rowText row')]
-  public function assertTextInTableRow(string $text, string $rowText): void {
+  #[Then('I should see the text :text in the :rowText row')]
+  public function tableRowTextAssertIsVisible(string $text, string $rowText): void {
     $row = $this->getTableRow($this->getSession()->getPage(), $rowText);
     if (!str_contains($row->getText(), $text)) {
       throw new \Exception(sprintf('Found a row containing "%s", but it did not contain the text "%s".', $rowText, $text));
@@ -215,12 +244,11 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    * Asset text not in a table row containing given text.
    *
    * @code
-   * Then I should not see "Delete" in the "My article" row
-   * Then I should not see the text "Delete" in the "My article" row
+   * Then I should not see the text :text in the :rowText row
    * @endcode
    */
-  #[Then('I should not see (the text ):text in the :rowText row')]
-  public function assertTextNotInTableRow(string $text, string $rowText): void {
+  #[Then('I should not see the text :text in the :rowText row')]
+  public function tableRowTextAssertIsNotVisible(string $text, string $rowText): void {
     $row = $this->getTableRow($this->getSession()->getPage(), $rowText);
     if (str_contains($row->getText(), $text)) {
       throw new \Exception(sprintf('Found a row containing "%s", but it contained the text "%s".', $rowText, $text));
@@ -234,12 +262,11 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    * screen found at `admin/structure/types`.
    *
    * @code
-   * Then I see the "Edit" in the "My article" row
-   * Then I should see the "Edit" in the "My article" row
+   * Then I should see the :link in the :rowText row
    * @endcode
    */
-  #[Then('I (should )see the :link in the :rowText row')]
-  public function assertLinkInTableRow(string $link, string $rowText): void {
+  #[Then('I should see the :link in the :rowText row')]
+  public function tableRowLinkAssertExists(string $link, string $rowText): void {
     $page = $this->getSession()->getPage();
     if ($this->getTableRow($page, $rowText)->findLink($link)) {
       return;
@@ -254,11 +281,11 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    * screen found at `admin/structure/types`.
    *
    * @code
-   * Then I should not see the "Delete" in the "My article" row
+   * Then I should not see the :link in the :rowText row
    * @endcode
    */
   #[Then('I should not see the :link in the :rowText row')]
-  public function assertNotLinkInTableRow(string $link, string $rowText): void {
+  public function tableRowLinkAssertNotExists(string $link, string $rowText): void {
     $page = $this->getSession()->getPage();
     if ($this->getTableRow($page, $rowText)->findLink($link)) {
       throw new \Exception(sprintf('Found a row containing "%s" with a "%s" link on the page %s', $rowText, $link, $this->getSession()->getCurrentUrl()));
@@ -345,25 +372,51 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
   }
 
   /**
-   * Creates content of the given type.
+   * View content of the given type with the given title.
    *
    * @code
    * Given I am viewing an "article" with the title "Test article"
+   * @endcode
+   */
+  #[Given('I am viewing a/an :type with the title :title')]
+  public function iAmViewingNode(string $type, string $title): void {
+    $this->createAndVisitNode($type, $title);
+  }
+
+  /**
+   * View content of the given type (with the explicit "content" word).
+   *
+   * @code
    * Given I am viewing an "article" content with the title "Test article"
+   * @endcode
+   */
+  #[Given('I am viewing a/an :type content with the title :title')]
+  public function iAmViewingNodeContent(string $type, string $title): void {
+    $this->createAndVisitNode($type, $title);
+  }
+
+  /**
+   * Create content of the given type without visiting it.
+   *
+   * @code
    * Given a "page" with the title "About us"
    * @endcode
    */
-  #[Given('I am viewing a/an :type (content )with the title :title')]
-  #[Given('a/an :type (content )with the title :title')]
-  public function createNode(string $type, string $title): void {
-    // @todo make this easily extensible.
-    $node = (object) [
-      'title' => $title,
-      'type' => $type,
-    ];
-    $saved = $this->nodeCreate($node);
-    // Set internal page on the new node.
-    $this->getSession()->visit($this->locatePath('/node/' . $saved->nid));
+  #[Given('a/an :type with the title :title')]
+  public function aNode(string $type, string $title): void {
+    $this->createAndVisitNode($type, $title);
+  }
+
+  /**
+   * Create content (with the explicit "content" word) without visiting.
+   *
+   * @code
+   * Given a "page" content with the title "About us"
+   * @endcode
+   */
+  #[Given('a/an :type content with the title :title')]
+  public function aNodeContent(string $type, string $title): void {
+    $this->createAndVisitNode($type, $title);
   }
 
   /**
@@ -371,41 +424,35 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    *
    * @code
    * Given I am viewing my "article" with the title "My article"
+   * @endcode
+   */
+  #[Given('I am viewing my :type with the title :title')]
+  public function createMyNode(string $type, string $title): void {
+    $this->createAndVisitMyNode($type, $title);
+  }
+
+  /**
+   * Creates content authored by the current user (with the "content" word).
+   *
+   * @code
    * Given I am viewing my "article" content with the title "My article"
    * @endcode
    */
-  #[Given('I am viewing my :type (content )with the title :title')]
-  public function createMyNode(string $type, string $title): void {
-    if ($this->getUserManager()->currentUserIsAnonymous()) {
-      throw new \Exception('There is no current logged in user to create a node for.');
-    }
-
-    $current_user = $this->getUserManager()->getCurrentUser();
-    if (!$current_user instanceof \stdClass) {
-      throw new \Exception('There is no current logged in user to create a node for.');
-    }
-    $node = (object) [
-      'title' => $title,
-      'type' => $type,
-      'body' => $this->getRandom()->name(255),
-      'uid' => $current_user->uid,
-    ];
-    $saved = $this->nodeCreate($node);
-
-    // Set internal page on the new node.
-    $this->getSession()->visit($this->locatePath('/node/' . $saved->nid));
+  #[Given('I am viewing my :type content with the title :title')]
+  public function createMyNodeContent(string $type, string $title): void {
+    $this->createAndVisitMyNode($type, $title);
   }
 
   /**
    * Creates content of a given type.
    *
    * @code
-   *   Given "article" content:
+   *   Given the following "article" content:
    *     | title      | status |
    *     | My article | 1      |
    * @endcode
    */
-  #[Given(':type content:')]
+  #[Given('the following :type content:')]
   public function createNodes(string $type, TableNode $nodesTable): void {
     foreach ($nodesTable->getHash() as $node_hash) {
       $node = (object) $node_hash;
@@ -418,85 +465,88 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    * Creates content of the given type and visits it.
    *
    * @code
-   *   Given I am viewing an "article":
-   *     | title | My article     |
-   *     | body  | Lorem ipsum    |
-   *   Given I am viewing an "article" content:
+   *   Given I am viewing an "article" with the following fields:
    *     | title | My article     |
    *     | body  | Lorem ipsum    |
    * @endcode
    */
-  #[Given('I am viewing a/an :type( content):')]
+  #[Given('I am viewing a/an :type with the following fields:')]
   public function assertViewingNode(string $type, TableNode $fields): void {
-    $node = (object) [
-      'type' => $type,
-    ];
-    foreach ($fields->getRowsHash() as $field => $value) {
-      $node->{$field} = $value;
-    }
+    $this->createAndVisitNodeFromTable($type, $fields);
+  }
 
-    $saved = $this->nodeCreate($node);
-
-    // Set internal browser on the node.
-    $this->getSession()->visit($this->locatePath('/node/' . $saved->nid));
+  /**
+   * Creates content (with explicit "content" word) and visits it.
+   *
+   * @code
+   *   Given I am viewing an "article" content with the following fields:
+   *     | title | My article     |
+   *     | body  | Lorem ipsum    |
+   * @endcode
+   */
+  #[Given('I am viewing a/an :type content with the following fields:')]
+  public function assertViewingNodeContent(string $type, TableNode $fields): void {
+    $this->createAndVisitNodeFromTable($type, $fields);
   }
 
   /**
    * Asserts that a given content type is editable.
    *
    * @code
-   * Then I should be able to edit an "article"
-   * Then I should be able to edit an "article" content
+   * Then I should be able to edit the :type
    * @endcode
    */
-  #[Then('I should be able to edit a/an :type( content)')]
-  public function assertEditNodeOfType(string $type): void {
-    $node = (object) [
-      'type' => $type,
-      'title' => 'Test ' . $type,
-    ];
-    $saved = $this->nodeCreate($node);
-
-    // Set internal browser on the node edit page.
-    $this->getSession()->visit($this->locatePath('/node/' . $saved->nid . '/edit'));
-
-    // Test status.
-    $this->assertSession()->statusCodeEquals(200);
+  #[Then('I should be able to edit the :type')]
+  public function nodeTypeAssertIsEditable(string $type): void {
+    $this->assertNodeTypeIsEditable($type);
   }
 
   /**
-   * Creates a term on an existing vocabulary.
+   * Asserts that a given content type (with explicit "content") is editable.
+   *
+   * @code
+   * Then I should be able to edit the :type content
+   * @endcode
+   */
+  #[Then('I should be able to edit the :type content')]
+  public function nodeTypeContentAssertIsEditable(string $type): void {
+    $this->assertNodeTypeIsEditable($type);
+  }
+
+  /**
+   * Creates a term on an existing vocabulary and visits it.
    *
    * @code
    * Given I am viewing a "tags" term with the name "Sports"
-   * Given an "categories" term with the name "News"
    * @endcode
    */
   #[Given('I am viewing a/an :vocabulary term with the name :name')]
-  #[Given('a/an :vocabulary term with the name :name')]
-  public function createTerm(string $vocabulary, string $name): void {
-    // @todo make this easily extensible.
-    $term = (object) [
-      'name' => $name,
-      'vocabulary_machine_name' => $vocabulary,
-      'description' => $this->getRandom()->name(255),
-    ];
-    $saved = $this->termCreate($term);
+  public function iAmViewingTerm(string $vocabulary, string $name): void {
+    $this->createAndVisitTerm($vocabulary, $name);
+  }
 
-    // Set internal page on the term.
-    $this->getSession()->visit($this->locatePath('/taxonomy/term/' . $saved->tid));
+  /**
+   * Creates a term on an existing vocabulary without explicit visit phrasing.
+   *
+   * @code
+   * Given an "categories" term with the name "News"
+   * @endcode
+   */
+  #[Given('a/an :vocabulary term with the name :name')]
+  public function aTerm(string $vocabulary, string $name): void {
+    $this->createAndVisitTerm($vocabulary, $name);
   }
 
   /**
    * Creates multiple users.
    *
    * @code
-   *   Given users:
+   *   Given the following users:
    *     | name     | mail            | roles  |
    *     | Joe User | joe@example.com | editor |
    * @endcode
    */
-  #[Given('users:')]
+  #[Given('the following users:')]
   public function createUsers(TableNode $usersTable): void {
     $driver = $this->getDriver();
 
@@ -532,13 +582,13 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    * Creates one or more terms on an existing vocabulary.
    *
    * @code
-   *   Given "tags" terms:
+   *   Given the following "tags" terms:
    *     | name   |
    *     | Sports |
    *     | News   |
    * @endcode
    */
-  #[Given(':vocabulary terms:')]
+  #[Given('the following :vocabulary terms:')]
   public function createTerms(string $vocabulary, TableNode $termsTable): void {
     foreach ($termsTable->getHash() as $terms_hash) {
       $term = (object) $terms_hash;
@@ -554,13 +604,10 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    *   The table listing languages by their ISO code.
    *
    * @code
-   *   Given the following languages are available:
+   *   Given the/these (following )languages are available:
    *     | languages |
    *     | en        |
    *     | fr        |
-   *   Given these languages are available:
-   *     | languages |
-   *     | de        |
    * @endcode
    */
   #[Given('the/these (following )languages are available:')]
@@ -579,11 +626,10 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    * Useful when debugging a scenario.
    *
    * @code
-   * Then break
-   * Then I break
+   * When I break
    * @endcode
    */
-  #[Then('(I )break')]
+  #[When('(I )break')]
   // phpcs:ignore Drupal.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
   public function iPutABreakpoint(): void {
     fwrite(STDOUT, "\033[s \033[93m[Breakpoint] Press \033[1;93m[RETURN]\033[0;93m to continue, or 'q' to quit...\033[0m");
@@ -615,6 +661,86 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
       }
     } while (TRUE);
     fwrite(STDOUT, "\033[u");
+  }
+
+  /**
+   * Create a node and visit its detail page.
+   */
+  protected function createAndVisitNode(string $type, string $title): void {
+    $node = (object) [
+      'title' => $title,
+      'type' => $type,
+    ];
+    $saved = $this->nodeCreate($node);
+    $this->getSession()->visit($this->locatePath('/node/' . $saved->nid));
+  }
+
+  /**
+   * Create a node owned by the current user and visit it.
+   */
+  protected function createAndVisitMyNode(string $type, string $title): void {
+    if ($this->getUserManager()->currentUserIsAnonymous()) {
+      throw new \Exception('There is no current logged in user to create a node for.');
+    }
+
+    $current_user = $this->getUserManager()->getCurrentUser();
+    if (!$current_user instanceof \stdClass) {
+      throw new \Exception('There is no current logged in user to create a node for.');
+    }
+    $node = (object) [
+      'title' => $title,
+      'type' => $type,
+      'body' => $this->getRandom()->name(255),
+      'uid' => $current_user->uid,
+    ];
+    $saved = $this->nodeCreate($node);
+
+    $this->getSession()->visit($this->locatePath('/node/' . $saved->nid));
+  }
+
+  /**
+   * Create a node from a TableNode of fields and visit it.
+   */
+  protected function createAndVisitNodeFromTable(string $type, TableNode $fields): void {
+    $node = (object) [
+      'type' => $type,
+    ];
+    foreach ($fields->getRowsHash() as $field => $value) {
+      $node->{$field} = $value;
+    }
+
+    $saved = $this->nodeCreate($node);
+
+    $this->getSession()->visit($this->locatePath('/node/' . $saved->nid));
+  }
+
+  /**
+   * Create a term on an existing vocabulary and visit it.
+   */
+  protected function createAndVisitTerm(string $vocabulary, string $name): void {
+    $term = (object) [
+      'name' => $name,
+      'vocabulary_machine_name' => $vocabulary,
+      'description' => $this->getRandom()->name(255),
+    ];
+    $saved = $this->termCreate($term);
+
+    $this->getSession()->visit($this->locatePath('/taxonomy/term/' . $saved->tid));
+  }
+
+  /**
+   * Create a node of the given type and verify its edit page returns 200.
+   */
+  protected function assertNodeTypeIsEditable(string $type): void {
+    $node = (object) [
+      'type' => $type,
+      'title' => 'Test ' . $type,
+    ];
+    $saved = $this->nodeCreate($node);
+
+    $this->getSession()->visit($this->locatePath('/node/' . $saved->nid . '/edit'));
+
+    $this->assertSession()->statusCodeEquals(200);
   }
 
 }

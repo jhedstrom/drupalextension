@@ -4,8 +4,8 @@ Feature: BatchContext
   So that I can test background processing behaviour
 
   @test-drupal @api
-  Scenario: Assert "Given there is an item in the system queue:" passes
-    Given there is an item in the system queue:
+  Scenario: Assert "Given the following item is in the system queue:" passes
+    Given the following item is in the system queue:
       | name    | test_queue       |
       | data    | {"key": "value"} |
       | created | 1700000000       |

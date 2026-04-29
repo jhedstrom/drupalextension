@@ -36,14 +36,14 @@ Given I wait for the batch job to finish
 </details>
 
 <details>
-  <summary><code>@Given there is an item in the system queue:</code></summary>
+  <summary><code>@Given the following item is in the system queue:</code></summary>
 
 <br/>
 Creates a queue item. Defaults inputs if none are available. 
 <br/><br/>
 
 ```gherkin
-  Given there is an item in the system queue:
+  Given the following item is in the system queue:
     | name    | my_queue              |
     | data    | {"key":"value"}       |
     | created | 1700000000            |
@@ -78,18 +78,18 @@ Sets a configuration item.
 </details>
 
 <details>
-  <summary><code>@Given I set the configuration item :name with key :key with values:</code></summary>
+  <summary><code>@Given I set the configuration item :name with key :key with the following values:</code></summary>
 
 <br/>
 Sets complex configuration. 
 <br/><br/>
 
 ```gherkin
-  Given I set the configuration item "system.site" with key "page" with values:
+  Given I set the configuration item "system.site" with key "page" with the following values:
     | key   | value  |
     | front | /node  |
     | 403   | /error |
-  Given I set the configuration item "some.config" with key "settings" with values:
+  Given I set the configuration item "some.config" with key "settings" with the following values:
     | key     | value                    |
     | enabled | true                     |
     | count   | 5                        |
@@ -101,32 +101,41 @@ Sets complex configuration.
 
 ## DrupalContext
 
-[Source](src/Drupal/DrupalExtension/Context/DrupalContext.php)
+[Source](src/Drupal/DrupalExtension/Context/DrupalContext.php), [Example](tests/behat/features/drupal.feature)
 
 >  Provides pre-built step definitions for interacting with Drupal.
 
 
 <details>
-  <summary><code>@Given I am an anonymous user
-@Given I am not logged in
-@Then I log out</code></summary>
+  <summary><code>@Given I am an anonymous user</code></summary>
 
 <br/>
-Assert the user is anonymous or log out. 
+Assert the user is anonymous. 
 <br/><br/>
 
 ```gherkin
 Given I am an anonymous user
-Given I am not logged in
-Then I log out
 
 ```
 
 </details>
 
 <details>
-  <summary><code>@Given I am logged in as a user with the :role role(s)
-@Given I am logged in as a/an :role</code></summary>
+  <summary><code>@Given I am not logged in</code></summary>
+
+<br/>
+Assert the user is not logged in. 
+<br/><br/>
+
+```gherkin
+Given I am not logged in
+
+```
+
+</details>
+
+<details>
+  <summary><code>@Given I am logged in as a user with the :role role(s)</code></summary>
 
 <br/>
 Creates and authenticates a user with the given role(s). 
@@ -135,6 +144,19 @@ Creates and authenticates a user with the given role(s).
 ```gherkin
 Given I am logged in as a user with the "editor" role
 Given I am logged in as a user with the "editor, admin" roles
+
+```
+
+</details>
+
+<details>
+  <summary><code>@Given I am logged in as a/an :role</code></summary>
+
+<br/>
+Creates and authenticates a user with the given single role. 
+<br/><br/>
+
+```gherkin
 Given I am logged in as an "editor"
 
 ```
@@ -243,16 +265,41 @@ Given I run cron
 </details>
 
 <details>
-  <summary><code>@Given I am viewing a/an :type (content )with the title :title
-@Given a/an :type (content )with the title :title</code></summary>
+  <summary><code>@Given I am viewing a/an :type with the title :title</code></summary>
 
 <br/>
-Creates content of the given type. 
+View content of the given type with the given title. 
 <br/><br/>
 
 ```gherkin
 Given I am viewing an "article" with the title "Test article"
+
+```
+
+</details>
+
+<details>
+  <summary><code>@Given I am viewing a/an :type content with the title :title</code></summary>
+
+<br/>
+View content of the given type (with the explicit "content" word). 
+<br/><br/>
+
+```gherkin
 Given I am viewing an "article" content with the title "Test article"
+
+```
+
+</details>
+
+<details>
+  <summary><code>@Given a/an :type with the title :title</code></summary>
+
+<br/>
+Create content of the given type without visiting it. 
+<br/><br/>
+
+```gherkin
 Given a "page" with the title "About us"
 
 ```
@@ -260,7 +307,21 @@ Given a "page" with the title "About us"
 </details>
 
 <details>
-  <summary><code>@Given I am viewing my :type (content )with the title :title</code></summary>
+  <summary><code>@Given a/an :type content with the title :title</code></summary>
+
+<br/>
+Create content (with the explicit "content" word) without visiting. 
+<br/><br/>
+
+```gherkin
+Given a "page" content with the title "About us"
+
+```
+
+</details>
+
+<details>
+  <summary><code>@Given I am viewing my :type with the title :title</code></summary>
 
 <br/>
 Creates content authored by the current user. 
@@ -268,6 +329,19 @@ Creates content authored by the current user.
 
 ```gherkin
 Given I am viewing my "article" with the title "My article"
+
+```
+
+</details>
+
+<details>
+  <summary><code>@Given I am viewing my :type content with the title :title</code></summary>
+
+<br/>
+Creates content authored by the current user (with the "content" word). 
+<br/><br/>
+
+```gherkin
 Given I am viewing my "article" content with the title "My article"
 
 ```
@@ -275,14 +349,14 @@ Given I am viewing my "article" content with the title "My article"
 </details>
 
 <details>
-  <summary><code>@Given :type content:</code></summary>
+  <summary><code>@Given the following :type content:</code></summary>
 
 <br/>
 Creates content of a given type. 
 <br/><br/>
 
 ```gherkin
-  Given "article" content:
+  Given the following "article" content:
     | title      | status |
     | My article | 1      |
 
@@ -291,17 +365,14 @@ Creates content of a given type.
 </details>
 
 <details>
-  <summary><code>@Given I am viewing a/an :type( content):</code></summary>
+  <summary><code>@Given I am viewing a/an :type with the following fields:</code></summary>
 
 <br/>
 Creates content of the given type and visits it. 
 <br/><br/>
 
 ```gherkin
-  Given I am viewing an "article":
-    | title | My article     |
-    | body  | Lorem ipsum    |
-  Given I am viewing an "article" content:
+  Given I am viewing an "article" with the following fields:
     | title | My article     |
     | body  | Lorem ipsum    |
 
@@ -310,15 +381,43 @@ Creates content of the given type and visits it.
 </details>
 
 <details>
-  <summary><code>@Given I am viewing a/an :vocabulary term with the name :name
-@Given a/an :vocabulary term with the name :name</code></summary>
+  <summary><code>@Given I am viewing a/an :type content with the following fields:</code></summary>
 
 <br/>
-Creates a term on an existing vocabulary. 
+Creates content (with explicit "content" word) and visits it. 
+<br/><br/>
+
+```gherkin
+  Given I am viewing an "article" content with the following fields:
+    | title | My article     |
+    | body  | Lorem ipsum    |
+
+```
+
+</details>
+
+<details>
+  <summary><code>@Given I am viewing a/an :vocabulary term with the name :name</code></summary>
+
+<br/>
+Creates a term on an existing vocabulary and visits it. 
 <br/><br/>
 
 ```gherkin
 Given I am viewing a "tags" term with the name "Sports"
+
+```
+
+</details>
+
+<details>
+  <summary><code>@Given a/an :vocabulary term with the name :name</code></summary>
+
+<br/>
+Creates a term on an existing vocabulary without explicit visit phrasing. 
+<br/><br/>
+
+```gherkin
 Given an "categories" term with the name "News"
 
 ```
@@ -326,14 +425,14 @@ Given an "categories" term with the name "News"
 </details>
 
 <details>
-  <summary><code>@Given users:</code></summary>
+  <summary><code>@Given the following users:</code></summary>
 
 <br/>
 Creates multiple users. 
 <br/><br/>
 
 ```gherkin
-  Given users:
+  Given the following users:
     | name     | mail            | roles  |
     | Joe User | joe@example.com | editor |
 
@@ -342,14 +441,14 @@ Creates multiple users.
 </details>
 
 <details>
-  <summary><code>@Given :vocabulary terms:</code></summary>
+  <summary><code>@Given the following :vocabulary terms:</code></summary>
 
 <br/>
 Creates one or more terms on an existing vocabulary. 
 <br/><br/>
 
 ```gherkin
-  Given "tags" terms:
+  Given the following "tags" terms:
     | name   |
     | Sports |
     | News   |
@@ -366,58 +465,80 @@ Creates one or more languages.
 <br/><br/>
 
 ```gherkin
-  Given the following languages are available:
+  Given the/these (following )languages are available:
     | languages |
     | en        |
     | fr        |
-  Given these languages are available:
-    | languages |
-    | de        |
 
 ```
 
 </details>
 
 <details>
-  <summary><code>@Then I should see (the text ):text in the :rowText row</code></summary>
+  <summary><code>@When I log out</code></summary>
+
+<br/>
+Log out the current user. 
+<br/><br/>
+
+```gherkin
+When I log out
+
+```
+
+</details>
+
+<details>
+  <summary><code>@When (I )break</code></summary>
+
+<br/>
+Pauses the scenario until the user presses a key. 
+<br/><br/>
+
+```gherkin
+When I break
+
+```
+
+</details>
+
+<details>
+  <summary><code>@Then I should see the text :text in the :rowText row</code></summary>
 
 <br/>
 Find text in a table row containing given text. 
 <br/><br/>
 
 ```gherkin
-Then I should see "Edit" in the "My article" row
-Then I should see the text "Edit" in the "My article" row
+Then I should see the text :text in the :rowText row
 
 ```
 
 </details>
 
 <details>
-  <summary><code>@Then I should not see (the text ):text in the :rowText row</code></summary>
+  <summary><code>@Then I should not see the text :text in the :rowText row</code></summary>
 
 <br/>
 Asset text not in a table row containing given text. 
 <br/><br/>
 
 ```gherkin
-Then I should not see "Delete" in the "My article" row
-Then I should not see the text "Delete" in the "My article" row
+Then I should not see the text :text in the :rowText row
 
 ```
 
 </details>
 
 <details>
-  <summary><code>@Then I (should )see the :link in the :rowText row</code></summary>
+  <summary><code>@Then I should see the :link in the :rowText row</code></summary>
 
 <br/>
 Asserts a link exists in a table row containing given text. 
 <br/><br/>
 
 ```gherkin
-Then I see the "Edit" in the "My article" row
-Then I should see the "Edit" in the "My article" row
+Then I should see the :link in the :rowText row
 
 ```
 
@@ -431,37 +552,35 @@ Asserts a link does not exist in a table row containing given text.
 <br/><br/>
 
 ```gherkin
-Then I should not see the "Delete" in the "My article" row
+Then I should not see the :link in the :rowText row
 
 ```
 
 </details>
 
 <details>
-  <summary><code>@Then I should be able to edit a/an :type( content)</code></summary>
+  <summary><code>@Then I should be able to edit the :type</code></summary>
 
 <br/>
 Asserts that a given content type is editable. 
 <br/><br/>
 
 ```gherkin
-Then I should be able to edit an "article"
-Then I should be able to edit an "article" content
+Then I should be able to edit the :type
 
 ```
 
 </details>
 
 <details>
-  <summary><code>@Then (I )break</code></summary>
+  <summary><code>@Then I should be able to edit the :type content</code></summary>
 
 <br/>
-Pauses the scenario until the user presses a key. 
+Asserts that a given content type (with explicit "content") is editable. 
 <br/><br/>
 
 ```gherkin
-Then break
-Then I break
+Then I should be able to edit the :type content
 
 ```
 
@@ -503,56 +622,56 @@ Given I run drush "pm:list" "--status=enabled"
 </details>
 
 <details>
-  <summary><code>@Then drush output should contain :output</code></summary>
-
-<br/>
-Assert Drush output contains a string. 
-<br/><br/>
-
-```gherkin
-Then drush output should contain "Drupal version"
-
-```
-
-</details>
-
-<details>
-  <summary><code>@Then drush output should match :regex</code></summary>
-
-<br/>
-Assert Drush output matches a regular expression. 
-<br/><br/>
-
-```gherkin
-Then drush output should match "/Drupal [0-9]+/"
-
-```
-
-</details>
-
-<details>
-  <summary><code>@Then drush output should not contain :output</code></summary>
-
-<br/>
-Assert Drush output does not contain a string. 
-<br/><br/>
-
-```gherkin
-Then drush output should not contain "error"
-
-```
-
-</details>
-
-<details>
-  <summary><code>@Then print last drush output</code></summary>
+  <summary><code>@When I print the last drush output</code></summary>
 
 <br/>
 Print the last Drush output. 
 <br/><br/>
 
 ```gherkin
-Then print last drush output
+When I print the last drush output
+
+```
+
+</details>
+
+<details>
+  <summary><code>@Then the drush output should contain :output</code></summary>
+
+<br/>
+Assert the Drush output contains a string. 
+<br/><br/>
+
+```gherkin
+Then the drush output should contain "Drupal version"
+
+```
+
+</details>
+
+<details>
+  <summary><code>@Then the drush output should match :regex</code></summary>
+
+<br/>
+Assert the Drush output matches a regular expression. 
+<br/><br/>
+
+```gherkin
+Then the drush output should match "/Drupal [0-9]+/"
+
+```
+
+</details>
+
+<details>
+  <summary><code>@Then the drush output should not contain :output</code></summary>
+
+<br/>
+Assert the Drush output does not contain a string. 
+<br/><br/>
+
+```gherkin
+Then the drush output should not contain "error"
 
 ```
 
@@ -566,18 +685,31 @@ Then print last drush output
 
 
 <details>
-  <summary><code>@When Drupal sends a/an (e)mail:</code></summary>
+  <summary><code>@When I send the following mail:</code></summary>
 
 <br/>
-This is mainly useful for testing this context. 
+Send a mail through the active Drupal driver. 
 <br/><br/>
 
 ```gherkin
-  When Drupal sends a mail:
+  When I send the following mail:
     | to      | user@example.com |
     | subject | Test mail        |
     | body    | Hello world      |
-  When Drupal sends an email:
+
+```
+
+</details>
+
+<details>
+  <summary><code>@When I send the following email:</code></summary>
+
+<br/>
+Send an email through the active Drupal driver. 
+<br/><br/>
+
+```gherkin
+  When I send the following email:
     | to      | user@example.com |
     | subject | Test email       |
     | body    | Hello world      |
@@ -587,19 +719,83 @@ This is mainly useful for testing this context.
 </details>
 
 <details>
-  <summary><code>@When I follow the link to :urlFragment from the (e)mail
-@When I follow the link to :urlFragment from the (e)mail to :to
-@When I follow the link to :urlFragment from the (e)mail with the subject :subject
-@When I follow the link to :urlFragment from the (e)mail to :to with the subject :subject</code></summary>
+  <summary><code>@When I follow the link to :urlFragment from the mail</code></summary>
+
+<br/>
+Follow a link from a mail body. 
+<br/><br/>
+
+```gherkin
+When I follow the link to "user/reset" from the mail
+
+```
+
+</details>
+
+<details>
+  <summary><code>@When I follow the link to :urlFragment from the email</code></summary>
 
 <br/>
 Follow a link from an email body. 
 <br/><br/>
 
 ```gherkin
-When I follow the link to "user/reset" from the mail
 When I follow the link to "user/reset" from the email
+
+```
+
+</details>
+
+<details>
+  <summary><code>@When I follow the link to :urlFragment from the mail to :to</code></summary>
+
+<br/>
+Follow a link from a mail body filtered by recipient. 
+<br/><br/>
+
+```gherkin
+When I follow the link to "user/reset" from the mail to "user@example.com"
+
+```
+
+</details>
+
+<details>
+  <summary><code>@When I follow the link to :urlFragment from the email to :to</code></summary>
+
+<br/>
+Follow a link from an email body filtered by recipient. 
+<br/><br/>
+
+```gherkin
 When I follow the link to "user/reset" from the email to "user@example.com"
+
+```
+
+</details>
+
+<details>
+  <summary><code>@When I follow the link to :urlFragment from the mail with the subject :subject</code></summary>
+
+<br/>
+Follow a link from a mail body filtered by subject. 
+<br/><br/>
+
+```gherkin
+When I follow the link to "user/reset" from the mail with the subject "Welcome"
+
+```
+
+</details>
+
+<details>
+  <summary><code>@When I follow the link to :urlFragment from the email with the subject :subject</code></summary>
+
+<br/>
+Follow a link from an email body filtered by subject. 
+<br/><br/>
+
+```gherkin
 When I follow the link to "user/reset" from the email with the subject "Welcome"
 
 ```
@@ -607,23 +803,58 @@ When I follow the link to "user/reset" from the email with the subject "Welcome"
 </details>
 
 <details>
-  <summary><code>@Then (a )(an )(e)mail(s) has/have been sent:
-@Then (a )(an )(e)mail(s) has/have been sent to :to:
-@Then (a )(an )(e)mail(s) has/have been sent with the subject :subject:
-@Then (a )(an )(e)mail(s) has/have been sent to :to with the subject :subject:</code></summary>
+  <summary><code>@When I follow the link to :urlFragment from the mail to :to with the subject :subject</code></summary>
 
 <br/>
-Check all mail sent during the scenario. 
+Follow a link from a mail body filtered by recipient and subject. 
 <br/><br/>
 
 ```gherkin
-  Then mail has been sent:
+When I follow the link to "user/reset" from the mail to "user@example.com" with the subject "Welcome"
+
+```
+
+</details>
+
+<details>
+  <summary><code>@When I follow the link to :urlFragment from the email to :to with the subject :subject</code></summary>
+
+<br/>
+Follow a link from an email body filtered by recipient and subject. 
+<br/><br/>
+
+```gherkin
+When I follow the link to "user/reset" from the email to "user@example.com" with the subject "Welcome"
+
+```
+
+</details>
+
+<details>
+  <summary><code>@Then the following (e)mail should have been sent:</code></summary>
+
+<br/>
+Assert mail has been sent during the scenario. 
+<br/><br/>
+
+```gherkin
+  Then the following mail should have been sent:
     | to               | body                |
     | user@example.com | Welcome to the site |
-  Then an email has been sent with the subject "Welcome":
-    | to               | body                |
-    | user@example.com | Welcome to the site |
-  Then emails have been sent to "user@example.com" with the subject "Welcome":
+
+```
+
+</details>
+
+<details>
+  <summary><code>@Then the following (e)mail should have been sent to :to:</code></summary>
+
+<br/>
+Assert mail has been sent to a recipient during the scenario. 
+<br/><br/>
+
+```gherkin
+  Then the following mail should have been sent to "user@example.com":
     | body                |
     | Welcome to the site |
 
@@ -632,20 +863,46 @@ Check all mail sent during the scenario.
 </details>
 
 <details>
-  <summary><code>@Then (a )(an )new (e)mail(s) is/are sent:
-@Then (a )(an )new (e)mail(s) is/are sent to :to:
-@Then (a )(an )new (e)mail(s) is/are sent with the subject :subject:
-@Then (a )(an )new (e)mail(s) is/are sent to :to with the subject :subject:</code></summary>
+  <summary><code>@Then the following (e)mail should have been sent with the subject :subject:</code></summary>
 
 <br/>
-Check mail sent since the last step that checked mail. 
+Assert mail with a subject has been sent during the scenario. 
 <br/><br/>
 
 ```gherkin
-  Then new mail is sent:
-    | subject   |
-    | Greetings |
-  Then a new email is sent to "user@example.com":
+  Then the following mail should have been sent with the subject "Welcome":
+    | body                |
+    | Welcome to the site |
+
+```
+
+</details>
+
+<details>
+  <summary><code>@Then the following (e)mail should have been sent to :to with the subject :subject:</code></summary>
+
+<br/>
+Assert mail to a recipient with a subject has been sent. 
+<br/><br/>
+
+```gherkin
+  Then the following mail should have been sent to "user@example.com" with the subject "Welcome":
+    | body                |
+    | Welcome to the site |
+
+```
+
+</details>
+
+<details>
+  <summary><code>@Then the following new (e)mail should have been sent:</code></summary>
+
+<br/>
+Assert new mail has been sent since the last mail check. 
+<br/><br/>
+
+```gherkin
+  Then the following new mail should have been sent:
     | subject   |
     | Greetings |
 
@@ -654,37 +911,168 @@ Check mail sent since the last step that checked mail.
 </details>
 
 <details>
-  <summary><code>@Then :count (e)mail(s) has/have been sent
-@Then :count (e)mail(s) has/have been sent to :to
-@Then :count (e)mail(s) has/have been sent with the subject :subject
-@Then :count (e)mail(s) has/have been sent to :to with the subject :subject</code></summary>
+  <summary><code>@Then the following new (e)mail should have been sent to :to:</code></summary>
 
 <br/>
-Check all mail sent during the scenario. 
+Assert new mail to a recipient has been sent since the last mail check. 
 <br/><br/>
 
 ```gherkin
-Then 0 emails have been sent
-Then 2 mails have been sent to "user@example.com"
-Then 1 email has been sent with the subject "Welcome"
+  Then the following new mail should have been sent to "user@example.com":
+    | subject   |
+    | Greetings |
 
 ```
 
 </details>
 
 <details>
-  <summary><code>@Then :count new (e)mail(s) is/are sent
-@Then :count new (e)mail(s) is/are sent to :to
-@Then :count new (e)mail(s) is/are sent with the subject :subject
-@Then :count new (e)mail(s) is/are sent to :to with the subject :subject</code></summary>
+  <summary><code>@Then the following new (e)mail should have been sent with the subject :subject:</code></summary>
 
 <br/>
-Check mail sent since the last step that checked mail. 
+Assert new mail with a subject has been sent since the last mail check. 
 <br/><br/>
 
 ```gherkin
-Then 0 new emails are sent
-Then 1 new mail is sent to "user@example.com"
+  Then the following new mail should have been sent with the subject "Greetings":
+    | body  |
+    | Hello |
+
+```
+
+</details>
+
+<details>
+  <summary><code>@Then the following new (e)mail should have been sent to :to with the subject :subject:</code></summary>
+
+<br/>
+Assert new mail to a recipient with a subject has been sent. 
+<br/><br/>
+
+```gherkin
+  Then the following new mail should have been sent to "user@example.com" with the subject "Greetings":
+    | body  |
+    | Hello |
+
+```
+
+</details>
+
+<details>
+  <summary><code>@Then there should be a total of :count (e)mail(s) sent</code></summary>
+
+<br/>
+Assert the count of mails sent during the scenario. 
+<br/><br/>
+
+```gherkin
+Then there should be a total of no mails sent
+Then there should be a total of 2 mails sent
+
+```
+
+</details>
+
+<details>
+  <summary><code>@Then there should be a total of :count (e)mail(s) sent to :to</code></summary>
+
+<br/>
+Assert the count of mails sent to a recipient during the scenario. 
+<br/><br/>
+
+```gherkin
+Then there should be a total of no mails sent to "user@example.com"
+Then there should be a total of 2 mails sent to "user@example.com"
+
+```
+
+</details>
+
+<details>
+  <summary><code>@Then there should be a total of :count (e)mail(s) sent with the subject :subject</code></summary>
+
+<br/>
+Assert the count of mails sent with a subject during the scenario. 
+<br/><br/>
+
+```gherkin
+Then there should be a total of no mails sent with the subject "Welcome"
+Then there should be a total of 1 mail sent with the subject "Welcome"
+
+```
+
+</details>
+
+<details>
+  <summary><code>@Then there should be a total of :count (e)mail(s) sent to :to with the subject :subject</code></summary>
+
+<br/>
+Assert the count of mails sent to a recipient with a subject. 
+<br/><br/>
+
+```gherkin
+Then there should be a total of no mails sent to "user@example.com" with the subject "Welcome"
+Then there should be a total of 1 mail sent to "user@example.com" with the subject "Welcome"
+
+```
+
+</details>
+
+<details>
+  <summary><code>@Then there should be a total of :count new (e)mail(s) sent</code></summary>
+
+<br/>
+Assert the count of new mails sent since the last mail check. 
+<br/><br/>
+
+```gherkin
+Then there should be a total of no new mails sent
+Then there should be a total of 1 new mail sent
+
+```
+
+</details>
+
+<details>
+  <summary><code>@Then there should be a total of :count new (e)mail(s) sent to :to</code></summary>
+
+<br/>
+Assert the count of new mails sent to a recipient since the last check. 
+<br/><br/>
+
+```gherkin
+Then there should be a total of no new mails sent to "user@example.com"
+Then there should be a total of 1 new mail sent to "user@example.com"
+
+```
+
+</details>
+
+<details>
+  <summary><code>@Then there should be a total of :count new (e)mail(s) sent with the subject :subject</code></summary>
+
+<br/>
+Assert the count of new mails sent with a subject since the last check. 
+<br/><br/>
+
+```gherkin
+Then there should be a total of no new mails sent with the subject "Welcome"
+Then there should be a total of 1 new mail sent with the subject "Welcome"
+
+```
+
+</details>
+
+<details>
+  <summary><code>@Then there should be a total of :count new (e)mail(s) sent to :to with the subject :subject</code></summary>
+
+<br/>
+Assert the count of new mails sent to a recipient with a subject. 
+<br/><br/>
+
+```gherkin
+Then there should be a total of no new mails sent to "user@example.com" with the subject "Welcome"
+Then there should be a total of 1 new mail sent to "user@example.com" with the subject "Welcome"
 
 ```
 
@@ -698,8 +1086,7 @@ Then 1 new mail is sent to "user@example.com"
 
 
 <details>
-  <summary><code>@Then I should see the button :button in the :region( region)
-@Then I should see the :button button in the :region( region)</code></summary>
+  <summary><code>@Then I should see the button :button in the :region( region)</code></summary>
 
 <br/>
 Checks if a button with id|name|title|alt|value exists in a region. 
@@ -708,6 +1095,20 @@ Checks if a button with id|name|title|alt|value exists in a region.
 ```gherkin
 Then I should see the button "Submit" in the "content"
 Then I should see the button "Submit" in the "content" region
+
+```
+
+</details>
+
+<details>
+  <summary><code>@Then I should see the :button button in the :region( region)</code></summary>
+
+<br/>
+Checks if a button (with the noun before "button") exists in a region. 
+<br/><br/>
+
+```gherkin
+Then I should see the "Submit" button in the "content"
 Then I should see the "Submit" button in the "content" region
 
 ```
@@ -715,8 +1116,7 @@ Then I should see the "Submit" button in the "content" region
 </details>
 
 <details>
-  <summary><code>@Then I should not see the button :button in the :region( region)
-@Then I should not see the :button button in the :region( region)</code></summary>
+  <summary><code>@Then I should not see the button :button in the :region( region)</code></summary>
 
 <br/>
 Asserts that a button does not exists in a region. 
@@ -725,6 +1125,20 @@ Asserts that a button does not exists in a region.
 ```gherkin
 Then I should not see the button "Delete" in the "sidebar"
 Then I should not see the button "Delete" in the "sidebar" region
+
+```
+
+</details>
+
+<details>
+  <summary><code>@Then I should not see the :button button in the :region( region)</code></summary>
+
+<br/>
+Asserts a button (with noun before "button") does not exist in a region. 
+<br/><br/>
+
+```gherkin
+Then I should not see the "Delete" button in the "sidebar"
 Then I should not see the "Delete" button in the "sidebar" region
 
 ```
@@ -732,14 +1146,14 @@ Then I should not see the "Delete" button in the "sidebar" region
 </details>
 
 <details>
-  <summary><code>@Then I( should) see the :tag element in the :region( region)</code></summary>
+  <summary><code>@Then I should see the :tag element in the :region( region)</code></summary>
 
 <br/>
 Assert an element exists in a region. 
 <br/><br/>
 
 ```gherkin
-Then I see the "h2" element in the "content"
+Then I should see the "h2" element in the "content"
 Then I should see the "h2" element in the "content" region
 
 ```
@@ -747,14 +1161,14 @@ Then I should see the "h2" element in the "content" region
 </details>
 
 <details>
-  <summary><code>@Then I( should) not see the :tag element in the :region( region)</code></summary>
+  <summary><code>@Then I should not see the :tag element in the :region( region)</code></summary>
 
 <br/>
 Assert an element does not exist in a region. 
 <br/><br/>
 
 ```gherkin
-Then I not see the "h2" element in the "sidebar"
+Then I should not see the "h2" element in the "sidebar"
 Then I should not see the "h2" element in the "sidebar" region
 
 ```
@@ -762,14 +1176,14 @@ Then I should not see the "h2" element in the "sidebar" region
 </details>
 
 <details>
-  <summary><code>@Then I( should) see :text in the :tag element in the :region( region)</code></summary>
+  <summary><code>@Then I should see :text in the :tag element in the :region( region)</code></summary>
 
 <br/>
 Assert text in an element within a region. 
 <br/><br/>
 
 ```gherkin
-Then I see "Welcome" in the "h2" element in the "content"
+Then I should see "Welcome" in the "h2" element in the "content"
 Then I should see "Welcome" in the "h2" element in the "content" region
 
 ```
@@ -777,14 +1191,14 @@ Then I should see "Welcome" in the "h2" element in the "content" region
 </details>
 
 <details>
-  <summary><code>@Then I( should) not see :text in the :tag element in the :region( region)</code></summary>
+  <summary><code>@Then I should not see :text in the :tag element in the :region( region)</code></summary>
 
 <br/>
 Assert text is not in an element within a region. 
 <br/><br/>
 
 ```gherkin
-Then I not see "Error" in the "div" element in the "content"
+Then I should not see "Error" in the "div" element in the "content"
 Then I should not see "Error" in the "div" element in the "content" region
 
 ```
@@ -792,14 +1206,14 @@ Then I should not see "Error" in the "div" element in the "content" region
 </details>
 
 <details>
-  <summary><code>@Then I( should) see the :tag element with the :attribute attribute set to :value in the :region( region)</code></summary>
+  <summary><code>@Then I should see the :tag element with the :attribute attribute set to :value in the :region( region)</code></summary>
 
 <br/>
 Assert an element with a specific attribute value exists in a region. 
 <br/><br/>
 
 ```gherkin
-Then I see the "a" element with the "href" attribute set to "/about" in the "footer"
+Then I should see the "a" element with the "href" attribute set to "/about" in the "footer"
 Then I should see the "a" element with the "href" attribute set to "/about" in the "footer" region
 
 ```
@@ -807,14 +1221,14 @@ Then I should see the "a" element with the "href" attribute set to "/about" in t
 </details>
 
 <details>
-  <summary><code>@Then I( should) see :text in the :tag element with the :attribute attribute set to :value in the :region( region)</code></summary>
+  <summary><code>@Then I should see :text in the :tag element with the :attribute attribute set to :value in the :region( region)</code></summary>
 
 <br/>
 Assert text in an element with a specific attribute value in a region. 
 <br/><br/>
 
 ```gherkin
-Then I see "About" in the "a" element with the "href" attribute set to "/about" in the "footer"
+Then I should see "About" in the "a" element with the "href" attribute set to "/about" in the "footer"
 Then I should see "About" in the "a" element with the "href" attribute set to "/about" in the "footer" region
 
 ```
@@ -822,14 +1236,14 @@ Then I should see "About" in the "a" element with the "href" attribute set to "/
 </details>
 
 <details>
-  <summary><code>@Then I( should) see :text in the :tag element with the :property CSS property set to :value in the :region( region)</code></summary>
+  <summary><code>@Then I should see :text in the :tag element with the :property CSS property set to :value in the :region( region)</code></summary>
 
 <br/>
 Assert text in an element with a specific CSS property value in a region. 
 <br/><br/>
 
 ```gherkin
-Then I see "Notice" in the "div" element with the "color" CSS property set to "red" in the "content"
+Then I should see "Notice" in the "div" element with the "color" CSS property set to "red" in the "content"
 Then I should see "Notice" in the "div" element with the "color" CSS property set to "red" in the "content" region
 
 ```
@@ -838,7 +1252,7 @@ Then I should see "Notice" in the "div" element with the "color" CSS property se
 
 ## MessageContext
 
-[Source](src/Drupal/DrupalExtension/Context/MessageContext.php)
+[Source](src/Drupal/DrupalExtension/Context/MessageContext.php), [Example](tests/behat/features/message.feature)
 
 >  Provides step-definitions for interacting with Drupal messages.
 
@@ -1062,14 +1476,13 @@ Checks if the current page does not contain the given message.
 
 ## MinkContext
 
-[Source](src/Drupal/DrupalExtension/Context/MinkContext.php)
+[Source](src/Drupal/DrupalExtension/Context/MinkContext.php), [Example](tests/behat/features/mink.feature)
 
 >  Extensions to the Mink Extension.
 
 
 <details>
-  <summary><code>@Given I am at :path
-@When I visit :path</code></summary>
+  <summary><code>@Given I am at :path</code></summary>
 
 <br/>
 Visit a given path, and additionally check for HTTP response code 200. 
@@ -1077,15 +1490,13 @@ Visit a given path, and additionally check for HTTP response code 200.
 
 ```gherkin
 Given I am at "/node/1"
-When I visit "/node/1"
 
 ```
 
 </details>
 
 <details>
-  <summary><code>@Given for :field I enter :value
-@Given I enter :value for :field</code></summary>
+  <summary><code>@Given for :field I enter :value</code></summary>
 
 <br/>
 Enter a value into a form field. 
@@ -1093,6 +1504,19 @@ Enter a value into a form field.
 
 ```gherkin
 Given for "Title" I enter "My article"
+
+```
+
+</details>
+
+<details>
+  <summary><code>@Given I enter :value for :field</code></summary>
+
+<br/>
+Enter a value into a form field (alternative phrasing). 
+<br/><br/>
+
+```gherkin
 Given I enter "My article" for "Title"
 
 ```
@@ -1143,8 +1567,7 @@ Given I press "Submit" in the "sidebar" region
 </details>
 
 <details>
-  <summary><code>@Given I fill in :value for :field in the :region( region)
-@Given I fill in :field with :value in the :region( region)</code></summary>
+  <summary><code>@Given I fill in :value for :field in the :region( region)</code></summary>
 
 <br/>
 Fills in a form field with id|name|title|alt|value in the specified region. 
@@ -1153,6 +1576,19 @@ Fills in a form field with id|name|title|alt|value in the specified region.
 ```gherkin
 Given I fill in "test" for "Search" in the "header"
 Given I fill in "test" for "Search" in the "header" region
+
+```
+
+</details>
+
+<details>
+  <summary><code>@Given I fill in :field with :value in the :region( region)</code></summary>
+
+<br/>
+Fills in a form field (alternative phrasing) in the specified region. 
+<br/><br/>
+
+```gherkin
 Given I fill in "Search" with "test" in the "header" region
 
 ```
@@ -1218,6 +1654,20 @@ Given I uncheck the box "Promoted to front page"
 </details>
 
 <details>
+  <summary><code>@When I visit :path</code></summary>
+
+<br/>
+Visit a given path, and additionally check for HTTP response code 200. 
+<br/><br/>
+
+```gherkin
+When I visit "/node/1"
+
+```
+
+</details>
+
+<details>
   <summary><code>@When I click :link</code></summary>
 
 <br/>
@@ -1276,8 +1726,7 @@ When I click "Read more" in the "content" region
 </details>
 
 <details>
-  <summary><code>@When I select the radio button :label with the id :id
-@When I select the radio button :label</code></summary>
+  <summary><code>@When I select the radio button :label</code></summary>
 
 <br/>
 Select a radio button. 
@@ -1285,6 +1734,19 @@ Select a radio button.
 
 ```gherkin
 When I select the radio button "Full HTML"
+
+```
+
+</details>
+
+<details>
+  <summary><code>@When I select the radio button :label with the id :id</code></summary>
+
+<br/>
+Select a radio button by id. 
+<br/><br/>
+
+```gherkin
 When I select the radio button "Full HTML" with the id "edit-format-full-html"
 
 ```
@@ -1350,14 +1812,13 @@ Then I should not visibly see the link "Skip to main content"
 </details>
 
 <details>
-  <summary><code>@Then I (should )see the heading :heading</code></summary>
+  <summary><code>@Then I should see the heading :heading</code></summary>
 
 <br/>
 Assert a heading is visible on the page. 
 <br/><br/>
 
 ```gherkin
-Then I see the heading "Welcome"
 Then I should see the heading "Welcome"
 
 ```
@@ -1365,14 +1826,13 @@ Then I should see the heading "Welcome"
 </details>
 
 <details>
-  <summary><code>@Then I (should )not see the heading :heading</code></summary>
+  <summary><code>@Then I should not see the heading :heading</code></summary>
 
 <br/>
 Assert a heading is not on the page. 
 <br/><br/>
 
 ```gherkin
-Then I not see the heading "Error"
 Then I should not see the heading "Error"
 
 ```
@@ -1380,16 +1840,27 @@ Then I should not see the heading "Error"
 </details>
 
 <details>
-  <summary><code>@Then I (should ) see the button :button
-@Then I (should ) see the :button button</code></summary>
+  <summary><code>@Then I should see the button :button</code></summary>
 
 <br/>
 Assert a button is visible on the page. 
 <br/><br/>
 
 ```gherkin
-Then I see the button "Save"
 Then I should see the button "Save"
+
+```
+
+</details>
+
+<details>
+  <summary><code>@Then I should see the :button button</code></summary>
+
+<br/>
+Assert a button (with the noun before "button") is visible on the page. 
+<br/><br/>
+
+```gherkin
 Then I should see the "Save" button
 
 ```
@@ -1397,8 +1868,7 @@ Then I should see the "Save" button
 </details>
 
 <details>
-  <summary><code>@Then I should not see the button :button
-@Then I should not see the :button button</code></summary>
+  <summary><code>@Then I should not see the button :button</code></summary>
 
 <br/>
 Assert a button is not on the page. 
@@ -1406,6 +1876,19 @@ Assert a button is not on the page.
 
 ```gherkin
 Then I should not see the button "Delete"
+
+```
+
+</details>
+
+<details>
+  <summary><code>@Then I should not see the :button button</code></summary>
+
+<br/>
+Assert a button (with the noun before "button") is not on the page. 
+<br/><br/>
+
+```gherkin
 Then I should not see the "Delete" button
 
 ```
@@ -1413,8 +1896,7 @@ Then I should not see the "Delete" button
 </details>
 
 <details>
-  <summary><code>@Then I should see the heading :heading in the :region( region)
-@Then I should see the :heading heading in the :region( region)</code></summary>
+  <summary><code>@Then I should see the heading :heading in the :region( region)</code></summary>
 
 <br/>
 Find a heading in a specific region. 
@@ -1423,6 +1905,20 @@ Find a heading in a specific region.
 ```gherkin
 Then I should see the heading "Latest news" in the "sidebar"
 Then I should see the heading "Latest news" in the "sidebar" region
+
+```
+
+</details>
+
+<details>
+  <summary><code>@Then I should see the :heading heading in the :region( region)</code></summary>
+
+<br/>
+Find a heading (with the noun before "heading") in a specific region. 
+<br/><br/>
+
+```gherkin
+Then I should see the "Latest news" heading in the "sidebar"
 Then I should see the "Latest news" heading in the "sidebar" region
 
 ```
@@ -1460,15 +1956,14 @@ Then I should not see the link "Admin" in the "footer" region
 </details>
 
 <details>
-  <summary><code>@Then I should see( the text) :text in the :region( region)</code></summary>
+  <summary><code>@Then I should see the text :text in the :region( region)</code></summary>
 
 <br/>
 Assert text is visible in a region. 
 <br/><br/>
 
 ```gherkin
-Then I should see "Welcome" in the "content"
-Then I should see "Welcome" in the "content" region
+Then I should see the text "Welcome" in the "content"
 Then I should see the text "Welcome" in the "content" region
 
 ```
@@ -1476,15 +1971,14 @@ Then I should see the text "Welcome" in the "content" region
 </details>
 
 <details>
-  <summary><code>@Then I should not see( the text) :text in the :region( region)</code></summary>
+  <summary><code>@Then I should not see the text :text in the :region( region)</code></summary>
 
 <br/>
 Assert text is not visible in a region. 
 <br/><br/>
 
 ```gherkin
-Then I should not see "Error" in the "content"
-Then I should not see "Error" in the "content" region
+Then I should not see the text "Error" in the "content"
 Then I should not see the text "Error" in the "content" region
 
 ```
@@ -1492,14 +1986,13 @@ Then I should not see the text "Error" in the "content" region
 </details>
 
 <details>
-  <summary><code>@Then I (should )see the text :text</code></summary>
+  <summary><code>@Then I should see the text :text</code></summary>
 
 <br/>
 Assert text is visible on the page. 
 <br/><br/>
 
 ```gherkin
-Then I see the text "Welcome to Drupal"
 Then I should see the text "Welcome to Drupal"
 
 ```
@@ -1542,7 +2035,7 @@ Assert the HTTP response code is not a specific value.
 <br/><br/>
 
 ```gherkin
-Then I should not get a 403 HTTP response
+Then I should not get a :code HTTP response
 
 ```
 

@@ -7,12 +7,12 @@ Feature: FieldHandlers
   # feature "fixtures/drupalN/modules/behat_test" to enabled on the site.
   @test-drupal @api
   Scenario: Test various node field handlers
-    Given "page" content:
+    Given the following "page" content:
       | title      |
       | Page one   |
       | Page two   |
       | Page three |
-    When I am viewing a "post" content:
+    When I am viewing a "post" content with the following fields:
       | title                | Post title                                                                       |
       | body                 | PLACEHOLDER BODY                                                                 |
       | field_post_reference | Page one, Page two                                                               |
@@ -37,29 +37,27 @@ Feature: FieldHandlers
 
   # Entity reference values containing ' - ' must be double-quoted to prevent
   # the compound column separator from splitting them.
-  # @see https://github.com/jhedstrom/drupalextension/issues/642
   @test-drupal @api
   Scenario: Test entity reference with compound separator in title
-    Given "page" content:
+    Given the following "page" content:
       | title         |
       | Alpha - Bravo |
-    When I am viewing a "post" content:
+    When I am viewing a "post" content with the following fields:
       | title                | Post with ref     |
       | field_post_reference | "Alpha - Bravo"   |
     Then I should see "Alpha - Bravo"
 
   # Unquoted entity reference values containing ' - ' are still split by the
   # compound column separator, which breaks the entity query.
-  # @see https://github.com/jhedstrom/drupalextension/issues/642
   @test-drupal @api
-  Scenario: Assert "Given :type content:" fails for unquoted entity reference title containing compound separator
+  Scenario: Assert "Given the following :type content:" fails for unquoted entity reference title containing compound separator
     Given some behat configuration
     And scenario steps tagged with "@test-drupal @api":
       """
-      Given "page" content:
+      Given the following "page" content:
         | title         |
         | Alpha - Bravo |
-      When I am viewing a "post" content:
+      When I am viewing a "post" content with the following fields:
         | title                | Post with ref |
         | field_post_reference | Alpha - Bravo |
       Then I should see "Alpha - Bravo"
@@ -76,12 +74,12 @@ Feature: FieldHandlers
   # the machine names and human readable names is defined.
   @test-drupal @api
   Scenario: Test using human readable names for fields using @Transform
-    Given "page" content:
+    Given the following "page" content:
       | title      |
       | Page one   |
       | Page two   |
       | Page three |
-    When I am viewing a "post" content:
+    When I am viewing a "post" content with the following fields:
       | title     | Post title                                                                       |
       | body      | PLACEHOLDER BODY                                                                 |
       | reference | Page one, Page two                                                               |
@@ -103,7 +101,7 @@ Feature: FieldHandlers
 
   @test-drupal @api
   Scenario: Test alternative syntax for named field columns on node content
-    When I am viewing a "post" content:
+    When I am viewing a "post" content with the following fields:
       | title                           | Post title                  |
       | field_post_address:country      | FR                          |
       | field_post_address:locality     | Paris                       |
@@ -116,7 +114,7 @@ Feature: FieldHandlers
 
   @test-drupal @api
   Scenario: Test shorthand syntax for named field columns on node content
-    When I am viewing a "post" content:
+    When I am viewing a "post" content with the following fields:
       | title                      | Post title      |
       | field_post_address:country | GB              |
       | :locality                  | London          |
@@ -129,7 +127,7 @@ Feature: FieldHandlers
 
   @test-drupal @api
   Scenario: Test multivalue fields with named field columns on node content
-    When I am viewing a "post" content:
+    When I am viewing a "post" content with the following fields:
       | title                      | Post title                             |
       | field_post_address:country | IT, JP                                 |
       | :locality                  | Milan, Tokyo                           |
@@ -146,16 +144,16 @@ Feature: FieldHandlers
 
   @test-drupal @api
   Scenario: Test various user field handlers.
-    Given "tags" terms:
+    Given the following "tags" terms:
       | name    |
       | Tag one |
       | Tag two |
-    And "page" content:
+    And the following "page" content:
       | title      |
       | Page one   |
       | Page two   |
       | Page three |
-    And users:
+    And the following users:
       | name     | mail         | field_tags       | field_post_reference | field_post_address                                                               |
       | Jane Doe |              |                  |                      |                                                                                  |
       | John Doe | john@doe.com | Tag one, Tag two | Page one, Page two   | country: BE - locality: Brussel - thoroughfare: Louisalaan 1 - postal_code: 1000 |
@@ -177,7 +175,7 @@ Feature: FieldHandlers
 
   @test-drupal @api
   Scenario: Test using @Transform to provide human friendly aliases for named field columns
-    Given users:
+    Given the following users:
       | name     | mail             | street        | city     | postcode | country |
       | Jane Doe | jane@example.com | Pioneer Place | Portland | OR 97204 | US      |
     And I am logged in as a user with the "administrator" role
@@ -190,13 +188,13 @@ Feature: FieldHandlers
 
   @test-drupal @api
   Scenario: Test taxonomy term reference field handler
-    Given "tags" terms:
+    Given the following "tags" terms:
       | name       |
       | Tag one    |
       | Tag two    |
       | Tag, three |
       | Tag four   |
-    And "article" content:
+    And the following "article" content:
       | title           | body             | promote | field_tags                    |
       # Field values containing commas should be escaped with double quotes.
       # The comma separator can optionally be followed by a space.

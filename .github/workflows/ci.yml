@@ -51,7 +51,7 @@ jobs:
           docker compose exec -T php vendor/bin/gherkinlint lint tests/behat/features
 
       - name: Lint documentation
-        run: docker compose exec -T php php scripts/docs.php --fail-on-change --warning-on-invalid --log-dir=.logs/docs
+        run: docker compose exec -T php php scripts/docs.php --fail-on-change --log-dir=.logs/docs
 
       - name: Load docs validation logs
         if: github.event_name == 'pull_request' && !cancelled()

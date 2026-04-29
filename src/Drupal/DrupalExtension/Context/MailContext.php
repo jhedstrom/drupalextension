@@ -73,21 +73,351 @@ class MailContext extends RawMailContext {
   }
 
   /**
-   * This is mainly useful for testing this context.
+   * Send a mail through the active Drupal driver.
    *
    * @code
-   *   When Drupal sends a mail:
+   *   When I send the following mail:
    *     | to      | user@example.com |
    *     | subject | Test mail        |
    *     | body    | Hello world      |
-   *   When Drupal sends an email:
+   * @endcode
+   */
+  #[When('I send the following mail:')]
+  public function iSendMail(TableNode $fields): void {
+    $this->sendMailFromTable($fields);
+  }
+
+  /**
+   * Send an email through the active Drupal driver.
+   *
+   * @code
+   *   When I send the following email:
    *     | to      | user@example.com |
    *     | subject | Test email       |
    *     | body    | Hello world      |
    * @endcode
    */
-  #[When('Drupal sends a/an (e)mail:')]
-  public function drupalSendsMail(TableNode $fields): void {
+  #[When('I send the following email:')]
+  public function iSendEmail(TableNode $fields): void {
+    $this->sendMailFromTable($fields);
+  }
+
+  /**
+   * Assert mail has been sent during the scenario.
+   *
+   * @code
+   *   Then the following mail should have been sent:
+   *     | to               | body                |
+   *     | user@example.com | Welcome to the site |
+   * @endcode
+   */
+  #[Then('the following (e)mail should have been sent:')]
+  public function mailAssertHasBeenSent(TableNode $expectedMailTable): void {
+    $this->assertMailMatches($expectedMailTable, '', '');
+  }
+
+  /**
+   * Assert mail has been sent to a recipient during the scenario.
+   *
+   * @code
+   *   Then the following mail should have been sent to "user@example.com":
+   *     | body                |
+   *     | Welcome to the site |
+   * @endcode
+   */
+  #[Then('the following (e)mail should have been sent to :to:')]
+  public function mailAssertHasBeenSentTo(string $to, TableNode $expectedMailTable): void {
+    $this->assertMailMatches($expectedMailTable, $to, '');
+  }
+
+  /**
+   * Assert mail with a subject has been sent during the scenario.
+   *
+   * @code
+   *   Then the following mail should have been sent with the subject "Welcome":
+   *     | body                |
+   *     | Welcome to the site |
+   * @endcode
+   */
+  #[Then('the following (e)mail should have been sent with the subject :subject:')]
+  public function mailAssertHasBeenSentWithSubject(string $subject, TableNode $expectedMailTable): void {
+    $this->assertMailMatches($expectedMailTable, '', $subject);
+  }
+
+  /**
+   * Assert mail to a recipient with a subject has been sent.
+   *
+   * @code
+   *   Then the following mail should have been sent to "user@example.com" with the subject "Welcome":
+   *     | body                |
+   *     | Welcome to the site |
+   * @endcode
+   */
+  #[Then('the following (e)mail should have been sent to :to with the subject :subject:')]
+  public function mailAssertHasBeenSentToWithSubject(string $to, string $subject, TableNode $expectedMailTable): void {
+    $this->assertMailMatches($expectedMailTable, $to, $subject);
+  }
+
+  /**
+   * Assert new mail has been sent since the last mail check.
+   *
+   * @code
+   *   Then the following new mail should have been sent:
+   *     | subject   |
+   *     | Greetings |
+   * @endcode
+   */
+  #[Then('the following new (e)mail should have been sent:')]
+  public function newMailAssertIsSent(TableNode $expectedMailTable): void {
+    $this->assertNewMailMatches($expectedMailTable, '', '');
+  }
+
+  /**
+   * Assert new mail to a recipient has been sent since the last mail check.
+   *
+   * @code
+   *   Then the following new mail should have been sent to "user@example.com":
+   *     | subject   |
+   *     | Greetings |
+   * @endcode
+   */
+  #[Then('the following new (e)mail should have been sent to :to:')]
+  public function newMailAssertIsSentTo(string $to, TableNode $expectedMailTable): void {
+    $this->assertNewMailMatches($expectedMailTable, $to, '');
+  }
+
+  /**
+   * Assert new mail with a subject has been sent since the last mail check.
+   *
+   * @code
+   *   Then the following new mail should have been sent with the subject "Greetings":
+   *     | body  |
+   *     | Hello |
+   * @endcode
+   */
+  #[Then('the following new (e)mail should have been sent with the subject :subject:')]
+  public function newMailAssertIsSentWithSubject(string $subject, TableNode $expectedMailTable): void {
+    $this->assertNewMailMatches($expectedMailTable, '', $subject);
+  }
+
+  /**
+   * Assert new mail to a recipient with a subject has been sent.
+   *
+   * @code
+   *   Then the following new mail should have been sent to "user@example.com" with the subject "Greetings":
+   *     | body  |
+   *     | Hello |
+   * @endcode
+   */
+  #[Then('the following new (e)mail should have been sent to :to with the subject :subject:')]
+  public function newMailAssertIsSentToWithSubject(string $to, string $subject, TableNode $expectedMailTable): void {
+    $this->assertNewMailMatches($expectedMailTable, $to, $subject);
+  }
+
+  /**
+   * Assert the count of mails sent during the scenario.
+   *
+   * @code
+   * Then there should be a total of no mails sent
+   * Then there should be a total of 2 mails sent
+   * @endcode
+   */
+  #[Then('there should be a total of :count (e)mail(s) sent')]
+  public function mailCountAssertEquals(string $count): void {
+    $this->assertMailCount($count, '', '');
+  }
+
+  /**
+   * Assert the count of mails sent to a recipient during the scenario.
+   *
+   * @code
+   * Then there should be a total of no mails sent to "user@example.com"
+   * Then there should be a total of 2 mails sent to "user@example.com"
+   * @endcode
+   */
+  #[Then('there should be a total of :count (e)mail(s) sent to :to')]
+  public function mailCountAssertEqualsForRecipient(string $count, string $to): void {
+    $this->assertMailCount($count, $to, '');
+  }
+
+  /**
+   * Assert the count of mails sent with a subject during the scenario.
+   *
+   * @code
+   * Then there should be a total of no mails sent with the subject "Welcome"
+   * Then there should be a total of 1 mail sent with the subject "Welcome"
+   * @endcode
+   */
+  #[Then('there should be a total of :count (e)mail(s) sent with the subject :subject')]
+  public function mailCountAssertEqualsForSubject(string $count, string $subject): void {
+    $this->assertMailCount($count, '', $subject);
+  }
+
+  /**
+   * Assert the count of mails sent to a recipient with a subject.
+   *
+   * @code
+   * Then there should be a total of no mails sent to "user@example.com" with the subject "Welcome"
+   * Then there should be a total of 1 mail sent to "user@example.com" with the subject "Welcome"
+   * @endcode
+   */
+  #[Then('there should be a total of :count (e)mail(s) sent to :to with the subject :subject')]
+  public function mailCountAssertEqualsForRecipientAndSubject(string $count, string $to, string $subject): void {
+    $this->assertMailCount($count, $to, $subject);
+  }
+
+  /**
+   * Assert the count of new mails sent since the last mail check.
+   *
+   * @code
+   * Then there should be a total of no new mails sent
+   * Then there should be a total of 1 new mail sent
+   * @endcode
+   */
+  #[Then('there should be a total of :count new (e)mail(s) sent')]
+  public function newMailCountAssertEquals(string $count): void {
+    $this->assertNewMailCount($count, '', '');
+  }
+
+  /**
+   * Assert the count of new mails sent to a recipient since the last check.
+   *
+   * @code
+   * Then there should be a total of no new mails sent to "user@example.com"
+   * Then there should be a total of 1 new mail sent to "user@example.com"
+   * @endcode
+   */
+  #[Then('there should be a total of :count new (e)mail(s) sent to :to')]
+  public function newMailCountAssertEqualsForRecipient(string $count, string $to): void {
+    $this->assertNewMailCount($count, $to, '');
+  }
+
+  /**
+   * Assert the count of new mails sent with a subject since the last check.
+   *
+   * @code
+   * Then there should be a total of no new mails sent with the subject "Welcome"
+   * Then there should be a total of 1 new mail sent with the subject "Welcome"
+   * @endcode
+   */
+  #[Then('there should be a total of :count new (e)mail(s) sent with the subject :subject')]
+  public function newMailCountAssertEqualsForSubject(string $count, string $subject): void {
+    $this->assertNewMailCount($count, '', $subject);
+  }
+
+  /**
+   * Assert the count of new mails sent to a recipient with a subject.
+   *
+   * @code
+   * Then there should be a total of no new mails sent to "user@example.com" with the subject "Welcome"
+   * Then there should be a total of 1 new mail sent to "user@example.com" with the subject "Welcome"
+   * @endcode
+   */
+  #[Then('there should be a total of :count new (e)mail(s) sent to :to with the subject :subject')]
+  public function newMailCountAssertEqualsForRecipientAndSubject(string $count, string $to, string $subject): void {
+    $this->assertNewMailCount($count, $to, $subject);
+  }
+
+  /**
+   * Follow a link from a mail body.
+   *
+   * @code
+   * When I follow the link to "user/reset" from the mail
+   * @endcode
+   */
+  #[When('I follow the link to :urlFragment from the mail')]
+  public function iFollowLinkInMail(string $urlFragment): void {
+    $this->followLinkFromMail($urlFragment, '', '');
+  }
+
+  /**
+   * Follow a link from an email body.
+   *
+   * @code
+   * When I follow the link to "user/reset" from the email
+   * @endcode
+   */
+  #[When('I follow the link to :urlFragment from the email')]
+  public function iFollowLinkInEmail(string $urlFragment): void {
+    $this->followLinkFromMail($urlFragment, '', '');
+  }
+
+  /**
+   * Follow a link from a mail body filtered by recipient.
+   *
+   * @code
+   * When I follow the link to "user/reset" from the mail to "user@example.com"
+   * @endcode
+   */
+  #[When('I follow the link to :urlFragment from the mail to :to')]
+  public function iFollowLinkInMailTo(string $urlFragment, string $to): void {
+    $this->followLinkFromMail($urlFragment, $to, '');
+  }
+
+  /**
+   * Follow a link from an email body filtered by recipient.
+   *
+   * @code
+   * When I follow the link to "user/reset" from the email to "user@example.com"
+   * @endcode
+   */
+  #[When('I follow the link to :urlFragment from the email to :to')]
+  public function iFollowLinkInEmailTo(string $urlFragment, string $to): void {
+    $this->followLinkFromMail($urlFragment, $to, '');
+  }
+
+  /**
+   * Follow a link from a mail body filtered by subject.
+   *
+   * @code
+   * When I follow the link to "user/reset" from the mail with the subject "Welcome"
+   * @endcode
+   */
+  #[When('I follow the link to :urlFragment from the mail with the subject :subject')]
+  public function iFollowLinkInMailWithSubject(string $urlFragment, string $subject): void {
+    $this->followLinkFromMail($urlFragment, '', $subject);
+  }
+
+  /**
+   * Follow a link from an email body filtered by subject.
+   *
+   * @code
+   * When I follow the link to "user/reset" from the email with the subject "Welcome"
+   * @endcode
+   */
+  #[When('I follow the link to :urlFragment from the email with the subject :subject')]
+  public function iFollowLinkInEmailWithSubject(string $urlFragment, string $subject): void {
+    $this->followLinkFromMail($urlFragment, '', $subject);
+  }
+
+  /**
+   * Follow a link from a mail body filtered by recipient and subject.
+   *
+   * @code
+   * When I follow the link to "user/reset" from the mail to "user@example.com" with the subject "Welcome"
+   * @endcode
+   */
+  #[When('I follow the link to :urlFragment from the mail to :to with the subject :subject')]
+  public function iFollowLinkInMailToWithSubject(string $urlFragment, string $to, string $subject): void {
+    $this->followLinkFromMail($urlFragment, $to, $subject);
+  }
+
+  /**
+   * Follow a link from an email body filtered by recipient and subject.
+   *
+   * @code
+   * When I follow the link to "user/reset" from the email to "user@example.com" with the subject "Welcome"
+   * @endcode
+   */
+  #[When('I follow the link to :urlFragment from the email to :to with the subject :subject')]
+  public function iFollowLinkInEmailToWithSubject(string $urlFragment, string $to, string $subject): void {
+    $this->followLinkFromMail($urlFragment, $to, $subject);
+  }
+
+  /**
+   * Send a mail using the active driver from a TableNode of fields.
+   */
+  protected function sendMailFromTable(TableNode $fields): void {
     $mail = [
       'body' => $this->getRandom()->name(255),
       'subject' => $this->getRandom()->name(20),
@@ -109,66 +439,27 @@ class MailContext extends RawMailContext {
   }
 
   /**
-   * Check all mail sent during the scenario.
-   *
-   * @code
-   *   Then mail has been sent:
-   *     | to               | body                |
-   *     | user@example.com | Welcome to the site |
-   *   Then an email has been sent with the subject "Welcome":
-   *     | to               | body                |
-   *     | user@example.com | Welcome to the site |
-   *   Then emails have been sent to "user@example.com" with the subject "Welcome":
-   *     | body                |
-   *     | Welcome to the site |
-   * @endcode
+   * Compare expected mail rows against all mail captured in the scenario.
    */
-  #[Then('(a )(an )(e)mail(s) has/have been sent:')]
-  #[Then('(a )(an )(e)mail(s) has/have been sent to :to:')]
-  #[Then('(a )(an )(e)mail(s) has/have been sent with the subject :subject:')]
-  #[Then('(a )(an )(e)mail(s) has/have been sent to :to with the subject :subject:')]
-  public function mailHasBeenSent(TableNode $expectedMailTable, string $to = '', string $subject = ''): void {
+  protected function assertMailMatches(TableNode $expectedMailTable, string $to, string $subject): void {
     $expected = $expectedMailTable->getHash();
     $actual = array_values($this->getMail(['to' => $to, 'subject' => $subject]));
     $this->compareMessages($actual, $expected);
   }
 
   /**
-   * Check mail sent since the last step that checked mail.
-   *
-   * @code
-   *   Then new mail is sent:
-   *     | subject   |
-   *     | Greetings |
-   *   Then a new email is sent to "user@example.com":
-   *     | subject   |
-   *     | Greetings |
-   * @endcode
+   * Compare expected mail rows against new mail since the last mail check.
    */
-  #[Then('(a )(an )new (e)mail(s) is/are sent:')]
-  #[Then('(a )(an )new (e)mail(s) is/are sent to :to:')]
-  #[Then('(a )(an )new (e)mail(s) is/are sent with the subject :subject:')]
-  #[Then('(a )(an )new (e)mail(s) is/are sent to :to with the subject :subject:')]
-  public function newMailIsSent(TableNode $expectedMailTable, string $to = '', string $subject = ''): void {
+  protected function assertNewMailMatches(TableNode $expectedMailTable, string $to, string $subject): void {
     $expected = $expectedMailTable->getHash();
     $actual = array_values($this->getMail(['to' => $to, 'subject' => $subject], TRUE));
     $this->compareMessages($actual, $expected);
   }
 
   /**
-   * Check all mail sent during the scenario.
-   *
-   * @code
-   * Then 0 emails have been sent
-   * Then 2 mails have been sent to "user@example.com"
-   * Then 1 email has been sent with the subject "Welcome"
-   * @endcode
+   * Assert the total mail count matches the expected count.
    */
-  #[Then(':count (e)mail(s) has/have been sent')]
-  #[Then(':count (e)mail(s) has/have been sent to :to')]
-  #[Then(':count (e)mail(s) has/have been sent with the subject :subject')]
-  #[Then(':count (e)mail(s) has/have been sent to :to with the subject :subject')]
-  public function noMailHasBeenSent(string $count, string $to = '', string $subject = ''): void {
+  protected function assertMailCount(string $count, string $to, string $subject): void {
     $actual = array_values($this->getMail(['to' => $to, 'subject' => $subject]));
     $expected_count = match ($count) {
       'no' => 0,
@@ -179,18 +470,9 @@ class MailContext extends RawMailContext {
   }
 
   /**
-   * Check mail sent since the last step that checked mail.
-   *
-   * @code
-   * Then 0 new emails are sent
-   * Then 1 new mail is sent to "user@example.com"
-   * @endcode
+   * Assert new mail count since the last check matches the expected count.
    */
-  #[Then(':count new (e)mail(s) is/are sent')]
-  #[Then(':count new (e)mail(s) is/are sent to :to')]
-  #[Then(':count new (e)mail(s) is/are sent with the subject :subject')]
-  #[Then(':count new (e)mail(s) is/are sent to :to with the subject :subject')]
-  public function noNewMailIsSent(string $count, string $to = '', string $subject = ''): void {
+  protected function assertNewMailCount(string $count, string $to, string $subject): void {
     $actual = array_values($this->getMail(['to' => $to, 'subject' => $subject], TRUE));
     $expected_count = match ($count) {
       'no' => 0,
@@ -201,21 +483,9 @@ class MailContext extends RawMailContext {
   }
 
   /**
-   * Follow a link from an email body.
-   *
-   * @code
-   * When I follow the link to "user/reset" from the mail
-   * When I follow the link to "user/reset" from the email
-   * When I follow the link to "user/reset" from the email to "user@example.com"
-   * When I follow the link to "user/reset" from the email with the subject "Welcome"
-   * @endcode
+   * Visit the first URL in a mail body that matches the given fragment.
    */
-  #[When('I follow the link to :urlFragment from the (e)mail')]
-  #[When('I follow the link to :urlFragment from the (e)mail to :to')]
-  #[When('I follow the link to :urlFragment from the (e)mail with the subject :subject')]
-  #[When('I follow the link to :urlFragment from the (e)mail to :to with the subject :subject')]
-  public function followLinkInMail(string $urlFragment, string $to = '', string $subject = ''): void {
-    // Get the message.
+  protected function followLinkFromMail(string $urlFragment, string $to, string $subject): void {
     $filters = ['to' => $to, 'subject' => $subject];
     $mail = $this->getMail($filters, FALSE, -1);
     if (count($mail) === 0) {
@@ -223,10 +493,8 @@ class MailContext extends RawMailContext {
     }
     $body = $mail['body'];
 
-    // Find web URLs in the message.
     $pattern = '`.*?((http|https)://[\w#$&+,\/:;=?@.-]+)[^\w#$&+,\/:;=?@.-]*?`i';
     if (preg_match_all($pattern, (string) $body, $urls)) {
-      // Visit the first url that contains the desired fragment.
       foreach ($urls[1] as $url) {
         if (str_contains(strtolower($url), strtolower($urlFragment))) {
           $this->getMinkContext()->visitPath($url);

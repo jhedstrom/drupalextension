@@ -45,25 +45,27 @@ class MinkContext extends MinkExtension implements TranslatableContext {
    *
    * @code
    * Given I am at "/node/1"
-   * When I visit "/node/1"
    * @endcode
-   *
    *
    * @throws \Behat\Mink\Exception\UnsupportedDriverActionException
    */
   #[Given('I am at :path')]
-  #[When('I visit :path')]
-  public function assertAtPath(string $path): void {
-    $this->getSession()->visit($this->locatePath($path));
+  public function iAmAtPath(string $path): void {
+    $this->visitPathWithStatusCheck($path);
+  }
 
-    // If available, add extra validation that this is a 200 response.
-    try {
-      $this->getSession()->getStatusCode();
-      $this->assertHttpResponse('200');
-    }
-    catch (UnsupportedDriverActionException) {
-      // Simply continue on, as this driver doesn't support HTTP response codes.
-    }
+  /**
+   * Visit a given path, and additionally check for HTTP response code 200.
+   *
+   * @code
+   * When I visit "/node/1"
+   * @endcode
+   *
+   * @throws \Behat\Mink\Exception\UnsupportedDriverActionException
+   */
+  #[When('I visit :path')]
+  public function iVisitPath(string $path): void {
+    $this->visitPathWithStatusCheck($path);
   }
 
   /**
@@ -74,7 +76,7 @@ class MinkContext extends MinkExtension implements TranslatableContext {
    * @endcode
    */
   #[When('I click :link')]
-  public function assertClick(string $link): void {
+  public function iClickLink(string $link): void {
     // Use the Mink Extension step definition.
     $this->clickLink($link);
   }
@@ -84,12 +86,23 @@ class MinkContext extends MinkExtension implements TranslatableContext {
    *
    * @code
    * Given for "Title" I enter "My article"
-   * Given I enter "My article" for "Title"
    * @endcode
    */
   #[Given('for :field I enter :value')]
+  public function iEnterValueInField(string $field, string $value): void {
+    // Use the Mink Extension step definition.
+    $this->fillField($field, $value);
+  }
+
+  /**
+   * Enter a value into a form field (alternative phrasing).
+   *
+   * @code
+   * Given I enter "My article" for "Title"
+   * @endcode
+   */
   #[Given('I enter :value for :field')]
-  public function assertEnterField(string $field, string $value): void {
+  public function iEnterValueForField(string $value, string $field): void {
     // Use the Mink Extension step definition.
     $this->fillField($field, $value);
   }
@@ -306,7 +319,7 @@ JS;
    * @endcode
    */
   #[Then('I should see the link :link')]
-  public function assertLinkVisible(string $link): void {
+  public function linkAssertIsVisible(string $link): void {
     $element = $this->getSession()->getPage();
     $result = $element->findLink($link);
 
@@ -334,7 +347,7 @@ JS;
    * @endcode
    */
   #[Then('I should not see the link :link')]
-  public function assertNotLinkVisible(string $link): void {
+  public function linkAssertIsNotVisible(string $link): void {
     $element = $this->getSession()->getPage();
     $result = $element->findLink($link);
 
@@ -364,7 +377,7 @@ JS;
    * @endcode
    */
   #[Then('I should not visibly see the link :link')]
-  public function assertNotLinkVisuallyVisible(string $link): void {
+  public function linkAssertIsNotVisuallyVisible(string $link): void {
     $element = $this->getSession()->getPage();
     $result = $element->findLink($link);
 
@@ -388,12 +401,11 @@ JS;
    * Assert a heading is visible on the page.
    *
    * @code
-   * Then I see the heading "Welcome"
    * Then I should see the heading "Welcome"
    * @endcode
    */
-  #[Then('I (should )see the heading :heading')]
-  public function assertHeading(string $heading): void {
+  #[Then('I should see the heading :heading')]
+  public function headingAssertIsVisible(string $heading): void {
     $element = $this->getSession()->getPage();
     foreach ($element->findAll('css', 'h1, h2, h3, h4, h5, h6') as $result) {
       if ($result->getText() == $heading) {
@@ -407,12 +419,11 @@ JS;
    * Assert a heading is not on the page.
    *
    * @code
-   * Then I not see the heading "Error"
    * Then I should not see the heading "Error"
    * @endcode
    */
-  #[Then('I (should )not see the heading :heading')]
-  public function assertNotHeading(string $heading): void {
+  #[Then('I should not see the heading :heading')]
+  public function headingAssertIsNotVisible(string $heading): void {
     $element = $this->getSession()->getPage();
     foreach ($element->findAll('css', 'h1, h2, h3, h4, h5, h6') as $result) {
       if ($result->getText() == $heading) {
@@ -425,19 +436,24 @@ JS;
    * Assert a button is visible on the page.
    *
    * @code
-   * Then I see the button "Save"
    * Then I should see the button "Save"
+   * @endcode
+   */
+  #[Then('I should see the button :button')]
+  public function buttonAssertIsVisible(string $button): void {
+    $this->assertButtonExists($button);
+  }
+
+  /**
+   * Assert a button (with the noun before "button") is visible on the page.
+   *
+   * @code
    * Then I should see the "Save" button
    * @endcode
    */
-  #[Then('I (should ) see the button :button')]
-  #[Then('I (should ) see the :button button')]
-  public function assertButton(string $button): void {
-    $element = $this->getSession()->getPage();
-    $button_obj = $element->findButton($button);
-    if (empty($button_obj)) {
-      throw new \Exception(sprintf("The button '%s' was not found on the page %s", $button, $this->getSession()->getCurrentUrl()));
-    }
+  #[Then('I should see the :button button')]
+  public function buttonAssertIsVisibleByLabel(string $button): void {
+    $this->assertButtonExists($button);
   }
 
   /**
@@ -445,17 +461,23 @@ JS;
    *
    * @code
    * Then I should not see the button "Delete"
-   * Then I should not see the "Delete" button
    * @endcode
    */
   #[Then('I should not see the button :button')]
+  public function buttonAssertIsNotVisible(string $button): void {
+    $this->assertButtonDoesNotExist($button);
+  }
+
+  /**
+   * Assert a button (with the noun before "button") is not on the page.
+   *
+   * @code
+   * Then I should not see the "Delete" button
+   * @endcode
+   */
   #[Then('I should not see the :button button')]
-  public function assertNotButton(string $button): void {
-    $element = $this->getSession()->getPage();
-    $button_obj = $element->findButton($button);
-    if (!empty($button_obj)) {
-      throw new \Exception(sprintf("The button '%s' was found on the page %s", $button, $this->getSession()->getCurrentUrl()));
-    }
+  public function buttonAssertIsNotVisibleByLabel(string $button): void {
+    $this->assertButtonDoesNotExist($button);
   }
 
   /**
@@ -471,7 +493,7 @@ JS;
    * @endcode
    */
   #[When('I follow/click :link in the :region( region)')]
-  public function assertRegionLinkFollow(string $link, string $region): void {
+  public function iFollowLinkInRegion(string $link, string $region): void {
     $region_obj = $this->getRegion($region);
 
     // Find the link within the region.
@@ -506,7 +528,7 @@ JS;
    * @endcode
    */
   #[Given('I press :button in the :region( region)')]
-  public function assertRegionPressButton(string $button, string $region): void {
+  public function iPressButtonInRegion(string $button, string $region): void {
     $region_obj = $this->getRegion($region);
 
     $button_obj = $region_obj->findButton($button);
@@ -525,16 +547,26 @@ JS;
    * @code
    * Given I fill in "test" for "Search" in the "header"
    * Given I fill in "test" for "Search" in the "header" region
-   * Given I fill in "Search" with "test" in the "header" region
    * @endcode
    */
   #[Given('I fill in :value for :field in the :region( region)')]
+  public function iFillInValueForFieldInRegion(string $value, string $field, string $region): void {
+    $this->fillFieldInRegion($field, $value, $region);
+  }
+
+  /**
+   * Fills in a form field (alternative phrasing) in the specified region.
+   *
+   * @throws \Exception
+   *   If region cannot be found.
+   *
+   * @code
+   * Given I fill in "Search" with "test" in the "header" region
+   * @endcode
+   */
   #[Given('I fill in :field with :value in the :region( region)')]
-  public function regionFillField(string $field, string $value, string $region): void {
-    $field = $this->fixStepArgument($field);
-    $value = $this->fixStepArgument($value);
-    $region_obj = $this->getRegion($region);
-    $region_obj->fillField($field, $value);
+  public function iFillInFieldWithValueInRegion(string $field, string $value, string $region): void {
+    $this->fillFieldInRegion($field, $value, $region);
   }
 
   /**
@@ -556,7 +588,7 @@ JS;
    * @endcode
    */
   #[Given('I check :locator in the :region( region)')]
-  public function assertRegionCheckBox(string $locator, string $region): void {
+  public function iCheckLocatorInRegion(string $locator, string $region): void {
     $region_obj = $this->getRegion($region);
     $region_obj->checkField($locator);
   }
@@ -566,7 +598,7 @@ JS;
    *
    * Matches by id|name|title|alt|value.
    *
-   * @param string $locator
+   * @param string $checkbox
    *   The id|name|title|alt|value of the checkbox to be unchecked.
    * @param string $region
    *   The region in which the checkbox should be unchecked.
@@ -580,9 +612,9 @@ JS;
    * @endcode
    */
   #[Given('I uncheck :checkbox in the :region( region)')]
-  public function assertRegionUncheckBox(string $locator, string $region): void {
+  public function iUncheckLocatorInRegion(string $checkbox, string $region): void {
     $region_obj = $this->getRegion($region);
-    $region_obj->uncheckField($locator);
+    $region_obj->uncheckField($checkbox);
   }
 
   /**
@@ -594,21 +626,27 @@ JS;
    * @code
    * Then I should see the heading "Latest news" in the "sidebar"
    * Then I should see the heading "Latest news" in the "sidebar" region
-   * Then I should see the "Latest news" heading in the "sidebar" region
    * @endcode
    */
   #[Then('I should see the heading :heading in the :region( region)')]
+  public function regionHeadingAssertIsVisible(string $heading, string $region): void {
+    $this->assertRegionContainsHeading($heading, $region);
+  }
+
+  /**
+   * Find a heading (with the noun before "heading") in a specific region.
+   *
+   * @throws \Exception
+   *   If region or header within it cannot be found.
+   *
+   * @code
+   * Then I should see the "Latest news" heading in the "sidebar"
+   * Then I should see the "Latest news" heading in the "sidebar" region
+   * @endcode
+   */
   #[Then('I should see the :heading heading in the :region( region)')]
-  public function assertRegionHeading(string $heading, string $region): void {
-    $region_obj = $this->getRegion($region);
-
-    foreach ($region_obj->findAll('css', 'h1, h2, h3, h4, h5, h6') as $element) {
-      if (trim($element->getText()) === $heading) {
-        return;
-      }
-    }
-
-    throw new \Exception(sprintf('The heading "%s" was not found in the "%s" region on the page %s', $heading, $region, $this->getSession()->getCurrentUrl()));
+  public function regionHeadingAssertIsVisibleByLabel(string $heading, string $region): void {
+    $this->assertRegionContainsHeading($heading, $region);
   }
 
   /**
@@ -623,7 +661,7 @@ JS;
    * @endcode
    */
   #[Then('I should see the link :link in the :region( region)')]
-  public function assertLinkRegion(string $link, string $region): void {
+  public function regionLinkAssertIsVisible(string $link, string $region): void {
     $region_obj = $this->getRegion($region);
 
     $result = $region_obj->findLink($link);
@@ -644,7 +682,7 @@ JS;
    * @endcode
    */
   #[Then('I should not see the link :link in the :region( region)')]
-  public function assertNotLinkRegion(string $link, string $region): void {
+  public function regionLinkAssertIsNotVisible(string $link, string $region): void {
     $region_obj = $this->getRegion($region);
 
     $result = $region_obj->findLink($link);
@@ -660,20 +698,13 @@ JS;
    *   If region or text within it cannot be found.
    *
    * @code
-   * Then I should see "Welcome" in the "content"
-   * Then I should see "Welcome" in the "content" region
+   * Then I should see the text "Welcome" in the "content"
    * Then I should see the text "Welcome" in the "content" region
    * @endcode
    */
-  #[Then('I should see( the text) :text in the :region( region)')]
-  public function assertRegionText(string $text, string $region): void {
-    $region_obj = $this->getRegion($region);
-
-    // Find the text within the region.
-    $region_text = $region_obj->getText();
-    if (!str_contains($region_text, $text)) {
-      throw new \Exception(sprintf("The text '%s' was not found in the region '%s' on the page %s", $text, $region, $this->getSession()->getCurrentUrl()));
-    }
+  #[Then('I should see the text :text in the :region( region)')]
+  public function regionTextAssertIsVisible(string $text, string $region): void {
+    $this->assertRegionContainsText($text, $region);
   }
 
   /**
@@ -683,32 +714,24 @@ JS;
    *   If region or text within it cannot be found.
    *
    * @code
-   * Then I should not see "Error" in the "content"
-   * Then I should not see "Error" in the "content" region
+   * Then I should not see the text "Error" in the "content"
    * Then I should not see the text "Error" in the "content" region
    * @endcode
    */
-  #[Then('I should not see( the text) :text in the :region( region)')]
-  public function assertNotRegionText(string $text, string $region): void {
-    $region_obj = $this->getRegion($region);
-
-    // Find the text within the region.
-    $region_text = $region_obj->getText();
-    if (str_contains($region_text, $text)) {
-      throw new \Exception(sprintf('The text "%s" was found in the region "%s" on the page %s', $text, $region, $this->getSession()->getCurrentUrl()));
-    }
+  #[Then('I should not see the text :text in the :region( region)')]
+  public function regionTextAssertIsNotVisible(string $text, string $region): void {
+    $this->assertRegionDoesNotContainText($text, $region);
   }
 
   /**
    * Assert text is visible on the page.
    *
    * @code
-   * Then I see the text "Welcome to Drupal"
    * Then I should see the text "Welcome to Drupal"
    * @endcode
    */
-  #[Then('I (should )see the text :text')]
-  public function assertTextVisible(string $text): void {
+  #[Then('I should see the text :text')]
+  public function textAssertIsVisible(string $text): void {
     // Use the Mink Extension step definition.
     $this->assertPageContainsText($text);
   }
@@ -721,7 +744,7 @@ JS;
    * @endcode
    */
   #[Then('I should not see the text :text')]
-  public function assertNotTextVisible(string $text): void {
+  public function textAssertIsNotVisible(string $text): void {
     // Use the Mink Extension step definition.
     $this->assertPageNotContainsText($text);
   }
@@ -734,7 +757,7 @@ JS;
    * @endcode
    */
   #[Then('I should get a :code HTTP response')]
-  public function assertHttpResponse(int|string $code): void {
+  public function httpResponseAssertEquals(int|string $code): void {
     // Use the Mink Extension step definition.
     $this->assertResponseStatus($code);
   }
@@ -743,11 +766,11 @@ JS;
    * Assert the HTTP response code is not a specific value.
    *
    * @code
-   * Then I should not get a 403 HTTP response
+   * Then I should not get a :code HTTP response
    * @endcode
    */
   #[Then('I should not get a :code HTTP response')]
-  public function assertNotHttpResponse(int|string $code): void {
+  public function httpResponseAssertNotEquals(int|string $code): void {
     // Use the Mink Extension step definition.
     $this->assertResponseStatusIsNot($code);
   }
@@ -760,7 +783,7 @@ JS;
    * @endcode
    */
   #[Given('I check the box :checkbox')]
-  public function assertCheckBox(string $checkbox): void {
+  public function iCheckTheBox(string $checkbox): void {
     // Use the Mink Extension step definition.
     $this->checkOption($checkbox);
   }
@@ -773,7 +796,7 @@ JS;
    * @endcode
    */
   #[Given('I uncheck the box :checkbox')]
-  public function assertUncheckBox(string $checkbox): void {
+  public function iUncheckTheBox(string $checkbox): void {
     // Use the Mink Extension step definition.
     $this->uncheckOption($checkbox);
   }
@@ -781,31 +804,25 @@ JS;
   /**
    * Select a radio button.
    *
-   * @todo convert to mink extension.
-   *
    * @code
    * When I select the radio button "Full HTML"
+   * @endcode
+   */
+  #[When('I select the radio button :label')]
+  public function iSelectRadioByLabel(string $label): void {
+    $this->selectRadioButton($label, '');
+  }
+
+  /**
+   * Select a radio button by id.
+   *
+   * @code
    * When I select the radio button "Full HTML" with the id "edit-format-full-html"
    * @endcode
    */
   #[When('I select the radio button :label with the id :id')]
-  #[When('I select the radio button :label')]
-  public function assertSelectRadioById(string $label, string $id = ''): void {
-    $element = $this->getSession()->getPage();
-    $radiobutton = $id !== '' && $id !== '0' ? $element->findById($id) : $element->find('named', [
-      'radio',
-      $label,
-    ]);
-    if ($radiobutton === NULL) {
-      throw new \Exception(sprintf('The radio button with "%s" was not found on the page %s', $id ?: $label, $this->getSession()->getCurrentUrl()));
-    }
-    $value = $radiobutton->getAttribute('value');
-    $radio_id = $radiobutton->getAttribute('id');
-    $labelonpage = $element->find('css', sprintf("label[for='%s']", $radio_id))->getText();
-    if ($label != $labelonpage) {
-      throw new \Exception(sprintf("Button with id '%s' has label '%s' instead of '%s' on the page %s", $id, $labelonpage, $label, $this->getSession()->getCurrentUrl()));
-    }
-    $radiobutton->selectOption($value, FALSE);
+  public function iSelectRadioByLabelWithId(string $label, string $id): void {
+    $this->selectRadioButton($label, $id);
   }
 
   /**
@@ -859,6 +876,111 @@ JS;
   }
 
   /**
-   * @} End of defgroup "mink extensions"
+   * Visit a path and verify the response is HTTP 200 when supported.
    */
+  protected function visitPathWithStatusCheck(string $path): void {
+    $this->getSession()->visit($this->locatePath($path));
+
+    // If available, add extra validation that this is a 200 response.
+    try {
+      $this->getSession()->getStatusCode();
+      $this->httpResponseAssertEquals('200');
+    }
+    catch (UnsupportedDriverActionException) {
+      // Simply continue on, as this driver doesn't support HTTP response codes.
+    }
+  }
+
+  /**
+   * Assert the named button is present anywhere on the page.
+   */
+  protected function assertButtonExists(string $button): void {
+    $element = $this->getSession()->getPage();
+    $button_obj = $element->findButton($button);
+    if (empty($button_obj)) {
+      throw new \Exception(sprintf("The button '%s' was not found on the page %s", $button, $this->getSession()->getCurrentUrl()));
+    }
+  }
+
+  /**
+   * Assert the named button is not present anywhere on the page.
+   */
+  protected function assertButtonDoesNotExist(string $button): void {
+    $element = $this->getSession()->getPage();
+    $button_obj = $element->findButton($button);
+    if (!empty($button_obj)) {
+      throw new \Exception(sprintf("The button '%s' was found on the page %s", $button, $this->getSession()->getCurrentUrl()));
+    }
+  }
+
+  /**
+   * Assert that a heading is present in a region.
+   */
+  protected function assertRegionContainsHeading(string $heading, string $region): void {
+    $region_obj = $this->getRegion($region);
+
+    foreach ($region_obj->findAll('css', 'h1, h2, h3, h4, h5, h6') as $element) {
+      if (trim($element->getText()) === $heading) {
+        return;
+      }
+    }
+
+    throw new \Exception(sprintf('The heading "%s" was not found in the "%s" region on the page %s', $heading, $region, $this->getSession()->getCurrentUrl()));
+  }
+
+  /**
+   * Assert that text is present in a region.
+   */
+  protected function assertRegionContainsText(string $text, string $region): void {
+    $region_obj = $this->getRegion($region);
+
+    $region_text = $region_obj->getText();
+    if (!str_contains($region_text, $text)) {
+      throw new \Exception(sprintf("The text '%s' was not found in the region '%s' on the page %s", $text, $region, $this->getSession()->getCurrentUrl()));
+    }
+  }
+
+  /**
+   * Assert that text is not present in a region.
+   */
+  protected function assertRegionDoesNotContainText(string $text, string $region): void {
+    $region_obj = $this->getRegion($region);
+
+    $region_text = $region_obj->getText();
+    if (str_contains($region_text, $text)) {
+      throw new \Exception(sprintf('The text "%s" was found in the region "%s" on the page %s', $text, $region, $this->getSession()->getCurrentUrl()));
+    }
+  }
+
+  /**
+   * Fill a form field within a specific region.
+   */
+  protected function fillFieldInRegion(string $field, string $value, string $region): void {
+    $field = $this->fixStepArgument($field);
+    $value = $this->fixStepArgument($value);
+    $region_obj = $this->getRegion($region);
+    $region_obj->fillField($field, $value);
+  }
+
+  /**
+   * Select a radio button by label, optionally locating it via id first.
+   */
+  protected function selectRadioButton(string $label, string $id): void {
+    $element = $this->getSession()->getPage();
+    $radiobutton = $id !== '' && $id !== '0' ? $element->findById($id) : $element->find('named', [
+      'radio',
+      $label,
+    ]);
+    if ($radiobutton === NULL) {
+      throw new \Exception(sprintf('The radio button with "%s" was not found on the page %s', $id ?: $label, $this->getSession()->getCurrentUrl()));
+    }
+    $value = $radiobutton->getAttribute('value');
+    $radio_id = $radiobutton->getAttribute('id');
+    $labelonpage = $element->find('css', sprintf("label[for='%s']", $radio_id))->getText();
+    if ($label != $labelonpage) {
+      throw new \Exception(sprintf("Button with id '%s' has label '%s' instead of '%s' on the page %s", $id, $labelonpage, $label, $this->getSession()->getCurrentUrl()));
+    }
+    $radiobutton->selectOption($value, FALSE);
+  }
+
 }
