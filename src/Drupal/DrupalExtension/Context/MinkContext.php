@@ -698,11 +698,12 @@ JS;
    *   If region or text within it cannot be found.
    *
    * @code
-   * Then I should see the text "Welcome" in the "content"
+   * Then I should see "Welcome" in the "content"
+   * Then I should see "Welcome" in the "content" region
    * Then I should see the text "Welcome" in the "content" region
    * @endcode
    */
-  #[Then('I should see the text :text in the :region( region)')]
+  #[Then('I should see( the text) :text in the :region( region)')]
   public function regionTextAssertIsVisible(string $text, string $region): void {
     $this->assertRegionContainsText($text, $region);
   }
@@ -714,11 +715,12 @@ JS;
    *   If region or text within it cannot be found.
    *
    * @code
-   * Then I should not see the text "Error" in the "content"
+   * Then I should not see "Error" in the "content"
+   * Then I should not see "Error" in the "content" region
    * Then I should not see the text "Error" in the "content" region
    * @endcode
    */
-  #[Then('I should not see the text :text in the :region( region)')]
+  #[Then('I should not see( the text) :text in the :region( region)')]
   public function regionTextAssertIsNotVisible(string $text, string $region): void {
     $this->assertRegionDoesNotContainText($text, $region);
   }

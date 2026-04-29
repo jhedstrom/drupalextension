@@ -26,19 +26,19 @@
         <target><![CDATA[(que )estoy conectado com un usuario con permiso(s) :permissions]]></target>
       </trans-unit>
       <trans-unit id="i-should-see-the-text-text-in-the-rowtext-row">
-        <source><![CDATA[I should see (the text ):text in the :rowText row]]></source>
-        <target><![CDATA[debo ver (el texto ):text en la fila :rowText]]></target>
+        <source><![CDATA[I should see the text :text in the :rowText row]]></source>
+        <target><![CDATA[debo ver el texto :text en la fila :rowText]]></target>
       </trans-unit>
       <trans-unit id="i-not-should-see-the-text-text-in-the-rowtext-row">
-        <source><![CDATA[I should not see (the text ):text in the :rowText row]]></source>
-        <target><![CDATA[no debo ver (el texto ):text en la fila :rowText]]></target>
+        <source><![CDATA[I should not see the text :text in the :rowText row]]></source>
+        <target><![CDATA[no debo ver el texto :text en la fila :rowText]]></target>
       </trans-unit>
       <trans-unit id="i-click-link-in-the-rowtext-row">
         <source><![CDATA[I click :link in the :rowText row]]></source>
         <target><![CDATA[hago click en el enlace :link de la fila :rowText]]></target>
       </trans-unit>
       <trans-unit id="i-should-see-the-link-in-the-rowtext-row">
-        <source><![CDATA[I (should )see the :link in the :rowText row]]></source>
+        <source><![CDATA[I should see the :link in the :rowText row]]></source>
         <target><![CDATA[debo ver el enlace :link de la fila :rowText]]></target>
       </trans-unit>
       <trans-unit id="the-cache-has-been-cleared">
@@ -49,29 +49,49 @@
         <source><![CDATA[I run cron]]></source>
         <target><![CDATA[lanzo el cron]]></target>
       </trans-unit>
-      <trans-unit id="i-am-viewing-a-an-type-content-with-the-title-title">
-        <source><![CDATA[I am viewing a/an :type (content )with the title :title]]></source>
+      <trans-unit id="i-am-viewing-a-an-type-with-the-title-title">
+        <source><![CDATA[I am viewing a/an :type with the title :title]]></source>
         <target><![CDATA[(que )estoy viendo un contenido de tipo :type con el título :title]]></target>
       </trans-unit>
-      <trans-unit id="a-an-type-content-with-the-title-title">
-        <source><![CDATA[a/an :type (content )with the title :title]]></source>
+      <trans-unit id="i-am-viewing-a-an-type-content-with-the-title-title">
+        <source><![CDATA[I am viewing a/an :type content with the title :title]]></source>
+        <target><![CDATA[(que )estoy viendo un contenido de tipo :type con el título :title]]></target>
+      </trans-unit>
+      <trans-unit id="a-an-type-with-the-title-title">
+        <source><![CDATA[a/an :type with the title :title]]></source>
         <target><![CDATA[un contenido de tipo :type con el título :title]]></target>
       </trans-unit>
-      <trans-unit id="i-am-viewing-my-type-content-with-the-title-title">
-        <source><![CDATA[I am viewing my :type (content )with the title :title]]></source>
+      <trans-unit id="a-an-type-content-with-the-title-title">
+        <source><![CDATA[a/an :type content with the title :title]]></source>
+        <target><![CDATA[un contenido de tipo :type con el título :title]]></target>
+      </trans-unit>
+      <trans-unit id="i-am-viewing-my-type-with-the-title-title">
+        <source><![CDATA[I am viewing my :type with the title :title]]></source>
         <target><![CDATA[(que )estoy viendo mi contenido de tipo :type con el título :title]]></target>
       </trans-unit>
-      <trans-unit id="type-content">
-        <source><![CDATA[:type content:]]></source>
-        <target><![CDATA[:type con contenido:]]></target>
+      <trans-unit id="i-am-viewing-my-type-content-with-the-title-title">
+        <source><![CDATA[I am viewing my :type content with the title :title]]></source>
+        <target><![CDATA[(que )estoy viendo mi contenido de tipo :type con el título :title]]></target>
       </trans-unit>
-      <trans-unit id="i-am-viewing-a-an-type-content">
-        <source><![CDATA[I am viewing a/an :type( content):]]></source>
-        <target><![CDATA[(que )veo un(a) :type( con contenido):]]></target>
+      <trans-unit id="the-following-type-content">
+        <source><![CDATA[the following :type content:]]></source>
+        <target><![CDATA[el siguiente contenido :type:]]></target>
       </trans-unit>
-      <trans-unit id="i-should-be-able-to-edit-a-an-type-content">
-        <source><![CDATA[I should be able to edit a/an :type( content)]]></source>
-        <target><![CDATA[debo poder editar un contenido de tipo :type]]></target>
+      <trans-unit id="i-am-viewing-a-an-type-with-the-following-fields">
+        <source><![CDATA[I am viewing a/an :type with the following fields:]]></source>
+        <target><![CDATA[(que )veo un(a) :type con los siguientes campos:]]></target>
+      </trans-unit>
+      <trans-unit id="i-am-viewing-a-an-type-content-with-the-following-fields">
+        <source><![CDATA[I am viewing a/an :type content with the following fields:]]></source>
+        <target><![CDATA[(que )veo un(a) :type contenido con los siguientes campos:]]></target>
+      </trans-unit>
+      <trans-unit id="i-should-be-able-to-edit-the-type">
+        <source><![CDATA[I should be able to edit the :type]]></source>
+        <target><![CDATA[debo poder editar el :type]]></target>
+      </trans-unit>
+      <trans-unit id="i-should-be-able-to-edit-the-type-content">
+        <source><![CDATA[I should be able to edit the :type content]]></source>
+        <target><![CDATA[debo poder editar el contenido :type]]></target>
       </trans-unit>
       <trans-unit id="i-am-viewing-a-an-vocabulary-term-with-the-name-name">
         <source><![CDATA[I am viewing a/an :vocabulary term with the name :name]]></source>
@@ -81,13 +101,13 @@
         <source><![CDATA[a/an :vocabulary term with the name :name]]></source>
         <target><![CDATA[un término de :vocabulary con el nombre :name]]></target>
       </trans-unit>
-      <trans-unit id="users">
-        <source><![CDATA[users:]]></source>
-        <target><![CDATA[usuarios:]]></target>
+      <trans-unit id="the-following-users">
+        <source><![CDATA[the following users:]]></source>
+        <target><![CDATA[los siguientes usuarios:]]></target>
       </trans-unit>
-      <trans-unit id="vocabulary-terms">
-        <source><![CDATA[:vocabulary terms:]]></source>
-        <target><![CDATA[:vocabulary términos:]]></target>
+      <trans-unit id="the-following-vocabulary-terms">
+        <source><![CDATA[the following :vocabulary terms:]]></source>
+        <target><![CDATA[los siguientes términos de :vocabulary:]]></target>
       </trans-unit>
       <trans-unit id="i-break">
         <source><![CDATA[(I )break]]></source>
@@ -101,17 +121,21 @@
         <source><![CDATA[I run drush :command :arguments]]></source>
         <target><![CDATA[ejecuto el comando drush :command :arguments]]></target>
       </trans-unit>
-      <trans-unit id="drush-output-should-contain-output">
-        <source><![CDATA[drush output should contain :output]]></source>
-        <target><![CDATA[la salidad de drush debe contener :output]]></target>
+      <trans-unit id="the-drush-output-should-contain-output">
+        <source><![CDATA[the drush output should contain :output]]></source>
+        <target><![CDATA[la salida de drush debe contener :output]]></target>
       </trans-unit>
-      <trans-unit id="drush-output-should-not-contain-output">
-        <source><![CDATA[drush output should not contain :output]]></source>
-        <target><![CDATA[la salidad de drush no debe contener :output]]></target>
+      <trans-unit id="the-drush-output-should-match-regex">
+        <source><![CDATA[the drush output should match :regex]]></source>
+        <target><![CDATA[la salida de drush debe coincidir con :regex]]></target>
       </trans-unit>
-      <trans-unit id="print-last-drush-output">
-        <source><![CDATA[print last drush output]]></source>
-        <target><![CDATA[imprime la última salida de drush]]></target>
+      <trans-unit id="the-drush-output-should-not-contain-output">
+        <source><![CDATA[the drush output should not contain :output]]></source>
+        <target><![CDATA[la salida de drush no debe contener :output]]></target>
+      </trans-unit>
+      <trans-unit id="i-print-the-last-drush-output">
+        <source><![CDATA[I print the last drush output]]></source>
+        <target><![CDATA[imprimo la última salida de drush]]></target>
       </trans-unit>
       <trans-unit id="i-should-see-the-error-message-containing-message">
         <source><![CDATA[I should see the error message( containing) :message]]></source>
@@ -212,11 +236,11 @@
         <target><![CDATA[no debo ver el enlace :link]]></target>
       </trans-unit>
       <trans-unit id="i-should-see-the-heading-heading">
-        <source><![CDATA[I (should )see the heading :heading]]></source>
+        <source><![CDATA[I should see the heading :heading]]></source>
         <target><![CDATA[debo ver el encabezado :heading]]></target>
       </trans-unit>
       <trans-unit id="i-should-not-see-the-heading-heading">
-        <source><![CDATA[I (should )not see the heading :heading]]></source>
+        <source><![CDATA[I should not see the heading :heading]]></source>
         <target><![CDATA[no debo ver el encabezado :heading]]></target>
       </trans-unit>
       <trans-unit id="i-should-see-the-heading-heading-in-the-region-region">
@@ -260,7 +284,7 @@
         <target><![CDATA[relleno el campo :field con :value en( la zona) :region]]></target>
       </trans-unit>
       <trans-unit id="i-should-see-the-text-text">
-        <source><![CDATA[I (should )see the text :text]]></source>
+        <source><![CDATA[I should see the text :text]]></source>
         <target><![CDATA[debo ver el texto :text]]></target>
       </trans-unit>
       <trans-unit id="i-should-not-see-the-text-text">
@@ -296,8 +320,16 @@
         <target><![CDATA[(que )el/los siguiente(s) idioma(s) esta(n) disponible(s):]]></target>
       </trans-unit>
       <trans-unit id="I-should-see-the-button-button">
-        <source><![CDATA[I (should ) see the button :button]]></source>
+        <source><![CDATA[I should see the button :button]]></source>
         <target><![CDATA[debo ver el botón :button]]></target>
+      </trans-unit>
+      <trans-unit id="I-should-see-the-button-button-by-label">
+        <source><![CDATA[I should see the :button button]]></source>
+        <target><![CDATA[debo ver el botón :button]]></target>
+      </trans-unit>
+      <trans-unit id="I-should-not-see-the-button-button-by-label">
+        <source><![CDATA[I should not see the :button button]]></source>
+        <target><![CDATA[no debo ver el botón :button]]></target>
       </trans-unit>
       <trans-unit id="I-should-not-see-the-button-button">
         <source><![CDATA[I should not see the button :button]]></source>
@@ -307,32 +339,44 @@
         <source><![CDATA[I should see the button :button in the :region( region)]]></source>
         <target><![CDATA[debo ver el botón :button en (la zona ):region]]></target>
       </trans-unit>
+      <trans-unit id="I-should-see-the-button-button-in-the-region-region-by-label">
+        <source><![CDATA[I should see the :button button in the :region( region)]]></source>
+        <target><![CDATA[debo ver el botón :button en (la zona ):region]]></target>
+      </trans-unit>
+      <trans-unit id="I-should-not-see-the-button-button-in-the-region-region">
+        <source><![CDATA[I should not see the button :button in the :region( region)]]></source>
+        <target><![CDATA[no debo ver el botón :button en (la zona ):region]]></target>
+      </trans-unit>
+      <trans-unit id="I-should-not-see-the-button-button-in-the-region-region-by-label">
+        <source><![CDATA[I should not see the :button button in the :region( region)]]></source>
+        <target><![CDATA[no debo ver el botón :button en (la zona ):region]]></target>
+      </trans-unit>
       <trans-unit id="I-should-see-the-tag-element-in-the-region-region">
-        <source><![CDATA[I( should) see the :tag element in the :region( region)]]></source>
+        <source><![CDATA[I should see the :tag element in the :region( region)]]></source>
         <target><![CDATA[debo ver un elemento :tag en (la zona ):region]]></target>
       </trans-unit>
       <trans-unit id="I-should-not-see-the-tag-element-in-the-region-region">
-        <source><![CDATA[I( should) not see the :tag element in the :region( region)]]></source>
+        <source><![CDATA[I should not see the :tag element in the :region( region)]]></source>
         <target><![CDATA[no debo ver un elemento :tag en (la zona ):region]]></target>
       </trans-unit>
       <trans-unit id="I-should-see-text-in-the-tag-element-in-the-region-region">
-        <source><![CDATA[I( should) see :text in the :tag element in the :region( region)]]></source>
+        <source><![CDATA[I should see :text in the :tag element in the :region( region)]]></source>
         <target><![CDATA[debo ver :text en un elemento :tag en (la zona ):region]]></target>
       </trans-unit>
       <trans-unit id="I-should-not-see-text-in-the-tag-element-in-the-region-region">
-        <source><![CDATA[I( should) not see :text in the :tag element in the :region( region)]]></source>
+        <source><![CDATA[I should not see :text in the :tag element in the :region( region)]]></source>
         <target><![CDATA[no debo ver :text en un elemento :tag en (la zona ):region]]></target>
       </trans-unit>
       <trans-unit id="I-should-see-the-tag-element-with-the-attribute-attribute-set-to-value-in-the-region-region">
-        <source><![CDATA[I( should) see the :tag element with the :attribute attribute set to :value in the :region( region)]]></source>
+        <source><![CDATA[I should see the :tag element with the :attribute attribute set to :value in the :region( region)]]></source>
         <target><![CDATA[debo ver un elemento :tag con el atributo :attribute igual a :value en (la zona ):region]]></target>
       </trans-unit>
       <trans-unit id="I-should-see-text-in-the-tag-element-with-the-attribute-attribute-set-to-value-in-the-region-region-">
-        <source><![CDATA[I( should) see :text in the :tag element with the :attribute attribute set to :value in the :region( region)]]></source>
+        <source><![CDATA[I should see :text in the :tag element with the :attribute attribute set to :value in the :region( region)]]></source>
         <target><![CDATA[debo ver :text en un elemento :tag con atributo :attribute igual a :value en (la zona ):region]]></target>
       </trans-unit>
       <trans-unit id="I-should-see-text-in-the-tag-element-with-the-property-CSS-property-set-to-value-in-the-region-region">
-        <source><![CDATA[I( should) see :text in the :tag element with the :property CSS property set to :value in the :region( region)]]></source>
+        <source><![CDATA[I should see :text in the :tag element with the :property CSS property set to :value in the :region( region)]]></source>
         <target><![CDATA[debo ver :text en un elemento :tag con estilo CSS :property igual a :value en (la zona ):region]]></target>
       </trans-unit>
     </body>

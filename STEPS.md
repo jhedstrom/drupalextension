@@ -1956,14 +1956,15 @@ Then I should not see the link "Admin" in the "footer" region
 </details>
 
 <details>
-  <summary><code>@Then I should see the text :text in the :region( region)</code></summary>
+  <summary><code>@Then I should see( the text) :text in the :region( region)</code></summary>
 
 <br/>
 Assert text is visible in a region. 
 <br/><br/>
 
 ```gherkin
-Then I should see the text "Welcome" in the "content"
+Then I should see "Welcome" in the "content"
+Then I should see "Welcome" in the "content" region
 Then I should see the text "Welcome" in the "content" region
 
 ```
@@ -1971,14 +1972,15 @@ Then I should see the text "Welcome" in the "content" region
 </details>
 
 <details>
-  <summary><code>@Then I should not see the text :text in the :region( region)</code></summary>
+  <summary><code>@Then I should not see( the text) :text in the :region( region)</code></summary>
 
 <br/>
 Assert text is not visible in a region. 
 <br/><br/>
 
 ```gherkin
-Then I should not see the text "Error" in the "content"
+Then I should not see "Error" in the "content"
+Then I should not see "Error" in the "content" region
 Then I should not see the text "Error" in the "content" region
 
 ```
