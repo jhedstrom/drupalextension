@@ -219,7 +219,7 @@ Feature: DrupalContext general testing
     Then I should see "Tag one"
     And I should see "Tag two"
 
-  @test-drupal @api
+  @test-drupal @api @bigpipe
   Scenario: Log in as a user with specific permissions
     Given I am logged in as a user with the "Administer content types" permission
     When I go to "admin/structure/types"

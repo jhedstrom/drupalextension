@@ -10,7 +10,7 @@ Característica: DrupalContext
     Cuando hago click en "My account"
     Entonces debo ver el texto "Member for"
 
-  @test-drupal @api @d10
+  @test-drupal @api @d10 @bigpipe
   Escenario: Enlaces dentro de filas de tablas  (Drupal 10)
     Dado que estoy conectado como un "administrator"
     Cuando estoy en la URL "admin/structure/types"

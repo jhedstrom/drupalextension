@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\DrupalExtension\Context\Traits;
 
-use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Hook\BeforeScenario;
 use Behat\Hook\BeforeStep;
 use Behat\Mink\Exception\DriverException;
@@ -21,15 +20,12 @@ use Behat\Mink\Exception\UnsupportedDriverActionException;
  * Drupal to render the page fully server-side, restoring the markup the
  * test expects.
  *
- * Per-scenario opt-out: tag the scenario with
- * '@behat-steps-skip:bigPipeBeforeScenario' (suppresses both hooks) or
- * '@behat-steps-skip:bigPipeBeforeStep' (suppresses only the per-step
- * cookie reset). Globally disable via the 'big_pipe.bypass' extension
- * option.
+ * Opt-in: tag the scenario or feature with '@bigpipe'. Without that tag
+ * the hooks are no-ops, so projects that do not exercise BigPipe pay no
+ * cost.
  *
  * Used in the standard 'DrupalContext'. The host class is expected to
- * extend 'RawDrupalContext' (so '$this->getSession()' and
- * '$this->getDrupalParameter()' are available).
+ * extend 'RawDrupalContext' so '$this->getSession()' is available.
  *
  * @see https://github.com/jhedstrom/drupalextension/issues/258
  */
@@ -45,6 +41,16 @@ trait BigPipeTrait {
   private const BIG_PIPE_NOJS_COOKIE = 'big_pipe_nojs';
 
   /**
+   * Whether '@bigpipe' is active for the current scenario.
+   *
+   * Set in 'bigPipeBeforeScenario' (which Behat only fires for tagged
+   * scenarios) and reset in 'bigPipeResetActivation' (fired for every
+   * scenario). The Behat 3 'BeforeStep' attribute does not support tag
+   * filters, so this flag gates the per-step cookie reset instead.
+   */
+  protected bool $bigPipeActive = FALSE;
+
+  /**
    * Whether the active driver supports JavaScript.
    *
    * Cached so the BeforeStep hook does not re-probe the driver on every
@@ -53,33 +59,29 @@ trait BigPipeTrait {
   protected bool $bigPipeJsIsSupported = FALSE;
 
   /**
-   * Whether to skip the per-step BigPipe cookie reset.
+   * Resets the activation flag at the start of every scenario.
    *
-   * Defaults to TRUE so scenarios where BigPipe handling is irrelevant
-   * (skip tag, JS driver, opt-out config) do not pay any cost. The
-   * BeforeScenario hook flips this to FALSE when the cookie should be
-   * kept alive across user logins / cookie-clearing redirects.
-   */
-  protected bool $bigPipeSkipBeforeStep = TRUE;
-
-  /**
-   * Sets the BigPipe NOJS cookie if the driver does not support JavaScript.
+   * Behat reuses context instances across scenarios in a suite, so the
+   * '@bigpipe' flag must be cleared between runs - otherwise a tagged
+   * scenario would leave the bypass on for every subsequent scenario in
+   * the same suite.
    */
   #[BeforeScenario]
-  public function bigPipeBeforeScenario(BeforeScenarioScope $scope): void {
-    // Reset state in case the context instance is reused across scenarios.
-    $this->bigPipeSkipBeforeStep = TRUE;
+  public function bigPipeResetActivation(): void {
+    $this->bigPipeActive = FALSE;
+    $this->bigPipeJsIsSupported = FALSE;
+  }
 
-    if ($scope->getScenario()->hasTag('behat-steps-skip:bigPipeBeforeScenario')) {
-      return;
-    }
-
-    if (!$this->bigPipeBypassEnabled()) {
-      return;
-    }
-
-    $this->bigPipeSkipBeforeStep = $scope->getScenario()->hasTag('behat-steps-skip:bigPipeBeforeStep');
-
+  /**
+   * Activates BigPipe handling and applies the cookie when '@bigpipe' is set.
+   *
+   * The Behat 'BeforeScenario' attribute filter applies the hook only to
+   * scenarios tagged '@bigpipe' (feature-level tags inherit to scenarios,
+   * matching the convention used by '@api', '@javascript', and '@mail').
+   */
+  #[BeforeScenario('@bigpipe')]
+  public function bigPipeActivate(): void {
+    $this->bigPipeActive = TRUE;
     $this->bigPipeApplyCookie();
   }
 
@@ -93,7 +95,7 @@ trait BigPipeTrait {
    */
   #[BeforeStep]
   public function bigPipeBeforeStep(): void {
-    if ($this->bigPipeSkipBeforeStep) {
+    if (!$this->bigPipeActive) {
       return;
     }
 
@@ -101,23 +103,18 @@ trait BigPipeTrait {
   }
 
   /**
-   * Sets the BigPipe NOJS cookie when applicable.
+   * Sets the BigPipe NOJS cookie when the driver does not support JavaScript.
    *
    * Returns silently when JavaScript is supported. Any 'DriverException'
    * raised by the underlying Mink driver (Selenium throws before the
    * browser is open) is caught - the next BeforeStep retry will succeed
    * once the driver is started.
    *
-   * The cookie is set unconditionally for non-JS drivers - it is a no-op
-   * on sites without the BigPipe module, but the BigPipe-availability
-   * check via '\Drupal::hasService()' is unreliable in 'BeforeScenario'
-   * because the Drupal kernel is not bootstrapped before the first @api
-   * scenario in the process. Setting an inert cookie is cheaper than
-   * forcing an early bootstrap. setCookie() is idempotent on the cookie
-   * jar, so re-applying the same value on every BeforeStep is harmless.
-   * The cookie value is intentionally not read first - BrowserKit's
-   * 'getCookie()' calls 'getCurrentUrl()' which throws when no page has
-   * been visited yet, suppressing the subsequent setCookie() call.
+   * 'setCookie()' is idempotent on the cookie jar, so re-applying the
+   * same value on every BeforeStep is harmless. The cookie value is
+   * intentionally not read first - BrowserKit's 'getCookie()' calls
+   * 'getCurrentUrl()' which throws when no page has been visited yet,
+   * suppressing the subsequent 'setCookie()' call.
    */
   protected function bigPipeApplyCookie(): void {
     try {
@@ -133,23 +130,6 @@ trait BigPipeTrait {
       // Driver session is not ready - the next BeforeStep retry will set
       // the cookie once the driver is started.
     }
-  }
-
-  /**
-   * Whether BigPipe bypass is enabled via the extension option.
-   *
-   * Defaults to TRUE so the fix is opt-out, not opt-in. Projects that
-   * need to keep streaming behaviour for their own assertions can set
-   * 'big_pipe.bypass: false' in 'behat.yml'.
-   */
-  protected function bigPipeBypassEnabled(): bool {
-    $config = $this->getDrupalParameter('big_pipe');
-
-    if (!is_array($config) || !array_key_exists('bypass', $config)) {
-      return TRUE;
-    }
-
-    return (bool) $config['bypass'];
   }
 
   /**

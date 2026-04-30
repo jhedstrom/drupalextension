@@ -87,14 +87,6 @@ default:
         warning_message_selector: '.messages--warning'
         login_form_selector: 'form#user-login,form#user-login-form'
         logged_in_selector: 'body.logged-in,body.user-logged-in'
-      # BigPipe NOJS bypass. When the active driver does not execute
-      # JavaScript, DrupalContext sets the 'big_pipe_nojs' cookie so Drupal
-      # renders BigPipe-streamed pages fully server-side. This restores the
-      # markup that Mink BrowserKit / Goutte would otherwise miss because
-      # they do not follow the 'http-equiv=refresh' fallback.
-      big_pipe:
-        # Set to false to leave BigPipe streaming intact.
-        bypass: true
 
 # Drupal API profile: tests that bootstrap Drupal.
 drupal:
