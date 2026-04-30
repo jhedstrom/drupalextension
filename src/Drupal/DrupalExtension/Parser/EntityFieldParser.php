@@ -236,11 +236,6 @@ final class EntityFieldParser implements EntityFieldParserInterface {
         $i++;
       }
 
-      if ($i >= $length) {
-        $items[] = '';
-        break;
-      }
-
       if ($cell[$i] === '"') {
         $start = $i;
 
@@ -573,16 +568,6 @@ final class EntityFieldParser implements EntityFieldParserInterface {
   private function readQuotedString(string $cell, int &$offset): string {
     $length = strlen($cell);
     $start = $offset;
-
-    if ($offset >= $length || $cell[$offset] !== '"') {
-      throw new ParseException(
-        'expected_quoted_string',
-        $offset,
-        $cell,
-        'Expected a quoted string.',
-      );
-    }
-
     $offset++;
     $out = '';
 
@@ -651,18 +636,7 @@ final class EntityFieldParser implements EntityFieldParserInterface {
    * '[...]' substring (downstream field handlers expand the token).
    */
   private function readToken(string $cell, int &$offset): string {
-    $length = strlen($cell);
     $start = $offset;
-
-    if ($offset >= $length || $cell[$offset] !== '[') {
-      throw new ParseException(
-        'expected_token',
-        $offset,
-        $cell,
-        'Expected a [name:value] token.',
-      );
-    }
-
     $close = strpos($cell, ']', $offset + 1);
 
     if ($close === FALSE) {

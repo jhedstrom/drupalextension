@@ -354,8 +354,20 @@ class EntityFieldParserTest extends TestCase {
       ['role'],
     ];
     yield 'compound value with escape sequences' => [
-      ['field_test' => 'note:"line1\nline2\ttab\\\\back"'],
-      ['field_test' => [['note' => "line1\nline2\ttab\\back"]]],
+      ['field_test' => 'note:"line1\nline2\ttab\\\\back\rret"'],
+      ['field_test' => [['note' => "line1\nline2\ttab\\back\rret"]]],
+    ];
+    yield 'scalar trailing comma' => [
+      ['field_test' => 'a,'],
+      ['field_test' => ['a', '']],
+    ];
+    yield 'scalar trailing whitespace' => [
+      ['field_test' => 'a, '],
+      ['field_test' => ['a', '']],
+    ];
+    yield 'scalar quoted item then space then comma' => [
+      ['field_test' => '"a" , "b"'],
+      ['field_test' => ['a', 'b']],
     ];
     yield 'compound whitespace inside quoted string preserved' => [
       ['field_test' => 'note:"  spaced  value  "'],
@@ -499,6 +511,35 @@ class EntityFieldParserTest extends TestCase {
       ParseException::class,
       'invalid_column',
     ];
+    yield 'error: compound column with empty value' => [
+      ['field_test' => 'name:"OK", other:'],
+      [],
+      NULL,
+      NULL,
+      ParseException::class,
+      'unquoted_compound_value',
+    ];
+  }
+
+  /**
+   * Tests that errors detected across multiple cells are aggregated.
+   */
+  public function testMultiCellErrorsAggregated(): void {
+    $classifier = $this->createMock(FieldClassifierInterface::class);
+    $classifier->method('fieldIsConfigurable')->willReturn(TRUE);
+
+    $parser = new EntityFieldParser('node', $classifier);
+
+    try {
+      $parser->parse([
+        'field_a' => 'name:"unclosed',
+        'field_b' => 'a;b',
+      ]);
+      $this->fail('Expected MultipleParseException, none thrown.');
+    }
+    catch (MultipleParseException $e) {
+      $this->assertGreaterThanOrEqual(2, count($e->errors));
+    }
   }
 
 }
