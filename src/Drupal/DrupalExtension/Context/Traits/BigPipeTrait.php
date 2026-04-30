@@ -103,17 +103,19 @@ trait BigPipeTrait {
   /**
    * Sets the BigPipe NOJS cookie when applicable.
    *
-   * Returns silently when BigPipe is not bootstrapped, when JavaScript is
-   * supported, or when the cookie is already present. Any
-   * 'DriverException' raised by the underlying Mink driver (Selenium throws
-   * before the browser is open) is caught - the next BeforeStep retry will
-   * succeed once the driver is started.
+   * Returns silently when JavaScript is supported or when the cookie is
+   * already present. Any 'DriverException' raised by the underlying Mink
+   * driver (Selenium throws before the browser is open) is caught - the
+   * next BeforeStep retry will succeed once the driver is started.
+   *
+   * The cookie is set unconditionally for non-JS drivers - it is a no-op
+   * on sites without the BigPipe module, but the BigPipe-availability
+   * check via '\Drupal::hasService()' is unreliable in 'BeforeScenario'
+   * because the Drupal kernel is not bootstrapped before the first @api
+   * scenario in the process. Setting an inert cookie is cheaper than
+   * forcing an early bootstrap.
    */
   protected function bigPipeApplyCookie(): void {
-    if (!$this->bigPipeIsAvailable()) {
-      return;
-    }
-
     try {
       $this->bigPipeJsIsSupported = $this->bigPipeIsJavascriptSupported();
 
@@ -146,27 +148,6 @@ trait BigPipeTrait {
     }
 
     return (bool) $config['bypass'];
-  }
-
-  /**
-   * Whether the BigPipe module is available in the bootstrapped Drupal kernel.
-   *
-   * Returns FALSE for non-API drivers (Drush, Blackbox) where
-   * '\Drupal::hasService()' cannot be called - the cookie is harmless in
-   * that case but the no-op behaviour is explicit so sites without
-   * BigPipe never see an unexpected cookie.
-   */
-  protected function bigPipeIsAvailable(): bool {
-    if (!class_exists(\Drupal::class, FALSE)) {
-      return FALSE;
-    }
-
-    try {
-      return \Drupal::hasService('big_pipe');
-    }
-    catch (\Throwable) {
-      return FALSE;
-    }
   }
 
   /**
