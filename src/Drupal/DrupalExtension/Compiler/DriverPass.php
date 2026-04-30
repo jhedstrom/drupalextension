@@ -30,8 +30,8 @@ class DriverPass implements CompilerPassInterface {
         }
       }
 
-      // The DrupalDriver in 3.x takes a single Core via setCore(). Resolve
-      // the first service tagged 'drupal.core' and inject it.
+      // The DrupalDriver takes a single Core via setCore(). Resolve the
+      // first service tagged 'drupal.core' and inject it.
       if ('drupal.driver.drupal' !== $id) {
         continue;
       }
