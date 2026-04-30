@@ -24,6 +24,7 @@ use Drupal\DrupalDriverManagerInterface;
 use Drupal\DrupalExtension\DrupalParametersTrait;
 use Drupal\DrupalExtension\Manager\DrupalAuthenticationManagerInterface;
 use Drupal\DrupalExtension\Manager\DrupalUserManagerInterface;
+use Drupal\DrupalExtension\Parser\EntityFieldParser;
 use Drupal\DrupalExtension\Parser\EntityFieldParserInterface;
 use Drupal\DrupalExtension\Parser\LegacyEntityFieldParser;
 
@@ -395,11 +396,31 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
   /**
    * Builds the active entity-field parser for one parsing call.
    *
-   * Override in a subclass to swap in a different parser implementation
-   * (e.g. the v6 modern parser, when it lands in 6.0).
+   * The 'field_parser' extension parameter controls which implementation is
+   * used: 'default' (the current parser) or 'legacy' (the deprecated parser
+   * that will be removed in 6.1). Override in a subclass to swap in a
+   * custom implementation.
    */
   protected function getFieldParser(string $entity_type, FieldClassifierInterface $classifier): EntityFieldParserInterface {
-    return new LegacyEntityFieldParser($entity_type, $classifier);
+    $mode = $this->getDrupalParameter('field_parser') ?? 'default';
+
+    if ($mode === 'legacy') {
+      static $deprecation_emitted = FALSE;
+
+      if (!$deprecation_emitted) {
+        // Behat installs an error handler that escalates 'E_USER_DEPRECATED'
+        // to a step failure, so 'trigger_error()' is the wrong vehicle here:
+        // it would break legacy-parser tests instead of merely warning. Write
+        // the notice to STDERR directly so test authors still see it during
+        // a Behat run.
+        fwrite(STDERR, '[Deprecation] The legacy field parser is deprecated and will be removed in 6.1. Remove "field_parser: legacy" from your behat.yml to migrate. See MIGRATION.md.' . PHP_EOL);
+        $deprecation_emitted = TRUE;
+      }
+
+      return new LegacyEntityFieldParser($entity_type, $classifier);
+    }
+
+    return new EntityFieldParser($entity_type, $classifier);
   }
 
   /**
@@ -441,23 +462,23 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    *   The same stub, now flagged as saved.
    */
   public function termCreate(EntityStubInterface $stub): EntityStubInterface {
-    // The 3.x DrupalDriver only loads vocabularies by machine name. Allow
-    // the Gherkin author to pass either the machine name or the human
-    // label by resolving the label to a machine name when the literal
-    // string does not match a vocabulary id. Resolution is best-effort -
-    // the driver throws a clearer error than we could when the lookup
-    // ultimately fails.
+    // The DrupalDriver only loads vocabularies by machine name. Allow the
+    // Gherkin author to pass either the machine name or the human label by
+    // resolving the label to a machine name when the literal string does
+    // not match a vocabulary id. Resolution is best-effort - the driver
+    // throws a clearer error than we could when the lookup ultimately
+    // fails.
     $vocabulary = $stub->getValue('vocabulary_machine_name');
 
     if (!empty($vocabulary)) {
       $stub->setValue('vocabulary_machine_name', $this->resolveVocabularyMachineName((string) $vocabulary));
     }
 
-    // The 3.x DrupalDriver resolves a 'parent' property as a term name
-    // against the configured vocabulary and throws if it does not exist;
-    // pass the name through unchanged. An empty 'parent' must be removed
-    // so the field-handler pipeline does not try to expand the empty
-    // string as an entity reference.
+    // The DrupalDriver resolves a 'parent' property as a term name against
+    // the configured vocabulary and throws if it does not exist; pass the
+    // name through unchanged. An empty 'parent' must be removed so the
+    // field-handler pipeline does not try to expand the empty string as
+    // an entity reference.
     if ($stub->hasValue('parent') && empty($stub->getValue('parent'))) {
       $stub->removeValue('parent');
     }
@@ -502,9 +523,9 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
   /**
    * Captures scalar values on an entity stub.
    *
-   * The 3.x DrupalDriver runs base fields through the field-handler
-   * pipeline during create, which casts scalar values such as 'title',
-   * 'name', 'mail' or 'pass' to single-element arrays. Most drupalextension
+   * The DrupalDriver runs base fields through the field-handler pipeline
+   * during create, which casts scalar values such as 'title', 'name',
+   * 'mail' or 'pass' to single-element arrays. Most drupalextension
    * downstream code (user manager indexing, login flow, stub matching)
    * expects scalars, so callers snapshot the scalars before the driver
    * call and restore them after.

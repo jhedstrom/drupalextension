@@ -35,6 +35,105 @@ Update each occurrence in your `.feature` files.
 | `Then break` / `Then I break`                                              | `When break` / `When I break` (re-categorised from `Then`)                               |
 | `Then I log out`                                                           | `When I log out` (re-categorised from `Then`)                                            |
 
+## Field syntax
+
+The inline syntax accepted by `parseEntityFields()` (the body of every
+`Given the following :type content:` and `Given the following users:`
+table) has been replaced. The new syntax has a single uniform escape
+mechanism (double quotes) and detects compound mode by value form rather
+than by the spacing of separators, removing the silent failures that
+plagued the legacy syntax.
+
+### Configuration
+
+A new `field_parser` extension parameter selects the active parser:
+
+```yaml
+default:
+  extensions:
+    Drupal\DrupalExtension:
+      field_parser: default   # one of: default | legacy
+```
+
+`default` is the default and uses the new parser. To opt back into the
+legacy parser during migration:
+
+```yaml
+field_parser: legacy
+```
+
+Setting `legacy` emits a deprecation notice once per process. The legacy
+parser is removed in 6.1; setting `field_parser: legacy` then will produce
+a hard configuration error.
+
+### Side-by-side syntax
+
+| Pattern                           | Legacy syntax                                                       | Modern syntax                                                                            |
+| --------------------------------- | ------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| Compound named single             | `country: BE - locality: Brussel`                                   | `country:"BE", locality:"Brussel"`                                                       |
+| Compound named multi              | `country: BE - locality: Brussel, country: FR - locality: Paris`    | `country:"BE", locality:"Brussel"; country:"FR", locality:"Paris"`                       |
+| Compound positional single (link) | `Link 1 - http://example.com`                                       | `title:"Link 1", uri:"http://example.com"` (positional gone, use named keys)             |
+| Compound positional multi (link)  | `L1 - http://a, L2 - http://b`                                      | `title:"L1", uri:"http://a"; title:"L2", uri:"http://b"`                                 |
+| Token at compound value position  | not expressible                                                     | `value:[relative:-1 week], end_value:[relative:+1 week]`                                 |
+| Scalar containing `,`             | `"Tag, one"`                                                        | `"Tag, one"` (unchanged)                                                                 |
+| Scalar containing ` - `           | `"Alpha - Bravo"` (workaround required)                             | `Alpha - Bravo` (no escape needed)                                                       |
+| Scalar containing `;`             | `Hello; world`                                                      | `"Hello; world"` (new escape required)                                                   |
+| Scalar containing literal `"`     | not expressible                                                     | `note:"He said \"hi\""`                                                                  |
+| Scalar that looks like `key:value`| `port:8080` (silent compound risk if value present)                 | `port:8080` (unambiguous scalar)                                                         |
+
+### Positional compound columns are no longer supported
+
+The legacy syntax allowed compound values without column names, e.g.
+`Link 1 - http://example.com`. The modern syntax requires every column
+to be named. Common field types and their column names:
+
+| Field type           | Column 1   | Column 2   | Column 3 |
+| -------------------- | ---------- | ---------- | -------- |
+| `link`               | `title`    | `uri`      | -        |
+| `text_with_summary`  | `value`    | `summary`  | `format` |
+| `daterange`          | `value`    | `end_value`| -        |
+| `image` / `file`     | `target_id`| `alt`      | `title`  |
+
+### Whitespace tolerance
+
+Whitespace around `,`, `;` and `:` is ignored outside quoted strings, so
+both forms are accepted:
+
+```text
+country:"BE",locality:"Brussel"
+country : "BE" , locality : "Brussel"
+```
+
+Whitespace inside `"..."` is preserved literally.
+
+### Escape sequences inside quoted strings
+
+| Sequence | Decoded |
+| -------- | ------- |
+| `\"`     | `"`     |
+| `\\`     | `\`     |
+| `\n`     | LF      |
+| `\t`     | TAB     |
+| `\r`     | CR      |
+
+Any other backslash sequence is a parse error.
+
+### New parse-error format
+
+The modern parser reports parse errors with character-level position
+information. A typical failure looks like:
+
+```text
+Parse error in field_post_address:
+country:"BE", locality:Brussel, postal_code:"1000"
+              ^
+unquoted_compound_value at offset 14: Compound column "locality" must use a quoted string or token.
+Hint: Wrap the value in double quotes or use a [token:value] form.
+```
+
+All errors detected in a single cell are reported together, so authors
+fix every problem in one edit instead of one error per run.
+
 ## Behaviour changes
 
 | Step                | 5.x behaviour                                          | 6.0 behaviour                                                          |

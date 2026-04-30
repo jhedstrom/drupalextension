@@ -54,6 +54,9 @@ default:
       api_driver: drush
       # Drush driver variant (legacy setting).
       drush_driver: drush
+      # Field-value parser used by parseEntityFields(): "default" or
+      # "legacy" (deprecated, removed in 6.1).
+      field_parser: default
       # Enable the blackbox driver.
       blackbox: ~
       # Map of named regions to CSS selectors.

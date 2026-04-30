@@ -97,6 +97,11 @@ class DrupalExtension implements ExtensionInterface {
         ->scalarNode('drush_driver')
           ->defaultValue('drush')
         ->end()
+        ->enumNode('field_parser')
+          ->values(['default', 'legacy'])
+          ->defaultValue('default')
+          ->info('Selects the field-value parser used by parseEntityFields(). "default" uses the current syntax; "legacy" opts in to the older syntax (deprecated, removed in 6.1).')
+        ->end()
         ->arrayNode('region_map')
           ->info("Targeting content in specific regions can be accomplished once those regions have been defined." . PHP_EOL
             . '  My region: "#css-selector"' . PHP_EOL

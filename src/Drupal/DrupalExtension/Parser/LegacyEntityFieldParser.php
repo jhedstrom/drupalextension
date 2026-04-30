@@ -83,14 +83,14 @@ final class LegacyEntityFieldParser implements EntityFieldParserInterface {
    *
    * @var string[]
    */
-  private array $ignoredProperties = [];
+  protected array $ignoredProperties = [];
 
   /**
    * Constructs the parser for one entity-type / classifier pairing.
    */
   public function __construct(
-    private readonly string $entityType,
-    private readonly FieldClassifierInterface $fieldClassifier,
+    protected readonly string $entityType,
+    protected readonly FieldClassifierInterface $fieldClassifier,
   ) {
   }
 

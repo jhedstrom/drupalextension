@@ -207,6 +207,20 @@ EOL;
   }
 
   /**
+   * Sets 'field_parser: legacy' on the drupal profile in the subprocess config.
+   *
+   * Use after 'Given some behat configuration' to exercise the legacy
+   * field-value parser inside a Behat subprocess invocation.
+   */
+  #[Given('the behat configuration uses the legacy field parser')]
+  public function behatCliUseLegacyFieldParser(): void {
+    $config_file = $this->workingDir . DIRECTORY_SEPARATOR . 'behat.yml';
+    $yaml = Yaml::parse((string) file_get_contents($config_file));
+    $yaml['drupal']['extensions']['Drupal\DrupalExtension']['field_parser'] = 'legacy';
+    file_put_contents($config_file, Yaml::dump($yaml, 4, 2));
+  }
+
+  /**
    * Asserts that behat failed with the given assertion error.
    */
   #[Then('it should fail with an error:')]
