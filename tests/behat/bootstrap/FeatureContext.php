@@ -17,6 +17,7 @@ use Behat\Behat\Hook\Scope\AfterFeatureScope;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Hook\AfterFeature;
+use Behat\Hook\AfterScenario;
 use Behat\Hook\BeforeScenario;
 use Behat\Mink\Exception\ExpectationException;
 use Drupal\Core\Database\Database;
@@ -639,6 +640,32 @@ class FeatureContext extends RawDrupalContext {
     $value = $this->getSession()->getCookie($name);
     if ($value !== NULL) {
       throw new ExpectationException(sprintf('Expected cookie "%s" to not exist, but it was set to "%s".', $name, $value), $this->getSession()->getDriver());
+    }
+  }
+
+  /**
+   * Installs a Drupal module via the module installer.
+   */
+  #[Given('I install a :module module')]
+  public function testInstallModule(string $module): void {
+    /** @var \Drupal\Core\Extension\ModuleInstallerInterface $installer */
+    $installer = \Drupal::service('module_installer');
+    $installer->install([$module]);
+  }
+
+  /**
+   * Uninstalls 'big_pipe' after every '@bigpipe' scenario.
+   *
+   * 'BeforeScenario' hooks fire before any 'Background' steps, so without
+   * this teardown a 'big_pipe' install in scenario N would leak into
+   * scenario N+1's BeforeScenario hook and break test isolation.
+   */
+  #[AfterScenario('@bigpipe')]
+  public function testUninstallBigPipeAfterScenario(): void {
+    if (\Drupal::moduleHandler()->moduleExists('big_pipe')) {
+      /** @var \Drupal\Core\Extension\ModuleInstallerInterface $installer */
+      $installer = \Drupal::service('module_installer');
+      $installer->uninstall(['big_pipe']);
     }
   }
 

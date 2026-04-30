@@ -62,19 +62,20 @@ function behat_test_deploy_add_editorial_workflow(): string {
 }
 
 /**
- * Uninstall page_cache to simplify anonymous-user assertions.
+ * Uninstall page_cache and big_pipe to simplify test assertions.
  *
- * 'page_cache' caches anonymous responses globally, which interferes with
- * Behat tests that assert exact page output. 'big_pipe' is intentionally
- * left installed - 'DrupalContext' bypasses BigPipe streaming via the
- * 'big_pipe_nojs' cookie, so authenticated-user assertions work without
- * any per-test setup.
+ * The Standard profile enables these caching modules by default. They
+ * interfere with Behat tests that assert exact page output, so we
+ * uninstall them during provisioning. Scenarios that exercise the
+ * BigPipe NOJS bypass (the '@bigpipe' tag triggered by 'BigPipeTrait')
+ * install 'big_pipe' explicitly with the 'I install a :module module'
+ * step.
  */
 function behat_test_deploy_uninstall_caching_modules(): string {
   $module_installer = \Drupal::service('module_installer');
-  $module_installer->uninstall(['page_cache']);
+  $module_installer->uninstall(['page_cache', 'big_pipe']);
 
-  return 'Uninstalled page_cache.';
+  return 'Uninstalled page_cache and big_pipe.';
 }
 
 /**
