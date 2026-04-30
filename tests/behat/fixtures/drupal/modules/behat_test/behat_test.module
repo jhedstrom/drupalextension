@@ -5,6 +5,9 @@
  * Hooks for the behat_test module.
  */
 
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\user\UserInterface;
+
 /**
  * Implements hook_cron().
  *
@@ -20,4 +23,43 @@ function behat_test_cron(): void {
   \Drupal::state()->set('behat_test.cron_request_time', $request_time);
   \Drupal::state()->set('behat_test.cron_actual_time', $actual_time);
   \Drupal::state()->set('behat_test.cron_time_drift', $actual_time - $request_time);
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter() for the user login form.
+ *
+ * Allows users to authenticate by email by translating an email entered in
+ * the username field to the matching account's username before core's own
+ * validation runs. Mirrors the behaviour of contrib modules like
+ * 'mail_login' or 'email_registration' so the email-based login flow can
+ * be exercised end-to-end without adding a contrib dependency.
+ *
+ * @see https://github.com/jhedstrom/drupalextension/issues/732
+ */
+function behat_test_form_user_login_form_alter(array &$form, FormStateInterface $form_state): void {
+  array_unshift($form['#validate'], 'behat_test_user_login_translate_mail_to_name');
+}
+
+/**
+ * Validation handler that swaps an email value for the matching username.
+ *
+ * Runs before core's authentication validation. If the submitted value
+ * looks like an email and matches a user's mail, the form value is
+ * rewritten to the account's actual name so core authenticates correctly.
+ */
+function behat_test_user_login_translate_mail_to_name(array &$form, FormStateInterface $form_state): void {
+  $value = (string) $form_state->getValue('name');
+
+  if ($value === '' || !str_contains($value, '@')) {
+    return;
+  }
+
+  $accounts = \Drupal::entityTypeManager()
+    ->getStorage('user')
+    ->loadByProperties(['mail' => $value]);
+  $account = reset($accounts);
+
+  if ($account instanceof UserInterface) {
+    $form_state->setValue('name', $account->getAccountName());
+  }
 }
