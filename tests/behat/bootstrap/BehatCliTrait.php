@@ -142,16 +142,15 @@ EOL;
     unset($yaml['default']['suites']['default']['paths']);
 
     // Find the BehatCliContext and remove it from the contexts list.
-    foreach (['default', 'drupal', 'drupal_legacy_parser'] as $profile) {
-      if (!isset($yaml[$profile]['suites']['default']['contexts'])) {
-        continue;
-      }
+    $index = array_search('BehatCliContext', $yaml['default']['suites']['default']['contexts'], TRUE);
+    if ($index !== FALSE) {
+      unset($yaml['default']['suites']['default']['contexts'][$index]);
+    }
 
-      $index = array_search('BehatCliContext', $yaml[$profile]['suites']['default']['contexts'], TRUE);
-
-      if ($index !== FALSE) {
-        unset($yaml[$profile]['suites']['default']['contexts'][$index]);
-      }
+    // Find the BehatCliContext and remove it from the contexts list.
+    $index = array_search('BehatCliContext', $yaml['drupal']['suites']['default']['contexts'], TRUE);
+    if ($index !== FALSE) {
+      unset($yaml['drupal']['suites']['default']['contexts'][$index]);
     }
 
     if (static::behatCliIsCoverageEnabled()) {
@@ -190,7 +189,7 @@ EOL;
     $project_root = dirname($source);
     $drush_binary = $project_root . '/vendor/bin/drush';
     if (file_exists($drush_binary)) {
-      foreach (['default', 'drupal', 'drupal_https', 'drupal_legacy_parser'] as $profile) {
+      foreach (['default', 'drupal', 'drupal_https'] as $profile) {
         if (isset($yaml[$profile]['extensions']['Drupal\DrupalExtension']['drush'])) {
           $yaml[$profile]['extensions']['Drupal\DrupalExtension']['drush']['binary'] = $drush_binary;
         }
@@ -205,6 +204,20 @@ EOL;
     if (static::behatCliIsDebug()) {
       static::behatCliPrintFileContents($this->workingDir . DIRECTORY_SEPARATOR . $filename, 'Behat Config (copied)');
     }
+  }
+
+  /**
+   * Sets 'field_parser: legacy' on the drupal profile in the subprocess config.
+   *
+   * Use after 'Given some behat configuration' to exercise the legacy
+   * field-value parser inside a Behat subprocess invocation.
+   */
+  #[Given('the behat configuration uses the legacy field parser')]
+  public function behatCliUseLegacyFieldParser(): void {
+    $config_file = $this->workingDir . DIRECTORY_SEPARATOR . 'behat.yml';
+    $yaml = Yaml::parse((string) file_get_contents($config_file));
+    $yaml['drupal']['extensions']['Drupal\DrupalExtension']['field_parser'] = 'legacy';
+    file_put_contents($config_file, Yaml::dump($yaml, 4, 2));
   }
 
   /**

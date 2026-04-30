@@ -435,6 +435,70 @@ class EntityFieldParserTest extends TestCase {
       ParseException::class,
       'unquoted_semicolon',
     ];
+    yield 'error: scalar with unclosed quote' => [
+      ['field_test' => '"unclosed scalar'],
+      [],
+      NULL,
+      NULL,
+      ParseException::class,
+      'unclosed_quote',
+    ];
+    yield 'error: scalar with dangling backslash' => [
+      ['field_test' => '"abc\\'],
+      [],
+      NULL,
+      NULL,
+      ParseException::class,
+      'unclosed_quote',
+    ];
+    yield 'error: scalar with unknown escape' => [
+      ['field_test' => '"abc\\xfoo"'],
+      [],
+      NULL,
+      NULL,
+      ParseException::class,
+      'unknown_escape',
+    ];
+    yield 'error: scalar with unexpected character after closing quote' => [
+      ['field_test' => '"valid"junk'],
+      [],
+      NULL,
+      NULL,
+      ParseException::class,
+      'unexpected_character',
+    ];
+    yield 'error: scalar with unexpected quote inside unquoted item' => [
+      ['field_test' => 'abc"def'],
+      [],
+      NULL,
+      NULL,
+      ParseException::class,
+      'unexpected_quote',
+    ];
+    yield 'error: compound trailing characters after closing quote' => [
+      ['field_test' => 'name:"Alice"junk'],
+      [],
+      NULL,
+      NULL,
+      ParseException::class,
+      'trailing_characters',
+    ];
+    yield 'error: compound trailing characters after token' => [
+      ['field_test' => 'value:[token:val]junk, other:"x"'],
+      [],
+      NULL,
+      NULL,
+      ParseException::class,
+      'trailing_characters',
+    ];
+    yield 'error: compound column missing key:value form' => [
+      ['field_test' => 'name:"OK", "no key here"'],
+      [],
+      NULL,
+      NULL,
+      ParseException::class,
+      'invalid_column',
+    ];
   }
 
 }

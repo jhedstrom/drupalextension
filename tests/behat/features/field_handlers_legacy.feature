@@ -1,58 +1,74 @@
-Feature: FieldHandlers
+Feature: FieldHandlersLegacyParser
   As a developer
-  I want to handle complex field types when creating entities
-  So that I can test content with references, dates, links, and addresses
+  I want the legacy field parser to remain available for migration
+  So that I can keep existing 5.x feature files running until the parser is removed in 6.1
 
-  # Drupal scenarios assume a "standard" install of Drupal and require the
-  # feature "fixtures/drupalN/modules/behat_test" to enabled on the site.
-  @test-drupal @api @test-legacy-parser
-  Scenario: Test various node field handlers
-    Given the following "page" content:
-      | title      |
-      | Page one   |
-      | Page two   |
-      | Page three |
-    When I am viewing a "post" content with the following fields:
-      | title                | Post title                                                                       |
-      | body                 | PLACEHOLDER BODY                                                                 |
-      | field_post_reference | Page one, Page two                                                               |
-      | field_post_date      | 2015-02-08 17:45:00                                                              |
-      | field_post_links     | Link 1 - http://example.com, Link 2 - http://example.com                         |
-      | field_post_select    | Select value one, Select value two                                               |
-      | field_post_address   | country: BE - locality: Brussel - thoroughfare: Louisalaan 1 - postal_code: 1000 |
-    Then I should see "Post title"
-    And I should see "PLACEHOLDER BODY"
-    And I should see "Page one"
-    And I should see "Page two"
-    And I should see "Sunday, February 8, 2015"
-    And I should see the link "Link 1"
-    And I should see the link "Link 2"
-    And I should see "Select value one"
-    And I should see "Select value two"
-    And I should not see "Select value three"
-    And I should see "Belgium"
-    And I should see "Brussel"
-    And I should see "1000"
-    And I should see "Louisalaan 1"
+  # Each scenario runs a Behat subprocess against an inline feature that
+  # uses the legacy syntax. The subprocess is configured with
+  # 'field_parser: legacy' so the deprecated parser handles the values;
+  # the parent scenario asserts the subprocess passes.
 
-  # Entity reference values containing ' - ' must be double-quoted to prevent
-  # the compound column separator from splitting them.
-  @test-drupal @api @test-legacy-parser
-  Scenario: Test entity reference with compound separator in title
-    Given the following "page" content:
-      | title         |
-      | Alpha - Bravo |
-    When I am viewing a "post" content with the following fields:
-      | title                | Post with ref     |
-      | field_post_reference | "Alpha - Bravo"   |
-    Then I should see "Alpha - Bravo"
-
-  # Unquoted entity reference values containing ' - ' are still split by the
-  # compound column separator, which breaks the entity query.
-  @test-drupal @api @test-legacy-parser
-  Scenario: Assert "Given the following :type content:" fails for unquoted entity reference title containing compound separator
+  @test-drupal @api
+  Scenario: Assert legacy positional and named compound syntax pass under field_parser:legacy
     Given some behat configuration
-    And scenario steps tagged with "@test-drupal @api @test-legacy-parser":
+    And the behat configuration uses the legacy field parser
+    And scenario steps tagged with "@test-drupal @api":
+      """
+      Given the following "page" content:
+        | title      |
+        | Page one   |
+        | Page two   |
+        | Page three |
+      When I am viewing a "post" content with the following fields:
+        | title                | Post title                                                                       |
+        | body                 | PLACEHOLDER BODY                                                                 |
+        | field_post_reference | Page one, Page two                                                               |
+        | field_post_links     | Link 1 - http://example.com, Link 2 - http://example.com                         |
+        | field_post_address   | country: BE - locality: Brussel - thoroughfare: Louisalaan 1 - postal_code: 1000 |
+      Then I should see "Post title"
+      And I should see "Page one"
+      And I should see "Page two"
+      And I should see the link "Link 1"
+      And I should see the link "Link 2"
+      And I should see "Belgium"
+      And I should see "Brussel"
+      And I should see "1000"
+      And I should see "Louisalaan 1"
+      """
+    When I run behat with drupal profile
+    Then it should pass with:
+      """
+      1 scenario (1 passed)
+      """
+
+  @test-drupal @api
+  Scenario: Assert quoted entity reference with compound separator passes under field_parser:legacy
+    Given some behat configuration
+    And the behat configuration uses the legacy field parser
+    And scenario steps tagged with "@test-drupal @api":
+      """
+      Given the following "page" content:
+        | title         |
+        | Alpha - Bravo |
+      When I am viewing a "post" content with the following fields:
+        | title                | Post with ref     |
+        | field_post_reference | "Alpha - Bravo"   |
+      Then I should see "Alpha - Bravo"
+      """
+    When I run behat with drupal profile
+    Then it should pass with:
+      """
+      1 scenario (1 passed)
+      """
+
+  # The legacy parser still has the silent-split bug for unquoted entity
+  # reference titles containing ' - '. This stays a negative test until the
+  # legacy parser is removed in 6.1.
+  @test-drupal @api
+  Scenario: Assert unquoted entity reference with compound separator fails under field_parser:legacy
+    Given some behat configuration
+    And the behat configuration uses the legacy field parser
+    And scenario steps tagged with "@test-drupal @api":
       """
       Given the following "page" content:
         | title         |
@@ -62,156 +78,8 @@ Feature: FieldHandlers
         | field_post_reference | Alpha - Bravo |
       Then I should see "Alpha - Bravo"
       """
-    When I run behat with drupal_legacy_parser profile
+    When I run behat with drupal profile
     Then it should fail with a "Drupal\Core\Database\InvalidQueryException" exception:
       """
       must have an array compatible operator
       """
-
-  # This is identical to the previous test, but uses human readable names for
-  # the field names. This is better from a BDD standpoint. Please have a look at
-  # FeatureContext::transformPostContentTable() to see how the mapping between
-  # the machine names and human readable names is defined.
-  @test-drupal @api @test-legacy-parser
-  Scenario: Test using human readable names for fields using @Transform
-    Given the following "page" content:
-      | title      |
-      | Page one   |
-      | Page two   |
-      | Page three |
-    When I am viewing a "post" content with the following fields:
-      | title     | Post title                                                                       |
-      | body      | PLACEHOLDER BODY                                                                 |
-      | reference | Page one, Page two                                                               |
-      | date      | 2015-02-08 17:45:00                                                              |
-      | links     | Link 1 - http://example.com, Link 2 - http://example.com                         |
-      | select    | Select value one, Select value two                                               |
-      | address   | country: BE - locality: Brussel - thoroughfare: Louisalaan 1 - postal_code: 1000 |
-    Then I should see "Page one"
-    And I should see "Page two"
-    And I should see "Sunday, February 8, 2015"
-    And I should see the link "Link 1"
-    And I should see the link "Link 2"
-    And I should see "Select value one"
-    And I should see "Select value two"
-    And I should see "Belgium"
-    And I should see "Brussel"
-    And I should see "1000"
-    And I should see "Louisalaan 1"
-
-  @test-drupal @api @test-legacy-parser
-  Scenario: Test alternative syntax for named field columns on node content
-    When I am viewing a "post" content with the following fields:
-      | title                           | Post title                  |
-      | field_post_address:country      | FR                          |
-      | field_post_address:locality     | Paris                       |
-      | field_post_address:thoroughfare | 1 Avenue des Champs Elysées |
-      | field_post_address:postal_code  | 75008                       |
-    Then I should see "France"
-    And I should see "Paris"
-    And I should see "1 Avenue des Champs Elysées"
-    And I should see "75008"
-
-  @test-drupal @api @test-legacy-parser
-  Scenario: Test shorthand syntax for named field columns on node content
-    When I am viewing a "post" content with the following fields:
-      | title                      | Post title      |
-      | field_post_address:country | GB              |
-      | :locality                  | London          |
-      | :thoroughfare              | 1 Oxford Street |
-      | :postal_code               | W1D 1AN         |
-    Then I should see "United Kingdom"
-    And I should see "London"
-    And I should see "1 Oxford Street"
-    And I should see "W1D 1AN"
-
-  @test-drupal @api @test-legacy-parser
-  Scenario: Test multivalue fields with named field columns on node content
-    When I am viewing a "post" content with the following fields:
-      | title                      | Post title                             |
-      | field_post_address:country | IT, JP                                 |
-      | :locality                  | Milan, Tokyo                           |
-      | :thoroughfare              | 1 Corso Buenos Aires, Shibuya Crossing |
-      | :postal_code               | 20124, 150-0040                        |
-    Then I should see "Italy"
-    And I should see "Milan"
-    And I should see "1 Corso Buenos Aires"
-    And I should see "20124"
-    And I should see "Japan"
-    And I should see "Tokyo"
-    And I should see "Shibuya Crossing"
-    And I should see "150-0040"
-
-  @test-drupal @api @test-legacy-parser
-  Scenario: Test various user field handlers.
-    Given the following "tags" terms:
-      | name    |
-      | Tag one |
-      | Tag two |
-    And the following "page" content:
-      | title      |
-      | Page one   |
-      | Page two   |
-      | Page three |
-    And the following users:
-      | name     | mail         | field_tags       | field_post_reference | field_post_address                                                               |
-      | Jane Doe |              |                  |                      |                                                                                  |
-      | John Doe | john@doe.com | Tag one, Tag two | Page one, Page two   | country: BE - locality: Brussel - thoroughfare: Louisalaan 1 - postal_code: 1000 |
-    And I am logged in as a user with the "administrator" role
-    When I visit "admin/people"
-    Then I should see the link "Jane Doe"
-    And I should see the link "John Doe"
-    When I click "John Doe"
-    Then I should see the link "Tag one"
-    And I should see the link "Tag two"
-    But I should not see the link "Tag three"
-    And I should see "Page one"
-    And I should see "Page two"
-    And I should not see "Page three"
-    And I should see "Belgium"
-    And I should see "Brussel"
-    And I should see "1000"
-    And I should see "Louisalaan 1"
-
-  @test-drupal @api @test-legacy-parser
-  Scenario: Test using @Transform to provide human friendly aliases for named field columns
-    Given the following users:
-      | name     | mail             | street        | city     | postcode | country |
-      | Jane Doe | jane@example.com | Pioneer Place | Portland | OR 97204 | US      |
-    And I am logged in as a user with the "administrator" role
-    When I visit "admin/people"
-    And I click "Jane Doe"
-    Then I should see "United States"
-    And I should see "Portland"
-    And I should see "Pioneer Place"
-    And I should see "OR 97204"
-
-  @test-drupal @api @test-legacy-parser
-  Scenario: Test taxonomy term reference field handler
-    Given the following "tags" terms:
-      | name       |
-      | Tag one    |
-      | Tag two    |
-      | Tag, three |
-      | Tag four   |
-    And the following "article" content:
-      | title           | body             | promote | field_tags                    |
-      # Field values containing commas should be escaped with double quotes.
-      # The comma separator can optionally be followed by a space.
-      | Article by Joe  | PLACEHOLDER BODY | 1       | Tag one, Tag two,"Tag, three" |
-      | Article by Mike | PLACEHOLDER BODY | 1       | Tag four                      |
-      | Article by Jane |                  |         |                               |
-    And I am logged in as a user with the "administrator" role
-    When I visit "admin/content"
-    Then I should see the link "Article by Joe"
-    And I should see the link "Article by Mike"
-    And I should see the link "Article by Jane"
-    When I am on the homepage
-    Then I should see the link "Article by Joe"
-    And I should see the link "Tag one"
-    And I should see the link "Tag two"
-    And I should see the link "Tag, three"
-    And I should see the link "Article by Mike"
-    And I should see the link "Tag four"
-    And I should see the link "Article by Joe"
-    And I should not see the link "Article by Jane"

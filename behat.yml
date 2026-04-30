@@ -139,7 +139,7 @@ drupal:
         - BehatCliContext
         - DrevOps\BehatScreenshotExtension\Context\ScreenshotContext
       filters:
-        tags: "@test-drupal&&~@skipped&&~@test-legacy-parser"
+        tags: "@test-drupal&&~@skipped"
 
   extensions:
     Drupal\MinkExtension:
@@ -149,49 +149,6 @@ drupal:
     Drupal\DrupalExtension:
       api_driver: "drupal"
       login_wait: 0
-      drupal:
-        drupal_root: "/var/www/html/build/web"
-      drush:
-        root: "/var/www/html/build/web"
-      region_map:
-        main content: "#main"
-      selectors:
-        message_selector: '.messages'
-        error_message_selector: '.messages--error'
-        success_message_selector: '.messages--status'
-        warning_message_selector: '.messages--warning'
-
-# Legacy field-parser profile: runs the legacy-syntax field-handler tests
-# under the deprecated parser. The parser is removed in 6.1; this profile
-# exists to keep the legacy syntax exercised until then.
-drupal_legacy_parser:
-  suites:
-    default:
-      contexts:
-        - Drupal\DrupalExtension\Context\ConfigContext
-        - Drupal\DrupalExtension\Context\BatchContext
-        - Drupal\DrupalExtension\Context\DrupalContext
-        - Drupal\DrupalExtension\Context\DrushContext
-        - Drupal\DrupalExtension\Context\MinkContext
-        - Drupal\DrupalExtension\Context\MarkupContext
-        - Drupal\DrupalExtension\Context\MessageContext
-        - Drupal\DrupalExtension\Context\MailContext
-        - Drupal\DrupalExtension\Context\RandomContext
-        - FeatureContext
-        - BehatCliContext
-        - DrevOps\BehatScreenshotExtension\Context\ScreenshotContext
-      filters:
-        tags: "@test-legacy-parser&&~@skipped"
-
-  extensions:
-    Drupal\MinkExtension:
-      base_url: http://drupal
-      files_path: /var/www/html/tests/behat/fixtures/files
-
-    Drupal\DrupalExtension:
-      api_driver: "drupal"
-      login_wait: 0
-      field_parser: legacy
       drupal:
         drupal_root: "/var/www/html/build/web"
       drush:
