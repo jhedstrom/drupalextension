@@ -221,6 +221,20 @@ EOL;
   }
 
   /**
+   * Disables BigPipe bypass on the drupal profile in the subprocess config.
+   *
+   * Use after 'Given some behat configuration' to exercise the
+   * 'big_pipe.bypass: false' opt-out inside a Behat subprocess invocation.
+   */
+  #[Given('the behat configuration disables big_pipe bypass')]
+  public function behatCliDisableBigPipeBypass(): void {
+    $config_file = $this->workingDir . DIRECTORY_SEPARATOR . 'behat.yml';
+    $yaml = Yaml::parse((string) file_get_contents($config_file));
+    $yaml['drupal']['extensions']['Drupal\DrupalExtension']['big_pipe']['bypass'] = FALSE;
+    file_put_contents($config_file, Yaml::dump($yaml, 4, 2));
+  }
+
+  /**
    * Asserts that behat failed with the given assertion error.
    */
   #[Then('it should fail with an error:')]

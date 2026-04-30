@@ -620,6 +620,28 @@ class FeatureContext extends RawDrupalContext {
     throw new \RuntimeException($message);
   }
 
+  /**
+   * Asserts that a cookie with the given name is present in the session.
+   */
+  #[Then('the cookie :name exists')]
+  public function testAssertCookieExists(string $name): void {
+    $value = $this->getSession()->getCookie($name);
+    if ($value === NULL) {
+      throw new ExpectationException(sprintf('Expected cookie "%s" to exist, but it was not set.', $name), $this->getSession()->getDriver());
+    }
+  }
+
+  /**
+   * Asserts that a cookie with the given name is not present in the session.
+   */
+  #[Then('the cookie :name does not exist')]
+  public function testAssertCookieDoesNotExist(string $name): void {
+    $value = $this->getSession()->getCookie($name);
+    if ($value !== NULL) {
+      throw new ExpectationException(sprintf('Expected cookie "%s" to not exist, but it was set to "%s".', $name, $value), $this->getSession()->getDriver());
+    }
+  }
+
 }
 
 /**
