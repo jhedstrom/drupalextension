@@ -441,7 +441,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
     }
 
     $entity_type = $stub->getEntityType();
-    $classifier = $driver->getCore()->classifier();
+    $classifier = $driver->getCore()->getFieldClassifier();
 
     $multicolumn_field = '';
     $multicolumn_column = '';

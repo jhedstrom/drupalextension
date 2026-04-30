@@ -35,7 +35,7 @@ class RawDrupalContextTest extends TestCase {
     $classifier->method('fieldIsConfigurable')->willReturn(TRUE);
 
     $core = $this->createMock(CoreInterface::class);
-    $core->method('classifier')->willReturn($classifier);
+    $core->method('getFieldClassifier')->willReturn($classifier);
 
     $driver = $this->createMock(DrupalDriver::class);
     $driver->method('getCore')->willReturn($core);
@@ -77,7 +77,7 @@ class RawDrupalContextTest extends TestCase {
       $classifier->method('fieldIsBaseCustomStorage')->willReturnCallback($is_base_field);
 
       $core = $this->createMock(CoreInterface::class);
-      $core->method('classifier')->willReturn($classifier);
+      $core->method('getFieldClassifier')->willReturn($classifier);
 
       $driver = $this->createMock(DrupalDriver::class);
       $driver->method('getCore')->willReturn($core);
@@ -279,7 +279,7 @@ class RawDrupalContextTest extends TestCase {
     }
 
     $core = $this->createMock(CoreInterface::class);
-    $core->method('classifier')->willReturn($classifier);
+    $core->method('getFieldClassifier')->willReturn($classifier);
 
     $driver = $this->createMock(DrupalDriver::class);
     $driver->method('getCore')->willReturn($core);
@@ -317,7 +317,7 @@ class RawDrupalContextTest extends TestCase {
       ->willReturn(TRUE);
 
     $core = $this->createMock(CoreInterface::class);
-    $core->method('classifier')->willReturn($classifier);
+    $core->method('getFieldClassifier')->willReturn($classifier);
 
     $driver = $this->createMock(DrupalDriver::class);
     $driver->method('getCore')->willReturn($core);
