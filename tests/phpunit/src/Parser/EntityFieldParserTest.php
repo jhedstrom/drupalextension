@@ -113,9 +113,9 @@ class EntityFieldParserTest extends TestCase {
   /**
    * Provides data for testParse().
    *
-   * Each yielded row mirrors a row of the validity table in the spec
-   * (.artifacts/spec-766-compound-syntax.md, section 6) so this provider
-   * reads as a top-to-bottom encoding of that table.
+   * Each yielded row mirrors a row of the syntax validity table in the
+   * issue description for #766, so this provider reads as a top-to-bottom
+   * encoding of that table.
    */
   public static function dataProviderParse(): \Iterator {
     // Row 1: scalar, single.
