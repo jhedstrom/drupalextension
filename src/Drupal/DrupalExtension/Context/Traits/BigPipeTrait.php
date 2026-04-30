@@ -47,7 +47,7 @@ trait BigPipeTrait {
    * scenario). The Behat 3 'BeforeStep' attribute does not support tag
    * filters, so this flag gates the per-step cookie reset instead.
    */
-  protected bool $bigPipeActive = FALSE;
+  protected bool $bigPipeIsActive = FALSE;
 
   /**
    * Whether the active driver supports JavaScript.
@@ -67,7 +67,7 @@ trait BigPipeTrait {
    */
   #[BeforeScenario]
   public function bigPipeResetActivation(): void {
-    $this->bigPipeActive = FALSE;
+    $this->bigPipeIsActive = FALSE;
     $this->bigPipeJsIsSupported = FALSE;
   }
 
@@ -80,7 +80,7 @@ trait BigPipeTrait {
    */
   #[BeforeScenario('@bigpipe')]
   public function bigPipeActivate(): void {
-    $this->bigPipeActive = TRUE;
+    $this->bigPipeIsActive = TRUE;
     $this->bigPipeApplyCookie();
   }
 
@@ -94,7 +94,7 @@ trait BigPipeTrait {
    */
   #[BeforeStep]
   public function bigPipeBeforeStep(): void {
-    if (!$this->bigPipeActive) {
+    if (!$this->bigPipeIsActive) {
       return;
     }
 
