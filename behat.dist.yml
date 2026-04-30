@@ -28,11 +28,7 @@ default:
       javascript_session: selenium2
       # Maximum time (in seconds) to wait for AJAX calls to complete.
       ajax_timeout: 5
-      # CSS selectors consumed by Mink-based contexts (new home in 6.0+).
-      # Move message selectors here from Drupal\DrupalExtension.selectors:
-      # and rename the flat keys (message_selector / error_message_selector /
-      # success_message_selector / warning_message_selector) to the nested
-      # form below.
+      # CSS selectors consumed by Mink-based contexts, grouped by concern.
       selectors:
         messages:
           default: '.messages'
@@ -65,8 +61,7 @@ default:
       api_driver: drush
       # Drush driver variant (legacy setting).
       drush_driver: drush
-      # Field-value parser used by parseEntityFields(): "default" or
-      # "legacy" (deprecated, removed in 6.1).
+      # Field-value parser used by parseEntityFields(): "default" or "legacy".
       field_parser: default
       # User entity property submitted as the login value (e.g. "name", "mail").
       login_field: name
@@ -91,9 +86,6 @@ default:
         password_field: Password
         username_field: Username
       # CSS selectors for Drupal UI elements.
-      # Note: the four message selectors have moved to
-      # Drupal\MinkExtension.selectors.messages: (keys: default, error,
-      # success, warning).
       selectors:
         login_form_selector: 'form#user-login,form#user-login-form'
         logged_in_selector: 'body.logged-in,body.user-logged-in'

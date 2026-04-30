@@ -363,22 +363,6 @@ class MessageContext extends RawMinkContext implements TranslatableContext, Drup
   }
 
   /**
-   * Maps short message-selector names to their legacy flat counterparts.
-   *
-   * The new nested location ('Drupal\MinkExtension.selectors.messages') keys
-   * the four message selectors as 'default', 'error', 'success', 'warning'.
-   * The deprecated flat location ('Drupal\DrupalExtension.selectors') keys
-   * them as 'message_selector', 'error_message_selector',
-   * 'success_message_selector', 'warning_message_selector'.
-   */
-  private const LEGACY_KEY_MAP = [
-    'default' => 'message_selector',
-    'error' => 'error_message_selector',
-    'success' => 'success_message_selector',
-    'warning' => 'warning_message_selector',
-  ];
-
-  /**
    * Resolves a message selector by short name.
    *
    * Reads from 'Drupal\MinkExtension.selectors.messages.<name>' first. When
@@ -396,8 +380,20 @@ class MessageContext extends RawMinkContext implements TranslatableContext, Drup
    *   When the selector is not configured under either extension, or when
    *   $name is not a recognised message-selector key.
    */
-  protected function getMessageSelector(string $name): string {
-    if (!isset(self::LEGACY_KEY_MAP[$name])) {
+  protected function getSelector(string $name): string {
+    // @deprecated in 6.0 — remove the local '$legacy_key_map', the unknown-
+    // key guard that uses it, the static deprecation flag, the STDERR
+    // notice and the trailing 'getDrupalSelector()' fallback in 6.1.
+    // The new-path lookup above ('$mink_selectors['messages'][$name]')
+    // becomes the single source of truth at that point.
+    $legacy_key_map = [
+      'default' => 'message_selector',
+      'error' => 'error_message_selector',
+      'success' => 'success_message_selector',
+      'warning' => 'warning_message_selector',
+    ];
+
+    if (!isset($legacy_key_map[$name])) {
       throw new \RuntimeException(sprintf('Unknown message selector "%s". Expected one of: default, error, success, warning.', $name));
     }
 
@@ -416,7 +412,7 @@ class MessageContext extends RawMinkContext implements TranslatableContext, Drup
       $deprecation_emitted = TRUE;
     }
 
-    return $this->getDrupalSelector(self::LEGACY_KEY_MAP[$name]);
+    return $this->getDrupalSelector($legacy_key_map[$name]);
   }
 
   /**
@@ -437,7 +433,7 @@ class MessageContext extends RawMinkContext implements TranslatableContext, Drup
    *   Thrown when the expected message is not present in the page.
    */
   protected function assert(string $message, string $selectorId, string $exceptionMsgNone, string $exceptionMsgMissing): void {
-    $selector = $this->getMessageSelector($selectorId);
+    $selector = $this->getSelector($selectorId);
     $selector_objects = $this->getSession()->getPage()->findAll("css", $selector);
     if (empty($selector_objects)) {
       throw new ExpectationException(sprintf($exceptionMsgNone, $this->getSession()->getCurrentUrl()), $this->getSession()->getDriver());
@@ -465,7 +461,7 @@ class MessageContext extends RawMinkContext implements TranslatableContext, Drup
    *   Thrown when the expected message is present in the page.
    */
   protected function assertNot(string $message, string $selectorId, string $exceptionMsg): void {
-    $selector = $this->getMessageSelector($selectorId);
+    $selector = $this->getSelector($selectorId);
     $selector_objects = $this->getSession()->getPage()->findAll("css", $selector);
     if (!empty($selector_objects)) {
       foreach ($selector_objects as $selector_object) {
