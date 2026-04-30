@@ -1,6 +1,6 @@
 <div align="center">
   <a href="" rel="noopener">
-  <img height=100px src="doc/_static/beehat.png" alt="Behat Drupal Extension Logo"></a>
+  <img height=100px src="docs/assets/beehat.png" alt="Behat Drupal Extension Logo"></a>
 </div>
 
 <h1 align="center">Behat Drupal Extension</h1>
@@ -15,8 +15,6 @@
 [![ci](https://github.com/jhedstrom/drupalextension/actions/workflows/ci.yml/badge.svg)](https://github.com/jhedstrom/drupalextension/actions/workflows/ci.yml)
 [![GitHub Issues](https://img.shields.io/github/issues/jhedstrom/drupalextension.svg)](https://github.com/jhedstrom/drupalextension/issues)
 [![GitHub Pull Requests](https://img.shields.io/github/issues-pr/jhedstrom/drupalextension.svg)](https://github.com/jhedstrom/drupalextension/pulls)
-[![Documentation Status](https://readthedocs.org/projects/behat-drupal-extension/badge/?version=master)](https://behat-drupal-extension.readthedocs.org)
-
 [![Join our community](https://img.shields.io/badge/Join%20our%20community-Slack-4A154B?style=for-the-badge&logo=slack&logoColor=white)](https://drupal.slack.com/archives/C4T2JHG9K)
 </div>
 
@@ -39,7 +37,7 @@ sites.
 ## Use it for testing your Drupal site.
 
 If you're new to the Drupal Extension, we recommend starting with
-the [Full documentation](https://behat-drupal-extension.readthedocs.org)
+the [full documentation](docs/README.md).
 
 ### Quick start
 
@@ -50,7 +48,7 @@ the [Full documentation](https://behat-drupal-extension.readthedocs.org)
     ```
 
 2. Create a file called `behat.yml` with a minimal configuration.
-   For more information on configuration options, see [Full documentation](https://behat-drupal-extension.readthedocs.org)
+   For more information on configuration options, see the [configuration guide](docs/configuration.md).
 
     ```yaml behat.yml
     default:
@@ -133,7 +131,7 @@ For detailed step documentation, see: vendor/drupal/drupal-extension/STEPS.md
 
 ## Additional resources
 
-* [Behat Drupal Extension documentation](https://behat-drupal-extension.readthedocs.org)
+* [Behat Drupal Extension documentation](docs/README.md)
 * [Behat documentation](http://docs.behat.org)
 * [Mink documentation](http://mink.behat.org)
 * [Drupal Behat group](http://groups.drupal.org/behat)
