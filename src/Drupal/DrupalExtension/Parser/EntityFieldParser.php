@@ -41,14 +41,14 @@ final class EntityFieldParser implements EntityFieldParserInterface {
    *
    * @var string[]
    */
-  private array $ignoredProperties = [];
+  protected array $ignoredProperties = [];
 
   /**
    * Constructs the parser for one entity-type / classifier pairing.
    */
   public function __construct(
-    private readonly string $entityType,
-    private readonly FieldClassifierInterface $fieldClassifier,
+    protected readonly string $entityType,
+    protected readonly FieldClassifierInterface $fieldClassifier,
   ) {
   }
 
@@ -150,7 +150,7 @@ final class EntityFieldParser implements EntityFieldParserInterface {
    * @throws \Drupal\DrupalExtension\Parser\Exception\ParseException
    *   On any cell-level parse error.
    */
-  private function parseCell(string $cell, bool $is_multicolumn): array {
+  protected function parseCell(string $cell, bool $is_multicolumn): array {
     $trimmed = trim($cell);
 
     if ($trimmed === '') {
@@ -173,7 +173,7 @@ final class EntityFieldParser implements EntityFieldParserInterface {
    * scan respecting quoted strings and bracketed tokens so an embedded
    * pattern inside a quoted scalar does not trigger compound mode.
    */
-  private function detectCompoundMode(string $cell): bool {
+  protected function detectCompoundMode(string $cell): bool {
     $length = strlen($cell);
     $i = 0;
 
@@ -225,7 +225,7 @@ final class EntityFieldParser implements EntityFieldParserInterface {
    * @return array<int, string>
    *   The parsed list of scalar items.
    */
-  private function parseScalarList(string $cell): array {
+  protected function parseScalarList(string $cell): array {
     $items = [];
     $length = strlen($cell);
     $i = 0;
@@ -328,7 +328,7 @@ final class EntityFieldParser implements EntityFieldParserInterface {
    * @return array<int, array<string, string>>
    *   The parsed list of compound records.
    */
-  private function parseCompound(string $cell): array {
+  protected function parseCompound(string $cell): array {
     $records = [];
     $errors = [];
     $record_strings = $this->splitTopLevel($cell, ';');
@@ -337,12 +337,7 @@ final class EntityFieldParser implements EntityFieldParserInterface {
       $record = trim($record);
 
       if ($record === '') {
-        $errors[] = new ParseException(
-          'empty_record',
-          0,
-          $cell,
-          'Empty compound record (consecutive ";" or trailing ";").',
-        );
+        $errors[] = new ParseException('empty_record', 0, $cell, 'Empty compound record (consecutive ";" or trailing ";").');
 
         continue;
       }
@@ -369,7 +364,7 @@ final class EntityFieldParser implements EntityFieldParserInterface {
    * @return array<string, string>
    *   The parsed columns keyed by column name.
    */
-  private function parseRecord(string $record, string $cell): array {
+  protected function parseRecord(string $record, string $cell): array {
     $columns = [];
     $errors = [];
     $column_strings = $this->splitTopLevel($record, ',');
@@ -378,12 +373,7 @@ final class EntityFieldParser implements EntityFieldParserInterface {
       $column = trim($column);
 
       if ($column === '') {
-        $errors[] = new ParseException(
-          'empty_column',
-          0,
-          $cell,
-          'Empty compound column (consecutive "," or trailing ",").',
-        );
+        $errors[] = new ParseException('empty_column', 0, $cell, 'Empty compound column (consecutive "," or trailing ",").');
 
         continue;
       }
@@ -410,7 +400,7 @@ final class EntityFieldParser implements EntityFieldParserInterface {
    * @return array{0: string, 1: string}
    *   [$key, $value]
    */
-  private function parseColumn(string $column, string $cell): array {
+  protected function parseColumn(string $column, string $cell): array {
     if (preg_match('/^([a-z_][a-z0-9_]*)\s*:\s*(.*)$/s', $column, $match) !== 1) {
       throw new ParseException(
         'invalid_column',
@@ -439,12 +429,7 @@ final class EntityFieldParser implements EntityFieldParserInterface {
       $value = $this->readQuotedString($value_raw, $offset);
 
       if ($offset !== strlen($value_raw)) {
-        throw new ParseException(
-          'trailing_characters',
-          0,
-          $cell,
-          sprintf('Trailing characters after closing quote in column "%s".', $key),
-        );
+        throw new ParseException('trailing_characters', 0, $cell, sprintf('Trailing characters after closing quote in column "%s".', $key));
       }
 
       return [$key, $value];
@@ -455,12 +440,7 @@ final class EntityFieldParser implements EntityFieldParserInterface {
       $value = $this->readToken($value_raw, $offset);
 
       if ($offset !== strlen($value_raw)) {
-        throw new ParseException(
-          'trailing_characters',
-          0,
-          $cell,
-          sprintf('Trailing characters after closing token in column "%s".', $key),
-        );
+        throw new ParseException('trailing_characters', 0, $cell, sprintf('Trailing characters after closing token in column "%s".', $key));
       }
 
       return [$key, $value];
@@ -483,7 +463,7 @@ final class EntityFieldParser implements EntityFieldParserInterface {
    * @return string[]
    *   The string segments separated by the top-level separator.
    */
-  private function splitTopLevel(string $cell, string $separator): array {
+  protected function splitTopLevel(string $cell, string $separator): array {
     $segments = [];
     $length = strlen($cell);
     $i = 0;
@@ -523,7 +503,7 @@ final class EntityFieldParser implements EntityFieldParserInterface {
    * Matches the same escape grammar as 'readQuotedString()'. If the string
    * is unterminated returns the cell length.
    */
-  private function skipQuotedString(string $cell, int $i): int {
+  protected function skipQuotedString(string $cell, int $i): int {
     $length = strlen($cell);
     $i++;
 
@@ -548,7 +528,7 @@ final class EntityFieldParser implements EntityFieldParserInterface {
    *
    * If the token is unterminated returns the cell length.
    */
-  private function skipToken(string $cell, int $i): int {
+  protected function skipToken(string $cell, int $i): int {
     $length = strlen($cell);
     $close = strpos($cell, ']', $i + 1);
 
@@ -565,7 +545,7 @@ final class EntityFieldParser implements EntityFieldParserInterface {
    * Advances $offset past the closing quote. Decodes the escapes \\, \",
    * \n, \t, \r. Any other backslash sequence is a parse error.
    */
-  private function readQuotedString(string $cell, int &$offset): string {
+  protected function readQuotedString(string $cell, int &$offset): string {
     $length = strlen($cell);
     $start = $offset;
     $offset++;
@@ -576,12 +556,7 @@ final class EntityFieldParser implements EntityFieldParserInterface {
 
       if ($char === '\\') {
         if ($offset + 1 >= $length) {
-          throw new ParseException(
-            'unclosed_quote',
-            $start,
-            $cell,
-            'Quoted string ends with a dangling backslash.',
-          );
+          throw new ParseException('unclosed_quote', $start, $cell, 'Quoted string ends with a dangling backslash.');
         }
 
         $next = $cell[$offset + 1];
@@ -635,17 +610,12 @@ final class EntityFieldParser implements EntityFieldParserInterface {
    * Advances $offset past the closing bracket and returns the verbatim
    * '[...]' substring (downstream field handlers expand the token).
    */
-  private function readToken(string $cell, int &$offset): string {
+  protected function readToken(string $cell, int &$offset): string {
     $start = $offset;
     $close = strpos($cell, ']', $offset + 1);
 
     if ($close === FALSE) {
-      throw new ParseException(
-        'unclosed_token',
-        $start,
-        $cell,
-        'Token is missing a closing "]".',
-      );
+      throw new ParseException('unclosed_token', $start, $cell, 'Token is missing a closing "]".');
     }
 
     $offset = $close + 1;

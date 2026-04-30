@@ -35,11 +35,7 @@ class ParseException extends \RuntimeException {
    */
   protected function buildMessage(): string {
     $caret = str_repeat(' ', max(0, $this->offset)) . '^';
-    $lines = [
-      $this->cell,
-      $caret,
-      sprintf('%s at offset %d: %s', $this->errorCode, $this->offset, $this->description),
-    ];
+    $lines = [$this->cell, $caret, sprintf('%s at offset %d: %s', $this->errorCode, $this->offset, $this->description)];
 
     if ($this->hint !== NULL && $this->hint !== '') {
       $lines[] = 'Hint: ' . $this->hint;

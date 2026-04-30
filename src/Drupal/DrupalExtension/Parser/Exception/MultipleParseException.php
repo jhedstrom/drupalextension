@@ -23,25 +23,14 @@ class MultipleParseException extends ParseException {
    * @param \Throwable|null $previous
    *   Optional previous throwable for chaining.
    */
-  public function __construct(
-    public readonly array $errors,
-    string $cell,
-    ?\Throwable $previous = NULL,
-  ) {
+  public function __construct(public readonly array $errors, string $cell, ?\Throwable $previous = NULL) {
     if ($errors === []) {
       throw new \InvalidArgumentException('MultipleParseException requires at least one error.');
     }
 
     $first = $errors[0];
 
-    parent::__construct(
-      $first->errorCode,
-      $first->offset,
-      $cell,
-      $this->buildDescription($errors),
-      NULL,
-      $previous,
-    );
+    parent::__construct($first->errorCode, $first->offset, $cell, $this->buildDescription($errors), NULL, $previous);
   }
 
   /**
