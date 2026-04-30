@@ -99,7 +99,7 @@ to be named. Common field types and their column names:
 Whitespace around `,`, `;` and `:` is ignored outside quoted strings, so
 both forms are accepted:
 
-```
+```text
 country:"BE",locality:"Brussel"
 country : "BE" , locality : "Brussel"
 ```
@@ -123,7 +123,7 @@ Any other backslash sequence is a parse error.
 The modern parser reports parse errors with character-level position
 information. A typical failure looks like:
 
-```
+```text
 Parse error in field_post_address:
 country:"BE", locality:Brussel, postal_code:"1000"
               ^

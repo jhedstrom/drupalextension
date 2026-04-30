@@ -70,7 +70,6 @@ final class EntityFieldParser implements EntityFieldParserInterface {
     $multicolumn_fields = [];
     $parsed = [];
     $errors = [];
-    $error_cell = '';
 
     foreach ($values as $field => $field_value) {
       $field = (string) $field;
@@ -98,7 +97,6 @@ final class EntityFieldParser implements EntityFieldParserInterface {
         }
         catch (ParseException $e) {
           $errors[] = $e;
-          $error_cell = (string) $field_value;
           continue;
         }
 
@@ -137,7 +135,7 @@ final class EntityFieldParser implements EntityFieldParserInterface {
     }
 
     if (count($errors) > 1) {
-      throw new MultipleParseException($errors, $error_cell);
+      throw new MultipleParseException($errors, $errors[0]->cell);
     }
 
     return $parsed;
