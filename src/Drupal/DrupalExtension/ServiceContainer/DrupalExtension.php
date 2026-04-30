@@ -102,6 +102,10 @@ class DrupalExtension implements ExtensionInterface {
           ->defaultValue('default')
           ->info('Selects the field-value parser used by parseEntityFields(). "default" uses the current syntax; "legacy" opts in to the older syntax (deprecated, removed in 6.1).')
         ->end()
+        ->scalarNode('login_field')
+          ->defaultValue('name')
+          ->info('User entity property submitted as the login value. Defaults to "name". Set to "mail" for sites that authenticate by email, or any other user property.')
+        ->end()
         ->arrayNode('region_map')
           ->info("Targeting content in specific regions can be accomplished once those regions have been defined." . PHP_EOL
             . '  My region: "#css-selector"' . PHP_EOL
