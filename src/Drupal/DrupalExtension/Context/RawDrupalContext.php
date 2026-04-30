@@ -408,8 +408,12 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
       static $deprecation_emitted = FALSE;
 
       if (!$deprecation_emitted) {
-        // phpcs:ignore Drupal.Semantics.FunctionTriggerError
-        @trigger_error('The legacy field parser is deprecated and will be removed in 6.1. Remove "field_parser: legacy" from your behat.yml to migrate. See MIGRATION.md.', E_USER_DEPRECATED);
+        // The deprecation is intentionally not silenced with '@': Behat does
+        // not run with a Symfony-style deprecation collector that observes
+        // suppressed notices, so the notice is only visible to test authors
+        // when emitted unsuppressed.
+        // phpcs:ignore Drupal.Semantics.FunctionTriggerError,Drupal.Semantics.UnsilencedDeprecation
+        trigger_error('The legacy field parser is deprecated and will be removed in 6.1. Remove "field_parser: legacy" from your behat.yml to migrate. See MIGRATION.md.', E_USER_DEPRECATED);
         $deprecation_emitted = TRUE;
       }
 
