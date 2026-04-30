@@ -103,17 +103,21 @@ trait BigPipeTrait {
   /**
    * Sets the BigPipe NOJS cookie when applicable.
    *
-   * Returns silently when JavaScript is supported or when the cookie is
-   * already present. Any 'DriverException' raised by the underlying Mink
-   * driver (Selenium throws before the browser is open) is caught - the
-   * next BeforeStep retry will succeed once the driver is started.
+   * Returns silently when JavaScript is supported. Any 'DriverException'
+   * raised by the underlying Mink driver (Selenium throws before the
+   * browser is open) is caught - the next BeforeStep retry will succeed
+   * once the driver is started.
    *
    * The cookie is set unconditionally for non-JS drivers - it is a no-op
    * on sites without the BigPipe module, but the BigPipe-availability
    * check via '\Drupal::hasService()' is unreliable in 'BeforeScenario'
    * because the Drupal kernel is not bootstrapped before the first @api
    * scenario in the process. Setting an inert cookie is cheaper than
-   * forcing an early bootstrap.
+   * forcing an early bootstrap. setCookie() is idempotent on the cookie
+   * jar, so re-applying the same value on every BeforeStep is harmless.
+   * The cookie value is intentionally not read first - BrowserKit's
+   * 'getCookie()' calls 'getCurrentUrl()' which throws when no page has
+   * been visited yet, suppressing the subsequent setCookie() call.
    */
   protected function bigPipeApplyCookie(): void {
     try {
@@ -123,9 +127,7 @@ trait BigPipeTrait {
         return;
       }
 
-      if ($this->getSession()->getCookie(self::BIG_PIPE_NOJS_COOKIE) === NULL) {
-        $this->getSession()->setCookie(self::BIG_PIPE_NOJS_COOKIE, 'true');
-      }
+      $this->getSession()->setCookie(self::BIG_PIPE_NOJS_COOKIE, 'true');
     }
     catch (DriverException) {
       // Driver session is not ready - the next BeforeStep retry will set
