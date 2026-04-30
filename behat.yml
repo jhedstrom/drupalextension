@@ -76,10 +76,11 @@ default:
                 - '--test-type'              # Disables certain security features and UI components that are unnecessary for automated testing, making Chrome more suitable for test environments.
       # Message selectors for MessageContext (the new home in 6.0+).
       selectors:
-        message_selector: '.static-messages'
-        error_message_selector: '.static-messages.static-error'
-        success_message_selector: '.static-messages.static-status'
-        warning_message_selector: '.static-messages.static-warning'
+        messages:
+          default: '.static-messages'
+          error: '.static-messages.static-error'
+          success: '.static-messages.static-status'
+          warning: '.static-messages.static-warning'
 
     Drupal\DrupalExtension:
       blackbox: ~
@@ -148,10 +149,11 @@ drupal:
       files_path: /var/www/html/tests/behat/fixtures/files
       # Message selectors for MessageContext (the new home in 6.0+).
       selectors:
-        message_selector: '.messages'
-        error_message_selector: '.messages--error'
-        success_message_selector: '.messages--status'
-        warning_message_selector: '.messages--warning'
+        messages:
+          default: '.messages'
+          error: '.messages--error'
+          success: '.messages--status'
+          warning: '.messages--warning'
 
     Drupal\DrupalExtension:
       api_driver: "drupal"

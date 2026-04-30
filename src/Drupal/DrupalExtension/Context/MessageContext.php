@@ -46,7 +46,7 @@ class MessageContext extends RawMinkContext implements TranslatableContext, Drup
   public function errorMessageAssertIsVisible(string $message): void {
     $this->assert(
           $message,
-          'error_message_selector',
+          'error',
           "The page '%s' does not contain any error messages",
           "The page '%s' does not contain the error message '%s'"
       );
@@ -91,7 +91,7 @@ class MessageContext extends RawMinkContext implements TranslatableContext, Drup
   public function assertNotErrorVisible(string $message): void {
     $this->assertNot(
           $message,
-          'error_message_selector',
+          'error',
           "The page '%s' contains the error message '%s'"
       );
   }
@@ -134,7 +134,7 @@ class MessageContext extends RawMinkContext implements TranslatableContext, Drup
   public function successMessageAssertIsVisible(string $message): void {
     $this->assert(
           $message,
-          'success_message_selector',
+          'success',
           "The page '%s' does not contain any success messages",
           "The page '%s' does not contain the success message '%s'"
       );
@@ -178,7 +178,7 @@ class MessageContext extends RawMinkContext implements TranslatableContext, Drup
   public function assertNotSuccessMessage(string $message): void {
     $this->assertNot(
           $message,
-          'success_message_selector',
+          'success',
           "The page '%s' contains the success message '%s'"
       );
   }
@@ -221,7 +221,7 @@ class MessageContext extends RawMinkContext implements TranslatableContext, Drup
   public function warningMessageAssertIsVisible(string $message): void {
     $this->assert(
           $message,
-          'warning_message_selector',
+          'warning',
           "The page '%s' does not contain any warning messages",
           "The page '%s' does not contain the warning message '%s'"
       );
@@ -265,7 +265,7 @@ class MessageContext extends RawMinkContext implements TranslatableContext, Drup
   public function assertNotWarningMessage(string $message): void {
     $this->assertNot(
           $message,
-          'warning_message_selector',
+          'warning',
           "The page '%s' contains the warning message '%s'"
       );
   }
@@ -308,7 +308,7 @@ class MessageContext extends RawMinkContext implements TranslatableContext, Drup
   public function messageAssertIsVisible(string $message): void {
     $this->assert(
           $message,
-          'message_selector',
+          'default',
           "The page '%s' does not contain any messages",
           "The page '%s' does not contain the message '%s'"
       );
@@ -329,7 +329,7 @@ class MessageContext extends RawMinkContext implements TranslatableContext, Drup
   public function messageAssertIsNotVisible(string $message): void {
     $this->assertNot(
           $message,
-          'message_selector',
+          'default',
           "The page '%s' contains the message '%s'"
       );
   }
@@ -363,28 +363,48 @@ class MessageContext extends RawMinkContext implements TranslatableContext, Drup
   }
 
   /**
-   * Resolves a message selector by name.
+   * Maps short message-selector names to their legacy flat counterparts.
    *
-   * Reads from the 'selectors:' map under 'Drupal\MinkExtension' first.
-   * When no value is set there, falls back to the legacy 'selectors:' map
-   * under 'Drupal\DrupalExtension' via 'getDrupalSelector()' and emits a
-   * one-shot deprecation notice.
+   * The new nested location ('Drupal\MinkExtension.selectors.messages') keys
+   * the four message selectors as 'default', 'error', 'success', 'warning'.
+   * The deprecated flat location ('Drupal\DrupalExtension.selectors') keys
+   * them as 'message_selector', 'error_message_selector',
+   * 'success_message_selector', 'warning_message_selector'.
+   */
+  private const LEGACY_KEY_MAP = [
+    'default' => 'message_selector',
+    'error' => 'error_message_selector',
+    'success' => 'success_message_selector',
+    'warning' => 'warning_message_selector',
+  ];
+
+  /**
+   * Resolves a message selector by short name.
+   *
+   * Reads from 'Drupal\MinkExtension.selectors.messages.<name>' first. When
+   * not configured there, falls back to the legacy flat key under
+   * 'Drupal\DrupalExtension.selectors' via 'getDrupalSelector()' and emits
+   * a one-shot deprecation notice.
    *
    * @param string $name
-   *   One of 'message_selector', 'error_message_selector',
-   *   'success_message_selector', 'warning_message_selector'.
+   *   One of 'default', 'error', 'success', 'warning'.
    *
    * @return string
    *   The resolved CSS selector.
    *
    * @throws \RuntimeException
-   *   When the selector is not configured under either extension.
+   *   When the selector is not configured under either extension, or when
+   *   $name is not a recognised message-selector key.
    */
   protected function getMessageSelector(string $name): string {
+    if (!isset(self::LEGACY_KEY_MAP[$name])) {
+      throw new \RuntimeException(sprintf('Unknown message selector "%s". Expected one of: default, error, success, warning.', $name));
+    }
+
     $mink_selectors = $this->getMinkParameter('selectors');
 
-    if (is_array($mink_selectors) && isset($mink_selectors[$name])) {
-      return $mink_selectors[$name];
+    if (is_array($mink_selectors) && isset($mink_selectors['messages'][$name])) {
+      return $mink_selectors['messages'][$name];
     }
 
     static $deprecation_emitted = FALSE;
@@ -392,11 +412,11 @@ class MessageContext extends RawMinkContext implements TranslatableContext, Drup
     if (!$deprecation_emitted) {
       // Match the legacy field-parser deprecation pattern: write to STDERR
       // directly so Behat does not escalate the notice to a step failure.
-      fwrite(STDERR, '[Deprecation] Configuring message selectors under "Drupal\DrupalExtension.selectors:" is deprecated and will be removed in 6.1. Move the four message selectors (message_selector, error_message_selector, success_message_selector, warning_message_selector) to "Drupal\MinkExtension.selectors:" in your behat.yml. See MIGRATION.md.' . PHP_EOL);
+      fwrite(STDERR, '[Deprecation] Configuring message selectors under "Drupal\DrupalExtension.selectors:" is deprecated and will be removed in 6.1. Move them to "Drupal\MinkExtension.selectors.messages:" (keys: default, error, success, warning) in your behat.yml. See MIGRATION.md.' . PHP_EOL);
       $deprecation_emitted = TRUE;
     }
 
-    return $this->getDrupalSelector($name);
+    return $this->getDrupalSelector(self::LEGACY_KEY_MAP[$name]);
   }
 
   /**

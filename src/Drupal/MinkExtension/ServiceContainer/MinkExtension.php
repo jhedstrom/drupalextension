@@ -45,18 +45,24 @@ class MinkExtension extends BaseMinkExtension {
         ->end()
         ->arrayNode('selectors')
           ->info(
-            'CSS selectors consumed by Mink-based contexts. Replaces the four message selectors previously configured under "Drupal\\DrupalExtension.selectors:".' . PHP_EOL
-            . '  message_selector: ".messages"' . PHP_EOL
-            . '  error_message_selector: ".messages--error"' . PHP_EOL
-            . '  success_message_selector: ".messages--status"' . PHP_EOL
-            . '  warning_message_selector: ".messages--warning"'
+            'CSS selectors consumed by Mink-based contexts, grouped by concern. Replaces the four flat message selectors previously configured under "Drupal\\DrupalExtension.selectors:".' . PHP_EOL
+            . '  messages:' . PHP_EOL
+            . '    default: ".messages"' . PHP_EOL
+            . '    error:   ".messages--error"' . PHP_EOL
+            . '    success: ".messages--status"' . PHP_EOL
+            . '    warning: ".messages--warning"'
           )
           ->ignoreExtraKeys(FALSE)
           ->children()
-            ->scalarNode('message_selector')->end()
-            ->scalarNode('error_message_selector')->end()
-            ->scalarNode('success_message_selector')->end()
-            ->scalarNode('warning_message_selector')->end()
+            ->arrayNode('messages')
+              ->ignoreExtraKeys(FALSE)
+              ->children()
+                ->scalarNode('default')->end()
+                ->scalarNode('error')->end()
+                ->scalarNode('success')->end()
+                ->scalarNode('warning')->end()
+              ->end()
+            ->end()
           ->end()
         ->end()
       ->end();

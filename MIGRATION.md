@@ -193,20 +193,31 @@ If you subclass `MessageContext`, replace any `RawDrupalContext`-typed
 references with `RawMinkContext` and `use DrupalParametersTrait;` in your
 subclass.
 
-### New location: `Drupal\MinkExtension.selectors:`
+### New location: `Drupal\MinkExtension.selectors.messages:`
 
-Move the four message selectors to a new `selectors:` map under
-`Drupal\MinkExtension`. The map keys are unchanged.
+Move the four message selectors to a new nested `selectors.messages:` map
+under `Drupal\MinkExtension`. Selectors are grouped by concern so future
+groups (e.g. `forms:`, `regions:`) can sit alongside `messages:` without
+flattening the namespace. The keys are shortened: drop the redundant
+`_selector` suffix and the `_message` infix from each name.
+
+| Legacy flat key (5.x)        | New nested key                |
+| ---------------------------- | ----------------------------- |
+| `message_selector`           | `selectors.messages.default`  |
+| `error_message_selector`     | `selectors.messages.error`    |
+| `success_message_selector`   | `selectors.messages.success`  |
+| `warning_message_selector`   | `selectors.messages.warning`  |
 
 ```yaml
 default:
   extensions:
     Drupal\MinkExtension:
       selectors:
-        message_selector: '.messages'
-        error_message_selector: '.messages--error'
-        success_message_selector: '.messages--status'
-        warning_message_selector: '.messages--warning'
+        messages:
+          default: '.messages'
+          error:   '.messages--error'
+          success: '.messages--status'
+          warning: '.messages--warning'
 ```
 
 ### Deprecation: legacy location under `Drupal\DrupalExtension.selectors:`
@@ -216,7 +227,8 @@ Defining `message_selector`, `error_message_selector`,
 `Drupal\DrupalExtension.selectors:` is deprecated and will be removed in
 6.1. The legacy location still works in 6.0 and emits a one-shot
 deprecation notice on first use. Migrate by moving the four keys to
-`Drupal\MinkExtension.selectors:` as shown above. Other entries under
+`Drupal\MinkExtension.selectors.messages:` and renaming them as shown in
+the table above. Other entries under
 `Drupal\DrupalExtension.selectors:` (`login_form_selector`,
 `logged_in_selector`) are unaffected.
 

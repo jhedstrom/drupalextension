@@ -223,41 +223,44 @@ EOL;
   /**
    * Moves message selectors to the deprecated location in subprocess config.
    *
-   * Strips the four message selectors from
-   * 'Drupal\MinkExtension.selectors:' and writes them under the legacy
-   * 'Drupal\DrupalExtension.selectors:' map, exercising the backward-compat
-   * path on 'MessageContext' that emits the one-shot deprecation notice.
+   * Strips the nested 'messages:' map from
+   * 'Drupal\MinkExtension.selectors:' and rewrites the four short keys
+   * ('default', 'error', 'success', 'warning') to their legacy flat
+   * counterparts under the deprecated 'Drupal\DrupalExtension.selectors:'
+   * map, exercising the backward-compat path on 'MessageContext' that
+   * emits the one-shot deprecation notice.
    */
   #[Given('the behat configuration uses the deprecated message selectors')]
   public function behatCliUseDeprecatedMessageSelectors(): void {
     $config_file = $this->workingDir . DIRECTORY_SEPARATOR . 'behat.yml';
     $yaml = Yaml::parse((string) file_get_contents($config_file));
 
-    $selector_keys = [
-      'message_selector',
-      'error_message_selector',
-      'success_message_selector',
-      'warning_message_selector',
+    $legacy_key_map = [
+      'default' => 'message_selector',
+      'error' => 'error_message_selector',
+      'success' => 'success_message_selector',
+      'warning' => 'warning_message_selector',
     ];
 
     foreach (['default', 'drupal'] as $profile) {
       $extensions = &$yaml[$profile]['extensions'];
 
-      if (!isset($extensions['Drupal\MinkExtension']['selectors'])) {
+      if (!isset($extensions['Drupal\MinkExtension']['selectors']['messages'])) {
         unset($extensions);
         continue;
       }
 
-      $mink_selectors = $extensions['Drupal\MinkExtension']['selectors'];
+      $messages = $extensions['Drupal\MinkExtension']['selectors']['messages'];
 
-      foreach ($selector_keys as $key) {
-        if (!isset($mink_selectors[$key])) {
+      foreach ($legacy_key_map as $short => $legacy) {
+        if (!isset($messages[$short])) {
           continue;
         }
 
-        $extensions['Drupal\DrupalExtension']['selectors'][$key] = $mink_selectors[$key];
-        unset($extensions['Drupal\MinkExtension']['selectors'][$key]);
+        $extensions['Drupal\DrupalExtension']['selectors'][$legacy] = $messages[$short];
       }
+
+      unset($extensions['Drupal\MinkExtension']['selectors']['messages']);
 
       if ($extensions['Drupal\MinkExtension']['selectors'] === []) {
         unset($extensions['Drupal\MinkExtension']['selectors']);
