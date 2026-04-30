@@ -113,9 +113,8 @@ class EntityFieldParserTest extends TestCase {
   /**
    * Provides data for testParse().
    *
-   * Each yielded row mirrors a row of the syntax validity table in the
-   * issue description for #766, so this provider reads as a top-to-bottom
-   * encoding of that table.
+   * Each yielded row encodes one row of the syntax validity table; see
+   * src/Drupal/DrupalExtension/Parser/README.md for the full table.
    */
   public static function dataProviderParse(): \Iterator {
     // Row 1: scalar, single.
