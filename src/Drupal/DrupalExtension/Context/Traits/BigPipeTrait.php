@@ -7,7 +7,6 @@ namespace Drupal\DrupalExtension\Context\Traits;
 use Behat\Hook\BeforeScenario;
 use Behat\Hook\BeforeStep;
 use Behat\Mink\Exception\DriverException;
-use Behat\Mink\Exception\UnsupportedDriverActionException;
 
 /**
  * Bypasses BigPipe streaming for non-JavaScript Mink drivers.
@@ -155,7 +154,7 @@ trait BigPipeTrait {
 
       return TRUE;
     }
-    catch (UnsupportedDriverActionException | \Exception) {
+    catch (DriverException) {
       return FALSE;
     }
   }
