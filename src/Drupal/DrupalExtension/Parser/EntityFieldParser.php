@@ -331,20 +331,20 @@ final class EntityFieldParser implements EntityFieldParserInterface {
   protected function parseCompound(string $cell): array {
     $records = [];
     $errors = [];
-    $record_strings = $this->splitTopLevel($cell, ';');
 
-    foreach ($record_strings as $record) {
-      $record = trim($record);
+    foreach ($this->splitTopLevel($cell, ';') as $segment) {
+      $trimmed = trim($segment['text']);
 
-      if ($record === '') {
-        $errors[] = new ParseException('empty_record', 0, $cell, 'Empty compound record (consecutive ";" or trailing ";").');
+      if ($trimmed === '') {
+        $errors[] = new ParseException('empty_record', $segment['offset'], $cell, 'Empty compound record (consecutive ";" or trailing ";").');
 
         continue;
       }
 
+      $base_offset = $segment['offset'] + (strlen($segment['text']) - strlen(ltrim($segment['text'])));
+
       try {
-        $columns = $this->parseRecord($record, $cell);
-        $records[] = $columns;
+        $records[] = $this->parseRecord($trimmed, $cell, $base_offset);
       }
       catch (ParseException $e) {
         $errors[] = $e;
@@ -364,22 +364,24 @@ final class EntityFieldParser implements EntityFieldParserInterface {
    * @return array<string, string>
    *   The parsed columns keyed by column name.
    */
-  protected function parseRecord(string $record, string $cell): array {
+  protected function parseRecord(string $record, string $cell, int $base_offset): array {
     $columns = [];
     $errors = [];
-    $column_strings = $this->splitTopLevel($record, ',');
 
-    foreach ($column_strings as $column) {
-      $column = trim($column);
+    foreach ($this->splitTopLevel($record, ',') as $segment) {
+      $absolute_offset = $base_offset + $segment['offset'];
+      $trimmed = trim($segment['text']);
 
-      if ($column === '') {
-        $errors[] = new ParseException('empty_column', 0, $cell, 'Empty compound column (consecutive "," or trailing ",").');
+      if ($trimmed === '') {
+        $errors[] = new ParseException('empty_column', $absolute_offset, $cell, 'Empty compound column (consecutive "," or trailing ",").');
 
         continue;
       }
 
+      $column_offset = $absolute_offset + (strlen($segment['text']) - strlen(ltrim($segment['text'])));
+
       try {
-        [$key, $value] = $this->parseColumn($column, $cell);
+        [$key, $value] = $this->parseColumn($trimmed, $cell, $column_offset);
         $columns[$key] = $value;
       }
       catch (ParseException $e) {
@@ -400,11 +402,11 @@ final class EntityFieldParser implements EntityFieldParserInterface {
    * @return array{0: string, 1: string}
    *   [$key, $value]
    */
-  protected function parseColumn(string $column, string $cell): array {
+  protected function parseColumn(string $column, string $cell, int $base_offset): array {
     if (preg_match('/^([a-z_][a-z0-9_]*)\s*:\s*(.*)$/s', $column, $match) !== 1) {
       throw new ParseException(
         'invalid_column',
-        0,
+        $base_offset,
         $cell,
         sprintf('Compound column "%s" is not in "key: value" form.', $column),
         'Each compound column must look like "key: \"value\"" or "key: [token:value]".',
@@ -412,12 +414,16 @@ final class EntityFieldParser implements EntityFieldParserInterface {
     }
 
     $key = $match[1];
-    $value_raw = trim($match[2]);
+    $value_raw_with_ws = $match[2];
+    $value_raw = trim($value_raw_with_ws);
+    // The value position inside $cell: column start + length consumed up to
+    // the trimmed value's first character.
+    $value_offset = $base_offset + (strlen($column) - strlen($value_raw_with_ws)) + (strlen($value_raw_with_ws) - strlen(ltrim($value_raw_with_ws)));
 
     if ($value_raw === '') {
       throw new ParseException(
         'unquoted_compound_value',
-        0,
+        $value_offset,
         $cell,
         sprintf('Compound column "%s" has no value.', $key),
         'Add a quoted string ("...") or a token ([name:value]).',
@@ -426,10 +432,10 @@ final class EntityFieldParser implements EntityFieldParserInterface {
 
     if ($value_raw[0] === '"') {
       $offset = 0;
-      $value = $this->readQuotedString($value_raw, $offset);
+      $value = $this->readQuotedString($value_raw, $offset, $cell, $value_offset);
 
       if ($offset !== strlen($value_raw)) {
-        throw new ParseException('trailing_characters', 0, $cell, sprintf('Trailing characters after closing quote in column "%s".', $key));
+        throw new ParseException('trailing_characters', $value_offset + $offset, $cell, sprintf('Trailing characters after closing quote in column "%s".', $key));
       }
 
       return [$key, $value];
@@ -437,10 +443,10 @@ final class EntityFieldParser implements EntityFieldParserInterface {
 
     if ($value_raw[0] === '[') {
       $offset = 0;
-      $value = $this->readToken($value_raw, $offset);
+      $value = $this->readToken($value_raw, $offset, $cell, $value_offset);
 
       if ($offset !== strlen($value_raw)) {
-        throw new ParseException('trailing_characters', 0, $cell, sprintf('Trailing characters after closing token in column "%s".', $key));
+        throw new ParseException('trailing_characters', $value_offset + $offset, $cell, sprintf('Trailing characters after closing token in column "%s".', $key));
       }
 
       return [$key, $value];
@@ -448,7 +454,7 @@ final class EntityFieldParser implements EntityFieldParserInterface {
 
     throw new ParseException(
       'unquoted_compound_value',
-      0,
+      $value_offset,
       $cell,
       sprintf('Compound column "%s" must use a quoted string or token.', $key),
       'Wrap the value in double quotes or use a [token:value] form.',
@@ -460,8 +466,8 @@ final class EntityFieldParser implements EntityFieldParserInterface {
    *
    * Skips matches inside '"..."' or '[...]'.
    *
-   * @return string[]
-   *   The string segments separated by the top-level separator.
+   * @return array<int, array{text: string, offset: int}>
+   *   Each entry is the segment text and its zero-based offset within $cell.
    */
   protected function splitTopLevel(string $cell, string $separator): array {
     $segments = [];
@@ -483,7 +489,7 @@ final class EntityFieldParser implements EntityFieldParserInterface {
       }
 
       if ($char === $separator) {
-        $segments[] = substr($cell, $start, $i - $start);
+        $segments[] = ['text' => substr($cell, $start, $i - $start), 'offset' => $start];
         $i++;
         $start = $i;
         continue;
@@ -492,7 +498,7 @@ final class EntityFieldParser implements EntityFieldParserInterface {
       $i++;
     }
 
-    $segments[] = substr($cell, $start);
+    $segments[] = ['text' => substr($cell, $start), 'offset' => $start];
 
     return $segments;
   }
@@ -543,23 +549,26 @@ final class EntityFieldParser implements EntityFieldParserInterface {
    * Reads a '"..."' quoted string starting at the current offset.
    *
    * Advances $offset past the closing quote. Decodes the escapes \\, \",
-   * \n, \t, \r. Any other backslash sequence is a parse error.
+   * \n, \t, \r. Any other backslash sequence is a parse error. When called
+   * for cell-level diagnostics, $error_cell and $error_base_offset are used
+   * to report errors against the original cell rather than the fragment.
    */
-  protected function readQuotedString(string $cell, int &$offset): string {
-    $length = strlen($cell);
+  protected function readQuotedString(string $fragment, int &$offset, ?string $error_cell = NULL, int $error_base_offset = 0): string {
+    $error_cell ??= $fragment;
+    $length = strlen($fragment);
     $start = $offset;
     $offset++;
     $out = '';
 
     while ($offset < $length) {
-      $char = $cell[$offset];
+      $char = $fragment[$offset];
 
       if ($char === '\\') {
         if ($offset + 1 >= $length) {
-          throw new ParseException('unclosed_quote', $start, $cell, 'Quoted string ends with a dangling backslash.');
+          throw new ParseException('unclosed_quote', $error_base_offset + $start, $error_cell, 'Quoted string ends with a dangling backslash.');
         }
 
-        $next = $cell[$offset + 1];
+        $next = $fragment[$offset + 1];
         $decoded = match ($next) {
           '"' => '"',
           '\\' => '\\',
@@ -572,8 +581,8 @@ final class EntityFieldParser implements EntityFieldParserInterface {
         if ($decoded === NULL) {
           throw new ParseException(
             'unknown_escape',
-            $offset,
-            $cell,
+            $error_base_offset + $offset,
+            $error_cell,
             sprintf('Unknown escape sequence "\\%s".', $next),
             'Supported escapes are \\", \\\\, \\n, \\t, \\r.',
           );
@@ -597,8 +606,8 @@ final class EntityFieldParser implements EntityFieldParserInterface {
 
     throw new ParseException(
       'unclosed_quote',
-      $start,
-      $cell,
+      $error_base_offset + $start,
+      $error_cell,
       'Quoted string is missing a closing double quote.',
       'Add a closing double quote, or escape any inner quotes with \\".',
     );
@@ -608,19 +617,22 @@ final class EntityFieldParser implements EntityFieldParserInterface {
    * Reads a '[name:value]' token starting at the current offset.
    *
    * Advances $offset past the closing bracket and returns the verbatim
-   * '[...]' substring (downstream field handlers expand the token).
+   * '[...]' substring (downstream field handlers expand the token). When
+   * called for cell-level diagnostics, $error_cell and $error_base_offset
+   * are used to report errors against the original cell.
    */
-  protected function readToken(string $cell, int &$offset): string {
+  protected function readToken(string $fragment, int &$offset, ?string $error_cell = NULL, int $error_base_offset = 0): string {
+    $error_cell ??= $fragment;
     $start = $offset;
-    $close = strpos($cell, ']', $offset + 1);
+    $close = strpos($fragment, ']', $offset + 1);
 
     if ($close === FALSE) {
-      throw new ParseException('unclosed_token', $start, $cell, 'Token is missing a closing "]".');
+      throw new ParseException('unclosed_token', $error_base_offset + $start, $error_cell, 'Token is missing a closing "]".');
     }
 
     $offset = $close + 1;
 
-    return substr($cell, $start, $offset - $start);
+    return substr($fragment, $start, $offset - $start);
   }
 
 }
