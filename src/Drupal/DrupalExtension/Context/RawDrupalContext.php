@@ -11,6 +11,7 @@ use Drupal\Driver\Capability\ContentCapabilityInterface;
 use Drupal\Driver\Capability\LanguageCapabilityInterface;
 use Drupal\Driver\Capability\RoleCapabilityInterface;
 use Drupal\Driver\Capability\UserCapabilityInterface;
+use Drupal\Driver\Core\Field\FieldClassifierInterface;
 use Drupal\Driver\DrupalDriver;
 use Drupal\Driver\Entity\EntityStubInterface;
 use Drupal\DrupalExtension\Hook\Attribute\BeforeNodeCreate;
@@ -23,8 +24,8 @@ use Drupal\DrupalDriverManagerInterface;
 use Drupal\DrupalExtension\DrupalParametersTrait;
 use Drupal\DrupalExtension\Manager\DrupalAuthenticationManagerInterface;
 use Drupal\DrupalExtension\Manager\DrupalUserManagerInterface;
-use Drupal\DrupalExtension\Parser\LegacyEntityFieldsParser;
-use Drupal\DrupalExtension\Parser\ParserInterface;
+use Drupal\DrupalExtension\Parser\EntityFieldParserInterface;
+use Drupal\DrupalExtension\Parser\LegacyEntityFieldParser;
 
 use Drupal\DrupalExtension\Hook\Scope\AfterLanguageCreateScope;
 use Drupal\DrupalExtension\Hook\Scope\AfterNodeCreateScope;
@@ -81,10 +82,6 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    */
   protected array $createdStubs = [];
 
-  /**
-   * Field-value parser, lazily instantiated on first use.
-   */
-  protected ?ParserInterface $fieldParser = NULL;
 
   /**
    * Keep track of any roles that are created so they can easily be removed.
@@ -359,73 +356,11 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
   /**
    * Parses field values from Behat table cells into Drupal's field format.
    *
-   * Only configurable fields (those for which the driver's isField() returns
-   * TRUE) are parsed. Base properties like "title" or "status" pass through
-   * unchanged.
-   *
-   * Single value:
-   * @code
-   * | title       | field_color |
-   * | My article  | Red         |
-   * @endcode
-   * Result: field_color = ['Red'].
-   *
-   * Multiple values (comma-separated):
-   * @code
-   * | field_tags        |
-   * | Sports, Politics  |
-   * @endcode
-   * Result: field_tags = ['Sports', 'Politics'].
-   * Wrap in double quotes to include a literal comma: "a value, with comma".
-   *
-   * Compound columns using ' - ' separator (e.g. link field with uri + title):
-   * @code
-   * | field_link                        |
-   * | http://example.com - Example site |
-   * @endcode
-   * Result: field_link = [['http://example.com', 'Example site']].
-   *
-   * Named compound columns using inline 'key: value' syntax:
-   * @code
-   * | field_link                                    |
-   * | uri: http://example.com - title: Example site |
-   * @endcode
-   * Result: field_link = [
-   *   ['uri' => 'http://example.com', 'title' => 'Example site']
-   * ].
-   *
-   * Multi-value compound (comma separates each value set):
-   * @code
-   * | field_link                                                 |
-   * | uri: /about - title: About, uri: /contact - title: Contact |
-   * @endcode
-   * Result: field_link = [
-   *   ['uri' => '/about', 'title' => 'About'],
-   *   ['uri' => '/contact', 'title' => 'Contact'],
-   * ].
-   *
-   * Multicolumn table headers using 'field:column' and ':column' syntax
-   * (useful when compound values contain commas or separators):
-   * @code
-   * | field_link:uri          | :title       |
-   * | http://example.com      | Example site |
-   * @endcode
-   * Result: field_link = [
-   *   ['uri' => 'http://example.com', 'title' => 'Example site']
-   * ].
-   *
-   * Multi-value multicolumn (comma-separated within each cell):
-   * @code
-   * | field_link:uri          | :title              |
-   * | /about, /contact        | About, Contact      |
-   * @endcode
-   * Result: field_link = [
-   *   ['uri' => '/about', 'title' => 'About'],
-   *   ['uri' => '/contact', 'title' => 'Contact'],
-   * ].
-   *
-   * Blank values remove the field from the stub so Drupal applies its
-   * default.
+   * Delegates everything to the active entity-field parser: textual
+   * parsing, multicolumn-header merging, field-type classification, and
+   * the unknown-field guard. For the syntax accepted by the legacy
+   * parser (multi-value, compound columns, inline named columns,
+   * multicolumn headers) see the parser class itself.
    *
    * @param \Drupal\Driver\Entity\EntityStubInterface $stub
    *   The entity stub. Recognised field values are replaced in-place with
@@ -439,6 +374,8 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
    *   Thrown when a column continuation (':column') appears without a
    *   preceding 'field:column' header, or when a property is neither a
    *   configurable field, a base field, nor in the ignored list.
+   *
+   * @see \Drupal\DrupalExtension\Parser\LegacyEntityFieldParser
    */
   public function parseEntityFields(EntityStubInterface $stub, array $ignored_properties = []): void {
     $driver = $this->getDriver();
@@ -447,97 +384,22 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
       throw new \RuntimeException(sprintf('The active Drupal driver "%s" does not support field inspection.', $driver::class));
     }
 
-    $entity_type = $stub->getEntityType();
-    $classifier = $driver->getCore()->getFieldClassifier();
-    $parser = $this->getFieldParser();
+    $parser = $this->getFieldParser($stub->getEntityType(), $driver->getCore()->getFieldClassifier());
+    $parser->ignoring($ignored_properties);
 
-    $multicolumn_field = '';
-    $multicolumn_column = '';
-    $multicolumn_fields = [];
-    $values = $stub->getValues();
-    $parsed = [];
-
-    foreach ($values as $field => $field_value) {
-      $field = (string) $field;
-
-      // Reset the multicolumn field if the field name does not have a column.
-      if (!str_contains($field, ':')) {
-        $multicolumn_field = '';
-        $multicolumn_column = '';
-      }
-      elseif (str_contains(substr($field, 1), ':')) {
-        // Start tracking a new multicolumn field if the field name contains a
-        // ':' which is preceded by at least 1 character.
-        [$multicolumn_field, $multicolumn_column] = explode(':', $field);
-      }
-      elseif (empty($multicolumn_field)) {
-        // If a field name starts with a ':' but we are not yet tracking a
-        // multicolumn field we don't know to which field this belongs.
-        throw new \RuntimeException('Field name missing for ' . $field);
-      }
-      else {
-        // Update the column name if the field name starts with a ':' and we are
-        // already tracking a multicolumn field.
-        $multicolumn_column = substr($field, 1);
-      }
-
-      $is_multicolumn = $multicolumn_field !== '' && $multicolumn_column !== '';
-      $field_name = $multicolumn_field !== '' ? $multicolumn_field : $field;
-
-      if ($classifier->fieldIsConfigurable($entity_type, $field_name)) {
-        $records = $parser->parse((string) $field_value, $is_multicolumn);
-
-        if ($is_multicolumn) {
-          foreach ($records as $key => $columns) {
-            $multicolumn_fields[$multicolumn_field][$key][$multicolumn_column] = $columns;
-          }
-        }
-        elseif ($field_value === '' || $field_value === NULL) {
-          // Don't specify any value if the step author has left it blank.
-          unset($parsed[$field_name]);
-        }
-        else {
-          $parsed[$field_name] = $records;
-        }
-      }
-      else {
-        // The v2 'fieldIsBase()' predicate returned TRUE for any field in
-        // 'getBaseFieldDefinitions()'. The v3 classifier splits that set
-        // across F1-F4 (standard, computed read-only, computed writable,
-        // custom storage), so the OR replaces the single v2 check and keeps
-        // computed/custom-storage base fields like 'moderation_state' from
-        // tripping the unknown-field guard.
-        $is_base_field = $classifier->fieldIsBaseStandard($entity_type, $field_name)
-          || $classifier->fieldIsBaseComputedReadOnly($entity_type, $field_name)
-          || $classifier->fieldIsBaseComputedWritable($entity_type, $field_name)
-          || $classifier->fieldIsBaseCustomStorage($entity_type, $field_name);
-
-        if (!$is_base_field && !in_array($field_name, $ignored_properties, TRUE)) {
-          throw new \RuntimeException(sprintf('Field "%s" does not exist on entity type "%s".', $field_name, $entity_type));
-        }
-
-        $parsed[$field] = $field_value;
-      }
-    }
-
-    // Add the multicolumn fields. Each entry in 'multicolumn_fields' is only
-    // set when there is at least one non-blank cell.
-    foreach ($multicolumn_fields as $field_name => $columns) {
-      $parsed[$field_name] = $columns;
-    }
+    $parsed = $parser->parse($stub->getValues());
 
     $stub->setValues($parsed);
   }
 
   /**
-   * Returns the active field-value parser, instantiating it on first use.
+   * Builds the active entity-field parser for one parsing call.
    *
-   * Override in a subclass or replace via the protected setter to swap in
-   * a different parser implementation (e.g. the v6 modern parser, when it
-   * lands in 6.0).
+   * Override in a subclass to swap in a different parser implementation
+   * (e.g. the v6 modern parser, when it lands in 6.0).
    */
-  protected function getFieldParser(): ParserInterface {
-    return $this->fieldParser ??= new LegacyEntityFieldsParser();
+  protected function getFieldParser(string $entity_type, FieldClassifierInterface $classifier): EntityFieldParserInterface {
+    return new LegacyEntityFieldParser($entity_type, $classifier);
   }
 
   /**
