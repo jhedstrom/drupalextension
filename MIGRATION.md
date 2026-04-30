@@ -183,6 +183,43 @@ Several multi-step methods have also been split, so that each step
 annotation lives on its own method. See [`STEPS.md`](STEPS.md) for the full
 list of methods and their step patterns.
 
+## MessageContext base class and selector configuration
+
+`MessageContext` no longer extends `RawDrupalContext`. It now extends
+`RawMinkContext` directly and uses `DrupalParametersTrait`, so it can be
+registered in a blackbox-only suite without booting Drupal.
+
+If you subclass `MessageContext`, replace any `RawDrupalContext`-typed
+references with `RawMinkContext` and `use DrupalParametersTrait;` in your
+subclass.
+
+### New location: `Drupal\MinkExtension.selectors:`
+
+Move the four message selectors to a new `selectors:` map under
+`Drupal\MinkExtension`. The map keys are unchanged.
+
+```yaml
+default:
+  extensions:
+    Drupal\MinkExtension:
+      selectors:
+        message_selector: '.messages'
+        error_message_selector: '.messages--error'
+        success_message_selector: '.messages--status'
+        warning_message_selector: '.messages--warning'
+```
+
+### Deprecation: legacy location under `Drupal\DrupalExtension.selectors:`
+
+Defining `message_selector`, `error_message_selector`,
+`success_message_selector` and `warning_message_selector` under
+`Drupal\DrupalExtension.selectors:` is deprecated and will be removed in
+6.1. The legacy location still works in 6.0 and emits a one-shot
+deprecation notice on first use. Migrate by moving the four keys to
+`Drupal\MinkExtension.selectors:` as shown above. Other entries under
+`Drupal\DrupalExtension.selectors:` (`login_form_selector`,
+`logged_in_selector`) are unaffected.
+
 ## Service interface changes
 
 `DrupalMailManagerInterface::getMail()` and `::clearMail()` no longer accept

@@ -4,22 +4,31 @@ declare(strict_types=1);
 
 namespace Drupal\DrupalExtension\Context;
 
-use Behat\Step\Then;
-use Behat\Step\Given;
 use Behat\Behat\Context\TranslatableContext;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Exception\ExpectationException;
+use Behat\MinkExtension\Context\RawMinkContext;
+use Behat\Step\Given;
+use Behat\Step\Then;
+use Drupal\DrupalExtension\DrupalParametersTrait;
 
 /**
  * Provides step-definitions for interacting with Drupal messages.
+ *
+ * Operates against the rendered page via Mink and four CSS selectors. The
+ * selectors are read from the 'selectors:' map under 'Drupal\MinkExtension'
+ * (preferred) and fall back to the legacy 'selectors:' map under
+ * 'Drupal\DrupalExtension' (deprecated, removed in 6.1).
  */
-class MessageContext extends RawDrupalContext implements TranslatableContext {
+class MessageContext extends RawMinkContext implements TranslatableContext, DrupalParametersAwareInterface {
+
+  use DrupalParametersTrait;
 
   /**
    * {@inheritdoc}
    */
   public static function getTranslationResources() {
-    return self::getDrupalTranslationResources();
+    return glob(__DIR__ . '/../../../../i18n/*.xliff') ?: [];
   }
 
   /**
@@ -231,7 +240,7 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
    *     | This action cannot be undone    |
    * @endcode
    */
-  #[Then('I should see the following warning messages:')]
+  #[Then('I should see the following warning message(s):')]
   public function warningMessagesAssertAreVisible(TableNode $messages): void {
     $this->assertValidMessageTable($messages, 'warning messages');
     foreach ($messages->getHash() as $value) {
@@ -354,6 +363,43 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
   }
 
   /**
+   * Resolves a message selector by name.
+   *
+   * Reads from the 'selectors:' map under 'Drupal\MinkExtension' first.
+   * When no value is set there, falls back to the legacy 'selectors:' map
+   * under 'Drupal\DrupalExtension' via 'getDrupalSelector()' and emits a
+   * one-shot deprecation notice.
+   *
+   * @param string $name
+   *   One of 'message_selector', 'error_message_selector',
+   *   'success_message_selector', 'warning_message_selector'.
+   *
+   * @return string
+   *   The resolved CSS selector.
+   *
+   * @throws \RuntimeException
+   *   When the selector is not configured under either extension.
+   */
+  protected function getMessageSelector(string $name): string {
+    $mink_selectors = $this->getMinkParameter('selectors');
+
+    if (is_array($mink_selectors) && isset($mink_selectors[$name])) {
+      return $mink_selectors[$name];
+    }
+
+    static $deprecation_emitted = FALSE;
+
+    if (!$deprecation_emitted) {
+      // Match the legacy field-parser deprecation pattern: write to STDERR
+      // directly so Behat does not escalate the notice to a step failure.
+      fwrite(STDERR, '[Deprecation] Configuring message selectors under "Drupal\DrupalExtension.selectors:" is deprecated and will be removed in 6.1. Move the four message selectors (message_selector, error_message_selector, success_message_selector, warning_message_selector) to "Drupal\MinkExtension.selectors:" in your behat.yml. See MIGRATION.md.' . PHP_EOL);
+      $deprecation_emitted = TRUE;
+    }
+
+    return $this->getDrupalSelector($name);
+  }
+
+  /**
    * Internal callback to check for a specific message in a given context.
    *
    * @param string $message
@@ -371,7 +417,7 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
    *   Thrown when the expected message is not present in the page.
    */
   protected function assert(string $message, string $selectorId, string $exceptionMsgNone, string $exceptionMsgMissing): void {
-    $selector = $this->getDrupalSelector($selectorId);
+    $selector = $this->getMessageSelector($selectorId);
     $selector_objects = $this->getSession()->getPage()->findAll("css", $selector);
     if (empty($selector_objects)) {
       throw new ExpectationException(sprintf($exceptionMsgNone, $this->getSession()->getCurrentUrl()), $this->getSession()->getDriver());
@@ -399,7 +445,7 @@ class MessageContext extends RawDrupalContext implements TranslatableContext {
    *   Thrown when the expected message is present in the page.
    */
   protected function assertNot(string $message, string $selectorId, string $exceptionMsg): void {
-    $selector = $this->getDrupalSelector($selectorId);
+    $selector = $this->getMessageSelector($selectorId);
     $selector_objects = $this->getSession()->getPage()->findAll("css", $selector);
     if (!empty($selector_objects)) {
       foreach ($selector_objects as $selector_object) {

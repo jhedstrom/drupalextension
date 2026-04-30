@@ -74,6 +74,12 @@ default:
                 - '--disable-translate'      # Disables the built-in translation feature, preventing Chrome from offering to translate pages.
                 - '--no-first-run'           # Skips the initial setup screen that Chrome typically shows when running for the first time.
                 - '--test-type'              # Disables certain security features and UI components that are unnecessary for automated testing, making Chrome more suitable for test environments.
+      # Message selectors for MessageContext (the new home in 6.0+).
+      selectors:
+        message_selector: '.static-messages'
+        error_message_selector: '.static-messages.static-error'
+        success_message_selector: '.static-messages.static-status'
+        warning_message_selector: '.static-messages.static-warning'
 
     Drupal\DrupalExtension:
       blackbox: ~
@@ -86,11 +92,6 @@ default:
         static left header: "#static-header-left"
         static right header: "#static-header-right"
         static sidebar: "#static-sidebar"
-      selectors:
-        message_selector: '.static-messages'
-        error_message_selector: '.static-messages.static-error'
-        success_message_selector: '.static-messages.static-status'
-        warning_message_selector: '.static-messages.static-warning'
 
     DrevOps\BehatScreenshotExtension:
         dir: '%paths.base%/.logs/screenshots'
@@ -145,6 +146,12 @@ drupal:
     Drupal\MinkExtension:
       base_url: http://drupal
       files_path: /var/www/html/tests/behat/fixtures/files
+      # Message selectors for MessageContext (the new home in 6.0+).
+      selectors:
+        message_selector: '.messages'
+        error_message_selector: '.messages--error'
+        success_message_selector: '.messages--status'
+        warning_message_selector: '.messages--warning'
 
     Drupal\DrupalExtension:
       api_driver: "drupal"
@@ -155,11 +162,6 @@ drupal:
         root: "/var/www/html/build/web"
       region_map:
         main content: "#main"
-      selectors:
-        message_selector: '.messages'
-        error_message_selector: '.messages--error'
-        success_message_selector: '.messages--status'
-        warning_message_selector: '.messages--warning'
 
 # HTTPS profile: tests TLS termination via Traefik reverse proxy.
 # Inherits: autoload, paths, Mink selenium2/chrome config, screenshot extension,

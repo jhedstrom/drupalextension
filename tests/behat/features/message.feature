@@ -275,3 +275,46 @@ Feature: MessageContext
   Scenario: Assert "Then I should not see the warning message :message" passes when not present
     Given I am on "/user/login"
     Then I should not see the warning message "logged in"
+
+  # Backward-compat: configuring the four message selectors under
+  # 'Drupal\DrupalExtension.selectors:' is deprecated in 6.0 and removed in
+  # 6.1. The scenarios below move the selectors from the new
+  # 'Drupal\MinkExtension.selectors:' map to the legacy location in the
+  # subprocess config so MessageContext falls back to 'getDrupalSelector()'
+  # and emits a one-shot deprecation notice on first use.
+
+  @test-drupal @api
+  Scenario: Assert deprecated selectors location still resolves messages
+    Given some behat configuration
+    And the behat configuration uses the deprecated message selectors
+    And scenario steps tagged with "@test-drupal @api":
+      """
+      Given I am on "/user/login"
+      When I fill in "a fake user" for "Username"
+      And I fill in "a fake password" for "Password"
+      And I press "Log in"
+      Then I should see the error message "Unrecognized username or password"
+      """
+    When I run behat with drupal profile
+    Then it should pass with:
+      """
+      1 scenario (1 passed)
+      """
+
+  @test-drupal @api
+  Scenario: Assert deprecated selectors location emits deprecation notice
+    Given some behat configuration
+    And the behat configuration uses the deprecated message selectors
+    And scenario steps tagged with "@test-drupal @api":
+      """
+      Given I am on "/user/login"
+      When I fill in "a fake user" for "Username"
+      And I fill in "a fake password" for "Password"
+      And I press "Log in"
+      Then I should see the error message "Unrecognized username or password"
+      """
+    When I run behat with drupal profile
+    Then the output should contain:
+      """
+      [Deprecation] Configuring message selectors under "Drupal\DrupalExtension.selectors:" is deprecated and will be removed in 6.1.
+      """

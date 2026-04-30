@@ -221,6 +221,55 @@ EOL;
   }
 
   /**
+   * Moves message selectors to the deprecated location in subprocess config.
+   *
+   * Strips the four message selectors from
+   * 'Drupal\MinkExtension.selectors:' and writes them under the legacy
+   * 'Drupal\DrupalExtension.selectors:' map, exercising the backward-compat
+   * path on 'MessageContext' that emits the one-shot deprecation notice.
+   */
+  #[Given('the behat configuration uses the deprecated message selectors')]
+  public function behatCliUseDeprecatedMessageSelectors(): void {
+    $config_file = $this->workingDir . DIRECTORY_SEPARATOR . 'behat.yml';
+    $yaml = Yaml::parse((string) file_get_contents($config_file));
+
+    $selector_keys = [
+      'message_selector',
+      'error_message_selector',
+      'success_message_selector',
+      'warning_message_selector',
+    ];
+
+    foreach (['default', 'drupal'] as $profile) {
+      $extensions = &$yaml[$profile]['extensions'];
+
+      if (!isset($extensions['Drupal\MinkExtension']['selectors'])) {
+        unset($extensions);
+        continue;
+      }
+
+      $mink_selectors = $extensions['Drupal\MinkExtension']['selectors'];
+
+      foreach ($selector_keys as $key) {
+        if (!isset($mink_selectors[$key])) {
+          continue;
+        }
+
+        $extensions['Drupal\DrupalExtension']['selectors'][$key] = $mink_selectors[$key];
+        unset($extensions['Drupal\MinkExtension']['selectors'][$key]);
+      }
+
+      if ($extensions['Drupal\MinkExtension']['selectors'] === []) {
+        unset($extensions['Drupal\MinkExtension']['selectors']);
+      }
+
+      unset($extensions);
+    }
+
+    file_put_contents($config_file, Yaml::dump($yaml, 4, 2));
+  }
+
+  /**
    * Asserts that behat failed with the given assertion error.
    */
   #[Then('it should fail with an error:')]

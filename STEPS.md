@@ -1255,6 +1255,11 @@ Then I should see "Notice" in the "div" element with the "color" CSS property se
 [Source](src/Drupal/DrupalExtension/Context/MessageContext.php), [Example](tests/behat/features/message.feature)
 
 > Provides step-definitions for interacting with Drupal messages.
+> <br/><br/>
+> Operates against the rendered page via Mink and four CSS selectors. The
+> selectors are read from the 'selectors:' map under 'Drupal\MinkExtension'
+> (preferred) and fall back to the legacy 'selectors:' map under
+> 'Drupal\DrupalExtension' (deprecated, removed in 6.1).
 
 
 <details>
@@ -1413,7 +1418,7 @@ Checks if the current page contains the given warning message.
 </details>
 
 <details>
-  <summary><code>@Then I should see the following warning messages:</code></summary>
+  <summary><code>@Then I should see the following warning message(s):</code></summary>
 
 <br/>
 Checks if the current page contains the given set of warning messages. 

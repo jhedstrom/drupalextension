@@ -43,6 +43,22 @@ class MinkExtension extends BaseMinkExtension {
           ->defaultValue(static::AJAX_TIMEOUT)
           ->info(sprintf('Change the maximum time to wait for AJAX calls to complete. Defaults to %s seconds.', static::AJAX_TIMEOUT))
         ->end()
+        ->arrayNode('selectors')
+          ->info(
+            'CSS selectors consumed by Mink-based contexts. Replaces the four message selectors previously configured under "Drupal\\DrupalExtension.selectors:".' . PHP_EOL
+            . '  message_selector: ".messages"' . PHP_EOL
+            . '  error_message_selector: ".messages--error"' . PHP_EOL
+            . '  success_message_selector: ".messages--status"' . PHP_EOL
+            . '  warning_message_selector: ".messages--warning"'
+          )
+          ->ignoreExtraKeys(FALSE)
+          ->children()
+            ->scalarNode('message_selector')->end()
+            ->scalarNode('error_message_selector')->end()
+            ->scalarNode('success_message_selector')->end()
+            ->scalarNode('warning_message_selector')->end()
+          ->end()
+        ->end()
       ->end();
     // phpcs:enable
     // @formatter:on

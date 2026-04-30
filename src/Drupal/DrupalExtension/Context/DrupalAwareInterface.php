@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\DrupalExtension\Context;
 
-use Behat\Behat\Context\Context;
 use Behat\Testwork\Hook\HookDispatcher;
 
 use Drupal\DrupalDriverManagerInterface;
@@ -14,7 +13,7 @@ use Drupal\DrupalExtension\Manager\DrupalUserManagerInterface;
 /**
  * Interface for contexts that are aware of the Drupal driver manager.
  */
-interface DrupalAwareInterface extends Context {
+interface DrupalAwareInterface extends DrupalParametersAwareInterface {
 
   /**
    * Sets Drupal instance.
@@ -33,14 +32,6 @@ interface DrupalAwareInterface extends Context {
    *   The Drupal driver manager instance.
    */
   public function getDrupal();
-
-  /**
-   * Sets parameters provided for Drupal.
-   *
-   * @param array<string, mixed> $parameters
-   *   The Drupal parameters.
-   */
-  public function setDrupalParameters(array $parameters): void;
 
   /**
    * Sets the Drupal user manager instance.
