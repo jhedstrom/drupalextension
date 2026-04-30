@@ -85,6 +85,45 @@ class DrupalAuthenticationManagerTest extends TestCase {
   }
 
   /**
+   * Tests the username field value submitted for various login_field configs.
+   */
+  #[DataProvider('dataProviderLogInFieldValue')]
+  public function testLogInFieldValue(?string $login_field, string $expected_value): void {
+    $submit = $this->createMock(NodeElement::class);
+
+    $page = $this->createMock(DocumentElement::class);
+    $page->method('findButton')->with('Log in')->willReturn($submit);
+    $page->method('has')->willReturn(TRUE);
+    $page->expects($this->exactly(2))->method('fillField')->willReturnCallback(function (string $field, string $value) use ($expected_value): void {
+      if ($field === 'Username') {
+        $this->assertSame($expected_value, $value);
+      }
+    });
+
+    $session = $this->createSessionMock($page);
+    // @phpstan-ignore method.notFound
+    $session->method('isStarted')->willReturn(TRUE);
+
+    $params = self::DRUPAL_PARAMS;
+    if ($login_field !== NULL) {
+      $params['login_field'] = $login_field;
+    }
+
+    $manager = $this->createManager($session, NULL, NULL, $params);
+    $user = new EntityStub('user', NULL, ['name' => 'admin', 'mail' => 'admin@example.com', 'pass' => 'password']);
+    $manager->logIn($user);
+  }
+
+  /**
+   * Data provider for testLogInFieldValue().
+   */
+  public static function dataProviderLogInFieldValue(): \Iterator {
+    yield 'defaults to name when not configured' => [NULL, 'admin'];
+    yield 'explicit name uses name' => ['name', 'admin'];
+    yield 'mail uses mail' => ['mail', 'admin@example.com'];
+  }
+
+  /**
    * Tests that logIn() throws when no submit button is found.
    */
   public function testLogInThrowsWhenNoSubmitButton(): void {

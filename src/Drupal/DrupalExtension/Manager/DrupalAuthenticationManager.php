@@ -66,9 +66,15 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
     $name = (string) $user->getValue('name');
     $pass = (string) $user->getValue('pass');
 
+    // Determine which user property to submit as the login value. Defaults
+    // to 'name' but may be set to 'mail' for sites that authenticate by
+    // email or to any other user entity property.
+    $login_field = (string) ($this->getDrupalParameter('login_field') ?: 'name');
+    $login_value = (string) $user->getValue($login_field);
+
     // Fill in the login form credentials.
     $page = $session->getPage();
-    $page->fillField($this->getDrupalText('username_field'), $name);
+    $page->fillField($this->getDrupalText('username_field'), $login_value);
     $page->fillField($this->getDrupalText('password_field'), $pass);
 
     // Submit the login form.

@@ -57,6 +57,8 @@ default:
       # Field-value parser used by parseEntityFields(): "default" or
       # "legacy" (deprecated, removed in 6.1).
       field_parser: default
+      # User entity property submitted as the login value (e.g. "name", "mail").
+      login_field: name
       # Enable the blackbox driver.
       blackbox: ~
       # Map of named regions to CSS selectors.
@@ -108,6 +110,7 @@ drupal:
 
     Drupal\DrupalExtension:
       api_driver: drupal
+      login_field: name
       # Drupal API driver settings.
       drupal:
         drupal_root: /var/www/html/web
