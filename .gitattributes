@@ -4,13 +4,12 @@
 /.gitattributes      export-ignore
 /.github             export-ignore
 /.gitignore          export-ignore
-/.readthedocs.yaml   export-ignore
 /CONTRIBUTING.md     export-ignore
 /behat.yml           export-ignore
 /build               export-ignore
 /composer.lock       export-ignore
-/doc                 export-ignore
 /docker-compose.yml  export-ignore
+/docs                export-ignore
 /gherkinlint.json    export-ignore
 /phpcs.xml           export-ignore
 /phpstan.neon        export-ignore
