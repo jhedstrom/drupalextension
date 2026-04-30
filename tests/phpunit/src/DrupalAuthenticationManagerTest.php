@@ -85,7 +85,7 @@ class DrupalAuthenticationManagerTest extends TestCase {
   }
 
   /**
-   * Tests the value submitted to the username field for various login_field configs.
+   * Tests the username field value submitted for various login_field configs.
    */
   #[DataProvider('dataProviderLogInFieldValue')]
   public function testLogInFieldValue(?string $login_field, string $expected_value): void {
