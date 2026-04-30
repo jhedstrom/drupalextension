@@ -142,15 +142,16 @@ EOL;
     unset($yaml['default']['suites']['default']['paths']);
 
     // Find the BehatCliContext and remove it from the contexts list.
-    $index = array_search('BehatCliContext', $yaml['default']['suites']['default']['contexts'], TRUE);
-    if ($index !== FALSE) {
-      unset($yaml['default']['suites']['default']['contexts'][$index]);
-    }
+    foreach (['default', 'drupal', 'drupal_legacy_parser'] as $profile) {
+      if (!isset($yaml[$profile]['suites']['default']['contexts'])) {
+        continue;
+      }
 
-    // Find the BehatCliContext and remove it from the contexts list.
-    $index = array_search('BehatCliContext', $yaml['drupal']['suites']['default']['contexts'], TRUE);
-    if ($index !== FALSE) {
-      unset($yaml['drupal']['suites']['default']['contexts'][$index]);
+      $index = array_search('BehatCliContext', $yaml[$profile]['suites']['default']['contexts'], TRUE);
+
+      if ($index !== FALSE) {
+        unset($yaml[$profile]['suites']['default']['contexts'][$index]);
+      }
     }
 
     if (static::behatCliIsCoverageEnabled()) {
@@ -189,7 +190,7 @@ EOL;
     $project_root = dirname($source);
     $drush_binary = $project_root . '/vendor/bin/drush';
     if (file_exists($drush_binary)) {
-      foreach (['default', 'drupal', 'drupal_https'] as $profile) {
+      foreach (['default', 'drupal', 'drupal_https', 'drupal_legacy_parser'] as $profile) {
         if (isset($yaml[$profile]['extensions']['Drupal\DrupalExtension']['drush'])) {
           $yaml[$profile]['extensions']['Drupal\DrupalExtension']['drush']['binary'] = $drush_binary;
         }

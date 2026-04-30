@@ -5,7 +5,7 @@ Feature: FieldHandlers
 
   # Drupal scenarios assume a "standard" install of Drupal and require the
   # feature "fixtures/drupalN/modules/behat_test" to enabled on the site.
-  @test-drupal @api
+  @test-drupal @api @test-legacy-parser
   Scenario: Test various node field handlers
     Given the following "page" content:
       | title      |
@@ -13,13 +13,13 @@ Feature: FieldHandlers
       | Page two   |
       | Page three |
     When I am viewing a "post" content with the following fields:
-      | title                | Post title                                                                            |
-      | body                 | PLACEHOLDER BODY                                                                      |
-      | field_post_reference | Page one, Page two                                                                    |
-      | field_post_date      | 2015-02-08 17:45:00                                                                   |
-      | field_post_links     | title:"Link 1", uri:"http://example.com"; title:"Link 2", uri:"http://example.com"    |
-      | field_post_select    | Select value one, Select value two                                                    |
-      | field_post_address   | country:"BE", locality:"Brussel", thoroughfare:"Louisalaan 1", postal_code:"1000"     |
+      | title                | Post title                                                                       |
+      | body                 | PLACEHOLDER BODY                                                                 |
+      | field_post_reference | Page one, Page two                                                               |
+      | field_post_date      | 2015-02-08 17:45:00                                                              |
+      | field_post_links     | Link 1 - http://example.com, Link 2 - http://example.com                         |
+      | field_post_select    | Select value one, Select value two                                               |
+      | field_post_address   | country: BE - locality: Brussel - thoroughfare: Louisalaan 1 - postal_code: 1000 |
     Then I should see "Post title"
     And I should see "PLACEHOLDER BODY"
     And I should see "Page one"
@@ -35,19 +35,44 @@ Feature: FieldHandlers
     And I should see "1000"
     And I should see "Louisalaan 1"
 
-  # Entity reference titles containing ' - ' no longer need any escape under
-  # the modern parser - dashes are just literal characters in scalar mode.
-  @test-drupal @api
-  Scenario: Test entity reference with literal dash in title
+  # Entity reference values containing ' - ' must be double-quoted to prevent
+  # the compound column separator from splitting them.
+  @test-drupal @api @test-legacy-parser
+  Scenario: Test entity reference with compound separator in title
     Given the following "page" content:
       | title         |
       | Alpha - Bravo |
     When I am viewing a "post" content with the following fields:
-      | title                | Post with ref |
-      | field_post_reference | Alpha - Bravo |
+      | title                | Post with ref     |
+      | field_post_reference | "Alpha - Bravo"   |
     Then I should see "Alpha - Bravo"
 
-  @test-drupal @api
+  # Unquoted entity reference values containing ' - ' are still split by the
+  # compound column separator, which breaks the entity query.
+  @test-drupal @api @test-legacy-parser
+  Scenario: Assert "Given the following :type content:" fails for unquoted entity reference title containing compound separator
+    Given some behat configuration
+    And scenario steps tagged with "@test-drupal @api @test-legacy-parser":
+      """
+      Given the following "page" content:
+        | title         |
+        | Alpha - Bravo |
+      When I am viewing a "post" content with the following fields:
+        | title                | Post with ref |
+        | field_post_reference | Alpha - Bravo |
+      Then I should see "Alpha - Bravo"
+      """
+    When I run behat with drupal_legacy_parser profile
+    Then it should fail with a "Drupal\Core\Database\InvalidQueryException" exception:
+      """
+      must have an array compatible operator
+      """
+
+  # This is identical to the previous test, but uses human readable names for
+  # the field names. This is better from a BDD standpoint. Please have a look at
+  # FeatureContext::transformPostContentTable() to see how the mapping between
+  # the machine names and human readable names is defined.
+  @test-drupal @api @test-legacy-parser
   Scenario: Test using human readable names for fields using @Transform
     Given the following "page" content:
       | title      |
@@ -55,13 +80,13 @@ Feature: FieldHandlers
       | Page two   |
       | Page three |
     When I am viewing a "post" content with the following fields:
-      | title     | Post title                                                                            |
-      | body      | PLACEHOLDER BODY                                                                      |
-      | reference | Page one, Page two                                                                    |
-      | date      | 2015-02-08 17:45:00                                                                   |
-      | links     | title:"Link 1", uri:"http://example.com"; title:"Link 2", uri:"http://example.com"    |
-      | select    | Select value one, Select value two                                                    |
-      | address   | country:"BE", locality:"Brussel", thoroughfare:"Louisalaan 1", postal_code:"1000"     |
+      | title     | Post title                                                                       |
+      | body      | PLACEHOLDER BODY                                                                 |
+      | reference | Page one, Page two                                                               |
+      | date      | 2015-02-08 17:45:00                                                              |
+      | links     | Link 1 - http://example.com, Link 2 - http://example.com                         |
+      | select    | Select value one, Select value two                                               |
+      | address   | country: BE - locality: Brussel - thoroughfare: Louisalaan 1 - postal_code: 1000 |
     Then I should see "Page one"
     And I should see "Page two"
     And I should see "Sunday, February 8, 2015"
@@ -74,7 +99,7 @@ Feature: FieldHandlers
     And I should see "1000"
     And I should see "Louisalaan 1"
 
-  @test-drupal @api
+  @test-drupal @api @test-legacy-parser
   Scenario: Test alternative syntax for named field columns on node content
     When I am viewing a "post" content with the following fields:
       | title                           | Post title                  |
@@ -87,7 +112,7 @@ Feature: FieldHandlers
     And I should see "1 Avenue des Champs Elysées"
     And I should see "75008"
 
-  @test-drupal @api
+  @test-drupal @api @test-legacy-parser
   Scenario: Test shorthand syntax for named field columns on node content
     When I am viewing a "post" content with the following fields:
       | title                      | Post title      |
@@ -100,7 +125,7 @@ Feature: FieldHandlers
     And I should see "1 Oxford Street"
     And I should see "W1D 1AN"
 
-  @test-drupal @api
+  @test-drupal @api @test-legacy-parser
   Scenario: Test multivalue fields with named field columns on node content
     When I am viewing a "post" content with the following fields:
       | title                      | Post title                             |
@@ -117,7 +142,7 @@ Feature: FieldHandlers
     And I should see "Shibuya Crossing"
     And I should see "150-0040"
 
-  @test-drupal @api
+  @test-drupal @api @test-legacy-parser
   Scenario: Test various user field handlers.
     Given the following "tags" terms:
       | name    |
@@ -129,9 +154,9 @@ Feature: FieldHandlers
       | Page two   |
       | Page three |
     And the following users:
-      | name     | mail         | field_tags       | field_post_reference | field_post_address                                                                |
-      | Jane Doe |              |                  |                      |                                                                                   |
-      | John Doe | john@doe.com | Tag one, Tag two | Page one, Page two   | country:"BE", locality:"Brussel", thoroughfare:"Louisalaan 1", postal_code:"1000" |
+      | name     | mail         | field_tags       | field_post_reference | field_post_address                                                               |
+      | Jane Doe |              |                  |                      |                                                                                  |
+      | John Doe | john@doe.com | Tag one, Tag two | Page one, Page two   | country: BE - locality: Brussel - thoroughfare: Louisalaan 1 - postal_code: 1000 |
     And I am logged in as a user with the "administrator" role
     When I visit "admin/people"
     Then I should see the link "Jane Doe"
@@ -148,7 +173,7 @@ Feature: FieldHandlers
     And I should see "1000"
     And I should see "Louisalaan 1"
 
-  @test-drupal @api
+  @test-drupal @api @test-legacy-parser
   Scenario: Test using @Transform to provide human friendly aliases for named field columns
     Given the following users:
       | name     | mail             | street        | city     | postcode | country |
@@ -161,7 +186,7 @@ Feature: FieldHandlers
     And I should see "Pioneer Place"
     And I should see "OR 97204"
 
-  @test-drupal @api
+  @test-drupal @api @test-legacy-parser
   Scenario: Test taxonomy term reference field handler
     Given the following "tags" terms:
       | name       |

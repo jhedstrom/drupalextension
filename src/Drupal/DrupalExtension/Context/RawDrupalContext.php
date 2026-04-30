@@ -24,6 +24,7 @@ use Drupal\DrupalDriverManagerInterface;
 use Drupal\DrupalExtension\DrupalParametersTrait;
 use Drupal\DrupalExtension\Manager\DrupalAuthenticationManagerInterface;
 use Drupal\DrupalExtension\Manager\DrupalUserManagerInterface;
+use Drupal\DrupalExtension\Parser\EntityFieldParser;
 use Drupal\DrupalExtension\Parser\EntityFieldParserInterface;
 use Drupal\DrupalExtension\Parser\LegacyEntityFieldParser;
 
@@ -395,11 +396,27 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
   /**
    * Builds the active entity-field parser for one parsing call.
    *
-   * Override in a subclass to swap in a different parser implementation
-   * (e.g. the v6 modern parser, when it lands in 6.0).
+   * The 'field_parser' extension parameter controls which implementation is
+   * used: 'default' (the current parser) or 'legacy' (the deprecated parser
+   * that will be removed in 6.1). Override in a subclass to swap in a
+   * custom implementation.
    */
   protected function getFieldParser(string $entity_type, FieldClassifierInterface $classifier): EntityFieldParserInterface {
-    return new LegacyEntityFieldParser($entity_type, $classifier);
+    $mode = $this->getDrupalParameter('field_parser') ?? 'default';
+
+    if ($mode === 'legacy') {
+      static $deprecation_emitted = FALSE;
+
+      if (!$deprecation_emitted) {
+        // phpcs:ignore Drupal.Semantics.FunctionTriggerError
+        @trigger_error('The legacy field parser is deprecated and will be removed in 6.1. Remove "field_parser: legacy" from your behat.yml to migrate. See MIGRATION.md.', E_USER_DEPRECATED);
+        $deprecation_emitted = TRUE;
+      }
+
+      return new LegacyEntityFieldParser($entity_type, $classifier);
+    }
+
+    return new EntityFieldParser($entity_type, $classifier);
   }
 
   /**

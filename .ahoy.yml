@@ -196,6 +196,9 @@ commands:
       ahoy title "Running Behat: drupal"
       ahoy cli "vendor/bin/behat --profile=drupal $STRICT --no-coverage --allow-no-tests $@"
 
+      ahoy title "Running Behat: drupal_legacy_parser"
+      ahoy cli "vendor/bin/behat --profile=drupal_legacy_parser $STRICT --no-coverage --allow-no-tests $@"
+
   test-bdd-blackbox:
     usage: Run blackbox Behat tests.
     cmd: ahoy cli "vendor/bin/behat --strict --no-coverage $@"
@@ -203,6 +206,10 @@ commands:
   test-bdd-drupal:
     usage: Run Drupal API Behat tests.
     cmd: ahoy cli "vendor/bin/behat --profile=drupal --strict --no-coverage $@"
+
+  test-bdd-drupal-legacy-parser:
+    usage: Run Drupal API Behat tests under the deprecated legacy field parser.
+    cmd: ahoy cli "vendor/bin/behat --profile=drupal_legacy_parser --strict --no-coverage $@"
 
   test-bdd-drupal-https:
     usage: Run HTTPS Behat tests.
