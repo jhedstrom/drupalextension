@@ -21,6 +21,8 @@ use Behat\Testwork\Hook\HookDispatcher;
 use Behat\Behat\Context\Environment\InitializedContextEnvironment;
 
 use Drupal\DrupalDriverManagerInterface;
+use Drupal\DrupalExtension\DeprecationInterface;
+use Drupal\DrupalExtension\DeprecationTrait;
 use Drupal\DrupalExtension\DrupalParametersTrait;
 use Drupal\DrupalExtension\Manager\DrupalAuthenticationManagerInterface;
 use Drupal\DrupalExtension\Manager\DrupalUserManagerInterface;
@@ -41,9 +43,10 @@ use Drupal\DrupalExtension\Manager\FastLogoutInterface;
 /**
  * Provides the raw functionality for interacting with Drupal.
  */
-class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
+class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface, DeprecationInterface {
 
   use DrupalParametersTrait;
+  use DeprecationTrait;
 
   /**
    * Drupal driver manager.
@@ -405,13 +408,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
     $mode = $this->getDrupalParameter('field_parser') ?? 'default';
 
     if ($mode === 'legacy') {
-      static $deprecation_emitted = FALSE;
-
-      if (!$deprecation_emitted) {
-        // phpcs:ignore Drupal.Semantics.UnsilencedDeprecation.UnsilencedDeprecation,Drupal.Semantics.FunctionTriggerError.TriggerErrorVersion,Drupal.Semantics.FunctionTriggerError.TriggerErrorSeeUrlFormat
-        trigger_error('The legacy field parser is deprecated in drupal-extension:6.0.0 and is removed from drupal-extension:6.1.0. Remove "field_parser: legacy" from your behat.yml to migrate. See https://github.com/jhedstrom/drupalextension/blob/main/MIGRATION.md', E_USER_DEPRECATED);
-        $deprecation_emitted = TRUE;
-      }
+      $this->triggerDeprecation('The legacy field parser is deprecated in drupal-extension:6.0.0 and is removed from drupal-extension:6.1.0. Remove "field_parser: legacy" from your behat.yml to migrate. See https://github.com/jhedstrom/drupalextension/blob/main/MIGRATION.md');
 
       return new LegacyEntityFieldParser($entity_type, $classifier);
     }

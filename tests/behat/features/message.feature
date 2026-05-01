@@ -287,7 +287,6 @@ Feature: MessageContext
   Scenario: Assert deprecated selectors location still resolves messages
     Given some behat configuration
     And the behat configuration uses the deprecated message selectors
-    And I set the php error_reporting option for the behat command to "ignore deprecations"
     And scenario steps tagged with "@test-drupal @api":
       """
       Given I am on "/user/login"
@@ -317,5 +316,5 @@ Feature: MessageContext
     When I run behat with drupal profile
     Then the output should contain:
       """
-      Configuring message selectors under "Drupal\DrupalExtension.selectors:" is deprecated in drupal-extension:6.0.0 and is removed from drupal-extension:6.1.0.
+      [Deprecation] Configuring message selectors as flat keys under "Drupal\DrupalExtension.selectors:" is deprecated in drupal-extension:6.0.0 and is removed from drupal-extension:6.1.0.
       """

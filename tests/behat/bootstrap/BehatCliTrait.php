@@ -221,14 +221,13 @@ EOL;
   }
 
   /**
-   * Moves message selectors to the deprecated location in subprocess config.
+   * Switches message selectors to the deprecated flat form in subprocess.
    *
-   * Strips the nested 'messages:' map from
-   * 'Drupal\MinkExtension.selectors:' and rewrites the four short keys
+   * Strips the nested 'messages:' map under
+   * 'Drupal\DrupalExtension.selectors:' and rewrites the four short keys
    * ('default', 'error', 'success', 'warning') to their legacy flat
-   * counterparts under the deprecated 'Drupal\DrupalExtension.selectors:'
-   * map, exercising the backward-compat path on 'MessageContext' that
-   * emits the one-shot deprecation notice.
+   * counterparts on the same map, exercising the backward-compat path on
+   * 'MessageContext' that emits the one-shot deprecation notice.
    */
   #[Given('the behat configuration uses the deprecated message selectors')]
   public function behatCliUseDeprecatedMessageSelectors(): void {
@@ -243,30 +242,25 @@ EOL;
     ];
 
     foreach (['default', 'drupal'] as $profile) {
-      $extensions = &$yaml[$profile]['extensions'];
+      $selectors = &$yaml[$profile]['extensions']['Drupal\DrupalExtension']['selectors'];
 
-      if (!isset($extensions['Drupal\MinkExtension']['selectors']['messages'])) {
-        unset($extensions);
+      if (!isset($selectors['messages'])) {
+        unset($selectors);
         continue;
       }
 
-      $messages = $extensions['Drupal\MinkExtension']['selectors']['messages'];
+      $messages = $selectors['messages'];
 
       foreach ($legacy_key_map as $short => $legacy) {
         if (!isset($messages[$short])) {
           continue;
         }
 
-        $extensions['Drupal\DrupalExtension']['selectors'][$legacy] = $messages[$short];
+        $selectors[$legacy] = $messages[$short];
       }
 
-      unset($extensions['Drupal\MinkExtension']['selectors']['messages']);
-
-      if ($extensions['Drupal\MinkExtension']['selectors'] === []) {
-        unset($extensions['Drupal\MinkExtension']['selectors']);
-      }
-
-      unset($extensions);
+      unset($selectors['messages']);
+      unset($selectors);
     }
 
     file_put_contents($config_file, Yaml::dump($yaml, 4, 2));

@@ -74,12 +74,6 @@ default:
                 - '--disable-translate'      # Disables the built-in translation feature, preventing Chrome from offering to translate pages.
                 - '--no-first-run'           # Skips the initial setup screen that Chrome typically shows when running for the first time.
                 - '--test-type'              # Disables certain security features and UI components that are unnecessary for automated testing, making Chrome more suitable for test environments.
-      selectors:
-        messages:
-          default: '.static-messages'
-          error: '.static-messages.static-error'
-          success: '.static-messages.static-status'
-          warning: '.static-messages.static-warning'
 
     Drupal\DrupalExtension:
       blackbox: ~
@@ -92,6 +86,12 @@ default:
         static left header: "#static-header-left"
         static right header: "#static-header-right"
         static sidebar: "#static-sidebar"
+      selectors:
+        messages:
+          default: '.static-messages'
+          error: '.static-messages.static-error'
+          success: '.static-messages.static-status'
+          warning: '.static-messages.static-warning'
 
     DrevOps\BehatScreenshotExtension:
         dir: '%paths.base%/.logs/screenshots'
@@ -146,12 +146,6 @@ drupal:
     Drupal\MinkExtension:
       base_url: http://drupal
       files_path: /var/www/html/tests/behat/fixtures/files
-      selectors:
-        messages:
-          default: '.messages'
-          error: '.messages--error'
-          success: '.messages--status'
-          warning: '.messages--warning'
 
     Drupal\DrupalExtension:
       api_driver: "drupal"
@@ -162,6 +156,12 @@ drupal:
         root: "/var/www/html/build/web"
       region_map:
         main content: "#main"
+      selectors:
+        messages:
+          default: '.messages'
+          error: '.messages--error'
+          success: '.messages--status'
+          warning: '.messages--warning'
 
 # HTTPS profile: tests TLS termination via Traefik reverse proxy.
 # Inherits: autoload, paths, Mink selenium2/chrome config, screenshot extension,

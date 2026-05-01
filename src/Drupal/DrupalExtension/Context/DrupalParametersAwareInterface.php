@@ -4,17 +4,10 @@ declare(strict_types=1);
 
 namespace Drupal\DrupalExtension\Context;
 
-use Behat\Behat\Context\Context;
-
 /**
- * Interface for contexts that consume the Drupal extension parameters.
- *
- * Implemented by Drupal-aware Mink contexts (such as 'MessageContext') that
- * need access to the global 'selectors:' / 'text:' / 'region_map:' values
- * from 'behat.yml' but do not require the full Drupal driver wiring of
- * 'DrupalAwareInterface'.
+ * Declares Drupal extension parameters availability.
  */
-interface DrupalParametersAwareInterface extends Context {
+interface DrupalParametersAwareInterface {
 
   /**
    * Sets parameters provided for Drupal.

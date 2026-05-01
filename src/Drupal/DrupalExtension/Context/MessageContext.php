@@ -10,20 +10,24 @@ use Behat\Mink\Exception\ExpectationException;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Behat\Step\Given;
 use Behat\Step\Then;
+use Drupal\DrupalExtension\DeprecationInterface;
+use Drupal\DrupalExtension\DeprecationTrait;
 use Drupal\DrupalExtension\DrupalParametersTrait;
-use Drupal\MinkExtension\Context\MinkParametersAwareInterface;
 
 /**
  * Provides step-definitions for interacting with Drupal messages.
  *
- * Operates against the rendered page via Mink and four CSS selectors. The
- * selectors are read from the 'selectors:' map under 'Drupal\MinkExtension'
- * (preferred) and fall back to the legacy 'selectors:' map under
- * 'Drupal\DrupalExtension' (deprecated, removed in 6.1).
+ * Operates against the rendered page via Mink. CSS selectors are read from
+ * the nested 'selectors.messages:' map under 'Drupal\DrupalExtension'.
+ * The legacy flat 'message_selector' / 'error_message_selector' /
+ * 'success_message_selector' / 'warning_message_selector' keys under the
+ * same map remain supported with a deprecation notice and are removed
+ * in 6.1.
  */
-class MessageContext extends RawMinkContext implements TranslatableContext, DrupalParametersAwareInterface, MinkParametersAwareInterface {
+class MessageContext extends RawMinkContext implements TranslatableContext, DrupalParametersAwareInterface, DeprecationInterface {
 
   use DrupalParametersTrait;
+  use DeprecationTrait;
 
   /**
    * {@inheritdoc}
@@ -366,10 +370,11 @@ class MessageContext extends RawMinkContext implements TranslatableContext, Drup
   /**
    * Resolves a message selector by short name.
    *
-   * Reads from 'Drupal\MinkExtension.selectors.messages.<name>' first. When
-   * not configured there, falls back to the legacy flat key under
-   * 'Drupal\DrupalExtension.selectors' via 'getDrupalSelector()' and emits
-   * a one-shot deprecation notice.
+   * Reads from 'Drupal\DrupalExtension.selectors.messages.<name>' first.
+   * When not configured there, falls back to the legacy flat key on the
+   * same map ('message_selector' / 'error_message_selector' /
+   * 'success_message_selector' / 'warning_message_selector'), emitting a
+   * one-shot deprecation notice for the legacy form.
    *
    * @param string $name
    *   One of 'default', 'error', 'success', 'warning'.
@@ -378,15 +383,14 @@ class MessageContext extends RawMinkContext implements TranslatableContext, Drup
    *   The resolved CSS selector.
    *
    * @throws \RuntimeException
-   *   When the selector is not configured under either extension, or when
+   *   When the selector is not configured under either form, or when
    *   $name is not a recognised message-selector key.
    */
   protected function getSelector(string $name): string {
-    // @deprecated in 6.0 — remove the local '$legacy_key_map', the unknown-
-    // key guard that uses it, the static deprecation flag, the STDERR
-    // notice and the trailing 'getDrupalSelector()' fallback in 6.1.
-    // The new-path lookup above ('$mink_selectors['messages'][$name]')
-    // becomes the single source of truth at that point.
+    // @deprecated in 6.0 — remove the local '$legacy_key_map', the
+    // legacy-form lookup and the deprecation call in 6.1. The new nested
+    // '$selectors['messages'][$name]' lookup becomes the single source
+    // of truth at that point.
     $legacy_key_map = [
       'default' => 'message_selector',
       'error' => 'error_message_selector',
@@ -398,21 +402,19 @@ class MessageContext extends RawMinkContext implements TranslatableContext, Drup
       throw new \RuntimeException(sprintf('Unknown message selector "%s". Expected one of: default, error, success, warning.', $name));
     }
 
-    $mink_selectors = $this->getMinkParameter('selectors');
+    $selectors = $this->getDrupalParameter('selectors');
 
-    if (is_array($mink_selectors) && isset($mink_selectors['messages'][$name])) {
-      return $mink_selectors['messages'][$name];
+    if (is_array($selectors) && isset($selectors['messages'][$name])) {
+      return $selectors['messages'][$name];
     }
 
-    static $deprecation_emitted = FALSE;
+    $legacy_key = $legacy_key_map[$name];
 
-    if (!$deprecation_emitted) {
-      // phpcs:ignore Drupal.Semantics.UnsilencedDeprecation.UnsilencedDeprecation,Drupal.Semantics.FunctionTriggerError.TriggerErrorVersion,Drupal.Semantics.FunctionTriggerError.TriggerErrorSeeUrlFormat
-      trigger_error('Configuring message selectors under "Drupal\DrupalExtension.selectors:" is deprecated in drupal-extension:6.0.0 and is removed from drupal-extension:6.1.0. Move them to "Drupal\MinkExtension.selectors.messages:" (keys: default, error, success, warning) in your behat.yml. See https://github.com/jhedstrom/drupalextension/blob/main/MIGRATION.md', E_USER_DEPRECATED);
-      $deprecation_emitted = TRUE;
+    if (is_array($selectors) && isset($selectors[$legacy_key])) {
+      $this->triggerDeprecation('Configuring message selectors as flat keys under "Drupal\\DrupalExtension.selectors:" is deprecated in drupal-extension:6.0.0 and is removed from drupal-extension:6.1.0. Move them under "Drupal\\DrupalExtension.selectors.messages:" with keys "default", "error", "success", "warning". See https://github.com/jhedstrom/drupalextension/blob/main/MIGRATION.md');
     }
 
-    return $this->getDrupalSelector($legacy_key_map[$name]);
+    return $this->getDrupalSelector($legacy_key);
   }
 
   /**

@@ -1256,10 +1256,12 @@ Then I should see "Notice" in the "div" element with the "color" CSS property se
 
 > Provides step-definitions for interacting with Drupal messages.
 > <br/><br/>
-> Operates against the rendered page via Mink and four CSS selectors. The
-> selectors are read from the 'selectors:' map under 'Drupal\MinkExtension'
-> (preferred) and fall back to the legacy 'selectors:' map under
-> 'Drupal\DrupalExtension' (deprecated, removed in 6.1).
+> Operates against the rendered page via Mink. CSS selectors are read from
+> the nested 'selectors.messages:' map under 'Drupal\DrupalExtension'.
+> The legacy flat 'message_selector' / 'error_message_selector' /
+> 'success_message_selector' / 'warning_message_selector' keys under the
+> same map remain supported with a deprecation notice and are removed
+> in 6.1.
 
 
 <details>

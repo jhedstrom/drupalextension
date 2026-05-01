@@ -28,13 +28,6 @@ default:
       javascript_session: selenium2
       # Maximum time (in seconds) to wait for AJAX calls to complete.
       ajax_timeout: 5
-      # CSS selectors consumed by Mink-based contexts, grouped by concern.
-      selectors:
-        messages:
-          default: '.messages'
-          error: '.messages--error'
-          success: '.messages--status'
-          warning: '.messages--warning'
       # Automatically open browser on failure.
       show_auto: false
       # Command to open the browser (e.g., "open %s" on macOS).
@@ -85,8 +78,15 @@ default:
         log_out: Log out
         password_field: Password
         username_field: Username
-      # CSS selectors for Drupal UI elements.
+      # CSS selectors for Drupal UI elements, grouped by concern. Message
+      # selectors live under 'messages:' (keys: default, error, success,
+      # warning); other selectors stay flat at the top of the map.
       selectors:
+        messages:
+          default: '.messages'
+          error: '.messages--error'
+          success: '.messages--status'
+          warning: '.messages--warning'
         login_form_selector: 'form#user-login,form#user-login-form'
         logged_in_selector: 'body.logged-in,body.user-logged-in'
 
@@ -109,12 +109,6 @@ drupal:
     Drupal\MinkExtension:
       base_url: http://mysite.local
       files_path: '%paths.base%/tests/files'
-      selectors:
-        messages:
-          default: '.messages'
-          error: '.messages--error'
-          success: '.messages--status'
-          warning: '.messages--warning'
 
     Drupal\DrupalExtension:
       api_driver: drupal
@@ -134,9 +128,11 @@ drupal:
         Footer: '#footer'
         Left sidebar: '#sidebar-first'
         Right sidebar: '#sidebar-second'
-      # Note: the four message selectors have moved to
-      # Drupal\MinkExtension.selectors.messages: (keys: default, error,
-      # success, warning).
       selectors:
+        messages:
+          default: '.messages'
+          error: '.messages--error'
+          success: '.messages--status'
+          warning: '.messages--warning'
         login_form_selector: 'form#user-login,form#user-login-form'
         logged_in_selector: 'body.logged-in,body.user-logged-in'

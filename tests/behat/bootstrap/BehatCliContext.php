@@ -637,7 +637,7 @@ EOL;
   {
     $this->errorLevel = match ($level) {
       'none' => 0,
-      'ignore deprecations' => E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED,
+      'ignore deprecations' => E_ALL & ~E_DEPRECATED,
       'all' => E_ALL,
     };
   }

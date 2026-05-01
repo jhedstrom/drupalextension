@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\DrupalExtension\Context;
 
+use Behat\Behat\Context\Context;
 use Behat\Testwork\Hook\HookDispatcher;
 
 use Drupal\DrupalDriverManagerInterface;
@@ -13,7 +14,7 @@ use Drupal\DrupalExtension\Manager\DrupalUserManagerInterface;
 /**
  * Interface for contexts that are aware of the Drupal driver manager.
  */
-interface DrupalAwareInterface extends DrupalParametersAwareInterface {
+interface DrupalAwareInterface extends Context, DrupalParametersAwareInterface {
 
   /**
    * Sets Drupal instance.

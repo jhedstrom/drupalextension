@@ -12,7 +12,6 @@ Feature: FieldHandlersLegacyParser
   Scenario: Assert legacy positional and named compound syntax pass under field_parser:legacy
     Given some behat configuration
     And the behat configuration uses the legacy field parser
-    And I set the php error_reporting option for the behat command to "ignore deprecations"
     And scenario steps tagged with "@test-drupal @api":
       """
       Given the following "page" content:
@@ -46,7 +45,6 @@ Feature: FieldHandlersLegacyParser
   Scenario: Assert quoted entity reference with compound separator passes under field_parser:legacy
     Given some behat configuration
     And the behat configuration uses the legacy field parser
-    And I set the php error_reporting option for the behat command to "ignore deprecations"
     And scenario steps tagged with "@test-drupal @api":
       """
       Given the following "page" content:
@@ -70,7 +68,6 @@ Feature: FieldHandlersLegacyParser
   Scenario: Assert unquoted entity reference with compound separator fails under field_parser:legacy
     Given some behat configuration
     And the behat configuration uses the legacy field parser
-    And I set the php error_reporting option for the behat command to "ignore deprecations"
     And scenario steps tagged with "@test-drupal @api":
       """
       Given the following "page" content:
