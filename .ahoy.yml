@@ -197,10 +197,6 @@ commands:
     usage: Run Drupal API Behat tests.
     cmd: ahoy cli "vendor/bin/behat --profile=drupal --strict --no-coverage $@"
 
-  test-bdd-drupal-https:
-    usage: Run HTTPS Behat tests.
-    cmd: ahoy cli "vendor/bin/behat --profile=drupal_https --strict --no-coverage $@"
-
   test-coverage:
     usage: Run all tests with coverage and merge reports.
     cmd: |

@@ -198,7 +198,7 @@ EOL;
     $project_root = dirname($source);
     $drush_binary = $project_root . '/vendor/bin/drush';
     if (file_exists($drush_binary)) {
-      foreach (['default', 'drupal', 'drupal_https'] as $profile) {
+      foreach (['default', 'drupal'] as $profile) {
         if (isset($yaml[$profile]['extensions']['Drupal\DrupalExtension']['drush'])) {
           $yaml[$profile]['extensions']['Drupal\DrupalExtension']['drush']['binary'] = $drush_binary;
         }

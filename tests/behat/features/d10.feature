@@ -3,7 +3,7 @@ Feature: DrupalContext
   I want to use Drupal-specific step definitions
   So that I can test table row links, user roles, and region headings
 
-  @d10 @test-https @api
+  @d10 @test-drupal @api
   Scenario: Target links within table rows (Drupal 10)
     Given I am logged in as a user with the "administrator" role
     When I am at "admin/structure/types"
