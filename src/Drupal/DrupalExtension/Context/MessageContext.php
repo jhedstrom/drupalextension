@@ -12,6 +12,7 @@ use Behat\Step\Given;
 use Behat\Step\Then;
 use Drupal\DrupalExtension\DeprecationInterface;
 use Drupal\DrupalExtension\DeprecationTrait;
+use Drupal\DrupalExtension\ParametersAwareInterface;
 use Drupal\DrupalExtension\ParametersTrait;
 
 /**

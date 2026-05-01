@@ -14,6 +14,7 @@ use Behat\Mink\Exception\UnsupportedDriverActionException;
 use Behat\Mink\Selector\Xpath\Escaper;
 use Behat\MinkExtension\Context\MinkContext as MinkExtension;
 use Drupal\DrupalExtension\Context\Traits\AjaxTrait;
+use Drupal\DrupalExtension\ParametersAwareInterface;
 use Drupal\DrupalExtension\ParametersTrait;
 use Drupal\DrupalExtension\RegionTrait;
 use Drupal\DrupalExtension\TagTrait;

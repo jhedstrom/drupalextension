@@ -140,7 +140,7 @@ lightweight traits:
   point for parameter, text, and selector access from any context,
   regardless of whether it inherits from `RawDrupalContext`. The
   context must also implement
-  `Drupal\DrupalExtension\Context\ParametersAwareInterface` so the
+  `Drupal\DrupalExtension\ParametersAwareInterface` so the
   initializer knows to inject the parameter array.
 - `Drupal\DrupalExtension\RegionTrait` exposes `getRegion()`, which
   resolves the human-readable region name through Mink's `region`
@@ -152,7 +152,7 @@ lightweight traits:
 <?php
 
 use Behat\MinkExtension\Context\RawMinkContext;
-use Drupal\DrupalExtension\Context\ParametersAwareInterface;
+use Drupal\DrupalExtension\ParametersAwareInterface;
 use Drupal\DrupalExtension\ParametersTrait;
 use Drupal\DrupalExtension\RegionTrait;
 

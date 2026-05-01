@@ -292,7 +292,7 @@ Subclasses that read the value need to switch from
 `$this->getMinkParameter('ajax_timeout')` to
 `$this->getParameter('ajax_timeout')`. Reading the value requires the
 context to use `Drupal\DrupalExtension\ParametersTrait` and implement
-`Drupal\DrupalExtension\Context\ParametersAwareInterface` (the bundled
+`Drupal\DrupalExtension\ParametersAwareInterface` (the bundled
 `MinkContext` already does).
 
 ## Parameters interface and trait renames
@@ -304,7 +304,7 @@ redundant.
 
 | 5.x                                                              | 6.0                                                          |
 |------------------------------------------------------------------|--------------------------------------------------------------|
-| `Drupal\DrupalExtension\Context\DrupalParametersAwareInterface`  | `Drupal\DrupalExtension\Context\ParametersAwareInterface`    |
+| `Drupal\DrupalExtension\Context\DrupalParametersAwareInterface`  | `Drupal\DrupalExtension\ParametersAwareInterface`            |
 | `Drupal\DrupalExtension\DrupalParametersTrait`                   | `Drupal\DrupalExtension\ParametersTrait`                     |
 | `setDrupalParameters(array $parameters): void`                   | `setParameters(array $parameters): void`                     |
 | `getDrupalParameter(string $name): mixed`                        | `getParameter(string $name): mixed`                          |
