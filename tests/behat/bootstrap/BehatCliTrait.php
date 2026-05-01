@@ -372,6 +372,26 @@ EOL;
   }
 
   /**
+   * Runs behat with the drupal profile and a YAML block of extension config.
+   *
+   * The provided YAML is merged into the Drupal\DrupalExtension config of
+   * the subprocess behat.yml, so nested keys (e.g. 'text.login_url') can
+   * be overridden in a single step.
+   */
+  #[When('I run behat with drupal profile and config:')]
+  public function behatCliRunWithDrupalProfileAndYamlConfig(PyStringNode $config):void {
+    $config_file = $this->workingDir . DIRECTORY_SEPARATOR . 'behat.yml';
+    $yaml = Yaml::parse(file_get_contents($config_file));
+    $overrides = Yaml::parse((string) $config);
+    $yaml['drupal']['extensions']['Drupal\DrupalExtension'] = array_replace_recursive(
+      $yaml['drupal']['extensions']['Drupal\DrupalExtension'] ?? [],
+      $overrides ?? []
+    );
+    file_put_contents($config_file, Yaml::dump($yaml, 4, 2));
+    $this->iRunBehat('--profile=drupal --no-colors');
+  }
+
+  /**
    * Asserts that behat failed with the given RuntimeException.
    */
   #[Then('it should fail with an exception:')]

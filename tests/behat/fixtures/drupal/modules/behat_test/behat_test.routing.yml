@@ -1,0 +1,15 @@
+behat_test.custom_login:
+  path: '/custom-login'
+  defaults:
+    _form: '\Drupal\user\Form\UserLoginForm'
+    _title: 'Custom log in'
+  requirements:
+    _user_is_logged_in: 'FALSE'
+
+behat_test.custom_logout:
+  path: '/custom-logout'
+  defaults:
+    _form: '\Drupal\user\Form\UserLogoutConfirm'
+    _title: 'Custom log out'
+  requirements:
+    _user_is_logged_in: 'TRUE'
