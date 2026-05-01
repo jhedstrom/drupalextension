@@ -234,6 +234,27 @@ in the table above. Other entries under
 `Drupal\DrupalExtension.selectors:` (`login_form_selector`,
 `logged_in_selector`) are unaffected.
 
+## RandomContext base class
+
+`RandomContext` no longer extends `RawDrupalContext`. It now implements
+`Behat\Behat\Context\Context` directly, so it can be registered in a suite
+that does not load `Drupal\MinkExtension` or `Drupal\DrupalExtension`.
+
+The class instantiates `Drupal\Component\Utility\Random` directly to
+generate placeholder values; the previous indirection through
+`getDriver()->getRandom()` is gone. `RandomContext` no longer calls
+`getDriver()` or `getSession()`.
+
+If you subclass `RandomContext`, the inherited `RawDrupalContext` helpers
+(`getDriver()`, `getSession()`, `getParameter()`, `getDrupalText()`,
+`getDrupalSelector()`) are no longer available. To keep them, change the
+parent of your subclass to `RawDrupalContext` (or `RawMinkContext`)
+explicitly. To compose only what you need, `use ParametersTrait;` together
+with `implements ParametersAwareInterface` for parameter access without
+booting Drupal or Mink.
+
+Step definitions and the placeholder regex are unchanged.
+
 ## Configuration: `region_map` renamed to `regions`
 
 The `region_map` configuration key under `Drupal\DrupalExtension` has been

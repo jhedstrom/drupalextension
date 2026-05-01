@@ -13,6 +13,7 @@ default:
         - Drupal\DrupalExtension\Context\MinkContext
         - Drupal\DrupalExtension\Context\MessageContext
         - Drupal\DrupalExtension\Context\MarkupContext
+        - Drupal\DrupalExtension\Context\RandomContext
 
   extensions:
     Drupal\MinkExtension:
