@@ -50,13 +50,12 @@ Feature: Article workflow
 
 ## Region steps
 
-The Mink Extension's region steps need a `region_map`. Configure one in
-`behat.yml`:
+The region steps need a `regions` map. Configure one in `behat.yml`:
 
 ```yaml
 Drupal\DrupalExtension:
   blackbox: ~
-  region_map:
+  regions:
     header: '#header'
     content: '#main'
     footer: '#footer'

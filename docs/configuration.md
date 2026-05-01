@@ -53,7 +53,7 @@ Drupal\DrupalExtension:
     alias: '@self'
   drupal:
     drupal_root: '/var/www/drupal'
-  region_map:
+  regions:
     header: '#header'
     content: '#main'
     footer: '#footer'
@@ -74,7 +74,7 @@ Drupal\DrupalExtension:
 | `api_driver` | `'blackbox'`, `'drush'`, or `'drupal'`. Used by `@api` scenarios. |
 | `drush` | Configuration for the [Drush driver](drivers/drush.md). |
 | `drupal` | Configuration for the [Drupal API driver](drivers/drupal-api.md). |
-| `region_map` | Maps human-readable region names to CSS selectors. |
+| `regions` | Maps human-readable region names to CSS selectors. |
 | `selectors` | CSS selectors for Drupal status, error, and success messages. |
 | `text` | Localised or themed strings used by the built-in steps. |
 
@@ -172,19 +172,27 @@ Drupal\DrupalExtension:
     username_field: 'Nickname'
 ```
 
-## Region map
+## Regions
 
-Define site regions so steps such as `I press "Search" in the "header"
+Define page regions so steps such as `I press "Search" in the "header"
 region` work without writing custom PHP:
 
 ```yaml
 Drupal\DrupalExtension:
-  region_map:
+  regions:
     header: '#header'
     content: '#main'
     footer: '#footer'
     'right sidebar': '#sidebar-second'
 ```
 
+Region steps work against any HTML page - resolution goes through Mink's
+custom `region` selector and has no dependency on the Drupal driver.
+
 See [Blackbox driver - Region steps](drivers/blackbox.md#region-steps)
 for the full pattern.
+
+> **Deprecated:** the `region_map` key is the legacy name for the same
+> map. It still works in 6.0 but emits a deprecation notice and is
+> removed in 6.1. Rename it to `regions`. If both keys are present, an
+> entry under `regions` overrides the same key under `region_map`.

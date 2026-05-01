@@ -106,11 +106,16 @@ class DrupalExtension implements ExtensionInterface {
           ->defaultValue('name')
           ->info('User entity property submitted as the login value. Defaults to "name". Set to "mail" for sites that authenticate by email, or any other user property.')
         ->end()
-        ->arrayNode('region_map')
-          ->info("Targeting content in specific regions can be accomplished once those regions have been defined." . PHP_EOL
+        ->arrayNode('regions')
+          ->info("Map of named regions to CSS selectors. Region steps such as 'I press :button in the :region region' resolve against this map." . PHP_EOL
             . '  My region: "#css-selector"' . PHP_EOL
             . '  Content: "#main .region-content"' . PHP_EOL
             . '  Right sidebar: "#sidebar-second"' . PHP_EOL)
+          ->useAttributeAsKey('key')
+          ->prototype('variable')->end()
+        ->end()
+        ->arrayNode('region_map')
+          ->info('Deprecated since drupal-extension:6.0.0 and removed from drupal-extension:6.1.0. Use "regions" instead.')
           ->useAttributeAsKey('key')
           ->prototype('variable')->end()
         ->end()
@@ -210,14 +215,46 @@ class DrupalExtension implements ExtensionInterface {
   /**
    * Load test parameters.
    *
+   * Resolves the region map from 'regions' (current) and 'region_map'
+   * (deprecated). Entries in 'regions' take precedence when a key appears
+   * in both. The merged result is exposed under the 'drupal.regions'
+   * container parameter and surfaced through the 'region' Mink selector.
+   *
    * @param \Symfony\Component\DependencyInjection\ContainerBuilder $container
    *   The container builder.
    * @param array<string, mixed> $config
    *   The extension configuration.
    */
   protected function loadParameters(ContainerBuilder $container, array $config): void {
+    $regions = $config['regions'] ?? [];
+    $legacy = $config['region_map'] ?? [];
+
+    if ($legacy !== []) {
+      $this->emitDeprecation('The "region_map" configuration key under "Drupal\\DrupalExtension" is deprecated in drupal-extension:6.0.0 and removed from drupal-extension:6.1.0. Rename it to "regions". See https://github.com/jhedstrom/drupalextension/blob/main/MIGRATION.md');
+      // 'regions' wins on key collisions; '+' keeps the left-hand keys.
+      $regions += $legacy;
+    }
+
+    // Surface the merged map back into the parameters array so contexts
+    // reading it through 'getParameter("regions")' see the same value
+    // the 'region' Mink selector resolves against.
+    $config['regions'] = $regions;
+    unset($config['region_map']);
+
     $container->setParameter('drupal.parameters', $config);
-    $container->setParameter('drupal.region_map', $config['region_map']);
+    $container->setParameter('drupal.regions', $regions);
+  }
+
+  /**
+   * Emits a deprecation notice during extension load.
+   *
+   * Writes to 'STDERR' so the message surfaces in CI output without
+   * triggering Behat's 'E_USER_DEPRECATED' -> step-failure handler.
+   * Tests override this method to capture deprecations without writing
+   * to the global stream.
+   */
+  protected function emitDeprecation(string $message): void {
+    fwrite(STDERR, '[Deprecation] ' . $message . PHP_EOL);
   }
 
   /**

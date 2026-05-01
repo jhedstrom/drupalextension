@@ -31,14 +31,14 @@ driver.
 
 ## Region steps
 
-The Blackbox driver supports a `region_map` that lets you reference
+The Blackbox driver supports a `regions` map that lets you reference
 parts of the page by name instead of CSS selectors. This makes
 scenarios readable without writing custom PHP.
 
 ```yaml
 Drupal\DrupalExtension:
   blackbox: ~
-  region_map:
+  regions:
     header: '#header'
     content: '#main'
     footer: '#footer'
@@ -76,7 +76,7 @@ Scenario: Find an element with an attribute in a region
 ```
 
 > Region steps fail with a clear error if the region name is not
-> defined in `region_map`.
+> defined in `regions`.
 
 ## Message selectors
 
