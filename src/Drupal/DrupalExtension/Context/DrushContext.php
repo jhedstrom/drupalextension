@@ -58,8 +58,12 @@ class DrushContext extends RawDrupalContext implements TranslatableContext {
   /**
    * Run a Drush command with arguments.
    *
+   * The arguments string is appended to the command verbatim, so it may
+   * contain Drush options (flags) as well as positional arguments.
+   *
    * @code
    * Given I run drush "pm:list" "--status=enabled"
+   * Given I run drush "config:get" "system.site uuid --format=string"
    * @endcode
    */
   #[Given('I run drush :command :arguments')]

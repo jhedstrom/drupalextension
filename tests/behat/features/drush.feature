@@ -9,9 +9,15 @@ Feature: DrushContext
     Then the drush output should contain "Drupal version"
 
   @test-drupal @api
-  Scenario: Assert "Given I run drush :command :arguments" passes
+  Scenario: Assert "Given I run drush :command :arguments" passes with a flag-only arguments string
     Given I run drush "pm:list" "--status=enabled"
     Then the drush output should contain "Enabled"
+
+  @test-drupal @api
+  Scenario: Assert "Given I run drush :command :arguments" passes with positional arguments and options combined
+    Given I run drush "config:get" "system.site uuid --format=string"
+    Then the drush output should match "/[a-f0-9-]{30,}/"
+    And the drush output should not contain "system.site"
 
   @test-drupal @api
   Scenario: Assert "Then the drush output should contain :output" passes
