@@ -9,9 +9,9 @@ use Behat\Behat\Context\Context;
 use Behat\Testwork\Hook\HookDispatcher;
 
 use Drupal\DrupalExtension\Context\DrupalAwareInterface;
-use Drupal\DrupalExtension\Manager\AuthenticationManagerInterface;
+use Drupal\DrupalExtension\Manager\DrupalAuthenticationManagerInterface;
 use Drupal\DrupalExtension\Manager\DriverManager;
-use Drupal\DrupalExtension\Manager\UserManagerInterface;
+use Drupal\DrupalExtension\Manager\DrupalUserManagerInterface;
 use Drupal\DrupalExtension\ParametersAwareInterface;
 
 /**
@@ -28,12 +28,12 @@ class DrupalAwareInitializer implements ContextInitializer {
    *   Configuration parameters.
    * @param \Behat\Testwork\Hook\HookDispatcher $hookDispatcher
    *   The hook dispatcher.
-   * @param \Drupal\DrupalExtension\Manager\AuthenticationManagerInterface $drupalAuthenticationManager
+   * @param \Drupal\DrupalExtension\Manager\DrupalAuthenticationManagerInterface $drupalAuthenticationManager
    *   The Drupal authentication manager.
-   * @param \Drupal\DrupalExtension\Manager\UserManagerInterface $drupalUserManager
+   * @param \Drupal\DrupalExtension\Manager\DrupalUserManagerInterface $drupalUserManager
    *   The Drupal user manager.
    */
-  public function __construct(private readonly DriverManager $drupalDriverManager, private readonly array $parameters, private readonly HookDispatcher $hookDispatcher, private readonly AuthenticationManagerInterface $drupalAuthenticationManager, private readonly UserManagerInterface $drupalUserManager) {
+  public function __construct(private readonly DriverManager $drupalDriverManager, private readonly array $parameters, private readonly HookDispatcher $hookDispatcher, private readonly DrupalAuthenticationManagerInterface $drupalAuthenticationManager, private readonly DrupalUserManagerInterface $drupalUserManager) {
   }
 
   /**

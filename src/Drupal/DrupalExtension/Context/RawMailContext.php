@@ -7,7 +7,7 @@ namespace Drupal\DrupalExtension\Context;
 use Behat\Mink\Exception\ExpectationException;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Drupal\Driver\Capability\MailCapabilityInterface;
-use Drupal\DrupalExtension\Manager\MailManager;
+use Drupal\DrupalExtension\Manager\DrupalMailManager;
 
 /**
  * Provides helper methods for interacting with mail.
@@ -17,7 +17,7 @@ class RawMailContext extends RawDrupalContext {
   /**
    * The mail manager.
    */
-  protected ?MailManager $mailManager = NULL;
+  protected ?DrupalMailManager $mailManager = NULL;
 
   /**
    * The number of mails received so far in this scenario.
@@ -27,20 +27,20 @@ class RawMailContext extends RawDrupalContext {
   /**
    * Get the mail manager service that handles stored test mail.
    *
-   * @return \Drupal\DrupalExtension\Manager\MailManager
+   * @return \Drupal\DrupalExtension\Manager\DrupalMailManager
    *   The mail manager service.
    */
-  protected function getMailManager(): MailManager {
+  protected function getMailManager(): DrupalMailManager {
     // Persist the mail manager between invocations. This is necessary for
     // remembering and reinstating the original mail backend.
-    if (!$this->mailManager instanceof MailManager) {
+    if (!$this->mailManager instanceof DrupalMailManager) {
       $driver = $this->getDriver();
 
       if (!$driver instanceof MailCapabilityInterface) {
         throw new \RuntimeException(sprintf('The active Drupal driver "%s" does not support mail collection.', $driver::class));
       }
 
-      $this->mailManager = new MailManager($driver);
+      $this->mailManager = new DrupalMailManager($driver);
     }
 
     return $this->mailManager;

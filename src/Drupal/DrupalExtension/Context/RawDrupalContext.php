@@ -23,9 +23,9 @@ use Behat\Behat\Context\Environment\InitializedContextEnvironment;
 use Drupal\DrupalExtension\DeprecationInterface;
 use Drupal\DrupalExtension\DeprecationTrait;
 use Drupal\DrupalExtension\ParametersTrait;
-use Drupal\DrupalExtension\Manager\AuthenticationManagerInterface;
+use Drupal\DrupalExtension\Manager\DrupalAuthenticationManagerInterface;
 use Drupal\DrupalExtension\Manager\DriverManagerInterface;
-use Drupal\DrupalExtension\Manager\UserManagerInterface;
+use Drupal\DrupalExtension\Manager\DrupalUserManagerInterface;
 use Drupal\DrupalExtension\Parser\EntityFieldParser;
 use Drupal\DrupalExtension\Parser\EntityFieldParserInterface;
 use Drupal\DrupalExtension\Parser\LegacyEntityFieldParser;
@@ -63,14 +63,14 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface, D
   /**
    * Drupal authentication manager.
    *
-   * @var \Drupal\DrupalExtension\Manager\AuthenticationManagerInterface
+   * @var \Drupal\DrupalExtension\Manager\DrupalAuthenticationManagerInterface
    */
   protected $authenticationManager;
 
   /**
    * Drupal user manager.
    *
-   * @var \Drupal\DrupalExtension\Manager\UserManagerInterface
+   * @var \Drupal\DrupalExtension\Manager\DrupalUserManagerInterface
    */
   protected $userManager;
 
@@ -111,7 +111,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface, D
   /**
    * {@inheritdoc}
    */
-  public function setUserManager(UserManagerInterface $userManager): void {
+  public function setUserManager(DrupalUserManagerInterface $userManager): void {
     $this->userManager = $userManager;
   }
 
@@ -125,7 +125,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface, D
   /**
    * {@inheritdoc}
    */
-  public function setAuthenticationManager(AuthenticationManagerInterface $authenticationManager): void {
+  public function setAuthenticationManager(DrupalAuthenticationManagerInterface $authenticationManager): void {
     $this->authenticationManager = $authenticationManager;
   }
 

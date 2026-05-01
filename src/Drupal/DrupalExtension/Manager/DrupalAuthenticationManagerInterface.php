@@ -9,7 +9,7 @@ use Drupal\Driver\Entity\EntityStubInterface;
 /**
  * Interface for classes that authenticate users during tests.
  */
-interface AuthenticationManagerInterface {
+interface DrupalAuthenticationManagerInterface {
 
   /**
    * Logs in as the given user.

@@ -6,17 +6,17 @@ namespace Drupal\DrupalExtension\Tests;
 
 use Drupal\Driver\Entity\EntityStub;
 use Drupal\Driver\Entity\EntityStubInterface;
-use Drupal\DrupalExtension\Manager\UserManager;
-use Drupal\DrupalExtension\Manager\UserManagerInterface;
+use Drupal\DrupalExtension\Manager\DrupalUserManager;
+use Drupal\DrupalExtension\Manager\DrupalUserManagerInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Tests the UserManager class.
+ * Tests the DrupalUserManager class.
  */
-#[CoversClass(UserManager::class)]
-class UserManagerTest extends TestCase {
+#[CoversClass(DrupalUserManager::class)]
+class DrupalUserManagerTest extends TestCase {
 
   /**
    * Builds a user stub with the given values.
@@ -32,15 +32,15 @@ class UserManagerTest extends TestCase {
    * Tests that the manager implements the interface.
    */
   public function testImplementsInterface(): void {
-    $manager = new UserManager();
-    $this->assertInstanceOf(UserManagerInterface::class, $manager);
+    $manager = new DrupalUserManager();
+    $this->assertInstanceOf(DrupalUserManagerInterface::class, $manager);
   }
 
   /**
    * Tests that current user defaults to false.
    */
   public function testCurrentUserDefaultsToFalse(): void {
-    $manager = new UserManager();
+    $manager = new DrupalUserManager();
     $this->assertFalse($manager->getCurrentUser());
   }
 
@@ -48,7 +48,7 @@ class UserManagerTest extends TestCase {
    * Tests setting and getting the current user.
    */
   public function testSetAndGetCurrentUser(): void {
-    $manager = new UserManager();
+    $manager = new DrupalUserManager();
     $user = self::userStub(['name' => 'admin']);
     $manager->setCurrentUser($user);
     $this->assertSame($user, $manager->getCurrentUser());
@@ -58,7 +58,7 @@ class UserManagerTest extends TestCase {
    * Tests setting current user to false.
    */
   public function testSetCurrentUserToFalse(): void {
-    $manager = new UserManager();
+    $manager = new DrupalUserManager();
     $manager->setCurrentUser(self::userStub(['name' => 'admin']));
     $manager->setCurrentUser(FALSE);
     $this->assertFalse($manager->getCurrentUser());
@@ -68,7 +68,7 @@ class UserManagerTest extends TestCase {
    * Tests adding and getting a user.
    */
   public function testAddAndGetUser(): void {
-    $manager = new UserManager();
+    $manager = new DrupalUserManager();
     $user = self::userStub(['name' => 'editor']);
     $manager->addUser($user);
     $this->assertSame($user, $manager->getUser('editor'));
@@ -78,7 +78,7 @@ class UserManagerTest extends TestCase {
    * Tests that getting an unknown user throws an exception.
    */
   public function testGetUserThrowsForUnknown(): void {
-    $manager = new UserManager();
+    $manager = new DrupalUserManager();
     $this->expectException(\InvalidArgumentException::class);
     $this->expectExceptionMessage('No user with ghost name is registered with the driver.');
     $manager->getUser('ghost');
@@ -88,7 +88,7 @@ class UserManagerTest extends TestCase {
    * Tests removing a user.
    */
   public function testRemoveUser(): void {
-    $manager = new UserManager();
+    $manager = new DrupalUserManager();
     $manager->addUser(self::userStub(['name' => 'editor']));
     $manager->removeUser('editor');
     $this->expectException(\InvalidArgumentException::class);
@@ -99,7 +99,7 @@ class UserManagerTest extends TestCase {
    * Tests that getUsers returns all registered users.
    */
   public function testGetUsersReturnsAll(): void {
-    $manager = new UserManager();
+    $manager = new DrupalUserManager();
     $user_a = self::userStub(['name' => 'alice']);
     $user_b = self::userStub(['name' => 'bob']);
     $manager->addUser($user_a);
@@ -114,7 +114,7 @@ class UserManagerTest extends TestCase {
    * Tests that getUsers returns empty by default.
    */
   public function testGetUsersReturnsEmptyByDefault(): void {
-    $manager = new UserManager();
+    $manager = new DrupalUserManager();
     $this->assertSame([], $manager->getUsers());
   }
 
@@ -122,7 +122,7 @@ class UserManagerTest extends TestCase {
    * Tests clearing all users.
    */
   public function testClearUsers(): void {
-    $manager = new UserManager();
+    $manager = new DrupalUserManager();
     $manager->setCurrentUser(self::userStub(['name' => 'admin']));
     $manager->addUser(self::userStub(['name' => 'editor']));
     $manager->clearUsers();
@@ -140,7 +140,7 @@ class UserManagerTest extends TestCase {
    */
   #[DataProvider('dataProviderHasUsers')]
   public function testHasUsers(array $users, bool $expected): void {
-    $manager = new UserManager();
+    $manager = new DrupalUserManager();
     foreach ($users as $user) {
       $manager->addUser($user);
     }
@@ -161,7 +161,7 @@ class UserManagerTest extends TestCase {
    */
   #[DataProvider('dataProviderCurrentUserIsAnonymous')]
   public function testCurrentUserIsAnonymous(EntityStubInterface|false $user, bool $expected): void {
-    $manager = new UserManager();
+    $manager = new DrupalUserManager();
     $manager->setCurrentUser($user);
     $this->assertSame($expected, $manager->currentUserIsAnonymous());
   }
@@ -179,7 +179,7 @@ class UserManagerTest extends TestCase {
    */
   #[DataProvider('dataProviderCurrentUserHasRole')]
   public function testCurrentUserHasRole(EntityStubInterface|false $user, string $role, bool $expected): void {
-    $manager = new UserManager();
+    $manager = new DrupalUserManager();
     $manager->setCurrentUser($user);
     $this->assertSame($expected, $manager->currentUserHasRole($role));
   }

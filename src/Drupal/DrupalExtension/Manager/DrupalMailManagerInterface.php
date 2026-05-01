@@ -7,7 +7,7 @@ namespace Drupal\DrupalExtension\Manager;
 /**
  * Interface for classes that manage mail created during tests.
  */
-interface MailManagerInterface {
+interface DrupalMailManagerInterface {
 
   /**
    * Collect outbound mail for analysis.

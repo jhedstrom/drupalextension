@@ -18,17 +18,17 @@ use Drupal\DrupalExtension\ParametersTrait;
 /**
  * Default implementation of the Drupal authentication manager service.
  */
-class AuthenticationManager implements AuthenticationManagerInterface, FastLogoutInterface {
+class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterface, FastLogoutInterface {
 
   use MinkAwareTrait;
   use ParametersTrait;
 
   /**
-   * Constructs an AuthenticationManager object.
+   * Constructs a DrupalAuthenticationManager object.
    *
    * @param \Behat\Mink\Mink $mink
    *   The Mink instance.
-   * @param \Drupal\DrupalExtension\Manager\UserManagerInterface $userManager
+   * @param \Drupal\DrupalExtension\Manager\DrupalUserManagerInterface $userManager
    *   The Drupal user manager.
    * @param \Drupal\DrupalExtension\Manager\DriverManagerInterface $driverManager
    *   The Drupal driver manager.
@@ -39,7 +39,7 @@ class AuthenticationManager implements AuthenticationManagerInterface, FastLogou
    */
   public function __construct(
     Mink $mink,
-    protected UserManagerInterface $userManager,
+    protected DrupalUserManagerInterface $userManager,
     protected DriverManagerInterface $driverManager,
     array $minkParameters,
     array $parameters,

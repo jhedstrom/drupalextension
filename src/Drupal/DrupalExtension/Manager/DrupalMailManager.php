@@ -13,7 +13,7 @@ use Drupal\Driver\Capability\MailCapabilityInterface;
  * collects outbound mail and prevents it from being sent. Therefore using
  * this implementation, mail is collected if and only if sending is disabled.
  */
-class MailManager implements MailManagerInterface {
+class DrupalMailManager implements DrupalMailManagerInterface {
 
   public function __construct(
     /**

@@ -9,7 +9,7 @@ use Drupal\Driver\Entity\EntityStubInterface;
 /**
  * Interface for classes that manage users created during tests.
  */
-interface UserManagerInterface {
+interface DrupalUserManagerInterface {
 
   /**
    * Returns the currently logged in user.
