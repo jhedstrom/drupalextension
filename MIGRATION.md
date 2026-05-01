@@ -34,6 +34,44 @@ Update each occurrence in your `.feature` files.
 | `Then I should be able to edit a/an :type content`                         | `Then I should be able to edit the :type content`                                        |
 | `Then break` / `Then I break`                                              | `When break` / `When I break` (re-categorised from `Then`)                               |
 | `Then I log out`                                                           | `When I log out` (re-categorised from `Then`)                                            |
+| `Given I should not see the error message ...`                             | `Then I should not see the error message ...` (re-categorised from `Given`)              |
+| `Given I should not see the success message ...`                           | `Then I should not see the success message ...` (re-categorised from `Given`)            |
+| `Given I should not see the warning message ...`                           | `Then I should not see the warning message ...` (re-categorised from `Given`)            |
+
+Note: Behat treats `Given`, `When` and `Then` as interchangeable when matching
+step text, so existing scenarios that still use the old keyword continue to
+work. The right-hand column is the canonical form documented in `STEPS.md` and
+shown by IDE autocomplete in 6.0.
+
+## Method renames
+
+Version 6.0 enforces that only `@Then` step methods may carry "Assert" in
+their name. Any subclass that overrode the following `@Given` or `@When`
+methods must be updated to use the new method name.
+
+| Context          | 5.x method name                              | 6.0 method name                          |
+| ---------------- | -------------------------------------------- | ---------------------------------------- |
+| `DrupalContext`  | `assertAuthenticatedByRole`                  | `iAmLoggedInAsUserWithRole`              |
+| `DrupalContext`  | `assertAuthenticatedByRoleShort`             | `iAmLoggedInAsRole`                      |
+| `DrupalContext`  | `assertAuthenticatedByRoleWithGivenFields`   | `iAmLoggedInAsUserWithRoleAndFields`     |
+| `DrupalContext`  | `assertLoggedInByName`                       | `iAmLoggedInAs`                          |
+| `DrupalContext`  | `assertLoggedInWithPermissions`              | `iAmLoggedInAsUserWithPermissions`       |
+| `DrupalContext`  | `assertClickInTableRow`                      | `iClickInTableRow`                       |
+| `DrupalContext`  | `assertPressInTableRow`                      | `iPressInTableRow`                       |
+| `DrupalContext`  | `assertCacheClear`                           | `clearCache`                             |
+| `DrupalContext`  | `assertCron`                                 | `iRunCron`                               |
+| `DrupalContext`  | `assertViewingNode`                          | `iAmViewingNodeWithFields`               |
+| `DrupalContext`  | `assertViewingNodeContent`                   | `iAmViewingNodeContentWithFields`        |
+| `DrushContext`   | `assertDrushCommand`                         | `iRunDrush`                              |
+| `DrushContext`   | `assertDrushCommandWithArgument`             | `iRunDrushWithArguments`                 |
+| `MessageContext` | `assertNotErrorVisible`                      | `errorMessageAssertIsNotVisible`         |
+| `MessageContext` | `assertNotSuccessMessage`                    | `successMessageAssertIsNotVisible`       |
+| `MessageContext` | `assertNotWarningMessage`                    | `warningMessageAssertIsNotVisible`       |
+
+The step text bound to each method is unchanged (with the exception of the
+three `MessageContext` keyword changes documented in the table above), so
+feature files only need updating where they relied on the old `Given`
+keyword for the negative-message steps.
 
 ## Field syntax
 

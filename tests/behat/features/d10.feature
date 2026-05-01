@@ -30,7 +30,7 @@ Feature: DrupalContext
 
   # This tests that a user that is created in one particular Context class (in
   # this case FeatureContext::assertLoggedInByUsernameAndPassword()) can be
-  # accessed in another Context (DrupalContext::assertLoggedInByName()).
+  # accessed in another Context (DrupalContext::iAmLoggedInAs()).
   @test-drupal @api
   Scenario: Logging in as a user without an e-mail address.
     Given I am logged in as a user with name "Carrot Ironfoundersson" and password "citywatch1234"

@@ -49,7 +49,7 @@ class DrushContext extends RawDrupalContext implements TranslatableContext {
    * @endcode
    */
   #[Given('I run drush :command')]
-  public function assertDrushCommand(string $command): void {
+  public function iRunDrush(string $command): void {
     if (!$this->drushOutput = $this->getDriver('drush')->$command()) {
       $this->drushOutput = TRUE;
     }
@@ -63,7 +63,7 @@ class DrushContext extends RawDrupalContext implements TranslatableContext {
    * @endcode
    */
   #[Given('I run drush :command :arguments')]
-  public function assertDrushCommandWithArgument(string $command, string $arguments): void {
+  public function iRunDrushWithArguments(string $command, string $arguments): void {
     $this->drushOutput = $this->getDriver('drush')->$command($this->fixStepArgument($arguments));
     if ($this->drushOutput === NULL) {
       $this->drushOutput = TRUE;

@@ -8,7 +8,6 @@ use Behat\Behat\Context\TranslatableContext;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Exception\ExpectationException;
 use Behat\MinkExtension\Context\RawMinkContext;
-use Behat\Step\Given;
 use Behat\Step\Then;
 use Drupal\DrupalExtension\DeprecationInterface;
 use Drupal\DrupalExtension\DeprecationTrait;
@@ -89,12 +88,12 @@ class MessageContext extends RawMinkContext implements TranslatableContext, Para
    *   The text to be checked.
    *
    * @code
-   *   Given I should not see the error message "Access denied"
-   *   Given I should not see the error message containing "Access"
+   *   Then I should not see the error message "Access denied"
+   *   Then I should not see the error message containing "Access"
    * @endcode
    */
-  #[Given('I should not see the error message( containing) :message')]
-  public function assertNotErrorVisible(string $message): void {
+  #[Then('I should not see the error message( containing) :message')]
+  public function errorMessageAssertIsNotVisible(string $message): void {
     $this->assertNot(
           $message,
           'error',
@@ -121,7 +120,7 @@ class MessageContext extends RawMinkContext implements TranslatableContext, Para
     foreach ($messages->getHash() as $value) {
       $value = array_change_key_case($value);
       $message = trim($value['error messages']);
-      $this->assertNotErrorVisible($message);
+      $this->errorMessageAssertIsNotVisible($message);
     }
   }
 
@@ -176,12 +175,12 @@ class MessageContext extends RawMinkContext implements TranslatableContext, Para
    *   The text to be checked.
    *
    * @code
-   *   Given I should not see the success message "saved"
-   *   Given I should not see the success message containing "saved"
+   *   Then I should not see the success message "saved"
+   *   Then I should not see the success message containing "saved"
    * @endcode
    */
-  #[Given('I should not see the success message( containing) :message')]
-  public function assertNotSuccessMessage(string $message): void {
+  #[Then('I should not see the success message( containing) :message')]
+  public function successMessageAssertIsNotVisible(string $message): void {
     $this->assertNot(
           $message,
           'success',
@@ -208,7 +207,7 @@ class MessageContext extends RawMinkContext implements TranslatableContext, Para
     foreach ($messages->getHash() as $value) {
       $value = array_change_key_case($value);
       $message = trim($value['success messages']);
-      $this->assertNotSuccessMessage($message);
+      $this->successMessageAssertIsNotVisible($message);
     }
   }
 
@@ -263,12 +262,12 @@ class MessageContext extends RawMinkContext implements TranslatableContext, Para
    *   The text to be checked.
    *
    * @code
-   *   Given I should not see the warning message "deprecated"
-   *   Given I should not see the warning message containing "deprecated"
+   *   Then I should not see the warning message "deprecated"
+   *   Then I should not see the warning message containing "deprecated"
    * @endcode
    */
-  #[Given('I should not see the warning message( containing) :message')]
-  public function assertNotWarningMessage(string $message): void {
+  #[Then('I should not see the warning message( containing) :message')]
+  public function warningMessageAssertIsNotVisible(string $message): void {
     $this->assertNot(
           $message,
           'warning',
@@ -295,7 +294,7 @@ class MessageContext extends RawMinkContext implements TranslatableContext, Para
     foreach ($messages->getHash() as $value) {
       $value = array_change_key_case($value);
       $message = trim($value['warning messages']);
-      $this->assertNotWarningMessage($message);
+      $this->warningMessageAssertIsNotVisible($message);
     }
   }
 
