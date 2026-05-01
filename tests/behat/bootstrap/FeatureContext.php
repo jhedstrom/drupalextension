@@ -656,17 +656,27 @@ class FeatureContext extends RawDrupalContext {
   /**
    * Uninstalls 'big_pipe' after every '@bigpipe' scenario.
    *
-   * 'BeforeScenario' hooks fire before any 'Background' steps, so without
-   * this teardown a 'big_pipe' install in scenario N would leak into
-   * scenario N+1's BeforeScenario hook and break test isolation.
+   * Subprocess scenarios install 'big_pipe' against the shared Drupal
+   * site, but the parent process's container has a stale view of the
+   * module list. Reading 'core.extension' directly (bypassing the
+   * cached configuration factory) reflects the real on-disk state, so
+   * the cleanup works whether the module was installed in this process
+   * or in a subprocess.
    */
   #[AfterScenario('@bigpipe')]
   public function testUninstallBigPipeAfterScenario(): void {
-    if (\Drupal::moduleHandler()->moduleExists('big_pipe')) {
-      /** @var \Drupal\Core\Extension\ModuleInstallerInterface $installer */
-      $installer = \Drupal::service('module_installer');
-      $installer->uninstall(['big_pipe']);
+    $modules = \Drupal::configFactory()
+      ->reset('core.extension')
+      ->get('core.extension')
+      ->get('module') ?? [];
+
+    if (!array_key_exists('big_pipe', $modules)) {
+      return;
     }
+
+    /** @var \Drupal\Core\Extension\ModuleInstallerInterface $installer */
+    $installer = \Drupal::service('module_installer');
+    $installer->uninstall(['big_pipe']);
   }
 
 }
