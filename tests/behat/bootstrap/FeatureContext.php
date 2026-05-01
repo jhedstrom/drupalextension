@@ -9,6 +9,7 @@
 
 declare(strict_types=1);
 
+use Behat\Behat\Context\Environment\InitializedContextEnvironment;
 use Behat\Step\When;
 use Behat\Step\Given;
 use Behat\Transformation\Transform;
@@ -25,6 +26,7 @@ use Drupal\Driver\Core\Field\AbstractHandler;
 use Drupal\Driver\DrupalDriver;
 use Drupal\Driver\Entity\EntityStub;
 use Drupal\Driver\Entity\EntityStubInterface;
+use Drupal\DrupalExtension\Context\MinkContext;
 use Drupal\DrupalExtension\Hook\Attribute\AfterNodeCreate;
 use Drupal\DrupalExtension\Hook\Attribute\AfterTermCreate;
 use Drupal\DrupalExtension\Hook\Attribute\AfterUserCreate;
@@ -51,6 +53,15 @@ class FeatureContext extends RawDrupalContext {
   protected string $previousUserName = '';
 
   /**
+   * Captured MinkContext used by 'testAjaxWaitTimesOutVerbose()'.
+   *
+   * 'iWaitForAjaxToFinish()' lives on MinkContext (via 'AjaxTrait'); this
+   * reference lets the verbose-timeout assertion call into it without
+   * duplicating the trait's wait/capture/format logic.
+   */
+  protected ?MinkContext $minkContextForAjaxTest = NULL;
+
+  /**
    * Stop Mink sessions before scenarios that will spawn sub-processes.
    *
    * When a @javascript scenario runs in the parent process, Mink keeps the
@@ -69,6 +80,58 @@ class FeatureContext extends RawDrupalContext {
     if ($has_trait_tag) {
       $this->getMink()->stopSessions();
     }
+  }
+
+  /**
+   * Captures the MinkContext from the suite environment per scenario.
+   */
+  #[BeforeScenario]
+  public function testCaptureMinkContextForAjaxTest(BeforeScenarioScope $scope): void {
+    $environment = $scope->getEnvironment();
+    if ($environment instanceof InitializedContextEnvironment && $environment->hasContextClass(MinkContext::class)) {
+      $this->minkContextForAjaxTest = $environment->getContext(MinkContext::class);
+    }
+  }
+
+  /**
+   * Asserts that 'iWaitForAjaxToFinish()' raises a verbose timeout exception.
+   *
+   * The companion fixture 'fixtures/blackbox/ajax_hang.html' pre-loads a
+   * permanently 'ajaxing' Drupal AJAX instance. This step delegates to the
+   * registered MinkContext so the wait/capture/format pipeline runs end-to-end
+   * against a real browser session, then asserts the resulting exception
+   * message contains the diagnostic substrings produced by 'AjaxTrait'.
+   */
+  #[Then('the AJAX wait should time out with verbose diagnostic info')]
+  public function testAjaxWaitTimesOutVerbose(): void {
+    if (!$this->minkContextForAjaxTest instanceof MinkContext) {
+      throw new \RuntimeException('MinkContext was not registered for the active scenario.');
+    }
+
+    try {
+      $this->minkContextForAjaxTest->iWaitForAjaxToFinish();
+    }
+    catch (\RuntimeException $e) {
+      $message = $e->getMessage();
+      $required = [
+        'Unable to complete AJAX request after',
+        'URL: http://blackbox/ajax_hang.html',
+        'Drupal AJAX instances active: 1',
+        "url: '/never-completes'",
+        "selector: '#fake-button'",
+        "event: 'click'",
+      ];
+
+      foreach ($required as $needle) {
+        if (!str_contains($message, $needle)) {
+          throw new \RuntimeException(sprintf("Expected exception message to contain '%s'.\nActual:\n%s", $needle, $message), $e->getCode(), $e);
+        }
+      }
+
+      return;
+    }
+
+    throw new \RuntimeException("Expected 'iWaitForAjaxToFinish()' to time out, but it succeeded.");
   }
 
   /**

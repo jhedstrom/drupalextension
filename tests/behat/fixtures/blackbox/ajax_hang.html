@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>AJAX hang fixture</title>
+  </head>
+  <body>
+    <h1>AJAX hang fixture</h1>
+    <p>
+      Simulates a permanently active Drupal AJAX instance so that
+      'iWaitForAjaxToFinish()' always times out, exercising the verbose
+      diagnostic path of the timeout exception.
+    </p>
+    <script>
+      window.Drupal = window.Drupal || {};
+      window.Drupal.ajax = window.Drupal.ajax || {};
+      window.Drupal.ajax.instances = [{
+        ajaxing: true,
+        url: '/never-completes',
+        element_settings: {
+          selector: '#fake-button',
+          event: 'click'
+        }
+      }];
+    </script>
+  </body>
+</html>
