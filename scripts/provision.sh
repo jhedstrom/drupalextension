@@ -25,11 +25,16 @@ echo "  > Copying 'behat_test' module."
 mkdir -p /app/build/web/modules
 cp -Rf /app/tests/behat/fixtures/drupal/modules/behat_test /app/build/web/modules/
 
+echo "  > Removing any leftover settings.php so 'site-install' can rewrite it."
+chmod -f u+w /app/build/web/sites/default 2>/dev/null || true
+chmod -f u+w /app/build/web/sites/default/settings.php 2>/dev/null || true
+rm -f /app/build/web/sites/default/settings.php
+
 echo "  > Dropping any existing database tables."
 "${DRUSH[@]}" sql-drop 2>/dev/null || true
 
 echo "  > Installing site."
-"${DRUSH[@]}" site-install --db-url=mysql://drupal:drupal@mariadb/drupal --debug
+"${DRUSH[@]}" site-install --db-url=mysql://drupal:drupal@mariadb:3306/drupal
 
 echo "  > Enabling 'behat_test' module."
 "${DRUSH[@]}" en behat_test
