@@ -10,7 +10,7 @@ use Behat\Testwork\Hook\HookDispatcher;
 
 use Drupal\DrupalDriverManager;
 use Drupal\DrupalExtension\Context\DrupalAwareInterface;
-use Drupal\DrupalExtension\Context\DrupalParametersAwareInterface;
+use Drupal\DrupalExtension\Context\ParametersAwareInterface;
 use Drupal\DrupalExtension\Manager\DrupalAuthenticationManagerInterface;
 use Drupal\DrupalExtension\Manager\DrupalUserManagerInterface;
 
@@ -41,12 +41,12 @@ class DrupalAwareInitializer implements ContextInitializer {
    */
   public function initializeContext(Context $context): void {
 
-    // 'DrupalParametersAwareInterface' is a strict subset of
+    // 'ParametersAwareInterface' is a strict subset of
     // 'DrupalAwareInterface' (the latter extends the former). Pass parameters
     // to any context that asks for them, then layer the heavier driver
     // wiring on top for full Drupal-aware contexts only.
-    if ($context instanceof DrupalParametersAwareInterface) {
-      $context->setDrupalParameters($this->parameters);
+    if ($context instanceof ParametersAwareInterface) {
+      $context->setParameters($this->parameters);
     }
 
     if (!$context instanceof DrupalAwareInterface) {

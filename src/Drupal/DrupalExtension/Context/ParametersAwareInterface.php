@@ -7,18 +7,18 @@ namespace Drupal\DrupalExtension\Context;
 /**
  * Declares Drupal extension parameters availability.
  */
-interface DrupalParametersAwareInterface {
+interface ParametersAwareInterface {
 
   /**
-   * Sets parameters provided for Drupal.
+   * Sets parameters provided by the Drupal extension.
    *
    * @param array<string, mixed> $parameters
    *   The Drupal extension parameters.
    */
-  public function setDrupalParameters(array $parameters): void;
+  public function setParameters(array $parameters): void;
 
   /**
-   * Returns a specific Drupal parameter.
+   * Returns a specific Drupal extension parameter.
    *
    * @param string $name
    *   Parameter name.
@@ -26,6 +26,6 @@ interface DrupalParametersAwareInterface {
    * @return mixed
    *   The value, or NULL if the parameter is not set.
    */
-  public function getDrupalParameter(string $name): mixed;
+  public function getParameter(string $name): mixed;
 
 }

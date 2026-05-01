@@ -13,16 +13,16 @@ use Behat\Mink\Mink;
 use Drupal\Driver\Capability\AuthenticationCapabilityInterface;
 use Drupal\Driver\Entity\EntityStubInterface;
 use Drupal\DrupalDriverManagerInterface;
-use Drupal\DrupalExtension\DrupalParametersTrait;
 use Drupal\DrupalExtension\MinkAwareTrait;
+use Drupal\DrupalExtension\ParametersTrait;
 
 /**
  * Default implementation of the Drupal authentication manager service.
  */
 class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterface, FastLogoutInterface {
 
-  use DrupalParametersTrait;
   use MinkAwareTrait;
+  use ParametersTrait;
 
   /**
    * Constructs a DrupalAuthenticationManager object.
@@ -35,19 +35,19 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
    *   The Drupal driver manager.
    * @param array<string, mixed> $minkParameters
    *   Mink configuration parameters.
-   * @param array<string, mixed> $drupalParameters
-   *   Drupal configuration parameters.
+   * @param array<string, mixed> $parameters
+   *   Drupal extension parameters.
    */
   public function __construct(
     Mink $mink,
     protected DrupalUserManagerInterface $userManager,
     protected DrupalDriverManagerInterface $driverManager,
     array $minkParameters,
-    array $drupalParameters,
+    array $parameters,
   ) {
     $this->setMink($mink);
     $this->setMinkParameters($minkParameters);
-    $this->setDrupalParameters($drupalParameters);
+    $this->setParameters($parameters);
   }
 
   /**
@@ -69,7 +69,7 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
     // Determine which user property to submit as the login value. Defaults
     // to 'name' but may be set to 'mail' for sites that authenticate by
     // email or to any other user entity property.
-    $login_field = (string) ($this->getDrupalParameter('login_field') ?: 'name');
+    $login_field = (string) ($this->getParameter('login_field') ?: 'name');
     $login_value = (string) $user->getValue($login_field);
 
     // Fill in the login form credentials.
@@ -85,7 +85,7 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
     $login_element->click();
 
     // Wait for the browser to load after login, if configured.
-    $login_wait = $this->getDrupalParameter('login_wait');
+    $login_wait = $this->getParameter('login_wait');
     if ($login_wait > 0) {
       // Wait for URL change after login (redirect away from login form).
       $timeout = microtime(TRUE) + $login_wait;

@@ -5,33 +5,33 @@ declare(strict_types=1);
 namespace Drupal\DrupalExtension;
 
 /**
- * Provides helpful methods for dealing with Drupal parameters.
+ * Provides helpful methods for dealing with Drupal extension parameters.
  *
- * These parameters are placed in behat.yml and can be used to define commonly
- * customized aspects of the Drupal installation such as CSS selectors,
- * interface text or region maps.
+ * These parameters are placed in behat.yml under 'Drupal\DrupalExtension'
+ * and can be used to define commonly customized aspects of the Drupal
+ * installation such as CSS selectors, interface text or region maps.
  */
-trait DrupalParametersTrait {
+trait ParametersTrait {
 
   /**
-   * Test parameters.
+   * Drupal extension parameters.
    *
    * @var array<string, mixed>
    */
-  protected array $drupalParameters = [];
+  protected array $parameters = [];
 
   /**
-   * Set parameters provided for Drupal.
+   * Set parameters provided by the Drupal extension.
    *
    * @param array<string, mixed> $parameters
    *   The parameters to set.
    */
-  public function setDrupalParameters(array $parameters): void {
-    $this->drupalParameters = $parameters;
+  public function setParameters(array $parameters): void {
+    $this->parameters = $parameters;
   }
 
   /**
-   * Returns a specific Drupal parameter.
+   * Returns a specific Drupal extension parameter.
    *
    * @param string $name
    *   Parameter name.
@@ -39,8 +39,8 @@ trait DrupalParametersTrait {
    * @return mixed
    *   The value, or null if the parameter does not exist.
    */
-  public function getDrupalParameter(string $name): mixed {
-    return $this->drupalParameters[$name] ?? NULL;
+  public function getParameter(string $name): mixed {
+    return $this->parameters[$name] ?? NULL;
   }
 
   /**
@@ -57,7 +57,7 @@ trait DrupalParametersTrait {
    *   Thrown when the text is not present in the list of parameters.
    */
   public function getDrupalText(string $name) {
-    $text = $this->getDrupalParameter('text');
+    $text = $this->getParameter('text');
     if (!isset($text[$name])) {
       throw new \RuntimeException(sprintf('No such Drupal string: %s', $name));
     }
@@ -77,7 +77,7 @@ trait DrupalParametersTrait {
    *   Thrown when the selector is not present in the list of parameters.
    */
   public function getDrupalSelector(string $name) {
-    $text = $this->getDrupalParameter('selectors');
+    $text = $this->getParameter('selectors');
     if (!isset($text[$name])) {
       throw new \RuntimeException(sprintf('No such selector configured: %s', $name));
     }

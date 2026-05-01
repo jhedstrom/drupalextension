@@ -12,7 +12,7 @@ use Behat\Step\Given;
 use Behat\Step\Then;
 use Drupal\DrupalExtension\DeprecationInterface;
 use Drupal\DrupalExtension\DeprecationTrait;
-use Drupal\DrupalExtension\DrupalParametersTrait;
+use Drupal\DrupalExtension\ParametersTrait;
 
 /**
  * Provides step-definitions for interacting with Drupal messages.
@@ -24,9 +24,9 @@ use Drupal\DrupalExtension\DrupalParametersTrait;
  * same map remain supported with a deprecation notice and are removed
  * in 6.1.
  */
-class MessageContext extends RawMinkContext implements TranslatableContext, DrupalParametersAwareInterface, DeprecationInterface {
+class MessageContext extends RawMinkContext implements TranslatableContext, ParametersAwareInterface, DeprecationInterface {
 
-  use DrupalParametersTrait;
+  use ParametersTrait;
   use DeprecationTrait;
 
   /**
@@ -402,7 +402,7 @@ class MessageContext extends RawMinkContext implements TranslatableContext, Drup
       throw new \RuntimeException(sprintf('Unknown message selector "%s". Expected one of: default, error, success, warning.', $name));
     }
 
-    $selectors = $this->getDrupalParameter('selectors');
+    $selectors = $this->getParameter('selectors');
 
     if (is_array($selectors) && isset($selectors['messages'][$name])) {
       return $selectors['messages'][$name];

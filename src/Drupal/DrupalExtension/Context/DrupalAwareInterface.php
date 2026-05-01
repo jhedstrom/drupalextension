@@ -14,7 +14,7 @@ use Drupal\DrupalExtension\Manager\DrupalUserManagerInterface;
 /**
  * Interface for contexts that are aware of the Drupal driver manager.
  */
-interface DrupalAwareInterface extends Context, DrupalParametersAwareInterface {
+interface DrupalAwareInterface extends Context, ParametersAwareInterface {
 
   /**
    * Sets Drupal instance.

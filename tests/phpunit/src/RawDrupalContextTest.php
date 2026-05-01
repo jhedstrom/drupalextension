@@ -66,7 +66,7 @@ class RawDrupalContextTest extends TestCase {
    */
   public function testParseEntityFieldsUsesLegacyParserWhenConfigured(): void {
     $context = $this->buildContext();
-    $context->setDrupalParameters(['field_parser' => 'legacy']);
+    $context->setParameters(['field_parser' => 'legacy']);
 
     $stub = new EntityStub('node', NULL, ['field_test' => 'A - B']);
     $context->parseEntityFields($stub);

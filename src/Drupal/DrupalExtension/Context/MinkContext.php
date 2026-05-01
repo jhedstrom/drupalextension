@@ -17,14 +17,16 @@ use Behat\Mink\Exception\ExpectationException;
 use Behat\Mink\Exception\UnsupportedDriverActionException;
 use Behat\Mink\Selector\Xpath\Escaper;
 use Behat\MinkExtension\Context\MinkContext as MinkExtension;
+use Drupal\DrupalExtension\ParametersTrait;
 use Drupal\DrupalExtension\RegionTrait;
 use Drupal\DrupalExtension\TagTrait;
 
 /**
  * Extensions to the Mink Extension.
  */
-class MinkContext extends MinkExtension implements TranslatableContext {
+class MinkContext extends MinkExtension implements TranslatableContext, ParametersAwareInterface {
 
+  use ParametersTrait;
   use RegionTrait;
   use TagTrait;
 
@@ -174,11 +176,11 @@ class MinkContext extends MinkExtension implements TranslatableContext {
       );
     }());
 JS;
-    $ajax_timeout = $this->getMinkParameter('ajax_timeout');
+    $ajax_timeout = $this->getParameter('ajax_timeout');
     $result = $this->getSession()->wait(1000 * $ajax_timeout, $condition);
     if (!$result) {
       if ($ajax_timeout === NULL) {
-        throw new \RuntimeException('No AJAX timeout has been defined. Please verify that "Drupal\MinkExtension" is configured in behat.yml (and not "Behat\MinkExtension").');
+        throw new \RuntimeException('No AJAX timeout has been defined. Please verify that "Drupal\DrupalExtension" is configured in behat.yml.');
       }
       if ($event) {
         /** @var \Behat\Behat\Hook\Scope\BeforeStepScope $event */
@@ -863,7 +865,7 @@ JS;
       throw new ElementNotFoundException($this->getSession()->getDriver(), sprintf('details element for "%s" action', $action), 'summary text', $summary);
     }
 
-    $ajax_timeout = $this->getMinkParameter('ajax_timeout') ?? 5;
+    $ajax_timeout = $this->getParameter('ajax_timeout') ?? 5;
     // 1/10th of ajax_timeout, in microseconds.
     $animate_delay = $ajax_timeout * 100000;
     try {

@@ -234,6 +234,57 @@ in the table above. Other entries under
 `Drupal\DrupalExtension.selectors:` (`login_form_selector`,
 `logged_in_selector`) are unaffected.
 
+## Configuration: `ajax_timeout`
+
+`ajax_timeout` has moved from `Drupal\MinkExtension` to `Drupal\DrupalExtension`.
+The Drupal Mink extension no longer extends the upstream Mink schema; all
+custom configuration belongs to `Drupal\DrupalExtension`.
+
+Update `behat.yml`:
+
+```yaml
+# 5.x
+default:
+  extensions:
+    Drupal\MinkExtension:
+      ajax_timeout: 5
+
+# 6.0
+default:
+  extensions:
+    Drupal\DrupalExtension:
+      ajax_timeout: 5
+```
+
+Subclasses that read the value need to switch from
+`$this->getMinkParameter('ajax_timeout')` to
+`$this->getParameter('ajax_timeout')`. Reading the value requires the
+context to use `Drupal\DrupalExtension\ParametersTrait` and implement
+`Drupal\DrupalExtension\Context\ParametersAwareInterface` (the bundled
+`MinkContext` already does).
+
+## Parameters interface and trait renames
+
+The interface, trait, and methods that expose `Drupal\DrupalExtension`
+parameters to contexts have lost their `Drupal` prefix. The Drupal extension
+is the only source of context parameters in 6.0, so the qualifier was
+redundant.
+
+| 5.x                                                              | 6.0                                                          |
+|------------------------------------------------------------------|--------------------------------------------------------------|
+| `Drupal\DrupalExtension\Context\DrupalParametersAwareInterface`  | `Drupal\DrupalExtension\Context\ParametersAwareInterface`    |
+| `Drupal\DrupalExtension\DrupalParametersTrait`                   | `Drupal\DrupalExtension\ParametersTrait`                     |
+| `setDrupalParameters(array $parameters): void`                   | `setParameters(array $parameters): void`                     |
+| `getDrupalParameter(string $name): mixed`                        | `getParameter(string $name): mixed`                          |
+| `protected array $drupalParameters`                              | `protected array $parameters`                                |
+
+The trait helpers `getDrupalText()` and `getDrupalSelector()` keep their
+names; they retrieve specific config keys (text strings, CSS selectors)
+rather than arbitrary parameters and are unaffected.
+
+Update any subclass or custom context that implements the interface,
+uses the trait, or calls the renamed methods directly.
+
 ## Service interface changes
 
 `DrupalMailManagerInterface::getMail()` and `::clearMail()` no longer accept

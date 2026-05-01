@@ -23,7 +23,7 @@ use Behat\Behat\Context\Environment\InitializedContextEnvironment;
 use Drupal\DrupalDriverManagerInterface;
 use Drupal\DrupalExtension\DeprecationInterface;
 use Drupal\DrupalExtension\DeprecationTrait;
-use Drupal\DrupalExtension\DrupalParametersTrait;
+use Drupal\DrupalExtension\ParametersTrait;
 use Drupal\DrupalExtension\Manager\DrupalAuthenticationManagerInterface;
 use Drupal\DrupalExtension\Manager\DrupalUserManagerInterface;
 use Drupal\DrupalExtension\Parser\EntityFieldParser;
@@ -45,7 +45,7 @@ use Drupal\DrupalExtension\Manager\FastLogoutInterface;
  */
 class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface, DeprecationInterface {
 
-  use DrupalParametersTrait;
+  use ParametersTrait;
   use DeprecationTrait;
 
   /**
@@ -405,7 +405,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface, D
    * custom implementation.
    */
   protected function getFieldParser(string $entity_type, FieldClassifierInterface $classifier): EntityFieldParserInterface {
-    $mode = $this->getDrupalParameter('field_parser') ?? 'default';
+    $mode = $this->getParameter('field_parser') ?? 'default';
 
     if ($mode === 'legacy') {
       $this->triggerDeprecation('The legacy field parser is deprecated in drupal-extension:6.0.0 and is removed from drupal-extension:6.1.0. Remove "field_parser: legacy" from your behat.yml to migrate. See https://github.com/jhedstrom/drupalextension/blob/main/MIGRATION.md');

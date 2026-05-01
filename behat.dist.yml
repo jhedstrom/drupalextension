@@ -26,8 +26,6 @@ default:
       browser_name: chrome
       # JavaScript browser session.
       javascript_session: selenium2
-      # Maximum time (in seconds) to wait for AJAX calls to complete.
-      ajax_timeout: 5
       # Automatically open browser on failure.
       show_auto: false
       # Command to open the browser (e.g., "open %s" on macOS).
@@ -69,6 +67,8 @@ default:
         Right sidebar: '#sidebar-second'
       # Seconds to wait for the browser to load after login. 0 to disable.
       login_wait: 0
+      # Maximum time (in seconds) to wait for AJAX calls to complete.
+      ajax_timeout: 5
       # Text strings used in step definitions.
       text:
         login_url: /user
