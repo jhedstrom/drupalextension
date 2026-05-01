@@ -1531,20 +1531,6 @@ Given I enter "My article" for "Title"
 </details>
 
 <details>
-  <summary><code>@Given I wait for AJAX to finish</code></summary>
-
-<br/>
-Wait for AJAX to finish. 
-<br/><br/>
-
-```gherkin
-Given I wait for AJAX to finish
-
-```
-
-</details>
-
-<details>
   <summary><code>@Given I press the :char key in the :field field</code></summary>
 
 <br/>
@@ -1655,6 +1641,20 @@ Uncheck a checkbox.
 
 ```gherkin
 Given I uncheck the box "Promoted to front page"
+
+```
+
+</details>
+
+<details>
+  <summary><code>@Given I wait for AJAX to finish</code></summary>
+
+<br/>
+Wait for AJAX to finish. 
+<br/><br/>
+
+```gherkin
+Given I wait for AJAX to finish
 
 ```
 
