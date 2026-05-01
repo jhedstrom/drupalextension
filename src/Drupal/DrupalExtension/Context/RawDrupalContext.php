@@ -21,6 +21,8 @@ use Behat\Testwork\Hook\HookDispatcher;
 use Behat\Behat\Context\Environment\InitializedContextEnvironment;
 
 use Drupal\DrupalDriverManagerInterface;
+use Drupal\DrupalExtension\DeprecationInterface;
+use Drupal\DrupalExtension\DeprecationTrait;
 use Drupal\DrupalExtension\DrupalParametersTrait;
 use Drupal\DrupalExtension\Manager\DrupalAuthenticationManagerInterface;
 use Drupal\DrupalExtension\Manager\DrupalUserManagerInterface;
@@ -41,9 +43,10 @@ use Drupal\DrupalExtension\Manager\FastLogoutInterface;
 /**
  * Provides the raw functionality for interacting with Drupal.
  */
-class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
+class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface, DeprecationInterface {
 
   use DrupalParametersTrait;
+  use DeprecationTrait;
 
   /**
    * Drupal driver manager.
@@ -405,17 +408,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
     $mode = $this->getDrupalParameter('field_parser') ?? 'default';
 
     if ($mode === 'legacy') {
-      static $deprecation_emitted = FALSE;
-
-      if (!$deprecation_emitted) {
-        // Behat installs an error handler that escalates 'E_USER_DEPRECATED'
-        // to a step failure, so 'trigger_error()' is the wrong vehicle here:
-        // it would break legacy-parser tests instead of merely warning. Write
-        // the notice to STDERR directly so test authors still see it during
-        // a Behat run.
-        fwrite(STDERR, '[Deprecation] The legacy field parser is deprecated and will be removed in 6.1. Remove "field_parser: legacy" from your behat.yml to migrate. See MIGRATION.md.' . PHP_EOL);
-        $deprecation_emitted = TRUE;
-      }
+      $this->triggerDeprecation('The legacy field parser is deprecated in drupal-extension:6.0.0 and is removed from drupal-extension:6.1.0. Remove "field_parser: legacy" from your behat.yml to migrate. See https://github.com/jhedstrom/drupalextension/blob/main/MIGRATION.md');
 
       return new LegacyEntityFieldParser($entity_type, $classifier);
     }

@@ -221,6 +221,52 @@ EOL;
   }
 
   /**
+   * Switches message selectors to the deprecated flat form in subprocess.
+   *
+   * Strips the nested 'messages:' map under
+   * 'Drupal\DrupalExtension.selectors:' and rewrites the four short keys
+   * ('default', 'error', 'success', 'warning') to their legacy flat
+   * counterparts on the same map, exercising the backward-compat path on
+   * 'MessageContext' that emits the one-shot deprecation notice.
+   */
+  #[Given('the behat configuration uses the deprecated message selectors')]
+  public function behatCliUseDeprecatedMessageSelectors(): void {
+    $config_file = $this->workingDir . DIRECTORY_SEPARATOR . 'behat.yml';
+    $yaml = Yaml::parse((string) file_get_contents($config_file));
+
+    $legacy_key_map = [
+      'default' => 'message_selector',
+      'error' => 'error_message_selector',
+      'success' => 'success_message_selector',
+      'warning' => 'warning_message_selector',
+    ];
+
+    foreach (['default', 'drupal'] as $profile) {
+      $selectors = &$yaml[$profile]['extensions']['Drupal\DrupalExtension']['selectors'];
+
+      if (!isset($selectors['messages'])) {
+        unset($selectors);
+        continue;
+      }
+
+      $messages = $selectors['messages'];
+
+      foreach ($legacy_key_map as $short => $legacy) {
+        if (!isset($messages[$short])) {
+          continue;
+        }
+
+        $selectors[$legacy] = $messages[$short];
+      }
+
+      unset($selectors['messages']);
+      unset($selectors);
+    }
+
+    file_put_contents($config_file, Yaml::dump($yaml, 4, 2));
+  }
+
+  /**
    * Asserts that behat failed with the given assertion error.
    */
   #[Then('it should fail with an error:')]

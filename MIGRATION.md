@@ -183,6 +183,57 @@ Several multi-step methods have also been split, so that each step
 annotation lives on its own method. See [`STEPS.md`](STEPS.md) for the full
 list of methods and their step patterns.
 
+## MessageContext base class and selector configuration
+
+`MessageContext` no longer extends `RawDrupalContext`. It now extends
+`RawMinkContext` directly and uses `DrupalParametersTrait`, so it can be
+registered in a blackbox-only suite without booting Drupal.
+
+If you subclass `MessageContext`, replace any `RawDrupalContext`-typed
+references with `RawMinkContext` and `use DrupalParametersTrait;` in your
+subclass.
+
+### Nested grouping: `Drupal\DrupalExtension.selectors.messages:`
+
+Group the four message selectors under a new nested `selectors.messages:`
+map (still inside `Drupal\DrupalExtension`). Future selector groups
+(e.g. `forms:`, `regions:`) can sit alongside `messages:` without
+flattening the namespace. The keys are shortened: drop the redundant
+`_selector` suffix and the `_message` infix from each name.
+
+| Legacy flat key (5.x)        | New nested key                |
+| ---------------------------- | ----------------------------- |
+| `message_selector`           | `selectors.messages.default`  |
+| `error_message_selector`     | `selectors.messages.error`    |
+| `success_message_selector`   | `selectors.messages.success`  |
+| `warning_message_selector`   | `selectors.messages.warning`  |
+
+```yaml
+default:
+  extensions:
+    Drupal\DrupalExtension:
+      selectors:
+        messages:
+          default: '.messages'
+          error:   '.messages--error'
+          success: '.messages--status'
+          warning: '.messages--warning'
+        login_form_selector: 'form#user-login,form#user-login-form'
+        logged_in_selector: 'body.logged-in,body.user-logged-in'
+```
+
+### Deprecation: legacy flat keys
+
+Defining `message_selector`, `error_message_selector`,
+`success_message_selector` and `warning_message_selector` as flat keys
+under `Drupal\DrupalExtension.selectors:` is deprecated and will be
+removed in 6.1. The flat form still works in 6.0 and emits a one-shot
+deprecation notice on first use. Migrate by moving the four keys under
+`Drupal\DrupalExtension.selectors.messages:` and renaming them as shown
+in the table above. Other entries under
+`Drupal\DrupalExtension.selectors:` (`login_form_selector`,
+`logged_in_selector`) are unaffected.
+
 ## Service interface changes
 
 `DrupalMailManagerInterface::getMail()` and `::clearMail()` no longer accept

@@ -87,10 +87,11 @@ default:
         static right header: "#static-header-right"
         static sidebar: "#static-sidebar"
       selectors:
-        message_selector: '.static-messages'
-        error_message_selector: '.static-messages.static-error'
-        success_message_selector: '.static-messages.static-status'
-        warning_message_selector: '.static-messages.static-warning'
+        messages:
+          default: '.static-messages'
+          error: '.static-messages.static-error'
+          success: '.static-messages.static-status'
+          warning: '.static-messages.static-warning'
 
     DrevOps\BehatScreenshotExtension:
         dir: '%paths.base%/.logs/screenshots'
@@ -156,10 +157,11 @@ drupal:
       region_map:
         main content: "#main"
       selectors:
-        message_selector: '.messages'
-        error_message_selector: '.messages--error'
-        success_message_selector: '.messages--status'
-        warning_message_selector: '.messages--warning'
+        messages:
+          default: '.messages'
+          error: '.messages--error'
+          success: '.messages--status'
+          warning: '.messages--warning'
 
 # HTTPS profile: tests TLS termination via Traefik reverse proxy.
 # Inherits: autoload, paths, Mink selenium2/chrome config, screenshot extension,
