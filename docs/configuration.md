@@ -233,7 +233,9 @@ BEHAT_DRUPALEXTENSION_SUPPRESS_DEPRECATIONS=1 vendor/bin/behat
 BEHAT_DRUPALEXTENSION_SUPPRESS_DEPRECATIONS=0 vendor/bin/behat
 ```
 
-Use the env var for ad-hoc overrides; use the configuration key when
-the suppression should be persistent for the project. The env var also
-works through Behat's standard `BEHAT_PARAMS` mechanism if you prefer
-to drive everything through one variable.
+Use `BEHAT_DRUPALEXTENSION_SUPPRESS_DEPRECATIONS` for ad-hoc overrides;
+use `suppress_deprecations` in config when suppression should be
+persistent for the project. If you prefer `BEHAT_PARAMS`, set the
+`suppress_deprecations` config key there - that drives the same config
+path. The dedicated env var remains a separate override channel and
+takes precedence when both are set.
