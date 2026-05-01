@@ -56,33 +56,44 @@ The test suites are organized by driver:
   (the blackbox driver). These run against static HTML fixtures.
 - `test-bdd-drupal` — Tests steps that need the Drupal API or
   Drush drivers. These run against a real Drupal installation.
-- `test-bdd-drupal-https` — Tests HTTPS-specific functionality.
 
 ## Setting up the local environment
 
-The local development environment uses Docker Compose to run
-the extension's test suite against a real Drupal installation.
-You can test with different combinations of PHP and Drupal
-versions to match the CI matrix.
+The local development environment uses [Lagoon](https://docs.lagoon.sh)
+container images and [Pygmy](https://github.com/pygmystack/pygmy) to
+serve the test site at a real `*.docker.amazee.io` URL with no
+`/etc/hosts` edits or host port juggling.
 
-You'll need [Docker and Docker Compose](https://docs.docker.com/engine/install/)
-and [Ahoy](https://github.com/ahoy-cli/ahoy) for running
-commands.
+You will need:
 
-The environment consists of several services:
+- [Docker and Docker Compose](https://docs.docker.com/engine/install/)
+- [Pygmy](https://github.com/pygmystack/pygmy)
+  (`brew install pygmy` on macOS, or
+  [`pygmy-go`](https://github.com/pygmystack/pygmy-go) on Linux)
+- [Ahoy](https://github.com/ahoy-cli/ahoy) for running commands
 
-- **php** — PHP-FPM backend that runs Drupal. All test commands
-  execute inside this container.
-- **database** — MariaDB database for the Drupal site.
-- **drupal** — Nginx web server for the Drupal site, used by
-  Behat tests that require a running Drupal installation
-  (`@api` tagged tests).
-- **blackbox** — Nginx web server serving static HTML fixtures,
-  used by Behat tests that do not require Drupal (`@test-blackbox`
-  tagged tests).
+Start Pygmy once and leave it running:
+
+```shell
+pygmy up
+```
+
+The first run may prompt to trust the self-signed certificate so that
+HTTPS routes work without browser warnings. Pygmy listens on host port
+80/443 — stop any local web server holding those ports first.
+
+The stack consists of:
+
+- **cli** — Lagoon `php-cli-drupal` image (built locally with Pcov).
+  All test commands run inside this container.
+- **php** — Lagoon `php-fpm` backend that serves Drupal pages.
+- **nginx** — Lagoon `nginx-drupal` web server. Pygmy routes
+  `http://drupalextension.docker.amazee.io` to this service.
+- **mariadb** — Lagoon `mariadb-drupal` database.
 - **chrome** — Selenium standalone Chromium for browser testing.
-- **proxy** — Traefik reverse proxy for HTTPS/TLS termination
-  in CI.
+- The blackbox HTML fixtures are served by an in-process PHP server
+  that the `BlackboxServerContext` starts inside `cli` for every
+  blackbox scenario; no separate web container is needed.
 
 ### Choosing PHP and Drupal versions
 
@@ -127,16 +138,15 @@ ahoy provision  # Install Drupal and configure. Run this when need to re-install
 
 ### Accessing the sites
 
-Once the environment is running, you can access the sites in
-your browser:
+Once the environment is running, you can reach the site in your
+browser at the Pygmy URL:
 
-- Drupal site: http://localhost:8888
-- Blackbox fixtures: http://localhost:8889
-- Selenium VNC: http://localhost:7900/?autoconnect=1&password=secret
+- Drupal site: http://drupalextension.docker.amazee.io
+- Selenium VNC: `ahoy info` prints the dynamically-assigned port
 
-To use different ports, set `DRUPAL_HOST_PORT` and
-`BLACKBOX_HOST_PORT` environment variables before starting the
-containers.
+If port 80 or 443 is already taken on the host, stop the colliding
+service or set `LOCALDEV_URL` and `PROJECT` to a unique pair before
+running `ahoy up`.
 
 ## Automated testing
 
@@ -149,10 +159,9 @@ ahoy lint-fix               # Fix coding standards
 
 ahoy test                   # Run all tests without coverage
 ahoy test-unit              # Run PHPUnit tests
-ahoy test-bdd               # Run all Behat tests (all profiles)
+ahoy test-bdd               # Run all Behat tests (both profiles)
 ahoy test-bdd-blackbox      # Blackbox tests only
 ahoy test-bdd-drupal        # Drupal API tests only
-ahoy test-bdd-drupal-https  # HTTPS tests only
 
 ahoy test-coverage          # Run all tests with coverage and merge
 ahoy test-unit-coverage     # Run PHPUnit tests with coverage
@@ -169,7 +178,6 @@ from functional tags like `@api` (which enables the Drupal API driver):
 |------------------|-----------------|--------------------------------|
 | `@test-blackbox` | `default`       | Static HTML fixtures           |
 | `@test-drupal`   | `drupal`        | Installed Drupal site with API |
-| `@test-https`    | `drupal_https`  | HTTPS via Traefik proxy        |
 
 Functional tags like `@api`, `@javascript`, and `@smoke` serve a different
 purpose — they enable specific Behat functionality (e.g. the Drupal API driver
