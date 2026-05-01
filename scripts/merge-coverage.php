@@ -8,7 +8,7 @@
  * php merge-coverage.php [coverage_root_path].
  *
  * Where coverage_root_path is the optional path to the coverage root directory.
- * Defaults to '/var/www/html/.logs/coverage'.
+ * Defaults to '/app/.logs/coverage'.
  *
  * This will merge coverage from:
  * - PHPUnit: {root}/phpunit/phpcov.php
@@ -31,7 +31,7 @@ use SebastianBergmann\CodeCoverage\Report\Thresholds;
 require_once __DIR__ . '/../vendor/autoload.php';
 
 // Get coverage root path from command line argument or use default.
-define('COVERAGE_ROOT_PATH', $argv[1] ?? '/var/www/html/.logs/coverage');
+define('COVERAGE_ROOT_PATH', $argv[1] ?? '/app/.logs/coverage');
 
 // Source coverage files to be merged.
 $sources = [

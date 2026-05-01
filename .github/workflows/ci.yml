@@ -31,7 +31,7 @@ jobs:
         run: docker compose up -d
 
       - name: Configure git safe directory
-        run: docker compose exec -T php git config --global --add safe.directory /var/www/html
+        run: docker compose exec -T php git config --global --add safe.directory /app
 
       - name: Install Composer dependencies
         run: docker compose exec -T php composer install
@@ -133,7 +133,7 @@ jobs:
         run: docker compose up -d
 
       - name: Configure git safe directory
-        run: docker compose exec -T php git config --global --add safe.directory /var/www/html
+        run: docker compose exec -T php git config --global --add safe.directory /app
 
       - name: Add Drupal core dependency
         run: docker compose exec -u ${DOCKER_USER_ID} -T php composer require --no-interaction --dev --no-update drupal/core:^${DRUPAL_VERSION} drupal/core-composer-scaffold:^${DRUPAL_VERSION}
@@ -171,8 +171,8 @@ jobs:
       - name: Run Behat tests with coverage
         if: ${{ matrix.coverage }}
         run: |
-          docker compose exec -T php php -d pcov.enabled=1 -d pcov.directory=/var/www/html/src vendor/bin/behat --strict
-          docker compose exec -T php php -d pcov.enabled=1 -d pcov.directory=/var/www/html/src vendor/bin/behat --profile=drupal --strict
+          docker compose exec -T php php -d pcov.enabled=1 -d pcov.directory=/app/src vendor/bin/behat --strict
+          docker compose exec -T php php -d pcov.enabled=1 -d pcov.directory=/app/src vendor/bin/behat --profile=drupal --strict
 
       - name: Run Behat tests
         if: ${{ !matrix.coverage }}

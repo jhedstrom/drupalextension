@@ -120,12 +120,12 @@ drupal:
       login_field: name
       # Drupal API driver settings.
       drupal:
-        drupal_root: /var/www/html/web
+        drupal_root: /app/web
       # Drush driver settings.
       drush:
         alias: ~
         binary: vendor/bin/drush
-        root: /var/www/html/web
+        root: /app/web
         global_options: ~
       regions:
         Content: '#main .region-content'

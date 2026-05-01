@@ -28,8 +28,8 @@ commands:
       echo "  PHP version              : " ${PHP_VERSION:-8.3}
       echo "  Site local URL           : " http://localhost:${DRUPAL_HOST_PORT:-8888}
       echo "  Blackbox local URL       : " http://localhost:${BLACKBOX_HOST_PORT:-8889}
-      echo "  Path to project          : " /var/www/html
-      echo "  Path to web root         : " /var/www/html/build/web
+      echo "  Path to project          : " /app
+      echo "  Path to web root         : " /app/build/web
       echo "  DB port on host          : " $(docker compose port database 3306 2>/dev/null | cut -d : -f 2)
       echo "  Selenium VNC URL on host :  http://localhost:$(docker compose port chrome 7900 2>/dev/null | cut -d : -f 2)/?autoconnect=1&password=secret"
       echo "  Xdebug                   : " $(docker compose exec -T php php -v 2>/dev/null | grep -q Xdebug && echo "enabled (disable with ahoy up)" || echo "disabled (enable with ahoy debug)")
@@ -217,10 +217,10 @@ commands:
       ahoy cli "php -d pcov.enabled=1 -d pcov.directory=. vendor/bin/phpunit -c phpunit.xml"
 
       ahoy title "Running Behat with coverage: blackbox"
-      ahoy cli "php -d pcov.enabled=1 -d pcov.directory=/var/www/html/src vendor/bin/behat --strict --allow-no-tests"
+      ahoy cli "php -d pcov.enabled=1 -d pcov.directory=/app/src vendor/bin/behat --strict --allow-no-tests"
 
       ahoy title "Running Behat with coverage: drupal"
-      ahoy cli "php -d pcov.enabled=1 -d pcov.directory=/var/www/html/src vendor/bin/behat --profile=drupal --strict --allow-no-tests"
+      ahoy cli "php -d pcov.enabled=1 -d pcov.directory=/app/src vendor/bin/behat --profile=drupal --strict --allow-no-tests"
 
       ahoy cli "php scripts/merge-coverage.php"
 
@@ -243,10 +243,10 @@ commands:
       STRICT=""; if [ -z "$1" ]; then STRICT="--strict"; fi
 
       ahoy title "Running Behat with coverage: blackbox"
-      ahoy cli "php -d pcov.enabled=1 -d pcov.directory=/var/www/html/src vendor/bin/behat $STRICT --allow-no-tests $@"
+      ahoy cli "php -d pcov.enabled=1 -d pcov.directory=/app/src vendor/bin/behat $STRICT --allow-no-tests $@"
 
       ahoy title "Running Behat with coverage: drupal"
-      ahoy cli "php -d pcov.enabled=1 -d pcov.directory=/var/www/html/src vendor/bin/behat --profile=drupal $STRICT --allow-no-tests $@"
+      ahoy cli "php -d pcov.enabled=1 -d pcov.directory=/app/src vendor/bin/behat --profile=drupal $STRICT --allow-no-tests $@"
 
       ahoy cli "php scripts/merge-coverage.php"
 

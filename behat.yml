@@ -145,15 +145,15 @@ drupal:
   extensions:
     Drupal\MinkExtension:
       base_url: http://drupal
-      files_path: /var/www/html/tests/behat/fixtures/files
+      files_path: /app/tests/behat/fixtures/files
 
     Drupal\DrupalExtension:
       api_driver: "drupal"
       login_wait: 0
       drupal:
-        drupal_root: "/var/www/html/build/web"
+        drupal_root: "/app/build/web"
       drush:
-        root: "/var/www/html/build/web"
+        root: "/app/build/web"
       regions:
         main content: "#main"
       selectors:
@@ -191,4 +191,4 @@ drupal_https:
     Drupal\DrupalExtension:
       api_driver: "drupal"
       drupal:
-        drupal_root: "/var/www/html/build/web"
+        drupal_root: "/app/build/web"

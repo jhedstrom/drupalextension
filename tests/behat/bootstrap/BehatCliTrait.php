@@ -48,9 +48,9 @@ trait BehatCliTrait {
     // Set environment variables for Drupal Finder.
     // This requires Drupal Finder version > 1.2 at commit:
     // @see https://github.com/webflo/drupal-finder/commit/2663b117878f4a45ca56df028460350c977f92c0
-    $this->iSetEnvironmentVariable('DRUPAL_FINDER_DRUPAL_ROOT', '/var/www/html/build/web');
-    $this->iSetEnvironmentVariable('DRUPAL_FINDER_COMPOSER_ROOT', '/var/www/html/build');
-    $this->iSetEnvironmentVariable('DRUPAL_FINDER_VENDOR_DIR', '/var/www/html/build/vendor');
+    $this->iSetEnvironmentVariable('DRUPAL_FINDER_DRUPAL_ROOT', '/app/build/web');
+    $this->iSetEnvironmentVariable('DRUPAL_FINDER_COMPOSER_ROOT', '/app/build');
+    $this->iSetEnvironmentVariable('DRUPAL_FINDER_VENDOR_DIR', '/app/build/vendor');
   }
 
   /**
@@ -124,7 +124,7 @@ EOL;
   #[Given('some behat configuration')]
   public function behatCliWriteBehatYml(): void {
     // @note Hardcoded path to the project root.
-    $source = '/var/www/html/behat.yml';
+    $source = '/app/behat.yml';
 
     $content = file_get_contents($source);
     if ($content === FALSE) {
@@ -162,7 +162,7 @@ EOL;
         'filter' => [
           'include' => [
             'directories' => [
-              '/var/www/html/src' => NULL,
+              '/app/src' => NULL,
             ],
           ],
         ],
@@ -172,7 +172,7 @@ EOL;
             'showOnlySummary' => TRUE,
           ],
           'php' => [
-            'target' => '/var/www/html/.logs/coverage/behat_cli/phpcov/' . $coverage_id . '.php',
+            'target' => '/app/.logs/coverage/behat_cli/phpcov/' . $coverage_id . '.php',
           ],
         ],
       ];
@@ -185,7 +185,7 @@ EOL;
 
     // Resolve the drush binary to an absolute path so subprocess tests
     // can find it regardless of their working directory.
-    // The source behat.yml is at /var/www/html, so resolve relative to that.
+    // The source behat.yml is at /app, so resolve relative to that.
     $project_root = dirname($source);
     $drush_binary = $project_root . '/vendor/bin/drush';
     if (file_exists($drush_binary)) {
@@ -482,7 +482,7 @@ EOL;
     $fixture_path_rel = 'tests/behat/fixtures';
 
     // @note Hardcoded path to the fixture directory.
-    $fixture_path_abs = '/var/www/html/' . DIRECTORY_SEPARATOR . $fixture_path_rel;
+    $fixture_path_abs = '/app/' . DIRECTORY_SEPARATOR . $fixture_path_rel;
 
     if (is_dir($fixture_path_abs)) {
       $dst = $this->workingDir . DIRECTORY_SEPARATOR . $fixture_path_rel;

@@ -119,7 +119,7 @@ class BrowserKitFactoryTest extends TestCase {
     $factory = $this->getMockBuilder(BrowserKitFactory::class)
       ->onlyMethods(['getCwd'])
       ->getMock();
-    $factory->method('getCwd')->willReturn('/var/www/html/build');
+    $factory->method('getCwd')->willReturn('/app/build');
     return $factory;
   }
 
