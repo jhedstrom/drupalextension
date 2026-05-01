@@ -70,7 +70,7 @@ Sets complex configuration.
   <summary><code>@Given I am an anonymous user</code></summary>
 
 <br/>
-Assert the user is anonymous. 
+Log the current user out so the session is anonymous. 
 <br/><br/>
 
 ```gherkin
@@ -84,7 +84,7 @@ Given I am an anonymous user
   <summary><code>@Given I am not logged in</code></summary>
 
 <br/>
-Assert the user is not logged in. 
+Log the current user out. 
 <br/><br/>
 
 ```gherkin
@@ -1257,51 +1257,6 @@ Then I should see "Notice" in the "div" element with the "color" CSS property se
 
 
 <details>
-  <summary><code>@Given I should not see the error message( containing) :message</code></summary>
-
-<br/>
-Checks if the current page does not contain the given error message. 
-<br/><br/>
-
-```gherkin
-  Given I should not see the error message "Access denied"
-  Given I should not see the error message containing "Access"
-
-```
-
-</details>
-
-<details>
-  <summary><code>@Given I should not see the success message( containing) :message</code></summary>
-
-<br/>
-Checks the page does not contain the given success message. 
-<br/><br/>
-
-```gherkin
-  Given I should not see the success message "saved"
-  Given I should not see the success message containing "saved"
-
-```
-
-</details>
-
-<details>
-  <summary><code>@Given I should not see the warning message( containing) :message</code></summary>
-
-<br/>
-Checks the page does not contain the given warning message. 
-<br/><br/>
-
-```gherkin
-  Given I should not see the warning message "deprecated"
-  Given I should not see the warning message containing "deprecated"
-
-```
-
-</details>
-
-<details>
   <summary><code>@Then I should see the error message( containing) :message</code></summary>
 
 <br/>
@@ -1328,6 +1283,21 @@ Checks if the current page contains the given set of error messages.
     | error messages         |
     | Username is required   |
     | Password is required   |
+
+```
+
+</details>
+
+<details>
+  <summary><code>@Then I should not see the error message( containing) :message</code></summary>
+
+<br/>
+Checks if the current page does not contain the given error message. 
+<br/><br/>
+
+```gherkin
+  Then I should not see the error message "Access denied"
+  Then I should not see the error message containing "Access"
 
 ```
 
@@ -1381,6 +1351,21 @@ Checks if the current page contains the given set of success messages.
 </details>
 
 <details>
+  <summary><code>@Then I should not see the success message( containing) :message</code></summary>
+
+<br/>
+Checks the page does not contain the given success message. 
+<br/><br/>
+
+```gherkin
+  Then I should not see the success message "saved"
+  Then I should not see the success message containing "saved"
+
+```
+
+</details>
+
+<details>
   <summary><code>@Then I should not see the following success messages:</code></summary>
 
 <br/>
@@ -1422,6 +1407,21 @@ Checks if the current page contains the given set of warning messages.
   Then I should see the following warning messages:
     | warning messages                |
     | This action cannot be undone    |
+
+```
+
+</details>
+
+<details>
+  <summary><code>@Then I should not see the warning message( containing) :message</code></summary>
+
+<br/>
+Checks the page does not contain the given warning message. 
+<br/><br/>
+
+```gherkin
+  Then I should not see the warning message "deprecated"
+  Then I should not see the warning message containing "deprecated"
 
 ```
 
