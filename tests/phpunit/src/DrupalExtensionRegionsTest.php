@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\DrupalExtension\Tests;
 
-use Drupal\DrupalExtension\DeprecationSuppression;
 use Drupal\DrupalExtension\ServiceContainer\DrupalExtension;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -104,13 +103,13 @@ class DrupalExtensionRegionsTest extends TestCase {
    */
   #[DataProvider('dataProviderRegionMapDeprecationSuppression')]
   public function testRegionMapDeprecationSuppression(array $config, ?string $env_value, bool $expects_deprecation): void {
-    $env_backup = getenv(DeprecationSuppression::ENV_VAR);
+    $env_backup = getenv('BEHAT_DRUPALEXTENSION_SUPPRESS_DEPRECATIONS');
 
     if ($env_value === NULL) {
-      putenv(DeprecationSuppression::ENV_VAR);
+      putenv('BEHAT_DRUPALEXTENSION_SUPPRESS_DEPRECATIONS');
     }
     else {
-      putenv(DeprecationSuppression::ENV_VAR . '=' . $env_value);
+      putenv('BEHAT_DRUPALEXTENSION_SUPPRESS_DEPRECATIONS=' . $env_value);
     }
 
     try {
@@ -138,10 +137,10 @@ class DrupalExtensionRegionsTest extends TestCase {
     }
     finally {
       if ($env_backup === FALSE) {
-        putenv(DeprecationSuppression::ENV_VAR);
+        putenv('BEHAT_DRUPALEXTENSION_SUPPRESS_DEPRECATIONS');
       }
       else {
-        putenv(DeprecationSuppression::ENV_VAR . '=' . $env_backup);
+        putenv('BEHAT_DRUPALEXTENSION_SUPPRESS_DEPRECATIONS=' . $env_backup);
       }
     }
   }
@@ -211,7 +210,11 @@ class TestableDrupalExtension extends DrupalExtension {
   /**
    * {@inheritdoc}
    */
-  protected function emitDeprecation(string $message): void {
+  public function triggerDeprecation(string $message): void {
+    if ($this->isDeprecationSuppressed()) {
+      return;
+    }
+
     $this->capturedDeprecations[] = $message;
   }
 

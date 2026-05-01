@@ -9,7 +9,7 @@ use Behat\Testwork\ServiceContainer\Extension as ExtensionInterface;
 use Behat\Testwork\ServiceContainer\ExtensionManager;
 use Drupal\DrupalExtension\Compiler\DriverPass;
 use Drupal\DrupalExtension\Compiler\EventSubscriberPass;
-use Drupal\DrupalExtension\DeprecationSuppression;
+use Drupal\DrupalExtension\DeprecationTrait;
 use Drupal\DrupalExtension\Generator\ClassGenerator;
 use Behat\Mink\Element\DocumentElement as MinkDocumentElement;
 use Drupal\DrupalExtension\Element\DocumentElement;
@@ -24,6 +24,8 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
  * Drupal extension for Behat providing step definitions and driver management.
  */
 class DrupalExtension implements ExtensionInterface {
+
+  use DeprecationTrait;
 
   /**
    * Extension configuration ID.
@@ -100,7 +102,7 @@ class DrupalExtension implements ExtensionInterface {
         ->end()
         ->booleanNode('suppress_deprecations')
           ->defaultFalse()
-          ->info('When TRUE, suppresses the "[Deprecation] ..." notices that the extension and its bundled contexts write to STDERR. The "BEHAT_DRUPALEXTENSION_SUPPRESS_DEPRECATIONS" environment variable, when set to a parseable boolean ("1"/"0", "true"/"false", "yes"/"no", "on"/"off"), overrides this setting in either direction.')
+          ->info('Suppresses deprecation notices. The "BEHAT_DRUPALEXTENSION_SUPPRESS_DEPRECATIONS" environment variable overrides this setting.')
         ->end()
         ->enumNode('field_parser')
           ->values(['default', 'legacy'])
@@ -231,14 +233,13 @@ class DrupalExtension implements ExtensionInterface {
    *   The extension configuration.
    */
   protected function loadParameters(ContainerBuilder $container, array $config): void {
+    $this->setParameters($config);
+
     $regions = $config['regions'] ?? [];
     $legacy = $config['region_map'] ?? [];
-    $suppress = DeprecationSuppression::shouldSuppress($config['suppress_deprecations'] ?? NULL);
 
     if ($legacy !== []) {
-      if (!$suppress) {
-        $this->emitDeprecation('The "region_map" configuration key under "Drupal\\DrupalExtension" is deprecated in drupal-extension:6.0.0 and removed from drupal-extension:6.1.0. Rename it to "regions". See https://github.com/jhedstrom/drupalextension/blob/main/MIGRATION.md');
-      }
+      $this->triggerDeprecation('The "region_map" configuration key under "Drupal\\DrupalExtension" is deprecated in drupal-extension:6.0.0 and removed from drupal-extension:6.1.0. Rename it to "regions". See https://github.com/jhedstrom/drupalextension/blob/main/MIGRATION.md');
       // 'regions' wins on key collisions; '+' keeps the left-hand keys.
       $regions += $legacy;
     }
@@ -251,18 +252,6 @@ class DrupalExtension implements ExtensionInterface {
 
     $container->setParameter('drupal.parameters', $config);
     $container->setParameter('drupal.regions', $regions);
-  }
-
-  /**
-   * Emits a deprecation notice during extension load.
-   *
-   * Writes to 'STDERR' so the message surfaces in CI output without
-   * triggering Behat's 'E_USER_DEPRECATED' -> step-failure handler.
-   * Tests override this method to capture deprecations without writing
-   * to the global stream.
-   */
-  protected function emitDeprecation(string $message): void {
-    fwrite(STDERR, '[Deprecation] ' . $message . PHP_EOL);
   }
 
   /**

@@ -16,8 +16,9 @@ namespace Drupal\DrupalExtension;
  * Includes 'ParametersTrait' to read the 'suppress_deprecations' value via
  * the standard 'getParameter()' accessor. The
  * 'BEHAT_DRUPALEXTENSION_SUPPRESS_DEPRECATIONS' environment variable
- * overrides the configured value in either direction. See
- * 'DeprecationSuppression' for the resolution rules.
+ * overrides the configured value in either direction. Recognised values
+ * are '1'/'0', 'true'/'false', 'yes'/'no', 'on'/'off' (case-insensitive,
+ * trimmed); unset or unparseable values fall back to the config value.
  */
 trait DeprecationTrait {
 
@@ -45,9 +46,21 @@ trait DeprecationTrait {
    * Determines whether deprecation emission is currently suppressed.
    */
   protected function isDeprecationSuppressed(): bool {
-    $config_value = $this->getParameter('suppress_deprecations');
+    $env = getenv('BEHAT_DRUPALEXTENSION_SUPPRESS_DEPRECATIONS');
 
-    return DeprecationSuppression::shouldSuppress(is_bool($config_value) ? $config_value : NULL);
+    if ($env !== FALSE && $env !== '') {
+      $normalized = strtolower(trim($env));
+
+      if (in_array($normalized, ['1', 'true', 'yes', 'on'], TRUE)) {
+        return TRUE;
+      }
+
+      if (in_array($normalized, ['0', 'false', 'no', 'off'], TRUE)) {
+        return FALSE;
+      }
+    }
+
+    return $this->getParameter('suppress_deprecations') === TRUE;
   }
 
 }

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Drupal\DrupalExtension\Tests;
 
 use Drupal\DrupalExtension\DeprecationInterface;
-use Drupal\DrupalExtension\DeprecationSuppression;
 use Drupal\DrupalExtension\DeprecationTrait;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -16,7 +15,6 @@ use PHPUnit\Framework\TestCase;
  *
  * 'fwrite(STDERR, ...)' bypasses PHP output buffering, so this suite verifies
  * the decision via 'isDeprecationSuppressed()' rather than the side effect.
- * 'DeprecationSuppressionTest' covers the resolution helper directly.
  */
 #[CoversClass(DeprecationTrait::class)]
 class DeprecationTraitTest extends TestCase {
@@ -30,9 +28,9 @@ class DeprecationTraitTest extends TestCase {
    * {@inheritdoc}
    */
   protected function setUp(): void {
-    $existing = getenv(DeprecationSuppression::ENV_VAR);
+    $existing = getenv('BEHAT_DRUPALEXTENSION_SUPPRESS_DEPRECATIONS');
     $this->envBackup = $existing === FALSE ? NULL : $existing;
-    putenv(DeprecationSuppression::ENV_VAR);
+    putenv('BEHAT_DRUPALEXTENSION_SUPPRESS_DEPRECATIONS');
   }
 
   /**
@@ -40,10 +38,10 @@ class DeprecationTraitTest extends TestCase {
    */
   protected function tearDown(): void {
     if ($this->envBackup === NULL) {
-      putenv(DeprecationSuppression::ENV_VAR);
+      putenv('BEHAT_DRUPALEXTENSION_SUPPRESS_DEPRECATIONS');
     }
     else {
-      putenv(DeprecationSuppression::ENV_VAR . '=' . $this->envBackup);
+      putenv('BEHAT_DRUPALEXTENSION_SUPPRESS_DEPRECATIONS=' . $this->envBackup);
     }
   }
 
@@ -60,7 +58,7 @@ class DeprecationTraitTest extends TestCase {
   #[DataProvider('dataProviderIsDeprecationSuppressed')]
   public function testIsDeprecationSuppressed(array $parameters, ?string $env_value, bool $expected): void {
     if ($env_value !== NULL) {
-      putenv(DeprecationSuppression::ENV_VAR . '=' . $env_value);
+      putenv('BEHAT_DRUPALEXTENSION_SUPPRESS_DEPRECATIONS=' . $env_value);
     }
 
     $consumer = new TestableDeprecationConsumer();
