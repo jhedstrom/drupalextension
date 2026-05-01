@@ -25,7 +25,7 @@ Feature: Class generator integration
     Then it should pass with:
       """
       """
-    And "features/bootstrap/GeneratedFeatureContext.php" file should contain:
+    And the file "features/bootstrap/GeneratedFeatureContext.php" should match:
       """
       <?php
 
@@ -72,7 +72,7 @@ Feature: Class generator integration
     Then it should pass with:
       """
       """
-    And "features/bootstrap/App/Tests/Behat/GeneratedFeatureContext.php" file should contain:
+    And the file "features/bootstrap/App/Tests/Behat/GeneratedFeatureContext.php" should match:
       """
       <?php
 
