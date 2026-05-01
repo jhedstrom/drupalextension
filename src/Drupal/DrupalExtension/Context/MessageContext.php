@@ -8,7 +8,6 @@ use Behat\Behat\Context\TranslatableContext;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Exception\ExpectationException;
 use Behat\MinkExtension\Context\RawMinkContext;
-use Behat\Step\Given;
 use Behat\Step\Then;
 use Drupal\DrupalExtension\DeprecationInterface;
 use Drupal\DrupalExtension\DeprecationTrait;
