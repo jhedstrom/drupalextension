@@ -408,12 +408,8 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface {
       static $deprecation_emitted = FALSE;
 
       if (!$deprecation_emitted) {
-        // Behat installs an error handler that escalates 'E_USER_DEPRECATED'
-        // to a step failure, so 'trigger_error()' is the wrong vehicle here:
-        // it would break legacy-parser tests instead of merely warning. Write
-        // the notice to STDERR directly so test authors still see it during
-        // a Behat run.
-        fwrite(STDERR, '[Deprecation] The legacy field parser is deprecated and will be removed in 6.1. Remove "field_parser: legacy" from your behat.yml to migrate. See MIGRATION.md.' . PHP_EOL);
+        // phpcs:ignore Drupal.Semantics.UnsilencedDeprecation.UnsilencedDeprecation,Drupal.Semantics.FunctionTriggerError.TriggerErrorVersion,Drupal.Semantics.FunctionTriggerError.TriggerErrorSeeUrlFormat
+        trigger_error('The legacy field parser is deprecated in drupal-extension:6.0.0 and is removed from drupal-extension:6.1.0. Remove "field_parser: legacy" from your behat.yml to migrate. See https://github.com/jhedstrom/drupalextension/blob/main/MIGRATION.md', E_USER_DEPRECATED);
         $deprecation_emitted = TRUE;
       }
 

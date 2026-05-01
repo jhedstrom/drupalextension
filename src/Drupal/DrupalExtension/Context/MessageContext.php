@@ -11,6 +11,7 @@ use Behat\MinkExtension\Context\RawMinkContext;
 use Behat\Step\Given;
 use Behat\Step\Then;
 use Drupal\DrupalExtension\DrupalParametersTrait;
+use Drupal\MinkExtension\Context\MinkParametersAwareInterface;
 
 /**
  * Provides step-definitions for interacting with Drupal messages.
@@ -20,7 +21,7 @@ use Drupal\DrupalExtension\DrupalParametersTrait;
  * (preferred) and fall back to the legacy 'selectors:' map under
  * 'Drupal\DrupalExtension' (deprecated, removed in 6.1).
  */
-class MessageContext extends RawMinkContext implements TranslatableContext, DrupalParametersAwareInterface {
+class MessageContext extends RawMinkContext implements TranslatableContext, DrupalParametersAwareInterface, MinkParametersAwareInterface {
 
   use DrupalParametersTrait;
 
@@ -406,9 +407,8 @@ class MessageContext extends RawMinkContext implements TranslatableContext, Drup
     static $deprecation_emitted = FALSE;
 
     if (!$deprecation_emitted) {
-      // Match the legacy field-parser deprecation pattern: write to STDERR
-      // directly so Behat does not escalate the notice to a step failure.
-      fwrite(STDERR, '[Deprecation] Configuring message selectors under "Drupal\DrupalExtension.selectors:" is deprecated and will be removed in 6.1. Move them to "Drupal\MinkExtension.selectors.messages:" (keys: default, error, success, warning) in your behat.yml. See MIGRATION.md.' . PHP_EOL);
+      // phpcs:ignore Drupal.Semantics.UnsilencedDeprecation.UnsilencedDeprecation,Drupal.Semantics.FunctionTriggerError.TriggerErrorVersion,Drupal.Semantics.FunctionTriggerError.TriggerErrorSeeUrlFormat
+      trigger_error('Configuring message selectors under "Drupal\DrupalExtension.selectors:" is deprecated in drupal-extension:6.0.0 and is removed from drupal-extension:6.1.0. Move them to "Drupal\MinkExtension.selectors.messages:" (keys: default, error, success, warning) in your behat.yml. See https://github.com/jhedstrom/drupalextension/blob/main/MIGRATION.md', E_USER_DEPRECATED);
       $deprecation_emitted = TRUE;
     }
 
