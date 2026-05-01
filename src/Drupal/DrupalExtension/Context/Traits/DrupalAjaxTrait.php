@@ -9,6 +9,8 @@ use Behat\Behat\Hook\Scope\BeforeStepScope;
 use Behat\Hook\AfterStep;
 use Behat\Hook\BeforeStep;
 use Behat\Step\Given;
+use Drupal\DrupalExtension\ParametersTrait;
+use Drupal\DrupalExtension\TagTrait;
 
 /**
  * Waits for Drupal-aware AJAX requests to complete on JavaScript-driven steps.
@@ -21,6 +23,9 @@ use Behat\Step\Given;
  * 'ajaxing' flag to wait for the *Drupal* request, not just any jQuery one.
  */
 trait DrupalAjaxTrait {
+
+  use ParametersTrait;
+  use TagTrait;
 
   /**
    * For javascript enabled scenarios, always wait for AJAX before clicking.
