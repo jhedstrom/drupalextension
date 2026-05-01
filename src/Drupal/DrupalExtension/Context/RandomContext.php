@@ -28,6 +28,12 @@ use Drupal\DrupalExtension\ParametersAwareInterface;
  *   '<?<name>>'                 - legacy, deprecated; equivalent to
  *                                 '[?<name>:string,10]'.
  *
+ * The two forms are processed by separate Transform methods - the modern
+ * pair handles '[?...]', the '*Legacy' pair handles '<?...>' and emits
+ * one '[Deprecation]' notice per unique legacy literal. Splitting the
+ * transforms makes the deprecation surface obvious to anyone scanning
+ * the class: every method on the legacy side will be removed together.
+ *
  * Each unique token (identity + type + args) resolves once per scenario
  * and re-using the same literal returns the same value. The default type
  * is 'string' with length '10', so '[?title]', '[?title:string]', and
@@ -40,7 +46,8 @@ class RandomContext implements Context, ParametersAwareInterface, DeprecationInt
 
   use DeprecationTrait;
 
-  protected const SCAN_REGEX = '#(\[\?[a-z0-9_]+(?::[^\]]+)?\]|\<\?[a-z0-9_]+\>)#i';
+  protected const BRACKET_REGEX = '#(\[\?[a-z0-9_]+(?::[^\]]+)?\])#i';
+  protected const LEGACY_REGEX = '#(\<\?[a-z0-9_]+\>)#i';
 
   /**
    * Token literal as it appears in the feature file -> canonical cache key.
@@ -69,49 +76,64 @@ class RandomContext implements Context, ParametersAwareInterface, DeprecationInt
   protected ?Random $random = NULL;
 
   /**
-   * Transforms tokens inside any step argument that contains one.
-   *
-   * The regex is intentionally permissive - the precise scan happens
-   * inside this method; the 'Transform' attribute just routes any
-   * argument that contains a '<?' or '[?' marker through here.
+   * Substitutes modern '[?...]' tokens inside a step argument.
    *
    * @return string|array<int, string>|null
    *   The transformed message.
    */
-  #[Transform('#(.*(?:\<\?|\[\?).*)#')]
+  #[Transform('#(.*\[\?[a-z0-9_]+(?::[^\]]+)?\].*)#i')]
   public function transformVariables(string $message): string|array|null {
-    $patterns = [];
-    $replacements = [];
-
-    preg_match_all(self::SCAN_REGEX, $message, $matches);
-    foreach ($matches[0] as $literal) {
-      $patterns[] = '#' . preg_quote($literal) . '#';
-      $replacements[] = (string) $this->resolveLiteral($literal);
-    }
-
-    return preg_replace($patterns, $replacements, $message);
+    return $this->substituteWithRegex(self::BRACKET_REGEX, $message);
   }
 
   /**
-   * Transforms tokens inside table arguments.
+   * Substitutes legacy '<?...>' tokens inside a step argument.
+   *
+   * Deprecated path: emits one '[Deprecation]' notice per unique legacy
+   * literal before substituting. Will be removed together with
+   * 'transformTableLegacy()' once the legacy form is dropped.
+   *
+   * @return string|array<int, string>|null
+   *   The transformed message.
+   */
+  #[Transform('#(.*\<\?[a-z0-9_]+\>.*)#i')]
+  public function transformVariablesLegacy(string $message): string|array|null {
+    $this->emitLegacyDeprecations($message);
+
+    return $this->substituteWithRegex(self::LEGACY_REGEX, $message);
+  }
+
+  /**
+   * Substitutes modern '[?...]' tokens inside table cells.
    */
   #[Transform('table:*')]
   public function transformTable(TableNode $table): TableNode {
-    $rows = [];
+    return $this->substituteTableWithRegex(self::BRACKET_REGEX, $table);
+  }
+
+  /**
+   * Substitutes legacy '<?...>' tokens inside table cells.
+   *
+   * Deprecated path - see 'transformVariablesLegacy()'.
+   */
+  #[Transform('table:*')]
+  public function transformTableLegacy(TableNode $table): TableNode {
     foreach ($table->getRows() as $row) {
-      $transformed = array_map($this->transformVariables(...), $row);
-      $rows[] = array_map(static fn (array|string|null $v): string => is_array($v) ? implode(',', $v) : (string) $v, $transformed);
+      foreach ($row as $cell) {
+        $this->emitLegacyDeprecations($cell);
+      }
     }
 
-    return new TableNode($rows);
+    return $this->substituteTableWithRegex(self::LEGACY_REGEX, $table);
   }
 
   /**
    * Pre-resolves every token literal found in the current scenario.
    *
    * Running this in a 'BeforeScenario' hook means the cache is warm by
-   * the time the first step runs, and emitted deprecation messages are
-   * grouped at scenario start instead of interleaved with step output.
+   * the time the first step runs, which keeps repeated literals stable
+   * even when their first occurrence is inside a step argument that
+   * Behat dispatches before the rest are visited.
    */
   #[BeforeScenario]
   public function beforeScenarioSetVariables(ScenarioScope $scope): void {
@@ -133,8 +155,10 @@ class RandomContext implements Context, ParametersAwareInterface, DeprecationInt
         $haystack .= "\n" . $step_argument[0]->getTableAsString();
       }
 
-      preg_match_all(self::SCAN_REGEX, $haystack, $matches);
-      foreach ($matches[0] as $literal) {
+      preg_match_all(self::BRACKET_REGEX, $haystack, $modern);
+      preg_match_all(self::LEGACY_REGEX, $haystack, $legacy);
+
+      foreach (array_merge($modern[0], $legacy[0]) as $literal) {
         $this->resolveLiteral($literal);
       }
     }
@@ -150,29 +174,80 @@ class RandomContext implements Context, ParametersAwareInterface, DeprecationInt
   }
 
   /**
-   * Resolves a token literal to its generated value.
+   * Substitutes every '$regex' match in '$message' via 'resolveLiteral()'.
    *
-   * On first encounter the literal is parsed, normalised to a canonical
-   * '(name, type, args)' tuple, the value is generated and stored under
-   * the canonical key, and the literal is recorded in the parsing memo
-   * so future lookups are O(1). Legacy '<?...>' literals additionally
-   * trigger a single deprecation notice.
+   * Modern and legacy paths share the substitution mechanics; only the
+   * regex that selects which literals to substitute differs.
    */
-  protected function resolveLiteral(string $literal): string|int {
-    if (isset($this->literals[$literal])) {
-      return $this->values[$this->literals[$literal]];
+  protected function substituteWithRegex(string $regex, string $message): string {
+    preg_match_all($regex, $message, $matches);
+
+    if ($matches[0] === []) {
+      return $message;
     }
 
-    [$name, $type, $args, $legacy] = $this->parseToken($literal);
+    $patterns = [];
+    $replacements = [];
+    foreach ($matches[0] as $literal) {
+      $patterns[] = '#' . preg_quote($literal) . '#';
+      $replacements[] = (string) $this->resolveLiteral($literal);
+    }
 
-    if ($legacy) {
+    $result = preg_replace($patterns, $replacements, $message);
+
+    return $result ?? $message;
+  }
+
+  /**
+   * Applies 'substituteWithRegex()' across every cell in '$table'.
+   */
+  protected function substituteTableWithRegex(string $regex, TableNode $table): TableNode {
+    $rows = [];
+    foreach ($table->getRows() as $row) {
+      $rows[] = array_map(fn (string $v): string => $this->substituteWithRegex($regex, $v), $row);
+    }
+
+    return new TableNode($rows);
+  }
+
+  /**
+   * Triggers a one-time deprecation notice per legacy literal in '$message'.
+   *
+   * The trait's process-wide dedup would already collapse repeated calls
+   * with the same message, but we dedup here as well so each unique
+   * literal incurs exactly one 'triggerDeprecation()' call regardless of
+   * how often it appears in a single argument.
+   */
+  protected function emitLegacyDeprecations(string $message): void {
+    preg_match_all(self::LEGACY_REGEX, $message, $matches);
+
+    foreach (array_unique($matches[0]) as $literal) {
+      $name = substr($literal, 2, -1);
       $this->triggerDeprecation(sprintf(
         'The "%s" token syntax is deprecated. Use "[?%s]" instead.',
         $literal,
         $name,
       ));
     }
+  }
 
+  /**
+   * Resolves a token literal to its generated value.
+   *
+   * On first encounter the literal is parsed, normalised to a canonical
+   * '(name, type, args)' tuple, the value is generated and stored under
+   * the canonical key, and the literal is recorded in the parsing memo
+   * so future lookups are O(1). The legacy '<?...>' form does not
+   * trigger a deprecation here - that lives in 'emitLegacyDeprecations()'
+   * so the deprecation is fired by the legacy Transform methods, not by
+   * the shared resolution path that the modern form also calls.
+   */
+  protected function resolveLiteral(string $literal): string|int {
+    if (isset($this->literals[$literal])) {
+      return $this->values[$this->literals[$literal]];
+    }
+
+    [$name, $type, $args] = $this->parseToken($literal);
     $args = $this->normaliseArgs($type, $args);
     $key = $name . ':' . $type . ':' . implode(',', $args);
     $this->literals[$literal] = $key;
@@ -185,21 +260,26 @@ class RandomContext implements Context, ParametersAwareInterface, DeprecationInt
   }
 
   /**
-   * Parses a token literal into '[name, type, args, legacy]'.
+   * Parses a token literal into '[name, type, args]'.
    *
-   * @return array{0: string, 1: string, 2: list<string>, 3: bool}
-   *   Tuple of name, type, args, and legacy flag.
+   * The legacy '<?name>' form is folded into the same '(name, string, [])'
+   * tuple as a bare '[?name]' so the resolver does not need to special-case
+   * it. Deprecation emission is handled separately in the legacy Transform
+   * methods.
+   *
+   * @return array{0: string, 1: string, 2: list<string>}
+   *   Tuple of name, type, and args.
    */
   protected function parseToken(string $literal): array {
     if (str_starts_with($literal, '<?')) {
-      return [substr($literal, 2, -1), 'string', [], TRUE];
+      return [substr($literal, 2, -1), 'string', []];
     }
 
     $body = substr($literal, 2, -1);
     $colon = strpos($body, ':');
 
     if ($colon === FALSE) {
-      return [$body, 'string', [], FALSE];
+      return [$body, 'string', []];
     }
 
     $name = substr($body, 0, $colon);
@@ -207,7 +287,7 @@ class RandomContext implements Context, ParametersAwareInterface, DeprecationInt
     $parts = array_map(trim(...), explode(',', $spec));
     $type = array_shift($parts);
 
-    return [$name, $type === '' ? 'string' : $type, $parts, FALSE];
+    return [$name, $type === '' ? 'string' : $type, $parts];
   }
 
   /**

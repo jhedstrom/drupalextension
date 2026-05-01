@@ -172,6 +172,13 @@ notices with the `suppress_deprecations` configuration key or the
 `BEHAT_DRUPALEXTENSION_SUPPRESS_DEPRECATIONS` environment variable -
 see [Configuration](configuration.md).
 
+The legacy form is processed by separate `Transform` methods on
+`RandomContext` (`transformVariablesLegacy()` /
+`transformTableLegacy()`) which exist purely to host the deprecated
+behaviour. They will be removed together once the legacy form is
+dropped, leaving only the modern `transformVariables()` /
+`transformTable()` pair.
+
 ## Custom step definitions
 
 When the prebuilt steps do not cover a behaviour, write your own. Add
