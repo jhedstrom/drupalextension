@@ -17,7 +17,7 @@ declared explicitly.
 | `Drupal\DrupalExtension\Context\ConfigContext` | Steps that read and write Drupal configuration. |
 | `Drupal\DrupalExtension\Context\DrushContext` | Steps that invoke arbitrary Drush commands. |
 | `Drupal\DrupalExtension\Context\MailContext` | Steps that assert against the Drupal mail collector. |
-| `Drupal\DrupalExtension\Context\RandomContext` | Transforms placeholders such as `<?title>` into random strings. Pure Behat context - no Drupal driver, no Mink session. |
+| `Drupal\DrupalExtension\Context\RandomContext` | Transforms typed placeholders such as `[?title]` or `[?id:int,1,99]` into random values. Pure Behat context - no Drupal driver, no Mink session. |
 
 For a complete reference of every step each context exposes, see
 [`STEPS.md`](../STEPS.md).

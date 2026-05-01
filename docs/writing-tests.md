@@ -75,19 +75,109 @@ for the full list.
 
 ## Random data
 
-`RandomContext` lets you reference random tokens in scenarios. The
-same token used twice resolves to the same value within a single
-scenario:
+`RandomContext` substitutes tokens in step text and table cells with
+random values. The same token reused inside one scenario resolves to
+the same value, so two steps can reference the same generated string,
+machine name, or integer without coordinating.
+
+Add `Drupal\DrupalExtension\Context\RandomContext` to the suite's
+`contexts` list in `behat.yml`. The context has no Drupal driver
+dependency, so it works in both Drupal API suites and pure blackbox
+suites.
+
+### Token grammar
+
+```text
+[?<name>:<type>[,<args>]]
+   │      │       │
+   │      │       └── type-specific args (length, range, ...)
+   │      └────────── generator type
+   └───────────────── identity / cache key (same name = same value in a scenario)
+```
+
+`name` is the *identity* - reuse it to get the same value back. `type`
+selects the generator. `args` are passed to the generator. Both `type`
+and `args` are optional; bare `[?title]` is equivalent to
+`[?title:string,10]`.
 
 ```gherkin
 @api
 Scenario: Articles get unique titles
-  Given I am viewing an "article" content with the title "<?title>"
-  Then I should see the heading "<?title>"
+  Given I am viewing an "article" content with the title "[?title]"
+  Then I should see the heading "[?title]"
 ```
 
-Add `Drupal\DrupalExtension\Context\RandomContext` to the
-suite's `contexts` list in `behat.yml`.
+### Built-in types
+
+| Type           | Default         | Example                       | Output shape          |
+| -------------- | --------------- | ----------------------------- | --------------------- |
+| `string`       | length `10`     | `[?title:string,8]`           | `a1b2c3d4`            |
+| `name`         | length `10`     | `[?label:name,6]`             | `Az9Bx2`              |
+| `machine_name` | length `10`     | `[?slug:machine_name,8]`      | `ab_cd_e1`            |
+| `int`          | `0..PHP_INT_MAX`| `[?age:int,18,65]`            | `42`                  |
+| `email`        | -               | `[?contact:email]`            | `abcd1234@efgh.test`  |
+| `uuid`         | -               | `[?id:uuid]`                  | `f47ac10b-58cc-4...`  |
+
+`string`, `name`, and `machine_name` differ in case and allowed
+characters: `string` is lowercase alphanumeric, `name` preserves the
+underlying `Random::name()` casing, and `machine_name` adds underscores.
+
+### Cache equivalence
+
+Tokens that normalise to the same `(name, type, args)` triple share one
+cached value within a scenario:
+
+| Literal                  | Canonical key       |
+| ------------------------ | ------------------- |
+| `[?title]`               | `title:string:10`   |
+| `[?title:string]`        | `title:string:10`   |
+| `[?title:string,10]`     | `title:string:10`   |
+| `<?title>` (legacy)      | `title:string:10`   |
+| `[?title:string,8]`      | `title:string:8`    |
+| `[?title:int]`           | `title:int:0,...`   |
+
+So a feature mid-migration from `<?title>` to `[?title]` resolves both
+literals to the same string, letting you swap one usage at a time.
+
+### Custom types
+
+Add types by extending `RandomContext` and overriding `generate()`:
+
+```php
+<?php
+
+use Drupal\DrupalExtension\Context\RandomContext;
+
+class CustomRandomContext extends RandomContext {
+
+  protected function generate(string $type, array $args): string|int {
+    return match ($type) {
+      'phone' => '+1' . random_int(2000000000, 9999999999),
+      default => parent::generate($type, $args),
+    };
+  }
+
+}
+```
+
+Register `CustomRandomContext` in `behat.yml` instead of `RandomContext`,
+then use `[?primary:phone]` in scenarios.
+
+### Legacy `<?token>` syntax
+
+The original `<?token>` form is still accepted but deprecated. Each
+unique legacy literal triggers a one-time `[Deprecation]` notice on
+`STDERR` pointing at the equivalent `[?token]` replacement. Suppress
+notices with the `suppress_deprecations` configuration key or the
+`BEHAT_DRUPALEXTENSION_SUPPRESS_DEPRECATIONS` environment variable -
+see [Configuration](configuration.md).
+
+The legacy form is processed by separate `Transform` methods on
+`RandomContext` (`transformVariablesLegacy()` /
+`transformTableLegacy()`) which exist purely to host the deprecated
+behaviour. They will be removed together once the legacy form is
+dropped, leaving only the modern `transformVariables()` /
+`transformTable()` pair.
 
 ## Custom step definitions
 
