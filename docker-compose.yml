@@ -13,7 +13,7 @@ x-project:
   &project ${PROJECT:-drupalextension}
 
 x-url:
-  &url ${LOCALDEV_URL:-http://drupalextension.docker.amazee.io}
+  &url ${LOCALDEV_URL:-http://${COMPOSE_PROJECT_NAME}.docker.amazee.io}
 
 x-volumes:
   &default-volumes
@@ -56,7 +56,7 @@ services:
       - container:amazeeio-ssh-agent ### Local overrides to mount host SSH keys. Automatically removed in CI.
 
   php:
-    image: uselagoon/php-${PHP_VERSION:-8.3}-fpm:26.2.0
+    image: uselagoon/php-${PHP_VERSION:-8.3}-fpm:latest
     <<: [*default-volumes, *default-user]
     environment:
       <<: *default-environment
@@ -64,7 +64,7 @@ services:
       - cli
 
   nginx:
-    image: uselagoon/nginx-drupal:26.2.0
+    image: uselagoon/nginx-drupal:latest
     <<: [*default-volumes, *default-user]
     environment:
       <<: *default-environment
@@ -75,14 +75,14 @@ services:
       - default
 
   mariadb:
-    image: uselagoon/mariadb-10.6-drupal:26.2.0
+    image: uselagoon/mariadb-10.6-drupal:latest
     environment:
       <<: *default-environment
     ports:
       - "3306"
 
   chrome:
-    image: selenium/standalone-chromium:145.0
+    image: selenium/standalone-chromium:latest
     ports:
       - "7900:7900"
     expose:
@@ -96,7 +96,7 @@ services:
 
   # Helper container to wait for services to become available.
   wait_dependencies:
-    image: drevops/docker-wait-for-dependencies:26.1.0
+    image: drevops/docker-wait-for-dependencies:latest
     depends_on:
       - cli
       - mariadb

@@ -24,7 +24,7 @@ commands:
     cmd: |
       echo "  Drupal version           : " ${DRUPAL_VERSION:-11}
       echo "  PHP version              : " ${PHP_VERSION:-8.3}
-      echo "  Site local URL           : " ${LOCALDEV_URL:-http://drupalextension.docker.amazee.io}
+      echo "  Site local URL           : " ${LOCALDEV_URL:-http://${COMPOSE_PROJECT_NAME:-$(basename "$PWD")}.docker.amazee.io}
       echo "  Path to project          : " /app
       echo "  Path to web root         : " /app/build/web
       echo "  DB port on host          : " $(docker compose port mariadb 3306 2>/dev/null | cut -d : -f 2)
@@ -84,7 +84,7 @@ commands:
 
   drush:
     usage: Run Drush commands in the CLI container.
-    cmd: docker compose exec -T cli /app/vendor/bin/drush --root=/app/build/web --uri=${LOCALDEV_URL:-http://drupalextension.docker.amazee.io} "$@"
+    cmd: docker compose exec -T cli /app/vendor/bin/drush --root=/app/build/web --uri=${LOCALDEV_URL:-http://${COMPOSE_PROJECT_NAME:-$(basename "$PWD")}.docker.amazee.io} "$@"
 
   debug:
     usage: Enable PHP Xdebug.

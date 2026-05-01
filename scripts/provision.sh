@@ -11,7 +11,7 @@
 set -e
 [ -n "${PROVISION_DEBUG}" ] && set -x
 
-LOCALDEV_URL="${LOCALDEV_URL:-http://drupalextension.docker.amazee.io}"
+LOCALDEV_URL="${LOCALDEV_URL:-http://${COMPOSE_PROJECT_NAME}.docker.amazee.io}"
 
 DRUSH=(/app/vendor/bin/drush --root=/app/build/web --uri="${LOCALDEV_URL}" --yes)
 
