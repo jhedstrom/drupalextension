@@ -362,6 +362,36 @@ EOL;
   }
 
   /**
+   * Asserts a file in the working directory matches the expected content.
+   *
+   * Mirrors the upstream "<path> file should contain:" step but does not
+   * depend on PHPUnit. CI runs strip 'phpunit/phpunit' from the non-coverage
+   * matrix, where the upstream step fatals on the missing 'Assert' class.
+   */
+  #[Then('the file :path should match:')]
+  public function behatCliAssertFileMatches(string $path, PyStringNode $text): void {
+    $absolute = $this->workingDir . DIRECTORY_SEPARATOR . $path;
+
+    if (!is_file($absolute)) {
+      throw new \RuntimeException(sprintf('Expected file "%s" does not exist.', $absolute));
+    }
+
+    $actual = trim((string) file_get_contents($absolute));
+
+    if (PHP_EOL !== "\n") {
+      $actual = str_replace(PHP_EOL, "\n", $actual);
+    }
+
+    $expected = trim((string) $text);
+
+    if ($actual === $expected) {
+      return;
+    }
+
+    throw new \RuntimeException(sprintf("File \"%s\" content does not match expected.\n--- Expected ---\n%s\n--- Actual ---\n%s", $path, $expected, $actual));
+  }
+
+  /**
    * Helper to print file comments.
    */
   protected static function behatCliPrintFileContents(string $filename, string $title = '') {
