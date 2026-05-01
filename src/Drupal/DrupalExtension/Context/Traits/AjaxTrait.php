@@ -197,7 +197,7 @@ JS;
       $lines[] = '';
 
       if (isset($diagnostics['url']) && is_string($diagnostics['url'])) {
-        $lines[] = 'URL: ' . $diagnostics['url'];
+        $lines[] = 'URL: ' . self::redactUrl($diagnostics['url']);
       }
 
       $lines[] = 'jQuery active requests: ' . self::formatScalar($diagnostics['jquery_active'] ?? NULL);
@@ -213,9 +213,15 @@ JS;
 
         $parts = [];
         foreach (['selector', 'event', 'url', 'index'] as $field) {
-          if (isset($instance[$field])) {
-            $parts[] = sprintf("%s: '%s'", $field, $instance[$field]);
+          if (!isset($instance[$field])) {
+            continue;
           }
+
+          $value = (string) $instance[$field];
+          if ($field === 'url') {
+            $value = self::redactUrl($value);
+          }
+          $parts[] = sprintf("%s: '%s'", $field, $value);
         }
         $lines[] = '  - ' . (count($parts) > 0 ? implode(', ', $parts) : '(no details)');
       }
@@ -245,6 +251,18 @@ JS;
     }
 
     return (string) $value;
+  }
+
+  /**
+   * Strips query string and fragment from a URL.
+   *
+   * Diagnostic messages can land in CI logs and artifacts where they may be
+   * publicly accessible, so query strings (potentially containing CSRF
+   * tokens, signed-URL signatures, or session identifiers) and fragments
+   * are removed before the URL is rendered.
+   */
+  private static function redactUrl(string $url): string {
+    return preg_replace('/[?#].*$/', '', $url) ?? $url;
   }
 
 }

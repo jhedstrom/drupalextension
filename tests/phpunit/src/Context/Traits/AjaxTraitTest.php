@@ -203,6 +203,37 @@ class AjaxTraitTest extends TestCase {
       NULL,
       "Unable to complete AJAX request after 5 second(s).\n\nURL: http://example.com/\njQuery active requests: 0\njQuery animated elements: 0\nDrupal AJAX instances active: 0",
     ];
+
+    yield 'page URL with query string and fragment is redacted' => [
+      5,
+      [
+        'url' => 'http://example.com/login?token=abc123&destination=/admin#section',
+        'jquery_active' => 0,
+        'jquery_animated' => 0,
+        'drupal_ajax_instances' => [],
+      ],
+      NULL,
+      "Unable to complete AJAX request after 5 second(s).\n\nURL: http://example.com/login\njQuery active requests: 0\njQuery animated elements: 0\nDrupal AJAX instances active: 0",
+    ];
+
+    yield 'instance URL with query string is redacted, other fields untouched' => [
+      5,
+      [
+        'url' => 'http://example.com/',
+        'jquery_active' => 0,
+        'jquery_animated' => 0,
+        'drupal_ajax_instances' => [
+          [
+            'index' => 0,
+            'selector' => '#edit-submit?keep-this',
+            'event' => 'mousedown',
+            'url' => '/system/ajax?token=abc&form_id=user_login',
+          ],
+        ],
+      ],
+      NULL,
+      "Unable to complete AJAX request after 5 second(s).\n\nURL: http://example.com/\njQuery active requests: 0\njQuery animated elements: 0\nDrupal AJAX instances active: 1\n  - selector: '#edit-submit?keep-this', event: 'mousedown', url: '/system/ajax', index: '0'",
+    ];
   }
 
 }
