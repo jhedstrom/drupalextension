@@ -37,7 +37,7 @@ Característica: DrupalContext
 
   # lo siguiente comprueba que un usuario creado por una clase Conexto (en este
   # caso FeatureContext::assertLoggedInByUsernameAndPassword()) puede ser utilizado
-  # por otro Contexto (DrupalContext::assertLoggedInByName()).
+  # por otro Contexto (DrupalContext::iAmLoggedInAs()).
   @test-drupal @api
   Escenario: Conectarse como usuario sin dirección de correo
     # notar que el siguiente paso no está traducido: está definido en FeatureContext (no en DrupalContext)

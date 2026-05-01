@@ -41,7 +41,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
   }
 
   /**
-   * Assert the user is anonymous.
+   * Log the current user out so the session is anonymous.
    *
    * @code
    * Given I am an anonymous user
@@ -53,7 +53,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
   }
 
   /**
-   * Assert the user is not logged in.
+   * Log the current user out.
    *
    * @code
    * Given I am not logged in
@@ -85,7 +85,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    * @endcode
    */
   #[Given('I am logged in as a user with the :role role(s)')]
-  public function assertAuthenticatedByRole(string $role): void {
+  public function iAmLoggedInAsUserWithRole(string $role): void {
     $this->createAndLoginUserWithRole($role);
   }
 
@@ -97,7 +97,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    * @endcode
    */
   #[Given('I am logged in as a/an :role')]
-  public function assertAuthenticatedByRoleShort(string $role): void {
+  public function iAmLoggedInAsRole(string $role): void {
     $this->createAndLoginUserWithRole($role);
   }
 
@@ -111,7 +111,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    * @endcode
    */
   #[Given('I am logged in as a user with the :role role(s) and I have the following fields:')]
-  public function assertAuthenticatedByRoleWithGivenFields(string $role, TableNode $fields): void {
+  public function iAmLoggedInAsUserWithRoleAndFields(string $role, TableNode $fields): void {
     $this->createAndLoginUserWithRole($role, $fields->getRowsHash());
   }
 
@@ -177,7 +177,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    * @endcode
    */
   #[Given('I am logged in as :name')]
-  public function assertLoggedInByName(string $name): void {
+  public function iAmLoggedInAs(string $name): void {
     $this->login($this->getUserManager()->getUser($name));
   }
 
@@ -190,7 +190,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    * @endcode
    */
   #[Given('I am logged in as a user with the :permissions permission(s)')]
-  public function assertLoggedInWithPermissions(string $permissions): void {
+  public function iAmLoggedInAsUserWithPermissions(string $permissions): void {
     $driver = $this->getDriver();
 
     if (!$driver instanceof RoleCapabilityInterface || !$driver instanceof UserCapabilityInterface) {
@@ -312,7 +312,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    * @endcode
    */
   #[Given('I click :link in the :rowText row')]
-  public function assertClickInTableRow(string $link, string $rowText): void {
+  public function iClickInTableRow(string $link, string $rowText): void {
     $page = $this->getSession()->getPage();
     if ($link_element = $this->getTableRow($page, $rowText)->findLink($link)) {
       // Click the link and return.
@@ -334,7 +334,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    * @endcode
    */
   #[Given('I press :button in the :rowText row')]
-  public function assertPressInTableRow(string $button, string $rowText): void {
+  public function iPressInTableRow(string $button, string $rowText): void {
     $page = $this->getSession()->getPage();
     if ($button_element = $this->getTableRow($page, $rowText)->findButton($button)) {
       // Press the button and return.
@@ -352,7 +352,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    * @endcode
    */
   #[Given('the cache has been cleared')]
-  public function assertCacheClear(): void {
+  public function clearCache(): void {
     $driver = $this->getDriver();
 
     if (!$driver instanceof CacheCapabilityInterface) {
@@ -370,7 +370,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    * @endcode
    */
   #[Given('I run cron')]
-  public function assertCron(): void {
+  public function iRunCron(): void {
     $driver = $this->getDriver();
 
     if (!$driver instanceof CronCapabilityInterface) {
@@ -479,7 +479,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    * @endcode
    */
   #[Given('I am viewing a/an :type with the following fields:')]
-  public function assertViewingNode(string $type, TableNode $fields): void {
+  public function iAmViewingNodeWithFields(string $type, TableNode $fields): void {
     $this->createAndVisitNodeFromTable($type, $fields);
   }
 
@@ -493,7 +493,7 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
    * @endcode
    */
   #[Given('I am viewing a/an :type content with the following fields:')]
-  public function assertViewingNodeContent(string $type, TableNode $fields): void {
+  public function iAmViewingNodeContentWithFields(string $type, TableNode $fields): void {
     $this->createAndVisitNodeFromTable($type, $fields);
   }
 
