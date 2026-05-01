@@ -22,7 +22,7 @@ use Drupal\DrupalExtension\TagTrait;
  * and intermittently fail. The JS condition embedded here probes Drupal's own
  * 'ajaxing' flag to wait for the *Drupal* request, not just any jQuery one.
  */
-trait DrupalAjaxTrait {
+trait AjaxTrait {
 
   use ParametersTrait;
   use TagTrait;

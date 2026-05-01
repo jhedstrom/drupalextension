@@ -13,7 +13,7 @@ use Behat\Mink\Exception\ExpectationException;
 use Behat\Mink\Exception\UnsupportedDriverActionException;
 use Behat\Mink\Selector\Xpath\Escaper;
 use Behat\MinkExtension\Context\MinkContext as MinkExtension;
-use Drupal\DrupalExtension\Context\Traits\DrupalAjaxTrait;
+use Drupal\DrupalExtension\Context\Traits\AjaxTrait;
 use Drupal\DrupalExtension\ParametersTrait;
 use Drupal\DrupalExtension\RegionTrait;
 use Drupal\DrupalExtension\TagTrait;
@@ -23,7 +23,7 @@ use Drupal\DrupalExtension\TagTrait;
  */
 class MinkContext extends MinkExtension implements TranslatableContext, ParametersAwareInterface {
 
-  use DrupalAjaxTrait;
+  use AjaxTrait;
   use ParametersTrait;
   use RegionTrait;
   use TagTrait;
