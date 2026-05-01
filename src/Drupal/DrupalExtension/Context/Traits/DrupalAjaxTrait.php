@@ -19,22 +19,6 @@ use Behat\Step\Given;
  * immediately after a 'When I press ...' step would race the AJAX completion
  * and intermittently fail. The JS condition embedded here probes Drupal's own
  * 'ajaxing' flag to wait for the *Drupal* request, not just any jQuery one.
- *
- * Wired in two places:
- * - 'BeforeStep' / 'AfterStep' hooks gated by the '@javascript' tag plus a
- *   verb regex ('follow|press|click|submit|attach') automatically wait around
- *   any step that mutates the page.
- * - Step definition 'Given I wait for AJAX to finish' lets a feature trigger
- *   the wait explicitly.
- *
- * Used in the standard 'MinkContext'. The host class is expected to provide
- * '$this->getSession()' (any Mink-based context), '$this->hasTag()' and
- * '$this->registerFeature()' (from 'TagTrait' / 'FeatureTrait'), and
- * '$this->getParameter()' (from 'ParametersTrait'). A consumer that does
- * not extend 'MinkContext' but wants Drupal-aware AJAX waits should 'use'
- * this trait alongside 'TagTrait' and 'ParametersTrait' on its host.
- *
- * @see https://github.com/jhedstrom/drupalextension/issues/825
  */
 trait DrupalAjaxTrait {
 
