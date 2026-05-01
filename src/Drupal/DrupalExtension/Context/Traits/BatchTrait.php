@@ -18,8 +18,8 @@ use Behat\Step\Given;
  * '\Drupal::' calls behind the API driver and avoids silent failures under
  * Blackbox/Drush drivers.
  *
- * The host class is expected to extend 'RawDrupalContext' so '$this->getSession()'
- * is available and the Drupal kernel is bootstrapped.
+ * The host class is expected to extend 'RawDrupalContext' so
+ * '$this->getSession()' is available and the Drupal kernel is bootstrapped.
  */
 trait BatchTrait {
 
