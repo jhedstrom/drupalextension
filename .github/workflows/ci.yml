@@ -21,41 +21,55 @@ jobs:
     env:
       PHP_VERSION: '8.4'
       DRUPAL_VERSION: '11'
-      DOCKER_USER_ID: '1001'
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Start Docker containers
-        run: docker compose up -d
+      - name: Cache Composer downloads
+        uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache
+          key: composer-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-
 
-      - name: Configure git safe directory
-        run: docker compose exec -T php git config --global --add safe.directory /app
+      - name: Process the codebase to run in CI
+        run: |
+          sed -i -e "/###/d" docker-compose.yml
+          sed -i -e "s/##//" docker-compose.yml
+
+      - name: Build stack
+        run: |
+          docker compose up -d --build
+          docker cp -L . "$(docker compose ps -q cli)":/app/
 
       - name: Install Composer dependencies
-        run: docker compose exec -T php composer install
+        run: |
+          docker compose exec -T cli bash -c "
+            if [ -n \"${GITHUB_TOKEN:-}\" ]; then export COMPOSER_AUTH='{\"github-oauth\": {\"github.com\": \"${GITHUB_TOKEN-}\"}}'; fi && \
+            COMPOSER_MEMORY_LIMIT=-1 composer --ansi install --prefer-dist"
 
       - name: Validate composer.json
-        run: docker compose exec -T php composer validate --no-interaction
+        run: docker compose exec -T cli composer validate --no-interaction
 
       - name: Check composer.json is normalized
-        run: docker compose exec -T php composer normalize --dry-run
+        run: docker compose exec -T cli composer normalize --dry-run
 
       - name: Run linting
         run: |
-          docker compose exec -T php vendor/bin/parallel-lint src scripts tests
-          docker compose exec -T php vendor/bin/phpcs
-          docker compose exec -T php vendor/bin/phpstan
-          docker compose exec -T php vendor/bin/rector process --dry-run
-          docker compose exec -T php vendor/bin/gherkinlint lint tests/behat/features
+          docker compose exec -T cli vendor/bin/parallel-lint src scripts tests
+          docker compose exec -T cli vendor/bin/phpcs
+          docker compose exec -T cli vendor/bin/phpstan
+          docker compose exec -T cli vendor/bin/rector process --dry-run
+          docker compose exec -T cli vendor/bin/gherkinlint lint tests/behat/features
 
       - name: Lint documentation
-        run: docker compose exec -T php php scripts/docs.php --fail-on-change --log-dir=.logs/docs
+        run: docker compose exec -T cli php scripts/docs.php --fail-on-change --log-dir=.logs/docs
 
       - name: Load docs validation logs
         if: github.event_name == 'pull_request' && !cancelled()
         run: |
+          docker compose cp cli:/app/.logs/docs/. .logs/docs/
           { echo "DOCS_SUMMARY<<EOF"; cat .logs/docs/validation-summary.txt; echo "EOF"; } >> "$GITHUB_ENV"
           { echo "DOCS_DETAILS<<EOF"; cat .logs/docs/validation-details.txt; echo "EOF"; } >> "$GITHUB_ENV"
 
@@ -123,67 +137,73 @@ jobs:
     env:
       PHP_VERSION: ${{ matrix.php_version }}
       DRUPAL_VERSION: ${{ matrix.drupal_version }}
-      DOCKER_USER_ID: '1001'
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Start Docker containers
-        run: docker compose up -d
+      - name: Cache Composer downloads
+        uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache
+          key: composer-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-
 
-      - name: Configure git safe directory
-        run: docker compose exec -T php git config --global --add safe.directory /app
+      - name: Process the codebase to run in CI
+        run: |
+          sed -i -e "/###/d" docker-compose.yml
+          sed -i -e "s/##//" docker-compose.yml
+
+      - name: Build stack
+        run: |
+          docker compose up -d --build
+          docker cp -L . "$(docker compose ps -q cli)":/app/
 
       - name: Add Drupal core dependency
-        run: docker compose exec -u ${DOCKER_USER_ID} -T php composer require --no-interaction --dev --no-update drupal/core:^${DRUPAL_VERSION} drupal/core-composer-scaffold:^${DRUPAL_VERSION}
+        run: docker compose exec -T cli composer require --no-interaction --dev --no-update drupal/core:^${DRUPAL_VERSION} drupal/core-composer-scaffold:^${DRUPAL_VERSION}
 
       - name: Remove PHPUnit 11 for Drupal 10
         if: ${{ !matrix.coverage }}
-        run: docker compose exec -u ${DOCKER_USER_ID} -T php composer remove --no-interaction --dev --no-update phpunit/phpunit
+        run: docker compose exec -T cli composer remove --no-interaction --dev --no-update phpunit/phpunit
 
       - name: Install Composer dependencies
         run: |
           if [[ "${{ matrix.deps }}" == "lowest" ]]; then
-            docker compose exec -T php composer update --prefer-lowest --prefer-stable
+            docker compose exec -T cli composer update --prefer-lowest --prefer-stable
           else
-            docker compose exec -T php composer install
+            docker compose exec -T cli composer install
           fi
 
-      - name: Copy Drush configuration
-        run: docker compose exec -T php cp -r tests/behat/fixtures/drupal/drush build/drush
+      - name: Provision Drupal site
+        run: docker compose exec -T cli bash scripts/provision.sh
 
       - name: Run PHPUnit tests
         if: ${{ matrix.coverage }}
-        run: docker compose exec -T php php -d pcov.enabled=1 -d pcov.directory=. vendor/bin/phpunit -c phpunit.xml
-
-      - name: Provision Drupal site
-        run: docker compose exec -T php ./vendor/bin/drush --yes --root=build/web site-install --db-url=mysql://drupal:drupal@database/drupal --debug
-
-      - name: Copy test fixtures
-        run: docker compose exec -T php cp -r tests/behat/fixtures/drupal/modules/behat_test build/web/modules
-
-      - name: Adjust Drupal configurations
-        run: |
-          docker compose exec -T php ./vendor/bin/drush --yes --root=build/web en behat_test
-          docker compose exec -T php ./vendor/bin/drush --yes --root=build/web deploy:hook
+        run: docker compose exec -T cli php -d pcov.enabled=1 -d pcov.directory=. vendor/bin/phpunit -c phpunit.xml
 
       - name: Run Behat tests with coverage
         if: ${{ matrix.coverage }}
         run: |
-          docker compose exec -T php php -d pcov.enabled=1 -d pcov.directory=/app/src vendor/bin/behat --strict
-          docker compose exec -T php php -d pcov.enabled=1 -d pcov.directory=/app/src vendor/bin/behat --profile=drupal --strict
+          docker compose exec -T cli php -d pcov.enabled=1 -d pcov.directory=/app/src vendor/bin/behat --strict
+          docker compose exec -T cli php -d pcov.enabled=1 -d pcov.directory=/app/src vendor/bin/behat --profile=drupal --strict
 
       - name: Run Behat tests
         if: ${{ !matrix.coverage }}
         run: |
-          docker compose exec -T php vendor/bin/behat --strict --no-coverage
-          docker compose exec -T php vendor/bin/behat --profile=drupal --strict --no-coverage
-          docker compose exec -T php vendor/bin/behat --profile=drupal_https --strict --no-coverage
+          docker compose exec -T cli vendor/bin/behat --strict --no-coverage
+          docker compose exec -T cli vendor/bin/behat --profile=drupal --strict --no-coverage
 
       - name: Merge all coverage
         if: ${{ matrix.coverage }}
-        run: docker compose exec -T php php scripts/merge-coverage.php
+        run: docker compose exec -T cli php scripts/merge-coverage.php
+
+      - name: Copy logs out of container
+        if: always()
+        run: |
+          mkdir -p .logs
+          if docker compose ps --services --filter "status=running" | grep -q cli && docker compose exec -T cli test -d /app/.logs; then
+            docker compose cp cli:/app/.logs/. .logs/
+          fi
 
       - name: Extract total coverage
         if: ${{ matrix.coverage }}
