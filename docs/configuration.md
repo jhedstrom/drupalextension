@@ -240,3 +240,36 @@ persistent for the project. If you prefer `BEHAT_PARAMS`, set the
 `suppress_deprecations` config key there - that drives the same config
 path. The dedicated env var remains a separate override channel and
 takes precedence when both are set.
+
+## Disabling automatic cleanup
+
+After every scenario, `RawDrupalContext` deletes the entities, users,
+and roles it created and logs the current user out. This keeps the
+database tidy between scenarios but makes it hard to inspect state when
+a scenario fails - by the time you look, the data is gone.
+
+Set `BEHAT_DRUPALEXTENSION_DISABLE_CLEANUP=1` to skip the entity, user,
+and role teardown for the run:
+
+```shell
+BEHAT_DRUPALEXTENSION_DISABLE_CLEANUP=1 vendor/bin/behat
+```
+
+Recognised "enabled" spellings (case-insensitive, whitespace trimmed):
+`1`, `true`, `yes`, `on`. Any other value, or unsetting the variable,
+leaves cleanup running.
+
+The toggle only affects entity, user, and role teardown. Config
+revert (`ConfigContext`), mail re-enable (`MailContext`), random
+variable reset (`RandomContext`), and static cache clearing all still
+run.
+
+The post-scenario logout is also skipped, so the session of the last
+logged-in user stays open. This is deliberate - the whole point of the
+flag is to let you load the failing page in a browser and look around.
+The flip side is that subsequent scenarios in the same run inherit
+that session, which may change their behaviour.
+
+This is intended for ad-hoc local debugging. Do not enable it on CI -
+leftover data and sessions will leak into subsequent scenarios in the
+same run and into subsequent runs against the same database.

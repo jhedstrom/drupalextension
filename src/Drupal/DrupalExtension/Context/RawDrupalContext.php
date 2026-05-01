@@ -198,6 +198,10 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface, D
    */
   #[AfterScenario]
   public function cleanEntities(): void {
+    if (!$this->shouldCleanup()) {
+      return;
+    }
+
     if ($this->createdStubs === []) {
       return;
     }
@@ -238,9 +242,19 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface, D
 
   /**
    * Remove any created users.
+   *
+   * The early-return guard intentionally also skips the post-scenario
+   * logout below. The whole point of 'BEHAT_DRUPALEXTENSION_DISABLE_CLEANUP'
+   * is to leave the failing scenario's state intact for inspection - that
+   * includes the session. Subsequent scenarios in the same run will inherit
+   * the leftover login, which is the expected trade-off.
    */
   #[AfterScenario]
   public function cleanUsers(): void {
+    if (!$this->shouldCleanup()) {
+      return;
+    }
+
     $driver = $this->getDriver();
 
     if ($this->userManager->hasUsers() && $driver instanceof UserCapabilityInterface) {
@@ -252,7 +266,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface, D
       $this->userManager->clearUsers();
     }
 
-    // Always reset auth state, even if no users were created during the
+    // Reset auth state, even if no users were created during the
     // scenario. A scenario may log in as a pre-existing user without calling
     // userCreate(), leaving stale session state for the next scenario.
     if ($this->getAuthenticationManager() instanceof FastLogoutInterface) {
@@ -282,6 +296,10 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface, D
    */
   #[AfterScenario]
   public function cleanRoles(): void {
+    if (!$this->shouldCleanup()) {
+      return;
+    }
+
     if ($this->roles === []) {
       return;
     }
@@ -309,6 +327,24 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface, D
     if ($driver instanceof CacheCapabilityInterface) {
       $driver->cacheClearStatic();
     }
+  }
+
+  /**
+   * Determines whether scenario cleanup should run.
+   *
+   * Set 'BEHAT_DRUPALEXTENSION_DISABLE_CLEANUP' to '1', 'true', 'yes', or
+   * 'on' (case-insensitive) to skip the AfterScenario teardown of
+   * entities, users, and roles. Useful for inspecting state left behind
+   * by a failing scenario; not intended for CI runs.
+   */
+  protected function shouldCleanup(): bool {
+    $env = getenv('BEHAT_DRUPALEXTENSION_DISABLE_CLEANUP');
+
+    if ($env === FALSE || $env === '') {
+      return TRUE;
+    }
+
+    return !in_array(strtolower(trim($env)), ['1', 'true', 'yes', 'on'], TRUE);
   }
 
   /**
