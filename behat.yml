@@ -25,7 +25,6 @@
 # like @api (which enables the Drupal API driver):
 #   @test-blackbox  — runs in the default (blackbox) profile only
 #   @test-drupal    — runs in the drupal profile only
-#   @test-https     — runs in the drupal_https profile only
 #
 # Each scenario must be explicitly tagged. The drupal profile only picks
 # up scenarios tagged @test-drupal, not "everything that is not @test-blackbox."
@@ -52,13 +51,19 @@ default:
         - FeatureContext
         - BehatCliContext
         - DrevOps\BehatScreenshotExtension\Context\ScreenshotContext
+        # Serves blackbox HTML fixtures from the 'cli' container itself, so
+        # tests do not depend on a separate web container.
+        - BlackboxServerContext:
+            webroot: '%paths.base%/tests/behat/fixtures/blackbox'
+            host: 0.0.0.0
+            port: 8888
       filters:
         tags: "@test-blackbox&&~@skipped"
 
   extensions:
     Drupal\MinkExtension:
       browserkit_http: ~
-      base_url: http://blackbox
+      base_url: http://cli:8888
       browser_name: chrome
       javascript_session: selenium2
       selenium2:
@@ -144,16 +149,16 @@ drupal:
 
   extensions:
     Drupal\MinkExtension:
-      base_url: http://drupal
-      files_path: /var/www/html/tests/behat/fixtures/files
+      base_url: http://nginx:8080
+      files_path: /app/tests/behat/fixtures/files
 
     Drupal\DrupalExtension:
       api_driver: "drupal"
       login_wait: 0
       drupal:
-        drupal_root: "/var/www/html/build/web"
+        drupal_root: "/app/build/web"
       drush:
-        root: "/var/www/html/build/web"
+        root: "/app/build/web"
       regions:
         main content: "#main"
       selectors:
@@ -162,33 +167,3 @@ drupal:
           error: '.messages--error'
           success: '.messages--status'
           warning: '.messages--warning'
-
-# HTTPS profile: tests TLS termination via Traefik reverse proxy.
-# Inherits: autoload, paths, Mink selenium2/chrome config, screenshot extension,
-# code coverage extension.
-drupal_https:
-  suites:
-    default:
-      contexts:
-        # Contexts under tests - Mink context.
-        - Drupal\DrupalExtension\Context\MinkContext
-        # Contexts under tests - Drupal contexts.
-        - Drupal\DrupalExtension\Context\DrupalContext
-        # Helper contexts for test execution and reporting.
-        - FeatureContext
-        - BehatCliContext
-        - DrevOps\BehatScreenshotExtension\Context\ScreenshotContext
-      filters:
-        tags: "@test-https&&~@skipped"
-
-  extensions:
-    Drupal\MinkExtension:
-      base_url: https://proxy
-      browserkit_http:
-        guzzle_request_options:
-          verify: false
-
-    Drupal\DrupalExtension:
-      api_driver: "drupal"
-      drupal:
-        drupal_root: "/var/www/html/build/web"

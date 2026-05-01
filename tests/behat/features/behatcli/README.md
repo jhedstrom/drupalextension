@@ -72,8 +72,7 @@ The `Given some behat configuration` step copies the real
 
 - Changes to `behat.yml` (regions, selectors, contexts, extensions)
   automatically apply to negative tests.
-- The subprocess has access to all profiles (`default`, `drupal`,
-  `drupal_https`).
+- The subprocess has access to both profiles (`default` and `drupal`).
 - Use `When I run behat` for the default (blackbox) profile, or
   `When I run behat with drupal profile` for the drupal profile.
 

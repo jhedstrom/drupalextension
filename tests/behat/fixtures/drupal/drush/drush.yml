@@ -1,3 +1,10 @@
+options:
+  # Drush 13 fails with "Invalid URI: Host is malformed" when it tries to
+  # bootstrap Drupal without a --uri. The Behat 'DrushDriver' does not pass
+  # one, so set the default here. Tests run inside the 'cli' container, which
+  # reaches the Lagoon nginx as 'http://nginx:8080'.
+  uri: http://nginx:8080
+
 command:
   sql:
     cli:

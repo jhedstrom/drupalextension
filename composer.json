@@ -51,6 +51,7 @@
         "composer/installers": "^2.3",
         "dantleech/gherkin-lint": "^0.2.3",
         "dflydev/dot-access-data": "^3.0.3",
+        "drevops/behat-phpserver": "^2.3",
         "drevops/behat-screenshot": "^2.2",
         "drevops/phpcs-standard": "^0.7.0",
         "drupal/coder": "^8.3.27",
