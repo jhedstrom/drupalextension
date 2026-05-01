@@ -69,6 +69,7 @@ jobs:
       - name: Load docs validation logs
         if: github.event_name == 'pull_request' && !cancelled()
         run: |
+          mkdir -p .logs/docs
           docker compose cp cli:/app/.logs/docs/. .logs/docs/
           { echo "DOCS_SUMMARY<<EOF"; cat .logs/docs/validation-summary.txt; echo "EOF"; } >> "$GITHUB_ENV"
           { echo "DOCS_DETAILS<<EOF"; cat .logs/docs/validation-details.txt; echo "EOF"; } >> "$GITHUB_ENV"
