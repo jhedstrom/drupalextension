@@ -1113,6 +1113,101 @@ EOD,
       TRUE,
       [],
     ];
+    yield 'given with assert in method name' => [
+      [
+        'TestContext' => [
+          'name' => 'TestContext',
+          'methods' => [
+            [
+              'name' => 'assertSomething',
+              'steps' => ['@Given I do something'],
+              'description' => 'Desc',
+              'example' => 'Example',
+            ],
+          ],
+        ],
+      ],
+      'assertSomething',
+      'method_naming',
+      FALSE,
+      ['Contains "Assert" in the method name (reserved for @Then)'],
+    ];
+    yield 'when with assert in method name' => [
+      [
+        'TestContext' => [
+          'name' => 'TestContext',
+          'methods' => [
+            [
+              'name' => 'assertWhenSomething',
+              'steps' => ['@When I do something'],
+              'description' => 'Desc',
+              'example' => 'Example',
+            ],
+          ],
+        ],
+      ],
+      'assertWhenSomething',
+      'method_naming',
+      FALSE,
+      ['Contains "Assert" in the method name (reserved for @Then)'],
+    ];
+    yield 'given with mid-name Assert' => [
+      [
+        'TestContext' => [
+          'name' => 'TestContext',
+          'methods' => [
+            [
+              'name' => 'doSomethingAssertingThing',
+              'steps' => ['@Given I do something'],
+              'description' => 'Desc',
+              'example' => 'Example',
+            ],
+          ],
+        ],
+      ],
+      'doSomethingAssertingThing',
+      'method_naming',
+      FALSE,
+      ['Contains "Assert" in the method name (reserved for @Then)'],
+    ];
+    yield 'given with should in step' => [
+      [
+        'TestContext' => [
+          'name' => 'TestContext',
+          'methods' => [
+            [
+              'name' => 'iDoSomething',
+              'steps' => ['@Given I should not see the error'],
+              'description' => 'Desc',
+              'example' => 'Example',
+            ],
+          ],
+        ],
+      ],
+      'iDoSomething',
+      'step_wording',
+      FALSE,
+      ['Contains "should" in the step (reserved for @Then)'],
+    ];
+    yield 'when with should in step' => [
+      [
+        'TestContext' => [
+          'name' => 'TestContext',
+          'methods' => [
+            [
+              'name' => 'iDoSomething',
+              'steps' => ['@When I think something should happen'],
+              'description' => 'Desc',
+              'example' => 'Example',
+            ],
+          ],
+        ],
+      ],
+      'iDoSomething',
+      'step_wording',
+      FALSE,
+      ['Contains "should" in the step (reserved for @Then)'],
+    ];
   }
 
   #[DataProvider('dataProviderRegexToTurnip')]

@@ -22,11 +22,13 @@
  *
  * Step definition conventions (to be enforced in version 6):
  * - @Given steps ending with ':' must contain the word "following".
+ * - @Given/@When steps must NOT contain the word "should" (reserved for @Then).
  * - @When steps must contain "I " (first person).
  * - @Then steps must contain the word "should".
  * - @Then steps must contain "the", "a", or "no".
  * - @Then method names must contain "Assert".
  * - @Then method names must NOT contain "Should".
+ * - @Given/@When method names must NOT contain "Assert" (reserved for @Then).
  * - All steps must have an @code/@endcode example in the docblock.
  * - Each method should define only one step annotation.
  * - Steps should use turnip syntax instead of unnecessary regex.
@@ -718,6 +720,10 @@ function validate(array $info, string $base_path = ''): array {
         $step_wording['pass'] = FALSE;
         $step_wording['messages'][] = 'Missing "I " in the step';
       }
+      if ((str_starts_with($step, '@Given') || str_starts_with($step, '@When')) && str_contains($step, ' should ')) {
+        $step_wording['pass'] = FALSE;
+        $step_wording['messages'][] = 'Contains "should" in the step (reserved for @Then)';
+      }
       if (str_starts_with($step, '@Then')) {
         if (!str_contains($step, ' should ')) {
           $step_wording['pass'] = FALSE;
@@ -740,6 +746,10 @@ function validate(array $info, string $base_path = ''): array {
           $method_naming['pass'] = FALSE;
           $method_naming['messages'][] = 'Contains "Should" in the method name';
         }
+      }
+      if ((str_starts_with($step, '@Given') || str_starts_with($step, '@When')) && stripos((string) $method['name'], 'assert') !== FALSE) {
+        $method_naming['pass'] = FALSE;
+        $method_naming['messages'][] = 'Contains "Assert" in the method name (reserved for @Then)';
       }
 
       // Single step check.
