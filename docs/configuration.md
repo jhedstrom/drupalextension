@@ -76,6 +76,7 @@ Drupal\DrupalExtension:
 | `drupal` | Configuration for the [Drupal API driver](drivers/drupal-api.md). |
 | `regions` | Maps human-readable region names to CSS selectors. |
 | `selectors` | CSS selectors for Drupal status, error, and success messages. |
+| `suppress_deprecations` | Silences `[Deprecation]` notices. See [Suppressing deprecation notices](#suppressing-deprecation-notices). |
 | `text` | Localised or themed strings used by the built-in steps. |
 
 ## Profiles
@@ -196,3 +197,45 @@ for the full pattern.
 > map. It still works in 6.0 but emits a deprecation notice and is
 > removed in 6.1. Rename it to `regions`. If both keys are present, an
 > entry under `regions` overrides the same key under `region_map`.
+
+## Suppressing deprecation notices
+
+The extension writes `[Deprecation] ...` notices to `STDERR` when it
+detects deprecated configuration or runtime patterns. Behat's error
+handler escalates `E_USER_DEPRECATED` into step failures, so notices
+are written directly to `STDERR` rather than through `trigger_error()`.
+Each unique message is emitted at most once per process.
+
+Two switches control whether the notices surface.
+
+**1. The `suppress_deprecations` configuration key** silences notices
+across both layers (extension load and context runtime). Set it on the
+profile that needs to be quiet:
+
+```yaml
+default:
+  extensions:
+    Drupal\DrupalExtension:
+      suppress_deprecations: true
+```
+
+**2. The `BEHAT_DRUPALEXTENSION_SUPPRESS_DEPRECATIONS` environment
+variable** overrides the configuration in either direction. It accepts
+the parseable boolean spellings `1`/`0`, `true`/`false`, `yes`/`no`,
+and `on`/`off` (case-insensitive). An unset or unparseable value yields
+no override:
+
+```shell
+# Force suppression for one CI run regardless of behat.yml.
+BEHAT_DRUPALEXTENSION_SUPPRESS_DEPRECATIONS=1 vendor/bin/behat
+
+# Force notices to surface even when suppress_deprecations: true is set.
+BEHAT_DRUPALEXTENSION_SUPPRESS_DEPRECATIONS=0 vendor/bin/behat
+```
+
+Use `BEHAT_DRUPALEXTENSION_SUPPRESS_DEPRECATIONS` for ad-hoc overrides;
+use `suppress_deprecations` in config when suppression should be
+persistent for the project. If you prefer `BEHAT_PARAMS`, set the
+`suppress_deprecations` config key there - that drives the same config
+path. The dedicated env var remains a separate override channel and
+takes precedence when both are set.

@@ -91,6 +91,107 @@ class DrupalExtensionRegionsTest extends TestCase {
     ];
   }
 
+  /**
+   * Tests suppression of the region_map deprecation via config + env var.
+   *
+   * @param array<string, mixed> $config
+   *   The DrupalExtension configuration (raw, before schema normalisation).
+   * @param string|null $env_value
+   *   Value to set on the suppression env var, or NULL to leave it unset.
+   * @param bool $expects_deprecation
+   *   Whether the call should still emit the region_map deprecation.
+   */
+  #[DataProvider('dataProviderRegionMapDeprecationSuppression')]
+  public function testRegionMapDeprecationSuppression(array $config, ?string $env_value, bool $expects_deprecation): void {
+    $env_backup = getenv('BEHAT_DRUPALEXTENSION_SUPPRESS_DEPRECATIONS');
+
+    if ($env_value === NULL) {
+      putenv('BEHAT_DRUPALEXTENSION_SUPPRESS_DEPRECATIONS');
+    }
+    else {
+      putenv('BEHAT_DRUPALEXTENSION_SUPPRESS_DEPRECATIONS=' . $env_value);
+    }
+
+    try {
+      $extension = new TestableDrupalExtension();
+
+      $builder = new ArrayNodeDefinition('drupal');
+      $extension->configure($builder);
+      $tree = $builder->getNode(TRUE);
+      $processed = $tree->finalize($tree->normalize($config));
+
+      $container = new ContainerBuilder();
+      $extension->callLoadParameters($container, $processed);
+
+      // The legacy keys are still merged regardless of suppression - this
+      // test only asserts that the deprecation notice is gated.
+      $this->assertSame(['Header' => '#header'], $container->getParameter('drupal.regions'));
+
+      if ($expects_deprecation) {
+        $this->assertCount(1, $extension->capturedDeprecations);
+        $this->assertStringContainsString('region_map', $extension->capturedDeprecations[0]);
+      }
+      else {
+        $this->assertSame([], $extension->capturedDeprecations);
+      }
+    }
+    finally {
+      if ($env_backup === FALSE) {
+        putenv('BEHAT_DRUPALEXTENSION_SUPPRESS_DEPRECATIONS');
+      }
+      else {
+        putenv('BEHAT_DRUPALEXTENSION_SUPPRESS_DEPRECATIONS=' . $env_backup);
+      }
+    }
+  }
+
+  /**
+   * Provides data for testRegionMapDeprecationSuppression().
+   */
+  public static function dataProviderRegionMapDeprecationSuppression(): \Iterator {
+    yield 'config off + env unset emits' => [
+      ['region_map' => ['Header' => '#header']],
+      NULL,
+      TRUE,
+    ];
+
+    yield 'config on + env unset suppresses' => [
+      ['region_map' => ['Header' => '#header'], 'suppress_deprecations' => TRUE],
+      NULL,
+      FALSE,
+    ];
+
+    yield 'config off + env "1" suppresses' => [
+      ['region_map' => ['Header' => '#header']],
+      '1',
+      FALSE,
+    ];
+
+    yield 'config off + env "true" suppresses' => [
+      ['region_map' => ['Header' => '#header']],
+      'true',
+      FALSE,
+    ];
+
+    yield 'config on + env "0" forces emit' => [
+      ['region_map' => ['Header' => '#header'], 'suppress_deprecations' => TRUE],
+      '0',
+      TRUE,
+    ];
+
+    yield 'config on + env "false" forces emit' => [
+      ['region_map' => ['Header' => '#header'], 'suppress_deprecations' => TRUE],
+      'false',
+      TRUE,
+    ];
+
+    yield 'unparseable env falls back to config' => [
+      ['region_map' => ['Header' => '#header'], 'suppress_deprecations' => TRUE],
+      'maybe',
+      FALSE,
+    ];
+  }
+
 }
 
 /**
@@ -109,7 +210,11 @@ class TestableDrupalExtension extends DrupalExtension {
   /**
    * {@inheritdoc}
    */
-  protected function emitDeprecation(string $message): void {
+  public function triggerDeprecation(string $message): void {
+    if ($this->isDeprecationSuppressed()) {
+      return;
+    }
+
     $this->capturedDeprecations[] = $message;
   }
 

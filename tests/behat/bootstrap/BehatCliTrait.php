@@ -296,6 +296,24 @@ EOL;
   }
 
   /**
+   * Sets 'suppress_deprecations: true' on both profiles in the subprocess.
+   *
+   * Use after 'Given some behat configuration' to exercise the suppression
+   * path on 'DrupalExtension::loadParameters()' and 'DeprecationTrait'.
+   */
+  #[Given('the behat configuration suppresses deprecations')]
+  public function behatCliSuppressDeprecations(): void {
+    $config_file = $this->workingDir . DIRECTORY_SEPARATOR . 'behat.yml';
+    $yaml = Yaml::parse((string) file_get_contents($config_file));
+
+    foreach (['default', 'drupal'] as $profile) {
+      $yaml[$profile]['extensions']['Drupal\DrupalExtension']['suppress_deprecations'] = TRUE;
+    }
+
+    file_put_contents($config_file, Yaml::dump($yaml, 4, 2));
+  }
+
+  /**
    * Asserts that behat failed with the given assertion error.
    */
   #[Then('it should fail with an error:')]
