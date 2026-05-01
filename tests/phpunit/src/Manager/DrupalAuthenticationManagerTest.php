@@ -563,6 +563,78 @@ class DrupalAuthenticationManagerTest extends TestCase {
   }
 
   /**
+   * Tests that logIn() visits the URL resolved from the 'login_url' config.
+   */
+  public function testLogInVisitsConfiguredLoginUrl(): void {
+    $submit = $this->createMock(NodeElement::class);
+
+    $page = $this->createMock(DocumentElement::class);
+    $page->method('findButton')->with('Log in')->willReturn($submit);
+    $page->method('has')->willReturn(TRUE);
+
+    $session = $this->createSessionMock($page);
+    // @phpstan-ignore method.notFound
+    $session->method('isStarted')->willReturn(TRUE);
+    // @phpstan-ignore method.notFound
+    $session->expects($this->once())->method('visit')->with('http://localhost/custom-login');
+
+    $params = self::DRUPAL_PARAMS;
+    $params['text']['login_url'] = '/custom-login';
+
+    $manager = $this->createManager($session, NULL, NULL, $params);
+    $manager->logIn(new EntityStub('user', NULL, ['name' => 'admin', 'pass' => 'password']));
+  }
+
+  /**
+   * Tests that logout() visits the URL resolved from the 'logout_url' config.
+   */
+  public function testLogoutVisitsConfiguredLogoutUrl(): void {
+    $page = $this->createMock(DocumentElement::class);
+
+    $session = $this->createSessionMock($page);
+    // @phpstan-ignore method.notFound
+    $session->expects($this->once())->method('visit')->with('http://localhost/custom-logout');
+    // @phpstan-ignore method.notFound
+    $session->method('getCurrentUrl')->willReturn('http://localhost/custom-logout');
+
+    $params = self::DRUPAL_PARAMS;
+    $params['text']['logout_url'] = '/custom-logout';
+
+    $user_manager = new DrupalUserManager();
+    $user_manager->setCurrentUser(new EntityStub('user', NULL, ['name' => 'admin']));
+
+    $manager = $this->createManager($session, $user_manager, NULL, $params);
+    $manager->logout();
+    $this->assertFalse($user_manager->getCurrentUser());
+  }
+
+  /**
+   * Tests that logout() recognises the confirm page from 'logout_confirm_url'.
+   */
+  public function testLogoutConfirmUsesConfiguredUrls(): void {
+    $submit = $this->createMock(NodeElement::class);
+    $submit->expects($this->once())->method('click');
+
+    $page = $this->createMock(DocumentElement::class);
+    $page->method('findButton')->with('Log out')->willReturn($submit);
+
+    $session = $this->createSessionMock($page);
+    // @phpstan-ignore method.notFound
+    $session->expects($this->once())->method('visit')->with('http://localhost/custom-logout');
+    // @phpstan-ignore method.notFound
+    $session->method('getCurrentUrl')->willReturn('http://localhost/custom-logout/confirm');
+
+    $params = self::DRUPAL_PARAMS;
+    $params['text']['logout_url'] = '/custom-logout';
+    $params['text']['logout_confirm_url'] = '/custom-logout/confirm';
+
+    $user_manager = new DrupalUserManager();
+    $manager = $this->createManager($session, $user_manager, NULL, $params);
+    $manager->logout();
+    $this->assertFalse($user_manager->getCurrentUser());
+  }
+
+  /**
    * Creates a DrupalAuthenticationManager with optional overrides.
    *
    * @param \Behat\Mink\Session|null $session

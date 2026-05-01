@@ -167,6 +167,7 @@ Drupal\DrupalExtension:
   text:
     login_url: '/user'
     logout_url: '/user/logout'
+    logout_confirm_url: '/user/logout/confirm'
     log_out: 'Sign out'
     log_in: 'Sign in'
     password_field: 'Enter your password'
