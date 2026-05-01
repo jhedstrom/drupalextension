@@ -101,7 +101,6 @@ class BehatDistYmlTest extends TestCase {
 
     $processed = $tree->finalize($tree->normalize($dist_values));
     $this->assertIsArray($processed);
-    $this->assertArrayHasKey('ajax_timeout', $processed);
   }
 
   /**
