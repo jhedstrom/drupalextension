@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\DrupalExtension\Context;
+namespace Drupal\DrupalExtension;
 
 /**
  * Declares Drupal extension parameters availability.

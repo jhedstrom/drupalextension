@@ -10,9 +10,9 @@ use Behat\Testwork\Hook\HookDispatcher;
 
 use Drupal\DrupalDriverManager;
 use Drupal\DrupalExtension\Context\DrupalAwareInterface;
-use Drupal\DrupalExtension\Context\ParametersAwareInterface;
 use Drupal\DrupalExtension\Manager\DrupalAuthenticationManagerInterface;
 use Drupal\DrupalExtension\Manager\DrupalUserManagerInterface;
+use Drupal\DrupalExtension\ParametersAwareInterface;
 
 /**
  * Initializes DrupalAwareInterface contexts with required dependencies.

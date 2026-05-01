@@ -10,6 +10,7 @@ use Behat\Testwork\Hook\HookDispatcher;
 use Drupal\DrupalDriverManagerInterface;
 use Drupal\DrupalExtension\Manager\DrupalAuthenticationManagerInterface;
 use Drupal\DrupalExtension\Manager\DrupalUserManagerInterface;
+use Drupal\DrupalExtension\ParametersAwareInterface;
 
 /**
  * Interface for contexts that are aware of the Drupal driver manager.
