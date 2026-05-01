@@ -13,6 +13,7 @@ use Behat\Gherkin\Node\StepNode;
 use Behat\Gherkin\Node\TableNode;
 use Drupal\DrupalExtension\Context\RandomContext;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -44,58 +45,71 @@ class RandomContextTest extends TestCase {
   }
 
   /**
-   * Tests that 'RandomContext' implements the bare Behat context interface.
+   * Tests the bare-Behat structural promise of the rebase.
    *
-   * Documents the contract that the class can be loaded in a suite that
-   * does not register Mink or the Drupal extension.
+   * 'RandomContext' must implement 'Behat\Behat\Context\Context' directly
+   * with no parent class, so it can be loaded in suites that do not
+   * register Mink or the Drupal extension.
    */
-  public function testImplementsBareBehatContext(): void {
+  public function testImplementsBareBehatContextWithoutAncestors(): void {
     $this->assertInstanceOf(Context::class, $this->context);
-  }
-
-  /**
-   * Tests that the class no longer extends Drupal- or Mink-specific bases.
-   *
-   * Guards the structural promise of the rebase: no inherited 'getDriver()'
-   * or 'getSession()' surface.
-   */
-  public function testHasNoDrupalOrMinkAncestor(): void {
     $this->assertSame([], class_parents($this->context));
   }
 
   /**
-   * Tests that 'transformVariables()' returns the input when no tokens.
+   * Tests 'transformVariables()' substitution behaviour.
+   *
+   * @param array<string, string> $values
+   *   Token-to-value map to seed before invoking the transform.
+   * @param string $message
+   *   The input message to transform.
+   * @param string $expected
+   *   The expected message after substitution.
    */
-  public function testTransformVariablesReturnsInputWhenNoTokens(): void {
-    $this->valuesProperty->setValue($this->context, []);
-    $this->assertSame('plain text', $this->context->transformVariables('plain text'));
+  #[DataProvider('dataProviderTransformVariables')]
+  public function testTransformVariables(array $values, string $message, string $expected): void {
+    $this->valuesProperty->setValue($this->context, $values);
+    $this->assertSame($expected, $this->context->transformVariables($message));
   }
 
   /**
-   * Tests that 'transformVariables()' substitutes a stored token.
+   * Provides data for testTransformVariables().
+   *
+   * @return \Iterator<string, array{array<string, string>, string, string}>
+   *   Cases keyed by description, each [stored values, input message,
+   *   expected output].
    */
-  public function testTransformVariablesSubstitutesToken(): void {
-    $this->valuesProperty->setValue($this->context, ['<?token>' => 'abcdef']);
-    $this->assertSame('value: abcdef', $this->context->transformVariables('value: <?token>'));
-  }
-
-  /**
-   * Tests that the same token resolves to the same value across uses.
-   */
-  public function testTransformVariablesIsConsistentForRepeatedToken(): void {
-    $this->valuesProperty->setValue($this->context, ['<?token>' => 'abcdef']);
-    $this->assertSame('abcdef and abcdef', $this->context->transformVariables('<?token> and <?token>'));
-  }
-
-  /**
-   * Tests that different tokens resolve to their own stored values.
-   */
-  public function testTransformVariablesUsesDistinctValuesForDistinctTokens(): void {
-    $this->valuesProperty->setValue($this->context, [
-      '<?one>' => 'aaaaaa',
-      '<?two>' => 'bbbbbb',
-    ]);
-    $this->assertSame('aaaaaa and bbbbbb', $this->context->transformVariables('<?one> and <?two>'));
+  public static function dataProviderTransformVariables(): \Iterator {
+    yield 'no tokens returns input unchanged' => [
+      [],
+      'plain text',
+      'plain text',
+    ];
+    yield 'single token is substituted' => [
+      ['<?token>' => 'abcdef'],
+      'value: <?token>',
+      'value: abcdef',
+    ];
+    yield 'repeated token resolves to same value' => [
+      ['<?token>' => 'abcdef'],
+      '<?token> and <?token>',
+      'abcdef and abcdef',
+    ];
+    yield 'distinct tokens resolve to their own values' => [
+      ['<?one>' => 'aaaaaa', '<?two>' => 'bbbbbb'],
+      '<?one> and <?two>',
+      'aaaaaa and bbbbbb',
+    ];
+    yield 'surrounding characters are preserved' => [
+      ['<?abc>' => 'value'],
+      '[<?abc>]',
+      '[value]',
+    ];
+    yield 'identifier with underscore is supported' => [
+      ['<?my_token>' => 'value'],
+      'see <?my_token>',
+      'see value',
+    ];
   }
 
   /**
@@ -118,99 +132,68 @@ class RandomContextTest extends TestCase {
   }
 
   /**
-   * Tests that 'beforeScenarioSetVariables()' populates values from steps.
+   * Tests that 'beforeScenarioSetVariables()' collects tokens from steps.
+   *
+   * Covers tokens in step text, in 'TableNode' step arguments, and in
+   * background steps; same-token reuse and distinct-token uniqueness.
+   *
+   * @param list<string> $expected_tokens
+   *   Tokens expected to be present in the populated values map, in
+   *   order of first appearance.
+   * @param list<\Behat\Gherkin\Node\StepNode> $scenario_steps
+   *   Scenario steps to attach to the constructed scope.
+   * @param list<\Behat\Gherkin\Node\StepNode>|null $background_steps
+   *   Optional background steps; NULL omits the background.
    */
-  public function testBeforeScenarioPopulatesValuesFromScenarioSteps(): void {
-    $scope = $this->createScenarioScope([
-      $this->createStep('Given a string <?token>'),
-    ]);
+  #[DataProvider('dataProviderBeforeScenarioCollectsTokens')]
+  public function testBeforeScenarioCollectsTokens(array $expected_tokens, array $scenario_steps, ?array $background_steps = NULL): void {
+    $background = $background_steps === NULL ? NULL : new BackgroundNode(NULL, $background_steps, 'Background', 1);
+    $scope = $this->createScenarioScope($scenario_steps, $background);
 
     $this->context->beforeScenarioSetVariables($scope);
     $values = $this->valuesProperty->getValue($this->context);
 
-    $this->assertArrayHasKey('<?token>', $values);
-    $this->assertMatchesRegularExpression('/^[a-z0-9]{10}$/', $values['<?token>']);
+    $this->assertSame($expected_tokens, array_keys($values));
+    foreach ($values as $value) {
+      $this->assertMatchesRegularExpression('/^[a-z0-9]{10}$/', (string) $value);
+    }
+    if (count($expected_tokens) > 1) {
+      $this->assertSame(count($expected_tokens), count(array_unique($values)));
+    }
   }
 
   /**
-   * Tests that the same token in multiple steps reuses the same value.
+   * Provides data for testBeforeScenarioCollectsTokens().
+   *
+   * @return \Iterator<string, array{0: list<string>, 1: list<\Behat\Gherkin\Node\StepNode>, 2?: list<\Behat\Gherkin\Node\StepNode>|null}>
+   *   Cases keyed by description, each [expected token list, scenario
+   *   steps, optional background steps].
    */
-  public function testBeforeScenarioReusesValuesForRepeatedTokens(): void {
-    $scope = $this->createScenarioScope([
-      $this->createStep('Given a string <?token>'),
-      $this->createStep('Then I see <?token>'),
-    ]);
-
-    $this->context->beforeScenarioSetVariables($scope);
-    $values = $this->valuesProperty->getValue($this->context);
-
-    $this->assertCount(1, $values);
-    $this->assertArrayHasKey('<?token>', $values);
-  }
-
-  /**
-   * Tests that distinct tokens get distinct generated values.
-   */
-  public function testBeforeScenarioGeneratesDistinctValuesForDistinctTokens(): void {
-    $scope = $this->createScenarioScope([
-      $this->createStep('Given <?one> and <?two>'),
-    ]);
-
-    $this->context->beforeScenarioSetVariables($scope);
-    $values = $this->valuesProperty->getValue($this->context);
-
-    $this->assertCount(2, $values);
-    $this->assertArrayHasKey('<?one>', $values);
-    $this->assertArrayHasKey('<?two>', $values);
-    $this->assertNotSame($values['<?one>'], $values['<?two>']);
-  }
-
-  /**
-   * Tests that token values are lowercase and 10 chars long.
-   */
-  public function testBeforeScenarioGeneratesLowercaseValues(): void {
-    $scope = $this->createScenarioScope([
-      $this->createStep('Given <?token>'),
-    ]);
-
-    $this->context->beforeScenarioSetVariables($scope);
-    $value = (string) $this->valuesProperty->getValue($this->context)['<?token>'];
-
-    $this->assertSame(strtolower($value), $value);
-    $this->assertSame(10, strlen($value));
-  }
-
-  /**
-   * Tests that tokens in TableNode step arguments are picked up.
-   */
-  public function testBeforeScenarioPicksUpTokensFromStepTableArguments(): void {
-    $table = new TableNode([
-      ['title', '<?random_page>'],
-    ]);
-    $scope = $this->createScenarioScope([
-      new StepNode('Given', 'a page with the following fields:', [$table], 1),
-    ]);
-
-    $this->context->beforeScenarioSetVariables($scope);
-    $values = $this->valuesProperty->getValue($this->context);
-
-    $this->assertArrayHasKey('<?random_page>', $values);
-  }
-
-  /**
-   * Tests that tokens in background steps are picked up.
-   */
-  public function testBeforeScenarioPicksUpTokensFromBackgroundSteps(): void {
-    $background = new BackgroundNode(NULL, [$this->createStep('Given <?from_background>')], 'Background', 1);
-    $scope = $this->createScenarioScope([
-      $this->createStep('Then <?from_scenario>'),
-    ], $background);
-
-    $this->context->beforeScenarioSetVariables($scope);
-    $values = $this->valuesProperty->getValue($this->context);
-
-    $this->assertArrayHasKey('<?from_background>', $values);
-    $this->assertArrayHasKey('<?from_scenario>', $values);
+  public static function dataProviderBeforeScenarioCollectsTokens(): \Iterator {
+    yield 'token in scenario step text' => [
+      ['<?token>'],
+      [new StepNode('Given', 'a string <?token>', [], 1)],
+    ];
+    yield 'repeated token across steps reuses one value' => [
+      ['<?token>'],
+      [
+        new StepNode('Given', 'a string <?token>', [], 1),
+        new StepNode('Then', 'I see <?token>', [], 2),
+      ],
+    ];
+    yield 'distinct tokens in one step yield distinct values' => [
+      ['<?one>', '<?two>'],
+      [new StepNode('Given', '<?one> and <?two>', [], 1)],
+    ];
+    yield 'token in TableNode step argument is picked up' => [
+      ['<?random_page>'],
+      [new StepNode('Given', 'a page with the following fields:', [new TableNode([['title', '<?random_page>']])], 1)],
+    ];
+    yield 'tokens in background and scenario steps are merged' => [
+      ['<?from_background>', '<?from_scenario>'],
+      [new StepNode('Then', '<?from_scenario>', [], 2)],
+      [new StepNode('Given', '<?from_background>', [], 1)],
+    ];
   }
 
   /**
@@ -223,26 +206,6 @@ class RandomContextTest extends TestCase {
     $this->context->afterScenarioResetVariables($scope);
 
     $this->assertSame([], $this->valuesProperty->getValue($this->context));
-  }
-
-  /**
-   * Tests that surrounding characters in the message are preserved.
-   *
-   * Guards against the literal '?' inside the placeholder unintentionally
-   * being treated as a regex quantifier when building the substitution
-   * pattern from the token text.
-   */
-  public function testTransformVariablesPreservesSurroundingCharacters(): void {
-    $this->valuesProperty->setValue($this->context, ['<?abc>' => 'value']);
-    $this->assertSame('[value]', $this->context->transformVariables('[<?abc>]'));
-  }
-
-  /**
-   * Tests that token identifiers may contain underscores.
-   */
-  public function testTransformVariablesSupportsTokensWithUnderscores(): void {
-    $this->valuesProperty->setValue($this->context, ['<?my_token>' => 'value']);
-    $this->assertSame('see value', $this->context->transformVariables('see <?my_token>'));
   }
 
   /**
@@ -272,13 +235,6 @@ class RandomContextTest extends TestCase {
     $scope->method('getScenario')->willReturn($scenario);
 
     return $scope;
-  }
-
-  /**
-   * Builds a 'StepNode' from raw text, defaulting to a 'Given' keyword.
-   */
-  protected function createStep(string $text): StepNode {
-    return new StepNode('Given', $text, [], 1);
   }
 
 }
