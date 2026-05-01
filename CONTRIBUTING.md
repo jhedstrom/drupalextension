@@ -142,7 +142,13 @@ Once the environment is running, you can reach the site in your
 browser at the Pygmy URL:
 
 - Drupal site: http://drupalextension.docker.amazee.io
-- Selenium VNC: `ahoy info` prints the dynamically-assigned port
+- Selenium VNC: `ahoy info` prints a ready-to-open URL like
+  `http://localhost:59216/?autoconnect=1&password=secret` (port is
+  dynamically assigned; password is `secret`). Open it in a browser
+  to watch the Chromium session driven by `@javascript` scenarios.
+- Xdebug status: `ahoy info` shows whether Xdebug is enabled or
+  disabled, with a hint to enable it via `ahoy debug` (see
+  [Debugging with Xdebug](#debugging-with-xdebug)).
 
 If port 80 or 443 is already taken on the host, stop the colliding
 service or set `LOCALDEV_URL` and `PROJECT` to a unique pair before

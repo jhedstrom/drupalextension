@@ -84,7 +84,7 @@ services:
   chrome:
     image: selenium/standalone-chromium:latest
     ports:
-      - "7900:7900"
+      - "7900"
     expose:
       - "8888"
     shm_size: '1gb'
