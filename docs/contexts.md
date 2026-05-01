@@ -127,3 +127,53 @@ You can structure your project's step definitions across as many
 custom contexts as you like. See Behat's
 [contexts guide](https://docs.behat.org/en/latest/user_guide/context.html)
 for the underlying mechanics.
+
+## Mink-only contexts
+
+You do not need to extend `RawDrupalContext` to read extension
+parameters or resolve regions. A context that only needs to drive the
+browser can extend `RawMinkContext` (or `MinkContext`) and pull in two
+lightweight traits:
+
+- `Drupal\DrupalExtension\ParametersTrait` exposes `getParameter()`,
+  `getDrupalText()`, and `getDrupalSelector()`. It is the consumption
+  point for parameter, text, and selector access from any context,
+  regardless of whether it inherits from `RawDrupalContext`. The
+  context must also implement
+  `Drupal\DrupalExtension\Context\ParametersAwareInterface` so the
+  initializer knows to inject the parameter array.
+- `Drupal\DrupalExtension\RegionTrait` exposes `getRegion()`, which
+  resolves the human-readable region name through Mink's `region`
+  selector. The selector is registered by the Drupal extension
+  service container at compile time, so it is available before any
+  context is instantiated.
+
+```php
+<?php
+
+use Behat\MinkExtension\Context\RawMinkContext;
+use Drupal\DrupalExtension\Context\ParametersAwareInterface;
+use Drupal\DrupalExtension\ParametersTrait;
+use Drupal\DrupalExtension\RegionTrait;
+
+class CustomMinkContext extends RawMinkContext implements ParametersAwareInterface {
+
+  use ParametersTrait;
+  use RegionTrait;
+
+  /**
+   * @Then I should see the configured log_out link in the :region region
+   */
+  public function logoutLinkInRegion(string $region): void {
+    $log_out = $this->getDrupalText('log_out');
+    $element = $this->getRegion($region);
+    if (!$element->findLink($log_out)) {
+      throw new \RuntimeException(sprintf('Log out link "%s" not in region "%s".', $log_out, $region));
+    }
+  }
+
+}
+```
+
+The bundled `MinkContext`, `MarkupContext`, and `MessageContext`
+follow this pattern - none of them inherit from `RawDrupalContext`.
