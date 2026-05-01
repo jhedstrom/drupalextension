@@ -17,6 +17,7 @@ use Behat\Behat\Hook\Scope\AfterFeatureScope;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Hook\AfterFeature;
+use Behat\Hook\AfterScenario;
 use Behat\Hook\BeforeScenario;
 use Behat\Mink\Exception\ExpectationException;
 use Drupal\Core\Database\Database;
@@ -618,6 +619,64 @@ class FeatureContext extends RawDrupalContext {
   #[Given('I throw a test runtime exception with message :message')]
   public function throwTestRuntimeException(string $message): never {
     throw new \RuntimeException($message);
+  }
+
+  /**
+   * Asserts that a cookie with the given name is present in the session.
+   */
+  #[Then('the cookie :name exists')]
+  public function testAssertCookieExists(string $name): void {
+    $value = $this->getSession()->getCookie($name);
+    if ($value === NULL) {
+      throw new ExpectationException(sprintf('Expected cookie "%s" to exist, but it was not set.', $name), $this->getSession()->getDriver());
+    }
+  }
+
+  /**
+   * Asserts that a cookie with the given name is not present in the session.
+   */
+  #[Then('the cookie :name does not exist')]
+  public function testAssertCookieDoesNotExist(string $name): void {
+    $value = $this->getSession()->getCookie($name);
+    if ($value !== NULL) {
+      throw new ExpectationException(sprintf('Expected cookie "%s" to not exist, but it was set to "%s".', $name, $value), $this->getSession()->getDriver());
+    }
+  }
+
+  /**
+   * Installs a Drupal module via the module installer.
+   */
+  #[Given('I install a :module module')]
+  public function testInstallModule(string $module): void {
+    /** @var \Drupal\Core\Extension\ModuleInstallerInterface $installer */
+    $installer = \Drupal::service('module_installer');
+    $installer->install([$module]);
+  }
+
+  /**
+   * Uninstalls 'big_pipe' after every '@bigpipe' scenario.
+   *
+   * Subprocess scenarios install 'big_pipe' against the shared Drupal
+   * site, but the parent process's container has a stale view of the
+   * module list. Reading 'core.extension' directly (bypassing the
+   * cached configuration factory) reflects the real on-disk state, so
+   * the cleanup works whether the module was installed in this process
+   * or in a subprocess.
+   */
+  #[AfterScenario('@bigpipe')]
+  public function testUninstallBigPipeAfterScenario(): void {
+    $modules = \Drupal::configFactory()
+      ->reset('core.extension')
+      ->get('core.extension')
+      ->get('module') ?? [];
+
+    if (!array_key_exists('big_pipe', $modules)) {
+      return;
+    }
+
+    /** @var \Drupal\Core\Extension\ModuleInstallerInterface $installer */
+    $installer = \Drupal::service('module_installer');
+    $installer->uninstall(['big_pipe']);
   }
 
 }

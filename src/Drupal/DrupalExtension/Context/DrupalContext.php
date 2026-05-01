@@ -19,11 +19,14 @@ use Drupal\Driver\Capability\RoleCapabilityInterface;
 use Drupal\Driver\Capability\UserCapabilityInterface;
 use Drupal\Driver\Entity\EntityStub;
 use Drupal\Driver\Entity\EntityStubInterface;
+use Drupal\DrupalExtension\Context\Traits\BigPipeTrait;
 
 /**
  * Provides pre-built step definitions for interacting with Drupal.
  */
 class DrupalContext extends RawDrupalContext implements TranslatableContext {
+
+  use BigPipeTrait;
 
   /**
    * Returns list of definition translation resources paths.

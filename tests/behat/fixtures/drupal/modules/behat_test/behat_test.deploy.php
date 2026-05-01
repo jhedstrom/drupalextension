@@ -66,7 +66,10 @@ function behat_test_deploy_add_editorial_workflow(): string {
  *
  * The Standard profile enables these caching modules by default. They
  * interfere with Behat tests that assert exact page output, so we
- * uninstall them during provisioning.
+ * uninstall them during provisioning. Scenarios that exercise the
+ * BigPipe NOJS bypass (the '@bigpipe' tag triggered by 'BigPipeTrait')
+ * install 'big_pipe' explicitly with the 'I install a :module module'
+ * step.
  */
 function behat_test_deploy_uninstall_caching_modules(): string {
   $module_installer = \Drupal::service('module_installer');
