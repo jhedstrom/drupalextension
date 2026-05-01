@@ -1853,6 +1853,45 @@ EOD,
   }
 
   /**
+   * Tests the extract_info → validate pipeline with the inverse checks.
+   *
+   * Builds the info structure from a real PHP fixture (via reflection on
+   * its '#[Given]' / '#[When]' attributes) and feeds it into validate(),
+   * confirming the validator flags '@Given'/'@When' methods named with
+   * 'Assert' and step text containing 'should'.
+   */
+  public function testValidateInverseChecksThroughExtractInfo(): void {
+    $base_path = static::$tmp;
+    $context_dir = $base_path . DIRECTORY_SEPARATOR . 'src';
+    if (!is_dir($context_dir)) {
+      mkdir($context_dir, 0777, TRUE);
+    }
+
+    $class_name = 'MisnamedAssertContext';
+    $fixtures_dir = __DIR__ . '/../fixtures/docs';
+    copy($fixtures_dir . DIRECTORY_SEPARATOR . $class_name . '.php', $context_dir . DIRECTORY_SEPARATOR . $class_name . '.php');
+
+    $info = extract_info($context_dir, [], $base_path, 'Drupal\\DrupalExtension\\Tests\\Fixtures');
+    $results = validate($info, $base_path);
+
+    $methods = $results[$class_name]['methods'];
+
+    $this->assertFalse($methods['assertGivenAction']['method_naming']['pass']);
+    $this->assertSame(['Contains "Assert" in the method name (reserved for @Then)'], $methods['assertGivenAction']['method_naming']['messages']);
+
+    $this->assertFalse($methods['assertWhenAction']['method_naming']['pass']);
+    $this->assertSame(['Contains "Assert" in the method name (reserved for @Then)'], $methods['assertWhenAction']['method_naming']['messages']);
+
+    $this->assertFalse($methods['pageIsReady']['step_wording']['pass']);
+    $this->assertSame(['Contains "should" in the step (reserved for @Then)'], $methods['pageIsReady']['step_wording']['messages']);
+
+    $this->assertFalse($methods['requestSucceeds']['step_wording']['pass']);
+    $this->assertSame(['Contains "should" in the step (reserved for @Then)'], $methods['requestSucceeds']['step_wording']['messages']);
+
+    $this->assertTrue(has_validation_errors($results));
+  }
+
+  /**
    * Test extract_info excludes classes without step definitions.
    */
   public function testExtractInfoNoStepAnnotations(): void {
