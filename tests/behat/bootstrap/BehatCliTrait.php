@@ -267,6 +267,35 @@ EOL;
   }
 
   /**
+   * Renames 'regions:' to the deprecated 'region_map:' in the subprocess.
+   *
+   * Use after 'Given some behat configuration' to exercise the
+   * backward-compat path on 'DrupalExtension::loadParameters()' that
+   * merges legacy 'region_map' into the active map and emits the
+   * one-shot deprecation notice.
+   */
+  #[Given('the behat configuration uses the deprecated region_map')]
+  public function behatCliUseDeprecatedRegionMap(): void {
+    $config_file = $this->workingDir . DIRECTORY_SEPARATOR . 'behat.yml';
+    $yaml = Yaml::parse((string) file_get_contents($config_file));
+
+    foreach (['default', 'drupal'] as $profile) {
+      $extension = &$yaml[$profile]['extensions']['Drupal\DrupalExtension'];
+
+      if (!isset($extension['regions'])) {
+        unset($extension);
+        continue;
+      }
+
+      $extension['region_map'] = $extension['regions'];
+      unset($extension['regions']);
+      unset($extension);
+    }
+
+    file_put_contents($config_file, Yaml::dump($yaml, 4, 2));
+  }
+
+  /**
    * Asserts that behat failed with the given assertion error.
    */
   #[Then('it should fail with an error:')]

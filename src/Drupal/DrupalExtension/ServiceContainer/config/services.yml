@@ -30,7 +30,7 @@ parameters:
 
   # Parameters.
   drupal.parameters: {}
-  drupal.region_map: {}
+  drupal.regions: {}
 
 services:
   drupal.drupal:
@@ -80,6 +80,6 @@ services:
     arguments:
       # inject the CSSSelector
       - "@mink.selector.css"
-      - "%drupal.region_map%"
+      - "%drupal.regions%"
     tags:
       - { name: mink.selector, alias: region }

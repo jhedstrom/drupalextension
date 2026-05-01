@@ -82,7 +82,10 @@ class BehatDistYmlTest extends TestCase {
 
     $tree = $this->buildDrupalExtensionTree();
 
-    $schema_keys = array_keys($tree->getChildren());
+    // Deprecated keys are intentionally absent from the recommended dist
+    // file - users should be steered towards the current names.
+    $deprecated_keys = ['region_map'];
+    $schema_keys = array_diff(array_keys($tree->getChildren()), $deprecated_keys);
     foreach ($schema_keys as $key) {
       $this->assertContains($key, $all_dist_keys, sprintf('behat.dist.yml missing DrupalExtension key "%s" in all profiles.', $key));
     }

@@ -10,6 +10,13 @@ namespace Drupal\DrupalExtension;
  * These parameters are placed in behat.yml under 'Drupal\DrupalExtension'
  * and can be used to define commonly customized aspects of the Drupal
  * installation such as CSS selectors, interface text or region maps.
+ *
+ * This is the consumption point for parameter, text, and selector access
+ * from any context, regardless of whether it inherits from
+ * 'RawDrupalContext'. A context only needs to implement
+ * 'ParametersAwareInterface' and 'use' this trait; 'DrupalAwareInitializer'
+ * injects the parameter array via 'setParameters()' before any scenario
+ * runs. No Drupal driver bootstrap is required.
  */
 trait ParametersTrait {
 

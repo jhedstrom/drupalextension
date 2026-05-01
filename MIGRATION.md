@@ -234,6 +234,38 @@ in the table above. Other entries under
 `Drupal\DrupalExtension.selectors:` (`login_form_selector`,
 `logged_in_selector`) are unaffected.
 
+## Configuration: `region_map` renamed to `regions`
+
+The `region_map` configuration key under `Drupal\DrupalExtension` has been
+renamed to `regions`. The structure is unchanged.
+
+Update `behat.yml`:
+
+```yaml
+# 5.x and pre-rename 6.0
+default:
+  extensions:
+    Drupal\DrupalExtension:
+      region_map:
+        Header: '#header'
+        Content: '#main'
+
+# 6.0
+default:
+  extensions:
+    Drupal\DrupalExtension:
+      regions:
+        Header: '#header'
+        Content: '#main'
+```
+
+`region_map` still works during the 6.0 cycle - it emits a one-shot
+deprecation notice on extension load and is removed in 6.1. If both
+keys are present, an entry under `regions` overrides the same key
+under `region_map`. The merged map is exposed to contexts as
+`getParameter('regions')` and to Mink's `region` selector as the
+`drupal.regions` container parameter.
+
 ## Configuration: `ajax_timeout`
 
 `ajax_timeout` has moved from `Drupal\MinkExtension` to `Drupal\DrupalExtension`.

@@ -79,7 +79,7 @@ default:
       blackbox: ~
       login_wait: 0
       # Region map in the static HTML fixture.
-      region_map:
+      regions:
         static content: "#static-content"
         static footer: "#static-footer"
         static navigation: "#static-nav"
@@ -154,7 +154,7 @@ drupal:
         drupal_root: "/var/www/html/build/web"
       drush:
         root: "/var/www/html/build/web"
-      region_map:
+      regions:
         main content: "#main"
       selectors:
         messages:

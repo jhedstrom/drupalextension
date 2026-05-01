@@ -58,8 +58,9 @@ default:
       login_field: name
       # Enable the blackbox driver.
       blackbox: ~
-      # Map of named regions to CSS selectors.
-      region_map:
+      # Map of named regions to CSS selectors. Region steps such as
+      # 'I press :button in the :region region' resolve against this map.
+      regions:
         Content: '#main .region-content'
         Header: '#header'
         Footer: '#footer'
@@ -122,7 +123,7 @@ drupal:
         binary: vendor/bin/drush
         root: /var/www/html/web
         global_options: ~
-      region_map:
+      regions:
         Content: '#main .region-content'
         Header: '#header'
         Footer: '#footer'
