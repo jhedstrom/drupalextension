@@ -4,22 +4,34 @@ declare(strict_types=1);
 
 namespace Drupal\DrupalExtension\Context;
 
-use Behat\Transformation\Transform;
-use Behat\Hook\BeforeScenario;
-use Behat\Hook\AfterScenario;
+use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\ScenarioScope;
 use Behat\Gherkin\Node\TableNode;
+use Behat\Hook\AfterScenario;
+use Behat\Hook\BeforeScenario;
+use Behat\Transformation\Transform;
+use Drupal\Component\Utility\Random;
 
 /**
  * Transform tokens into random variables.
+ *
+ * Operates purely on Gherkin step text - no Mink session, no Drupal driver.
+ * Can be registered in any Behat suite, including ones that load neither
+ * 'Drupal\MinkExtension' nor 'Drupal\DrupalExtension'.
  */
-class RandomContext extends RawDrupalContext {
+class RandomContext implements Context {
+
   /**
    * Tracks variable names for consistent replacement during a given scenario.
    *
    * @var array<string, string>
    */
   protected array $values = [];
+
+  /**
+   * Random string generator.
+   */
+  private ?Random $random = NULL;
 
   /**
    * The regex to use for variable replacement.
@@ -82,7 +94,7 @@ class RandomContext extends RawDrupalContext {
       }
       foreach ($variables_found as $variable_found) {
         if (!isset($this->values[$variable_found])) {
-          $value = $this->getDriver()->getRandom()->name(10);
+          $value = $this->getRandom()->name(10);
           // Value forced to lowercase to ensure it is machine-readable.
           $this->values[$variable_found] = strtolower((string) $value);
         }
@@ -96,6 +108,13 @@ class RandomContext extends RawDrupalContext {
   #[AfterScenario]
   public function afterScenarioResetVariables(ScenarioScope $scope): void {
     $this->values = [];
+  }
+
+  /**
+   * Lazily resolves the random string generator.
+   */
+  private function getRandom(): Random {
+    return $this->random ??= new Random();
   }
 
 }

@@ -36,3 +36,32 @@ Feature: RandomContext functionality
       """
     When I run behat with drupal profile
     Then it should fail
+
+  # The two scenarios below prove that 'RandomContext' can run without the
+  # Drupal API driver. They register against the 'default' (blackbox) profile
+  # and rely on the placeholder transform happening before the assertion.
+
+  @test-blackbox @random
+  Scenario: Assert random variable transform passes in blackbox profile
+    Given some behat configuration
+    And scenario steps tagged with "@test-blackbox @random":
+      """
+      Given I am at "index.html"
+      Then I should not see the text "<?token>"
+      """
+    When I run behat
+    Then it should pass with:
+      """
+      1 scenario (1 passed)
+      """
+
+  @test-blackbox @random
+  Scenario: Assert random variable transform fails when token text expected
+    Given some behat configuration
+    And scenario steps tagged with "@test-blackbox @random":
+      """
+      Given I am at "index.html"
+      Then I should see the text "<?token>"
+      """
+    When I run behat
+    Then it should fail

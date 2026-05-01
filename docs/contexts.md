@@ -18,7 +18,7 @@ declared explicitly.
 | `Drupal\DrupalExtension\Context\ConfigContext` | Steps that read and write Drupal configuration. |
 | `Drupal\DrupalExtension\Context\DrushContext` | Steps that invoke arbitrary Drush commands. |
 | `Drupal\DrupalExtension\Context\MailContext` | Steps that assert against the Drupal mail collector. |
-| `Drupal\DrupalExtension\Context\RandomContext` | Transforms placeholders such as `<?title>` into random strings. |
+| `Drupal\DrupalExtension\Context\RandomContext` | Transforms placeholders such as `<?title>` into random strings. Pure Behat context - no Drupal driver, no Mink session. |
 
 For a complete reference of every step each context exposes, see
 [`STEPS.md`](../STEPS.md).
@@ -177,3 +177,8 @@ class CustomMinkContext extends RawMinkContext implements ParametersAwareInterfa
 
 The bundled `MinkContext`, `MarkupContext`, and `MessageContext`
 follow this pattern - none of them inherit from `RawDrupalContext`.
+
+`RandomContext` goes one step further: it implements
+`Behat\Behat\Context\Context` directly and uses no Mink session at all.
+A consumer can register it in any Behat suite, even one that does not
+load `Drupal\MinkExtension`.

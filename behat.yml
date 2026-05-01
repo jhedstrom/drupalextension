@@ -47,6 +47,7 @@ default:
         - Drupal\DrupalExtension\Context\DrupalContext
         - Drupal\DrupalExtension\Context\MessageContext
         - Drupal\DrupalExtension\Context\MarkupContext
+        - Drupal\DrupalExtension\Context\RandomContext
         # Helper contexts for test execution and reporting.
         - FeatureContext
         - BehatCliContext
