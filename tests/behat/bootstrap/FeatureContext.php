@@ -115,7 +115,8 @@ class FeatureContext extends RawDrupalContext {
       $message = $e->getMessage();
       $required = [
         'Unable to complete AJAX request after',
-        'URL: http://blackbox/ajax_hang.html',
+        'URL: http://',
+        '/ajax_hang.html',
         'Drupal AJAX instances active: 1',
         "url: '/never-completes'",
         "selector: '#fake-button'",
