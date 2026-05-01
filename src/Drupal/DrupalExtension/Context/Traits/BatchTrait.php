@@ -2,16 +2,26 @@
 
 declare(strict_types=1);
 
-namespace Drupal\DrupalExtension\Context;
+namespace Drupal\DrupalExtension\Context\Traits;
 
-use Behat\Step\Given;
 use Behat\Gherkin\Node\TableNode;
-use Behat\MinkExtension\Context\RawMinkContext;
+use Behat\Step\Given;
 
 /**
- * Extensions to the Mink Extension.
+ * Drupal-specific batch and queue helpers.
+ *
+ * Both steps are Drupal-aware: 'iWaitForTheBatchJobToFinish' polls the
+ * '#updateprogress' element rendered by Drupal's Batch API, and
+ * 'thereIsAnItemInTheSystemQueue' writes directly to the 'queue' table
+ * managed by Drupal's SystemQueue. The trait is therefore consumed by the
+ * Drupal-aware 'DrupalContext' rather than a Mink-only context, which keeps
+ * '\Drupal::' calls behind the API driver and avoids silent failures under
+ * Blackbox/Drush drivers.
+ *
+ * The host class is expected to extend 'RawDrupalContext' so '$this->getSession()'
+ * is available and the Drupal kernel is bootstrapped.
  */
-class BatchContext extends RawMinkContext {
+trait BatchTrait {
 
   /**
    * Wait for the Batch API to finish.
@@ -43,10 +53,8 @@ class BatchContext extends RawMinkContext {
    */
   #[Given('the following item is in the system queue:')]
   public function thereIsAnItemInTheSystemQueue(TableNode $table): void {
-    // Gather the data.
     $fields = $table->getRowsHash();
 
-    // Default data field separately since this is longish.
     if (empty($fields['data'])) {
       $fields['data'] = json_encode([]);
     }

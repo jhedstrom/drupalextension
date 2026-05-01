@@ -1,4 +1,4 @@
-Feature: BatchContext
+Feature: Drupal Batch API and queue
   As a developer
   I want to create queue items and manage batch operations
   So that I can test background processing behaviour

@@ -16,9 +16,9 @@
 #    selectors mapped to the Drupal theme). This dual testing proves that
 #    the contexts are truly driver-agnostic.
 #
-# 3. Drupal API contexts (e.g. DrupalContext, DrushContext, BatchContext)
-#    require a running Drupal site and the API driver. They can only run
-#    in the drupal profile.
+# 3. Drupal API contexts (e.g. DrupalContext, DrushContext) require a
+#    running Drupal site and the API driver. They can only run in the
+#    drupal profile.
 #
 # Profile-selection tags control which profile runs a given scenario.
 # These use a "test-" prefix to distinguish them from functional tags
@@ -128,7 +128,6 @@ drupal:
       contexts:
         # Contexts under tests - Drupal contexts.
         - Drupal\DrupalExtension\Context\ConfigContext
-        - Drupal\DrupalExtension\Context\BatchContext
         - Drupal\DrupalExtension\Context\DrupalContext
         - Drupal\DrupalExtension\Context\DrushContext
         - Drupal\DrupalExtension\Context\MinkContext
