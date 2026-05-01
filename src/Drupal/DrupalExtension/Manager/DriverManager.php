@@ -2,11 +2,7 @@
 
 declare(strict_types=1);
 
-/**
- * @file
- * Contains \Drupal\DrupalDriverManager.
- */
-namespace Drupal;
+namespace Drupal\DrupalExtension\Manager;
 
 use Behat\Testwork\Environment\Environment;
 use Drupal\Driver\DriverInterface;
@@ -14,7 +10,7 @@ use Drupal\Driver\DriverInterface;
 /**
  * Drupal driver manager.
  */
-class DrupalDriverManager implements DrupalDriverManagerInterface {
+class DriverManager implements DriverManagerInterface {
 
   /**
    * The name of the default driver.

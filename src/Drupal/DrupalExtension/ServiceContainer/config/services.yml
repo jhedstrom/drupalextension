@@ -1,14 +1,14 @@
 parameters:
   # Drupal driver manager.
-  drupal.drupal.class: Drupal\DrupalDriverManager
+  drupal.drupal.class: Drupal\DrupalExtension\Manager\DriverManager
   drupal.drupal.default_session: blackbox
   drupal.drupal.api_driver: drush
 
   # Drupal authentication manager.
-  drupal.authentication_manager.class: Drupal\DrupalExtension\Manager\DrupalAuthenticationManager
+  drupal.authentication_manager.class: Drupal\DrupalExtension\Manager\AuthenticationManager
 
   # Drupal user manager.
-  drupal.user_manager.class: Drupal\DrupalExtension\Manager\DrupalUserManager
+  drupal.user_manager.class: Drupal\DrupalExtension\Manager\UserManager
 
   # Random generator.
   drupal.random.class: Drupal\Component\Utility\Random

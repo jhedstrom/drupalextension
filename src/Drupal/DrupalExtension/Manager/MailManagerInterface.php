@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Drupal;
+namespace Drupal\DrupalExtension\Manager;
 
 /**
  * Interface for classes that manage mail created during tests.
  */
-interface DrupalMailManagerInterface {
+interface MailManagerInterface {
 
   /**
    * Collect outbound mail for analysis.

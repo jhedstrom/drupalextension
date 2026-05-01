@@ -317,6 +317,50 @@ rather than arbitrary parameters and are unaffected.
 Update any subclass or custom context that implements the interface,
 uses the trait, or calls the renamed methods directly.
 
+## Manager class renames
+
+The four manager classes and their interfaces have been consolidated under
+`Drupal\DrupalExtension\Manager\` and have lost their `Drupal` prefix. The
+two driver/mail managers were previously squatting on the global `Drupal\`
+namespace; the two existing managers under `Drupal\DrupalExtension\Manager\`
+already lived in the right place but kept the redundant prefix. All four now
+sit alongside each other with the prefix removed, matching the precedent set
+by the `DrupalParametersTrait` -> `ParametersTrait` rename.
+
+| 5.x                                                                  | 6.0                                                                  |
+|----------------------------------------------------------------------|----------------------------------------------------------------------|
+| `Drupal\DrupalDriverManager`                                         | `Drupal\DrupalExtension\Manager\DriverManager`                       |
+| `Drupal\DrupalDriverManagerInterface`                                | `Drupal\DrupalExtension\Manager\DriverManagerInterface`              |
+| `Drupal\DrupalMailManager`                                           | `Drupal\DrupalExtension\Manager\MailManager`                         |
+| `Drupal\DrupalMailManagerInterface`                                  | `Drupal\DrupalExtension\Manager\MailManagerInterface`                |
+| `Drupal\DrupalExtension\Manager\DrupalUserManager`                   | `Drupal\DrupalExtension\Manager\UserManager`                         |
+| `Drupal\DrupalExtension\Manager\DrupalUserManagerInterface`          | `Drupal\DrupalExtension\Manager\UserManagerInterface`                |
+| `Drupal\DrupalExtension\Manager\DrupalAuthenticationManager`         | `Drupal\DrupalExtension\Manager\AuthenticationManager`               |
+| `Drupal\DrupalExtension\Manager\DrupalAuthenticationManagerInterface`| `Drupal\DrupalExtension\Manager\AuthenticationManagerInterface`      |
+
+`FastLogoutInterface` already lived under `Drupal\DrupalExtension\Manager\`
+without a prefix and is unchanged.
+
+Update any subclass, custom context, or test double that imports these
+classes by their old fully-qualified name. If you implement
+`DriverManagerInterface` or `MailManagerInterface` directly, also see
+[Service interface changes](#service-interface-changes) for unrelated
+method-signature breaks on `MailManagerInterface`.
+
+### Service container parameters
+
+If you override the manager service classes in your own Behat config, the
+container parameter values change accordingly:
+
+| 5.x parameter value                                          | 6.0 parameter value                                            |
+|--------------------------------------------------------------|----------------------------------------------------------------|
+| `drupal.drupal.class: Drupal\DrupalDriverManager`            | `drupal.drupal.class: Drupal\DrupalExtension\Manager\DriverManager`        |
+| `drupal.authentication_manager.class: Drupal\DrupalExtension\Manager\DrupalAuthenticationManager` | `drupal.authentication_manager.class: Drupal\DrupalExtension\Manager\AuthenticationManager` |
+| `drupal.user_manager.class: Drupal\DrupalExtension\Manager\DrupalUserManager` | `drupal.user_manager.class: Drupal\DrupalExtension\Manager\UserManager`    |
+
+The service ids (`drupal.drupal`, `drupal.authentication_manager`,
+`drupal.user_manager`) are unchanged.
+
 ## Service interface changes
 
 `DrupalMailManagerInterface::getMail()` and `::clearMail()` no longer accept

@@ -9,7 +9,7 @@ use Drupal\Driver\Core\Field\FieldClassifierInterface;
 use Drupal\Driver\DriverInterface;
 use Drupal\Driver\DrupalDriver;
 use Drupal\Driver\Entity\EntityStub;
-use Drupal\DrupalDriverManagerInterface;
+use Drupal\DrupalExtension\Manager\DriverManagerInterface;
 use Drupal\DrupalExtension\Context\RawDrupalContext;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
@@ -32,7 +32,7 @@ class RawDrupalContextTest extends TestCase {
   public function testParseEntityFieldsRequiresDrupalDriver(): void {
     $driver = $this->createMock(DriverInterface::class);
 
-    $drupal = $this->createMock(DrupalDriverManagerInterface::class);
+    $drupal = $this->createMock(DriverManagerInterface::class);
     $drupal->method('getDriver')->willReturn($driver);
 
     $context = new RawDrupalContext();
@@ -90,7 +90,7 @@ class RawDrupalContextTest extends TestCase {
     $driver = $this->createMock(DrupalDriver::class);
     $driver->method('getCore')->willReturn($core);
 
-    $drupal = $this->createMock(DrupalDriverManagerInterface::class);
+    $drupal = $this->createMock(DriverManagerInterface::class);
     $drupal->method('getDriver')->willReturn($driver);
 
     $context = new RawDrupalContext();

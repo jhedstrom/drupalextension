@@ -9,7 +9,7 @@ use Drupal\Driver\Entity\EntityStubInterface;
 /**
  * Default implementation of the Drupal user manager service.
  */
-class DrupalUserManager implements DrupalUserManagerInterface {
+class UserManager implements UserManagerInterface {
 
   /**
    * The user stub representing the currently logged in user.

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal;
+namespace Drupal\DrupalExtension\Manager;
 
 use Drupal\Driver\Capability\MailCapabilityInterface;
 
@@ -13,7 +13,7 @@ use Drupal\Driver\Capability\MailCapabilityInterface;
  * collects outbound mail and prevents it from being sent. Therefore using
  * this implementation, mail is collected if and only if sending is disabled.
  */
-class DrupalMailManager implements DrupalMailManagerInterface {
+class MailManager implements MailManagerInterface {
 
   public function __construct(
     /**

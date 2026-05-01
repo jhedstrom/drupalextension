@@ -5,16 +5,16 @@ declare(strict_types=1);
 namespace Drupal\DrupalExtension\Tests;
 
 use Drupal\Driver\Capability\MailCapabilityInterface;
-use Drupal\DrupalMailManager;
+use Drupal\DrupalExtension\Manager\MailManager;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Tests the DrupalMailManager class.
+ * Tests the MailManager class.
  */
-#[CoversClass(DrupalMailManager::class)]
-class DrupalMailManagerTest extends TestCase {
+#[CoversClass(MailManager::class)]
+class MailManagerTest extends TestCase {
 
   /**
    * Tests that manager methods delegate to the driver.
@@ -35,7 +35,7 @@ class DrupalMailManagerTest extends TestCase {
       $driver->expects($this->once())->method($extra_driver_method);
     }
 
-    $manager = new DrupalMailManager($driver);
+    $manager = new MailManager($driver);
     $manager->$method();
   }
 
@@ -57,7 +57,7 @@ class DrupalMailManagerTest extends TestCase {
     $expected = [['to' => 'a@b.com', 'subject' => 'test', 'body' => 'hello']];
     $driver = $this->createMock(MailCapabilityInterface::class);
     $driver->expects($this->once())->method('mailGet')->willReturn($expected);
-    $manager = new DrupalMailManager($driver);
+    $manager = new MailManager($driver);
     $this->assertSame($expected, $manager->getMail());
   }
 

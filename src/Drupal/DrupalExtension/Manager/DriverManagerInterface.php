@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal;
+namespace Drupal\DrupalExtension\Manager;
 
 use Behat\Testwork\Environment\Environment;
 use Drupal\Driver\DriverInterface;
@@ -10,7 +10,7 @@ use Drupal\Driver\DriverInterface;
 /**
  * Interface for managing Drupal drivers.
  */
-interface DrupalDriverManagerInterface {
+interface DriverManagerInterface {
 
   /**
    * Register a new driver.

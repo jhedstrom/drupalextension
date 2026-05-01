@@ -8,10 +8,10 @@ use Behat\Behat\Context\Initializer\ContextInitializer;
 use Behat\Behat\Context\Context;
 use Behat\Testwork\Hook\HookDispatcher;
 
-use Drupal\DrupalDriverManager;
 use Drupal\DrupalExtension\Context\DrupalAwareInterface;
-use Drupal\DrupalExtension\Manager\DrupalAuthenticationManagerInterface;
-use Drupal\DrupalExtension\Manager\DrupalUserManagerInterface;
+use Drupal\DrupalExtension\Manager\AuthenticationManagerInterface;
+use Drupal\DrupalExtension\Manager\DriverManager;
+use Drupal\DrupalExtension\Manager\UserManagerInterface;
 use Drupal\DrupalExtension\ParametersAwareInterface;
 
 /**
@@ -22,18 +22,18 @@ class DrupalAwareInitializer implements ContextInitializer {
   /**
    * Constructs a DrupalAwareInitializer object.
    *
-   * @param \Drupal\DrupalDriverManager $drupalDriverManager
+   * @param \Drupal\DrupalExtension\Manager\DriverManager $drupalDriverManager
    *   The Drupal driver manager.
    * @param array<string, mixed> $parameters
    *   Configuration parameters.
    * @param \Behat\Testwork\Hook\HookDispatcher $hookDispatcher
    *   The hook dispatcher.
-   * @param \Drupal\DrupalExtension\Manager\DrupalAuthenticationManagerInterface $drupalAuthenticationManager
+   * @param \Drupal\DrupalExtension\Manager\AuthenticationManagerInterface $drupalAuthenticationManager
    *   The Drupal authentication manager.
-   * @param \Drupal\DrupalExtension\Manager\DrupalUserManagerInterface $drupalUserManager
+   * @param \Drupal\DrupalExtension\Manager\UserManagerInterface $drupalUserManager
    *   The Drupal user manager.
    */
-  public function __construct(private readonly DrupalDriverManager $drupalDriverManager, private readonly array $parameters, private readonly HookDispatcher $hookDispatcher, private readonly DrupalAuthenticationManagerInterface $drupalAuthenticationManager, private readonly DrupalUserManagerInterface $drupalUserManager) {
+  public function __construct(private readonly DriverManager $drupalDriverManager, private readonly array $parameters, private readonly HookDispatcher $hookDispatcher, private readonly AuthenticationManagerInterface $drupalAuthenticationManager, private readonly UserManagerInterface $drupalUserManager) {
   }
 
   /**

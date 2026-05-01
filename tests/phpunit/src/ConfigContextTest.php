@@ -7,7 +7,7 @@ namespace Drupal\DrupalExtension\Tests;
 use Behat\Gherkin\Node\TableNode;
 use PHPUnit\Framework\MockObject\MockObject;
 use Drupal\Driver\Capability\ConfigCapabilityInterface;
-use Drupal\DrupalDriverManagerInterface;
+use Drupal\DrupalExtension\Manager\DriverManagerInterface;
 use Drupal\DrupalExtension\Context\ConfigContext;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -35,7 +35,7 @@ class ConfigContextTest extends TestCase {
   protected function setUp(): void {
     $this->context = new ConfigContext();
     $this->driver = $this->createMock(ConfigCapabilityInterface::class);
-    $drupal = $this->createMock(DrupalDriverManagerInterface::class);
+    $drupal = $this->createMock(DriverManagerInterface::class);
     $drupal->method('getDriver')->willReturn($this->driver);
     $this->context->setDrupal($drupal);
   }

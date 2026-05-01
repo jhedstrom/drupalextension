@@ -12,26 +12,25 @@ use Behat\Mink\Exception\ExpectationException;
 use Behat\Mink\Mink;
 use Drupal\Driver\Capability\AuthenticationCapabilityInterface;
 use Drupal\Driver\Entity\EntityStubInterface;
-use Drupal\DrupalDriverManagerInterface;
 use Drupal\DrupalExtension\MinkAwareTrait;
 use Drupal\DrupalExtension\ParametersTrait;
 
 /**
  * Default implementation of the Drupal authentication manager service.
  */
-class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterface, FastLogoutInterface {
+class AuthenticationManager implements AuthenticationManagerInterface, FastLogoutInterface {
 
   use MinkAwareTrait;
   use ParametersTrait;
 
   /**
-   * Constructs a DrupalAuthenticationManager object.
+   * Constructs an AuthenticationManager object.
    *
    * @param \Behat\Mink\Mink $mink
    *   The Mink instance.
-   * @param \Drupal\DrupalExtension\Manager\DrupalUserManagerInterface $userManager
+   * @param \Drupal\DrupalExtension\Manager\UserManagerInterface $userManager
    *   The Drupal user manager.
-   * @param \Drupal\DrupalDriverManagerInterface $driverManager
+   * @param \Drupal\DrupalExtension\Manager\DriverManagerInterface $driverManager
    *   The Drupal driver manager.
    * @param array<string, mixed> $minkParameters
    *   Mink configuration parameters.
@@ -40,8 +39,8 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
    */
   public function __construct(
     Mink $mink,
-    protected DrupalUserManagerInterface $userManager,
-    protected DrupalDriverManagerInterface $driverManager,
+    protected UserManagerInterface $userManager,
+    protected DriverManagerInterface $driverManager,
     array $minkParameters,
     array $parameters,
   ) {

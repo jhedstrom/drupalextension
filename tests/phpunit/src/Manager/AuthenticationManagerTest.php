@@ -15,21 +15,21 @@ use Behat\Mink\Exception\DriverException;
 use Behat\Mink\Mink;
 use Behat\Mink\Session;
 use Drupal\Driver\Capability\AuthenticationCapabilityInterface;
-use Drupal\DrupalDriverManagerInterface;
-use Drupal\DrupalExtension\Manager\DrupalAuthenticationManager;
-use Drupal\DrupalExtension\Manager\DrupalAuthenticationManagerInterface;
-use Drupal\DrupalExtension\Manager\DrupalUserManager;
-use Drupal\DrupalExtension\Manager\DrupalUserManagerInterface;
+use Drupal\DrupalExtension\Manager\DriverManagerInterface;
+use Drupal\DrupalExtension\Manager\AuthenticationManager;
+use Drupal\DrupalExtension\Manager\AuthenticationManagerInterface;
+use Drupal\DrupalExtension\Manager\UserManager;
+use Drupal\DrupalExtension\Manager\UserManagerInterface;
 use Drupal\DrupalExtension\Manager\FastLogoutInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Tests for DrupalAuthenticationManager.
+ * Tests for AuthenticationManager.
  */
-#[CoversClass(DrupalAuthenticationManager::class)]
-class DrupalAuthenticationManagerTest extends TestCase {
+#[CoversClass(AuthenticationManager::class)]
+class AuthenticationManagerTest extends TestCase {
 
   private const DRUPAL_PARAMS = [
     'text' => [
@@ -56,7 +56,7 @@ class DrupalAuthenticationManagerTest extends TestCase {
    */
   public function testImplementsInterfaces(): void {
     $manager = $this->createManager();
-    $this->assertInstanceOf(DrupalAuthenticationManagerInterface::class, $manager);
+    $this->assertInstanceOf(AuthenticationManagerInterface::class, $manager);
     $this->assertInstanceOf(FastLogoutInterface::class, $manager);
   }
 
@@ -75,7 +75,7 @@ class DrupalAuthenticationManagerTest extends TestCase {
     // @phpstan-ignore method.notFound
     $session->method('isStarted')->willReturn(TRUE);
 
-    $user_manager = new DrupalUserManager();
+    $user_manager = new UserManager();
     $driver_manager = $this->createDriverManagerMock();
     $manager = $this->createManager($session, $user_manager, $driver_manager);
 
@@ -197,7 +197,7 @@ class DrupalAuthenticationManagerTest extends TestCase {
     $auth_driver = $this->createAuthDriverMock();
     $auth_driver->expects($this->once())->method('login');
 
-    $driver_manager = $this->createMock(DrupalDriverManagerInterface::class);
+    $driver_manager = $this->createMock(DriverManagerInterface::class);
     $driver_manager->method('getDriver')->willReturn($auth_driver);
 
     $manager = $this->createManager($session, NULL, $driver_manager);
@@ -216,7 +216,7 @@ class DrupalAuthenticationManagerTest extends TestCase {
     // @phpstan-ignore method.notFound
     $session->method('getCurrentUrl')->willReturn('http://localhost/user/logout');
 
-    $user_manager = new DrupalUserManager();
+    $user_manager = new UserManager();
     $user_manager->setCurrentUser(new EntityStub('user', NULL, ['name' => 'admin']));
 
     $driver_manager = $this->createDriverManagerMock();
@@ -239,7 +239,7 @@ class DrupalAuthenticationManagerTest extends TestCase {
     // @phpstan-ignore method.notFound
     $session->method('getCurrentUrl')->willReturn('http://localhost/user/logout/confirm');
 
-    $user_manager = new DrupalUserManager();
+    $user_manager = new UserManager();
     $driver_manager = $this->createDriverManagerMock();
     $manager = $this->createManager($session, $user_manager, $driver_manager);
     $manager->logout();
@@ -276,7 +276,7 @@ class DrupalAuthenticationManagerTest extends TestCase {
     $auth_driver = $this->createAuthDriverMock();
     $auth_driver->expects($this->once())->method('logout');
 
-    $driver_manager = $this->createMock(DrupalDriverManagerInterface::class);
+    $driver_manager = $this->createMock(DriverManagerInterface::class);
     $driver_manager->method('getDriver')->willReturn($auth_driver);
 
     $manager = $this->createManager($session, NULL, $driver_manager);
@@ -330,7 +330,7 @@ class DrupalAuthenticationManagerTest extends TestCase {
     $mink = new Mink(['default' => $session]);
     $mink->setDefaultSessionName('default');
 
-    $manager = new DrupalAuthenticationManager($mink, new DrupalUserManager(), $this->createDriverManagerMock(), self::MINK_PARAMS, self::DRUPAL_PARAMS);
+    $manager = new AuthenticationManager($mink, new UserManager(), $this->createDriverManagerMock(), self::MINK_PARAMS, self::DRUPAL_PARAMS);
     $this->assertFalse($manager->loggedIn());
   }
 
@@ -366,11 +366,11 @@ class DrupalAuthenticationManagerTest extends TestCase {
     $mink = new Mink(['default' => $session]);
     $mink->setDefaultSessionName('default');
 
-    $user_manager = new DrupalUserManager();
+    $user_manager = new UserManager();
     $user_manager->setCurrentUser(new EntityStub('user', NULL, ['name' => 'admin']));
 
     $driver_manager = $this->createDriverManagerMock();
-    $manager = new DrupalAuthenticationManager($mink, $user_manager, $driver_manager, self::MINK_PARAMS, self::DRUPAL_PARAMS);
+    $manager = new AuthenticationManager($mink, $user_manager, $driver_manager, self::MINK_PARAMS, self::DRUPAL_PARAMS);
     $manager->fastLogout();
 
     $this->assertFalse($user_manager->getCurrentUser());
@@ -388,7 +388,7 @@ class DrupalAuthenticationManagerTest extends TestCase {
     $mink->setDefaultSessionName('default');
 
     $driver_manager = $this->createDriverManagerMock();
-    $manager = new DrupalAuthenticationManager($mink, new DrupalUserManager(), $driver_manager, self::MINK_PARAMS, self::DRUPAL_PARAMS);
+    $manager = new AuthenticationManager($mink, new UserManager(), $driver_manager, self::MINK_PARAMS, self::DRUPAL_PARAMS);
     $manager->fastLogout();
   }
 
@@ -405,10 +405,10 @@ class DrupalAuthenticationManagerTest extends TestCase {
     $auth_driver = $this->createAuthDriverMock();
     $auth_driver->expects($this->once())->method('logout');
 
-    $driver_manager = $this->createMock(DrupalDriverManagerInterface::class);
+    $driver_manager = $this->createMock(DriverManagerInterface::class);
     $driver_manager->method('getDriver')->willReturn($auth_driver);
 
-    $manager = new DrupalAuthenticationManager($mink, new DrupalUserManager(), $driver_manager, self::MINK_PARAMS, self::DRUPAL_PARAMS);
+    $manager = new AuthenticationManager($mink, new UserManager(), $driver_manager, self::MINK_PARAMS, self::DRUPAL_PARAMS);
     $manager->fastLogout();
   }
 
@@ -452,12 +452,12 @@ class DrupalAuthenticationManagerTest extends TestCase {
   }
 
   /**
-   * Creates a DrupalDriverManagerInterface mock with a bootstrapped driver.
+   * Creates a DriverManagerInterface mock with a bootstrapped driver.
    */
-  private function createDriverManagerMock(): DrupalDriverManagerInterface {
+  private function createDriverManagerMock(): DriverManagerInterface {
     $driver = $this->createMock(DriverInterface::class);
     $driver->method('isBootstrapped')->willReturn(TRUE);
-    $driver_manager = $this->createMock(DrupalDriverManagerInterface::class);
+    $driver_manager = $this->createMock(DriverManagerInterface::class);
     $driver_manager->method('getDriver')->willReturn($driver);
     return $driver_manager;
   }
@@ -526,7 +526,7 @@ class DrupalAuthenticationManagerTest extends TestCase {
     $params = self::DRUPAL_PARAMS;
     $params['login_wait'] = 1;
 
-    $user_manager = new DrupalUserManager();
+    $user_manager = new UserManager();
     $manager = $this->createManager($session, $user_manager, NULL, $params);
     $manager->logIn(new EntityStub('user', NULL, ['name' => 'admin', 'pass' => 'password']));
 
@@ -563,25 +563,25 @@ class DrupalAuthenticationManagerTest extends TestCase {
   }
 
   /**
-   * Creates a DrupalAuthenticationManager with optional overrides.
+   * Creates a AuthenticationManager with optional overrides.
    *
    * @param \Behat\Mink\Session|null $session
    *   Optional Mink session override.
-   * @param \Drupal\DrupalExtension\Manager\DrupalUserManagerInterface|null $user_manager
+   * @param \Drupal\DrupalExtension\Manager\UserManagerInterface|null $user_manager
    *   Optional user manager override.
-   * @param \Drupal\DrupalDriverManagerInterface|null $driver_manager
+   * @param \Drupal\DriverManagerInterface|null $driver_manager
    *   Optional driver manager override.
    * @param array<string, mixed>|null $drupal_params
    *   Optional Drupal parameters override.
    */
-  private function createManager(?Session $session = NULL, ?DrupalUserManagerInterface $user_manager = NULL, ?DrupalDriverManagerInterface $driver_manager = NULL, ?array $drupal_params = NULL): DrupalAuthenticationManager {
+  private function createManager(?Session $session = NULL, ?UserManagerInterface $user_manager = NULL, ?DriverManagerInterface $driver_manager = NULL, ?array $drupal_params = NULL): AuthenticationManager {
     $session ??= $this->createSessionMock();
     $mink = new Mink(['default' => $session]);
     $mink->setDefaultSessionName('default');
 
-    return new DrupalAuthenticationManager(
+    return new AuthenticationManager(
           $mink,
-          $user_manager ?? new DrupalUserManager(),
+          $user_manager ?? new UserManager(),
           $driver_manager ?? $this->createDriverManagerMock(),
           self::MINK_PARAMS,
           $drupal_params ?? self::DRUPAL_PARAMS

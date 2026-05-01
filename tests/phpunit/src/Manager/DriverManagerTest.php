@@ -4,25 +4,25 @@ declare(strict_types=1);
 
 namespace Drupal\DrupalExtension\Tests;
 
-use Drupal\DrupalDriverManagerInterface;
+use Drupal\DrupalExtension\Manager\DriverManagerInterface;
 use Behat\Testwork\Environment\Environment;
 use Drupal\Driver\DriverInterface;
-use Drupal\DrupalDriverManager;
+use Drupal\DrupalExtension\Manager\DriverManager;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Tests the DrupalDriverManager class.
+ * Tests the DriverManager class.
  */
-#[CoversClass(DrupalDriverManager::class)]
-class DrupalDriverManagerTest extends TestCase {
+#[CoversClass(DriverManager::class)]
+class DriverManagerTest extends TestCase {
 
   /**
    * Tests that the manager implements the interface.
    */
   public function testImplementsInterface(): void {
-    $manager = new DrupalDriverManager();
-    $this->assertInstanceOf(DrupalDriverManagerInterface::class, $manager);
+    $manager = new DriverManager();
+    $this->assertInstanceOf(DriverManagerInterface::class, $manager);
   }
 
   /**
@@ -30,7 +30,7 @@ class DrupalDriverManagerTest extends TestCase {
    */
   public function testConstructorRegistersDrivers(): void {
     $driver = $this->createDriverMock(TRUE);
-    $manager = new DrupalDriverManager(['Alpha' => $driver]);
+    $manager = new DriverManager(['Alpha' => $driver]);
     $this->assertSame($driver, $manager->getDriver('alpha'));
     $this->assertCount(1, $manager->getDrivers());
   }
@@ -40,7 +40,7 @@ class DrupalDriverManagerTest extends TestCase {
    */
   public function testConstructorLowercasesDriverNames(): void {
     $driver = $this->createDriverMock(TRUE);
-    $manager = new DrupalDriverManager(['MY_DRIVER' => $driver]);
+    $manager = new DriverManager(['MY_DRIVER' => $driver]);
     $this->assertSame($driver, $manager->getDriver('my_driver'));
   }
 
@@ -49,7 +49,7 @@ class DrupalDriverManagerTest extends TestCase {
    */
   public function testRegisterDriverLowercasesName(): void {
     $driver = $this->createDriverMock(TRUE);
-    $manager = new DrupalDriverManager();
+    $manager = new DriverManager();
     $manager->registerDriver('FooBar', $driver);
     $this->assertSame($driver, $manager->getDriver('foobar'));
   }
@@ -59,7 +59,7 @@ class DrupalDriverManagerTest extends TestCase {
    */
   public function testGetDriverReturnsDefaultDriver(): void {
     $driver = $this->createDriverMock(TRUE);
-    $manager = new DrupalDriverManager();
+    $manager = new DriverManager();
     $manager->registerDriver('default', $driver);
     $manager->setDefaultDriverName('default');
     $this->assertSame($driver, $manager->getDriver());
@@ -69,7 +69,7 @@ class DrupalDriverManagerTest extends TestCase {
    * Tests that getDriver throws without a default.
    */
   public function testGetDriverThrowsWithoutDefault(): void {
-    $manager = new DrupalDriverManager();
+    $manager = new DriverManager();
     $this->expectException(\InvalidArgumentException::class);
     $this->expectExceptionMessage('Specify a Drupal driver to get.');
     $manager->getDriver();
@@ -79,7 +79,7 @@ class DrupalDriverManagerTest extends TestCase {
    * Tests that getDriver throws for unregistered names.
    */
   public function testGetDriverThrowsForUnregisteredName(): void {
-    $manager = new DrupalDriverManager();
+    $manager = new DriverManager();
     $this->expectException(\InvalidArgumentException::class);
     $this->expectExceptionMessage('Driver "ghost" is not registered');
     $manager->getDriver('ghost');
@@ -92,7 +92,7 @@ class DrupalDriverManagerTest extends TestCase {
     $driver = $this->createMock(DriverInterface::class);
     $driver->method('isBootstrapped')->willReturn(FALSE);
     $driver->expects($this->once())->method('bootstrap');
-    $manager = new DrupalDriverManager(['test' => $driver]);
+    $manager = new DriverManager(['test' => $driver]);
     $manager->getDriver('test');
   }
 
@@ -103,7 +103,7 @@ class DrupalDriverManagerTest extends TestCase {
     $driver = $this->createMock(DriverInterface::class);
     $driver->method('isBootstrapped')->willReturn(TRUE);
     $driver->expects($this->never())->method('bootstrap');
-    $manager = new DrupalDriverManager(['test' => $driver]);
+    $manager = new DriverManager(['test' => $driver]);
     $manager->getDriver('test');
   }
 
@@ -111,7 +111,7 @@ class DrupalDriverManagerTest extends TestCase {
    * Tests that getDrivers returns empty by default.
    */
   public function testGetDriversReturnsEmptyByDefault(): void {
-    $manager = new DrupalDriverManager();
+    $manager = new DriverManager();
     $this->assertSame([], $manager->getDrivers());
   }
 
@@ -121,7 +121,7 @@ class DrupalDriverManagerTest extends TestCase {
   public function testGetDriversReturnsAllRegistered(): void {
     $driver_a = $this->createDriverMock(TRUE);
     $driver_b = $this->createDriverMock(TRUE);
-    $manager = new DrupalDriverManager();
+    $manager = new DriverManager();
     $manager->registerDriver('a', $driver_a);
     $manager->registerDriver('b', $driver_b);
     $drivers = $manager->getDrivers();
@@ -134,7 +134,7 @@ class DrupalDriverManagerTest extends TestCase {
    * Tests that setDefaultDriverName throws for unregistered drivers.
    */
   public function testSetDefaultDriverNameThrowsForUnregistered(): void {
-    $manager = new DrupalDriverManager();
+    $manager = new DriverManager();
     $this->expectException(\InvalidArgumentException::class);
     $this->expectExceptionMessage('Driver "missing" is not registered.');
     $manager->setDefaultDriverName('missing');
@@ -145,7 +145,7 @@ class DrupalDriverManagerTest extends TestCase {
    */
   public function testSetDefaultDriverNameLowercases(): void {
     $driver = $this->createDriverMock(TRUE);
-    $manager = new DrupalDriverManager();
+    $manager = new DriverManager();
     $manager->registerDriver('mydriver', $driver);
     $manager->setDefaultDriverName('MyDriver');
     $this->assertSame($driver, $manager->getDriver());
@@ -155,7 +155,7 @@ class DrupalDriverManagerTest extends TestCase {
    * Tests that getEnvironment returns null by default.
    */
   public function testGetEnvironmentReturnsNullByDefault(): void {
-    $manager = new DrupalDriverManager();
+    $manager = new DriverManager();
     $this->assertNull($manager->getEnvironment());
   }
 
@@ -164,7 +164,7 @@ class DrupalDriverManagerTest extends TestCase {
    */
   public function testSetAndGetEnvironment(): void {
     $environment = $this->createMock(Environment::class);
-    $manager = new DrupalDriverManager();
+    $manager = new DriverManager();
     $manager->setEnvironment($environment);
     $this->assertSame($environment, $manager->getEnvironment());
   }
