@@ -47,6 +47,39 @@ Feature: FieldHandlers
       | field_post_reference | Alpha - Bravo |
     Then I should see "Alpha - Bravo"
 
+  # URI-only link values (no title) are supported via scalar mode: the bare
+  # URI is treated as the 'uri' column and the title is left empty, so
+  # Drupal renders the URI itself as the visible link text.
+  @test-drupal @api
+  Scenario: Test link field with a single URI-only value in scalar mode
+    When I am viewing a "post" content with the following fields:
+      | title            | Post with URI-only link |
+      | field_post_links | http://example.com      |
+    Then I should see the link "http://example.com"
+
+  @test-drupal @api
+  Scenario: Test link field with multiple URI-only values in scalar mode
+    When I am viewing a "post" content with the following fields:
+      | title            | Post with multiple URI-only links      |
+      | field_post_links | http://first.com, http://second.com    |
+    Then I should see the link "http://first.com"
+    And I should see the link "http://second.com"
+
+  @test-drupal @api
+  Scenario: Test link field with a URI-only value using named compound column
+    When I am viewing a "post" content with the following fields:
+      | title            | Post with named URI-only link |
+      | field_post_links | uri:"http://example.com"      |
+    Then I should see the link "http://example.com"
+
+  @test-drupal @api
+  Scenario: Test link field mixing a titled link and a URI-only link in compound mode
+    When I am viewing a "post" content with the following fields:
+      | title            | Post mixing titled and URI-only links                           |
+      | field_post_links | title:"Titled", uri:"http://first.com"; uri:"http://second.com" |
+    Then I should see the link "Titled"
+    And I should see the link "http://second.com"
+
   @test-drupal @api
   Scenario: Test using human readable names for fields using @Transform
     Given the following "page" content:

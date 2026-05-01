@@ -42,6 +42,23 @@ Feature: FieldHandlersLegacyParser
       """
 
   @test-drupal @api
+  Scenario: Assert URI-only link value passes under field_parser:legacy
+    Given some behat configuration
+    And the behat configuration uses the legacy field parser
+    And scenario steps tagged with "@test-drupal @api":
+      """
+      When I am viewing a "post" content with the following fields:
+        | title            | Post with URI-only link |
+        | field_post_links | http://example.com      |
+      Then I should see the link "http://example.com"
+      """
+    When I run behat with drupal profile
+    Then it should pass with:
+      """
+      1 scenario (1 passed)
+      """
+
+  @test-drupal @api
   Scenario: Assert quoted entity reference with compound separator passes under field_parser:legacy
     Given some behat configuration
     And the behat configuration uses the legacy field parser
