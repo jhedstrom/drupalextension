@@ -264,6 +264,12 @@ revert (`ConfigContext`), mail re-enable (`MailContext`), random
 variable reset (`RandomContext`), and static cache clearing all still
 run.
 
+The post-scenario logout is also skipped, so the session of the last
+logged-in user stays open. This is deliberate - the whole point of the
+flag is to let you load the failing page in a browser and look around.
+The flip side is that subsequent scenarios in the same run inherit
+that session, which may change their behaviour.
+
 This is intended for ad-hoc local debugging. Do not enable it on CI -
-leftover data will leak into subsequent scenarios in the same run and
-into subsequent runs against the same database.
+leftover data and sessions will leak into subsequent scenarios in the
+same run and into subsequent runs against the same database.

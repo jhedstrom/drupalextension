@@ -242,6 +242,12 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface, D
 
   /**
    * Remove any created users.
+   *
+   * The early-return guard intentionally also skips the post-scenario
+   * logout below. The whole point of 'BEHAT_DRUPALEXTENSION_DISABLE_CLEANUP'
+   * is to leave the failing scenario's state intact for inspection - that
+   * includes the session. Subsequent scenarios in the same run will inherit
+   * the leftover login, which is the expected trade-off.
    */
   #[AfterScenario]
   public function cleanUsers(): void {
@@ -260,7 +266,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface, D
       $this->userManager->clearUsers();
     }
 
-    // Always reset auth state, even if no users were created during the
+    // Reset auth state, even if no users were created during the
     // scenario. A scenario may log in as a pre-existing user without calling
     // userCreate(), leaving stale session state for the next scenario.
     if ($this->getAuthenticationManager() instanceof FastLogoutInterface) {
