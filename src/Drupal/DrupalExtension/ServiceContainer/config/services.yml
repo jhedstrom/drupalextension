@@ -18,7 +18,6 @@ services:
     class: "%drupal.drupal.class%"
     arguments:
       - {}
-      - "@drupal.random"
   drupal.authentication_manager:
     class: "%drupal.authentication_manager.class%"
     arguments:
