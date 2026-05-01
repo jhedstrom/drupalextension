@@ -87,7 +87,7 @@ suites.
 
 ### Token grammar
 
-```
+```text
 [?<name>:<type>[,<args>]]
    │      │       │
    │      │       └── type-specific args (length, range, ...)

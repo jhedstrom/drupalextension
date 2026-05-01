@@ -209,6 +209,61 @@ class RandomContextTest extends TestCase {
   }
 
   /**
+   * Tests that malformed token args fail loudly instead of being coerced.
+   *
+   * A typo like '[?title:string,abc]' would otherwise silently generate a
+   * 1-character string, hiding the typo and producing test data that is
+   * almost-but-not-what-the-author-meant. Each row asserts the literal
+   * raises 'InvalidArgumentException' with a message that names the
+   * offending input.
+   *
+   * @param string $literal
+   *   The malformed token literal embedded in a step argument.
+   * @param string $expected_message_fragment
+   *   Substring that must appear in the thrown exception message.
+   */
+  #[DataProvider('dataProviderMalformedArgsThrow')]
+  public function testMalformedArgsThrow(string $literal, string $expected_message_fragment): void {
+    $this->expectException(\InvalidArgumentException::class);
+    $this->expectExceptionMessage($expected_message_fragment);
+    $this->context->transformVariables($literal);
+  }
+
+  /**
+   * Provides cases for testMalformedArgsThrow().
+   */
+  public static function dataProviderMalformedArgsThrow(): \Iterator {
+    yield 'string length is non-numeric' => [
+      'value: [?title:string,abc]',
+      'length must be a non-negative integer; got "abc"',
+    ];
+    yield 'string takes too many args' => [
+      'value: [?title:string,5,extra]',
+      'Type "string" accepts at most one argument',
+    ];
+    yield 'machine_name length is signed' => [
+      'value: [?slug:machine_name,-3]',
+      'length must be a non-negative integer; got "-3"',
+    ];
+    yield 'int with one arg is ambiguous' => [
+      'value: [?age:int,18]',
+      'Type "int" accepts no args (full range) or two args',
+    ];
+    yield 'int with non-integer arg' => [
+      'value: [?age:int,18,foo]',
+      'Type "int" args must be integers; got "foo"',
+    ];
+    yield 'email rejects extra args' => [
+      'value: [?contact:email,extra]',
+      'Type "email" does not accept arguments',
+    ];
+    yield 'uuid rejects extra args' => [
+      'value: [?id:uuid,extra]',
+      'Type "uuid" does not accept arguments',
+    ];
+  }
+
+  /**
    * Tests that 'transformTable()' substitutes modern tokens in cells.
    */
   public function testTransformTableSubstitutesModernTokensInCells(): void {

@@ -291,10 +291,13 @@ class RandomContext implements Context, ParametersAwareInterface, DeprecationInt
   }
 
   /**
-   * Fills in defaults so equivalent tokens collapse to the same cache key.
+   * Validates and fills defaults so equivalent tokens share a cache key.
    *
-   * Each branch returns the canonical args list for the given type.
-   * Unknown types pass through unchanged - 'generate()' will reject them.
+   * Each branch returns the canonical args list for the given type, or
+   * throws 'InvalidArgumentException' when the literal supplies malformed
+   * input (non-integer length, wrong arg count, extra args on argless
+   * types). Failing fast prevents typos like '[?title:string,abc]' from
+   * silently producing a 1-character string.
    *
    * @param string $type
    *   The generator type extracted from the token.
@@ -306,15 +309,91 @@ class RandomContext implements Context, ParametersAwareInterface, DeprecationInt
    */
   protected function normaliseArgs(string $type, array $args): array {
     return match ($type) {
-      'string', 'name', 'machine_name' => [$args[0] ?? '10'],
-      'int' => [$args[0] ?? '0', $args[1] ?? (string) PHP_INT_MAX],
-      'email', 'uuid' => [],
+      'string', 'name', 'machine_name' => $this->normaliseLengthArgs($type, $args),
+      'int' => $this->normaliseIntArgs($args),
+      'email', 'uuid' => $this->normaliseArglessArgs($type, $args),
       default => $args,
     };
   }
 
   /**
+   * Validates length-style args (one optional non-negative integer).
+   *
+   * @param string $type
+   *   The generator type, used for error messages.
+   * @param list<string> $args
+   *   Raw args parsed from the token literal.
+   *
+   * @return list<string>
+   *   Args with the default length filled in if absent.
+   */
+  protected function normaliseLengthArgs(string $type, array $args): array {
+    if (count($args) > 1) {
+      throw new \InvalidArgumentException(sprintf('Type "%s" accepts at most one argument (length); got %d.', $type, count($args)));
+    }
+
+    if (!isset($args[0])) {
+      return ['10'];
+    }
+
+    if (!ctype_digit($args[0])) {
+      throw new \InvalidArgumentException(sprintf('Type "%s" length must be a non-negative integer; got "%s".', $type, $args[0]));
+    }
+
+    return [$args[0]];
+  }
+
+  /**
+   * Validates 'int' args (zero args for full range, or two integer bounds).
+   *
+   * @param list<string> $args
+   *   Raw args parsed from the token literal.
+   *
+   * @return list<string>
+   *   Args with default range filled in if absent.
+   */
+  protected function normaliseIntArgs(array $args): array {
+    if ($args === []) {
+      return ['0', (string) PHP_INT_MAX];
+    }
+
+    if (count($args) !== 2) {
+      throw new \InvalidArgumentException(sprintf('Type "int" accepts no args (full range) or two args (min, max); got %d.', count($args)));
+    }
+
+    foreach ($args as $arg) {
+      if (preg_match('/^-?\d+$/', $arg) !== 1) {
+        throw new \InvalidArgumentException(sprintf('Type "int" args must be integers; got "%s".', $arg));
+      }
+    }
+
+    return [$args[0], $args[1]];
+  }
+
+  /**
+   * Validates argless types ('email', 'uuid'): refuses any positional args.
+   *
+   * @param string $type
+   *   The generator type, used for error messages.
+   * @param list<string> $args
+   *   Raw args parsed from the token literal.
+   *
+   * @return list<string>
+   *   Always empty.
+   */
+  protected function normaliseArglessArgs(string $type, array $args): array {
+    if ($args !== []) {
+      throw new \InvalidArgumentException(sprintf('Type "%s" does not accept arguments; got %d.', $type, count($args)));
+    }
+
+    return [];
+  }
+
+  /**
    * Dispatches to the type-specific generator.
+   *
+   * Args are validated by 'normaliseArgs()' before reaching this method,
+   * so the casts are safe and not a fallback.
    *
    * @param string $type
    *   The generator type extracted from the token.
@@ -326,10 +405,10 @@ class RandomContext implements Context, ParametersAwareInterface, DeprecationInt
    */
   protected function generate(string $type, array $args): string|int {
     return match ($type) {
-      'string' => $this->generateString((int) ($args[0] ?? 10)),
-      'name' => $this->generateName((int) ($args[0] ?? 10)),
-      'machine_name' => $this->generateMachineName((int) ($args[0] ?? 10)),
-      'int' => $this->generateInt((int) ($args[0] ?? 0), (int) ($args[1] ?? PHP_INT_MAX)),
+      'string' => $this->generateString((int) $args[0]),
+      'name' => $this->generateName((int) $args[0]),
+      'machine_name' => $this->generateMachineName((int) $args[0]),
+      'int' => $this->generateInt((int) $args[0], (int) $args[1]),
       'email' => $this->generateEmail(),
       'uuid' => $this->generateUuid(),
       default => throw new \InvalidArgumentException(sprintf('Unknown random token type "%s".', $type)),
