@@ -9,7 +9,7 @@ use Behat\Testwork\ServiceContainer\Extension as ExtensionInterface;
 use Behat\Testwork\ServiceContainer\ExtensionManager;
 use Drupal\DrupalExtension\Compiler\DriverPass;
 use Drupal\DrupalExtension\Compiler\EventSubscriberPass;
-use Drupal\DrupalExtension\Context\ContextClass\ClassGenerator;
+use Drupal\DrupalExtension\Generator\ClassGenerator;
 use Behat\Mink\Element\DocumentElement as MinkDocumentElement;
 use Drupal\DrupalExtension\Element\DocumentElement;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;

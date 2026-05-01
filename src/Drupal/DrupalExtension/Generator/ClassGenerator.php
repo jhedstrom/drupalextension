@@ -2,13 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Drupal\DrupalExtension\Context\ContextClass;
+namespace Drupal\DrupalExtension\Generator;
 
 use Behat\Behat\Context\ContextClass\ClassGenerator as BehatClassGenerator;
 use Behat\Testwork\Suite\Suite;
 
 /**
  * Generates a starting class that extends the RawDrupalContext.
+ *
+ * Replaces Behat's default 'Behat\Behat\Context\ContextClass\ClassGenerator'
+ * for the 'context.class_generator.simple' service tag.
  */
 class ClassGenerator implements BehatClassGenerator {
 
