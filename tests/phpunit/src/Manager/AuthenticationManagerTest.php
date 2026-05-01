@@ -569,7 +569,7 @@ class AuthenticationManagerTest extends TestCase {
    *   Optional Mink session override.
    * @param \Drupal\DrupalExtension\Manager\UserManagerInterface|null $user_manager
    *   Optional user manager override.
-   * @param \Drupal\DriverManagerInterface|null $driver_manager
+   * @param \Drupal\DrupalExtension\Manager\DriverManagerInterface|null $driver_manager
    *   Optional driver manager override.
    * @param array<string, mixed>|null $drupal_params
    *   Optional Drupal parameters override.
