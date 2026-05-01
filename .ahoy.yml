@@ -18,21 +18,18 @@ commands:
       ahoy composer require --no-interaction --dev --no-update drupal/core:^${DRUPAL_VERSION:-11} drupal/core-composer-scaffold:^${DRUPAL_VERSION:-11}
       if [ "${DRUPAL_VERSION:-11}" != "11" ]; then ahoy composer remove --no-interaction --dev --no-update phpunit/phpunit; fi
       ahoy composer install
-      ahoy cli cp -r tests/behat/fixtures/drupal/modules/behat_test build/web/modules
-      ahoy cli cp -r tests/behat/fixtures/drupal/drush build/drush
 
   info:
     usage: Print information about this project.
     cmd: |
       echo "  Drupal version           : " ${DRUPAL_VERSION:-11}
       echo "  PHP version              : " ${PHP_VERSION:-8.3}
-      echo "  Site local URL           : " http://localhost:${DRUPAL_HOST_PORT:-8888}
-      echo "  Blackbox local URL       : " http://localhost:${BLACKBOX_HOST_PORT:-8889}
+      echo "  Site local URL           : " ${LOCALDEV_URL:-http://drupalextension.docker.amazee.io}
       echo "  Path to project          : " /app
       echo "  Path to web root         : " /app/build/web
-      echo "  DB port on host          : " $(docker compose port database 3306 2>/dev/null | cut -d : -f 2)
+      echo "  DB port on host          : " $(docker compose port mariadb 3306 2>/dev/null | cut -d : -f 2)
       echo "  Selenium VNC URL on host :  http://localhost:$(docker compose port chrome 7900 2>/dev/null | cut -d : -f 2)/?autoconnect=1&password=secret"
-      echo "  Xdebug                   : " $(docker compose exec -T php php -v 2>/dev/null | grep -q Xdebug && echo "enabled (disable with ahoy up)" || echo "disabled (enable with ahoy debug)")
+      echo "  Xdebug                   : " $(ahoy cli php -v 2>/dev/null | grep -q Xdebug && echo "enabled (disable with 'ahoy up')" || echo "disabled (enable with 'ahoy debug')")
       if [ -n "$1" ]; then
         echo "  One-time login           : " $(ahoy login -- --no-browser)
       fi
@@ -41,7 +38,7 @@ commands:
     usage: Open DB in Sequel Ace.
     cmd: |
       uname -a | grep -i -q darwin && mdfind -name 'Sequel Ace'|grep -q "Ace" && \
-      HOST_DB_PORT="$(docker compose port database 3306 2>/dev/null | cut -d : -f 2)" && \
+      HOST_DB_PORT="$(docker compose port mariadb 3306 2>/dev/null | cut -d : -f 2)" && \
       open "mysql://drupal:drupal@127.0.0.1:${HOST_DB_PORT}/drupal" -a "Sequel Ace" \
       || echo "Not a supported OS or Sequel Ace is not installed."
 
@@ -75,23 +72,23 @@ commands:
 
   pull:
     usage: Pull latest docker images.
-    cmd: if [ ! -z "$(docker image ls -q)" ]; then docker image ls --format \"{{.Repository}}:{{.Tag}}\" | grep wodby/ | grep -v none | xargs -n1 docker pull | cat; fi
+    cmd: if [ ! -z "$(docker image ls -q)" ]; then docker image ls --format \"{{.Repository}}:{{.Tag}}\" | grep uselagoon/ | grep -v none | xargs -n1 docker pull | cat; fi
 
   cli:
-    usage: Start a shell inside PHP container or run a command.
-    cmd: if \[ "${#}" -ne 0 \]; then docker compose exec -e BEHAT_CLI_DEBUG=${BEHAT_CLI_DEBUG:-0} php bash -c "$*"; else docker compose exec php bash; fi
+    usage: Start a shell inside CLI container or run a command.
+    cmd: if \[ "${#}" -ne 0 \]; then docker compose exec -e BEHAT_CLI_DEBUG=${BEHAT_CLI_DEBUG:-0} -T cli bash -c "$*"; else docker compose exec cli bash; fi
 
   composer:
-    usage: Run Composer commands in the PHP service container.
-    cmd: docker compose exec -T php composer "$@"
+    usage: Run Composer commands in the CLI container.
+    cmd: docker compose exec -T cli composer "$@"
 
   drush:
-    usage: Run Drush commands in the PHP service container.
-    cmd: ahoy cli "./vendor/bin/drush --root=build/web $*"
+    usage: Run Drush commands in the CLI container.
+    cmd: docker compose exec -T cli /app/vendor/bin/drush --root=/app/build/web --uri=${LOCALDEV_URL:-http://drupalextension.docker.amazee.io} "$@"
 
   debug:
     usage: Enable PHP Xdebug.
-    cmd: PHP_EXTENSIONS_DISABLE=xhprof,spx PHP_XDEBUG_MODE=debug docker compose up -d --force-recreate php && ahoy cli php -v | grep -q Xdebug && echo "Enabled debug configuration. Use 'ahoy up -- --force-recreate' to disable."
+    cmd: ahoy cli php -v | grep -q Xdebug || XDEBUG_ENABLE=true docker compose up -d --force-recreate cli php && ahoy cli php -v | grep -q Xdebug && echo "Enabled debug configuration. Use 'ahoy up -- --force-recreate' to disable."
 
   # ----------------------------------------------------------------------------
   # Application commands.
@@ -99,15 +96,11 @@ commands:
 
   login:
     usage: Login to a website.
-    cmd: ahoy drush --uri="http://localhost:${DRUPAL_HOST_PORT:-8888}" uli "$@"
+    cmd: ahoy drush uli "$@"
 
   provision:
     usage: Provision a fixture test site.
-    cmd: |
-      ahoy drush sql-drop --yes 2>/dev/null || true
-      ahoy drush --yes site-install --db-url=mysql://drupal:drupal@database/drupal --debug
-      ahoy drush --yes en behat_test
-      ahoy drush --yes deploy:hook
+    cmd: ahoy cli ./scripts/provision.sh
 
   clean:
     usage: Remove containers and all build files.
