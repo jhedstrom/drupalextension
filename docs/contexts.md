@@ -10,11 +10,10 @@ declared explicitly.
 | Context | Purpose |
 | --- | --- |
 | `Drupal\DrupalExtension\Context\RawDrupalContext` | Base class with Drupal and Mink session helpers but no step definitions. Extend this in your `FeatureContext`. |
-| `Drupal\DrupalExtension\Context\DrupalContext` | Steps for users, nodes, taxonomy terms, and login flows. |
+| `Drupal\DrupalExtension\Context\DrupalContext` | Steps for users, nodes, taxonomy terms, login flows, and the Drupal Batch API and queue items. |
 | `Drupal\DrupalExtension\Context\MinkContext` | Region-aware extensions over the Mink Extension's default steps. |
 | `Drupal\DrupalExtension\Context\MarkupContext` | Low-level markup assertions - tags, classes, attributes. |
 | `Drupal\DrupalExtension\Context\MessageContext` | Steps for Drupal status, error, and warning messages. |
-| `Drupal\DrupalExtension\Context\BatchContext` | Steps for the Drupal Batch API and queue items. |
 | `Drupal\DrupalExtension\Context\ConfigContext` | Steps that read and write Drupal configuration. |
 | `Drupal\DrupalExtension\Context\DrushContext` | Steps that invoke arbitrary Drush commands. |
 | `Drupal\DrupalExtension\Context\MailContext` | Steps that assert against the Drupal mail collector. |
@@ -47,8 +46,8 @@ In this configuration, scenarios have access to:
 - Steps you defined in `tests/bootstrap/FeatureContext.php`.
 - Steps you defined in `CustomContext`.
 
-They do **not** have access to `MarkupContext`, `BatchContext`,
-`DrushContext`, or any context not declared in this list.
+They do **not** have access to `MarkupContext`, `DrushContext`,
+or any context not declared in this list.
 
 ## RawDrupalContext
 

@@ -102,7 +102,6 @@ drupal:
         - Drupal\DrupalExtension\Context\MessageContext
         - Drupal\DrupalExtension\Context\MarkupContext
         - Drupal\DrupalExtension\Context\DrushContext
-        - Drupal\DrupalExtension\Context\BatchContext
         - Drupal\DrupalExtension\Context\MailContext
         - Drupal\DrupalExtension\Context\RandomContext
         - Drupal\DrupalExtension\Context\ConfigContext

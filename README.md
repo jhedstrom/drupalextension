@@ -86,7 +86,6 @@ the [full documentation](docs/README.md).
 
 | Class | Description |
 | --- | --- |
-| [BatchContext](STEPS.md#batchcontext) | Extensions to the Mink Extension. |
 | [ConfigContext](STEPS.md#configcontext) | Provides pre-built step definitions for interacting with Drupal config. |
 | [DrupalContext](STEPS.md#drupalcontext) | Provides pre-built step definitions for interacting with Drupal. |
 | [DrushContext](STEPS.md#drushcontext) | Provides step definitions for interacting directly with Drush commands. |

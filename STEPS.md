@@ -2,7 +2,6 @@
 
 | Class | Description |
 | --- | --- |
-| [BatchContext](#batchcontext) | Extensions to the Mink Extension. |
 | [ConfigContext](#configcontext) | Provides pre-built step definitions for interacting with Drupal config. |
 | [DrupalContext](#drupalcontext) | Provides pre-built step definitions for interacting with Drupal. |
 | [DrushContext](#drushcontext) | Provides step definitions for interacting directly with Drush commands. |
@@ -13,45 +12,6 @@
 
 
 ---
-
-## BatchContext
-
-[Source](src/Drupal/DrupalExtension/Context/BatchContext.php), [Example](tests/behat/features/batch.feature)
-
-> Extensions to the Mink Extension.
-
-
-<details>
-  <summary><code>@Given I wait for the batch job to finish</code></summary>
-
-<br/>
-Wait for the Batch API to finish. 
-<br/><br/>
-
-```gherkin
-Given I wait for the batch job to finish
-
-```
-
-</details>
-
-<details>
-  <summary><code>@Given the following item is in the system queue:</code></summary>
-
-<br/>
-Creates a queue item. Defaults inputs if none are available. 
-<br/><br/>
-
-```gherkin
-  Given the following item is in the system queue:
-    | name    | my_queue              |
-    | data    | {"key":"value"}       |
-    | created | 1700000000            |
-    | expire  | 0                     |
-
-```
-
-</details>
 
 ## ConfigContext
 
@@ -469,6 +429,38 @@ Creates one or more languages.
     | languages |
     | en        |
     | fr        |
+
+```
+
+</details>
+
+<details>
+  <summary><code>@Given I wait for the batch job to finish</code></summary>
+
+<br/>
+Wait for the Batch API to finish. 
+<br/><br/>
+
+```gherkin
+Given I wait for the batch job to finish
+
+```
+
+</details>
+
+<details>
+  <summary><code>@Given the following item is in the system queue:</code></summary>
+
+<br/>
+Creates a queue item. Defaults inputs if none are available. 
+<br/><br/>
+
+```gherkin
+  Given the following item is in the system queue:
+    | name    | my_queue              |
+    | data    | {"key":"value"}       |
+    | created | 1700000000            |
+    | expire  | 0                     |
 
 ```
 

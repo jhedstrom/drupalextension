@@ -234,6 +234,50 @@ in the table above. Other entries under
 `Drupal\DrupalExtension.selectors:` (`login_form_selector`,
 `logged_in_selector`) are unaffected.
 
+## BatchContext removed
+
+`Drupal\DrupalExtension\Context\BatchContext` no longer exists. Its two
+step definitions are now provided by `DrupalContext` via the new
+`Drupal\DrupalExtension\Context\Traits\BatchTrait` trait.
+
+Both steps are Drupal-specific - `Given I wait for the batch job to
+finish` polls the `#updateprogress` element rendered by Drupal's
+Batch API, and `Given the following item is in the system queue:`
+writes directly to the `queue` table managed by Drupal's
+`SystemQueue`. Hosting them on `DrupalContext` (which extends
+`RawDrupalContext` and is only loaded with the API driver) keeps
+`\Drupal::` calls inside a bootstrapped Drupal kernel, removing the
+silent failures that occurred when the steps were invoked under the
+Blackbox or Drush drivers.
+
+Remove the `BatchContext` entry from your `behat.yml` suites:
+
+```yaml
+# 5.x
+default:
+  suites:
+    default:
+      contexts:
+        - Drupal\DrupalExtension\Context\DrupalContext
+        - Drupal\DrupalExtension\Context\BatchContext
+
+# 6.0
+default:
+  suites:
+    default:
+      contexts:
+        - Drupal\DrupalExtension\Context\DrupalContext
+```
+
+If your suite already registers `DrupalContext`, the two batch/queue
+steps remain available without any feature-file changes. If you
+registered `BatchContext` without `DrupalContext`, add `DrupalContext`
+to the suite to keep the steps.
+
+If you subclass `BatchContext` directly, change the parent to
+`DrupalContext` (or extend `RawDrupalContext` and `use BatchTrait;`
+yourself).
+
 ## RandomContext base class
 
 `RandomContext` no longer extends `RawDrupalContext`. It now implements
