@@ -13,7 +13,6 @@ use Behat\Gherkin\Node\StepNode;
 use Behat\Gherkin\Node\TableNode;
 use Drupal\DrupalExtension\Context\RandomContext;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -227,24 +226,23 @@ class RandomContextTest extends TestCase {
   }
 
   /**
-   * Tests that a placeholder with regex special characters is handled.
+   * Tests that surrounding characters in the message are preserved.
+   *
+   * Guards against the literal '?' inside the placeholder unintentionally
+   * being treated as a regex quantifier when building the substitution
+   * pattern from the token text.
    */
-  #[DataProvider('dataProviderTransformVariablesEscapesRegexMetachars')]
-  public function testTransformVariablesEscapesRegexMetachars(string $token, string $value, string $message, string $expected): void {
-    $this->valuesProperty->setValue($this->context, [$token => $value]);
-    $this->assertSame($expected, $this->context->transformVariables($message));
+  public function testTransformVariablesPreservesSurroundingCharacters(): void {
+    $this->valuesProperty->setValue($this->context, ['<?abc>' => 'value']);
+    $this->assertSame('[value]', $this->context->transformVariables('[<?abc>]'));
   }
 
   /**
-   * Provides data for testTransformVariablesEscapesRegexMetachars().
-   *
-   * @return \Iterator<string, array<int, string>>
-   *   Cases keyed by description, each [token, value, input message,
-   *   expected message after substitution].
+   * Tests that token identifiers may contain underscores.
    */
-  public static function dataProviderTransformVariablesEscapesRegexMetachars(): \Iterator {
-    yield 'simple alphanumeric token' => ['<?abc>', 'value', '[<?abc>]', '[value]'];
-    yield 'token with underscore' => ['<?my_token>', 'value', 'see <?my_token>', 'see value'];
+  public function testTransformVariablesSupportsTokensWithUnderscores(): void {
+    $this->valuesProperty->setValue($this->context, ['<?my_token>' => 'value']);
+    $this->assertSame('see value', $this->context->transformVariables('see <?my_token>'));
   }
 
   /**
