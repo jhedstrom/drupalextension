@@ -52,13 +52,19 @@ default:
         - FeatureContext
         - BehatCliContext
         - DrevOps\BehatScreenshotExtension\Context\ScreenshotContext
+        # Serves blackbox HTML fixtures from the 'cli' container itself, so
+        # tests do not depend on a separate web container.
+        - BlackboxServerContext:
+            webroot: '%paths.base%/tests/behat/fixtures/blackbox'
+            host: 0.0.0.0
+            port: 8888
       filters:
         tags: "@test-blackbox&&~@skipped"
 
   extensions:
     Drupal\MinkExtension:
       browserkit_http: ~
-      base_url: http://blackbox
+      base_url: http://cli:8888
       browser_name: chrome
       javascript_session: selenium2
       selenium2:
@@ -144,7 +150,7 @@ drupal:
 
   extensions:
     Drupal\MinkExtension:
-      base_url: http://drupal
+      base_url: http://nginx:8080
       files_path: /app/tests/behat/fixtures/files
 
     Drupal\DrupalExtension:

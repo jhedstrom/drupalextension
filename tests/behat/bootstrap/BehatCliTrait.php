@@ -153,6 +153,15 @@ EOL;
       unset($yaml['drupal']['suites']['default']['contexts'][$index]);
     }
 
+    // Drop 'BlackboxServerContext' from the subprocess config: the parent's
+    // server is already running on 0.0.0.0:8888 and the subprocess shares
+    // the cli container, so reusing it avoids a port collision.
+    foreach ($yaml['default']['suites']['default']['contexts'] as $key => $context) {
+      if (is_array($context) && array_key_exists('BlackboxServerContext', $context)) {
+        unset($yaml['default']['suites']['default']['contexts'][$key]);
+      }
+    }
+
     if (static::behatCliIsCoverageEnabled()) {
       // Update the code coverage configuration to use an alternative
       // coverage report target. This report is merged into a single report
