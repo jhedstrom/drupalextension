@@ -24,11 +24,17 @@ use DrevOps\BehatPhpServer\PhpServerContext;
  */
 class BlackboxServerContext extends PhpServerContext {
 
+  /**
+   * Starts the PHP server before each scenario.
+   */
   #[BeforeScenario]
   public function blackboxStartServer(BeforeScenarioScope $scope): void {
     $this->start();
   }
 
+  /**
+   * Stops the PHP server after each scenario.
+   */
   #[AfterScenario]
   public function blackboxStopServer(AfterScenarioScope $scope): void {
     $this->stop();
