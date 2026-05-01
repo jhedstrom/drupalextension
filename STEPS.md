@@ -608,6 +608,7 @@ Run a Drush command with arguments.
 
 ```gherkin
 Given I run drush "pm:list" "--status=enabled"
+Given I run drush "config:get" "system.site uuid --format=string"
 
 ```
 
