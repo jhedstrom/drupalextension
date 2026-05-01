@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\DrupalExtension\Tests;
 
 use Drupal\Driver\Capability\MailCapabilityInterface;
-use Drupal\DrupalMailManager;
+use Drupal\DrupalExtension\Manager\DrupalMailManager;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;

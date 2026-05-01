@@ -7,7 +7,7 @@ namespace Drupal\DrupalExtension\Context;
 use Behat\Mink\Exception\ExpectationException;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Drupal\Driver\Capability\MailCapabilityInterface;
-use Drupal\DrupalMailManager;
+use Drupal\DrupalExtension\Manager\DrupalMailManager;
 
 /**
  * Provides helper methods for interacting with mail.
@@ -27,7 +27,7 @@ class RawMailContext extends RawDrupalContext {
   /**
    * Get the mail manager service that handles stored test mail.
    *
-   * @return \Drupal\DrupalMailManager
+   * @return \Drupal\DrupalExtension\Manager\DrupalMailManager
    *   The mail manager service.
    */
   protected function getMailManager(): DrupalMailManager {

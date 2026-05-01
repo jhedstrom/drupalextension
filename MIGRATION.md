@@ -338,6 +338,48 @@ rather than arbitrary parameters and are unaffected.
 Update any subclass or custom context that implements the interface,
 uses the trait, or calls the renamed methods directly.
 
+## Manager class moves
+
+The driver and mail manager classes were squatting on the global `Drupal\`
+namespace and have been moved under `Drupal\DrupalExtension\Manager\`
+alongside the existing user and authentication managers. The driver manager
+also loses the `Drupal` prefix - the driver manager is generic infrastructure
+(it routes to whatever driver Behat is configured with) and is not itself
+Drupal-specific. The mail manager, user manager, and authentication manager
+keep their `Drupal` prefix because they manage Drupal-specific concerns and
+the prefix leaves room for future non-Drupal managers under the same
+namespace.
+
+| 5.x                                       | 6.0                                                          |
+|-------------------------------------------|--------------------------------------------------------------|
+| `Drupal\DrupalDriverManager`              | `Drupal\DrupalExtension\Manager\DriverManager`               |
+| `Drupal\DrupalDriverManagerInterface`     | `Drupal\DrupalExtension\Manager\DriverManagerInterface`      |
+| `Drupal\DrupalMailManager`                | `Drupal\DrupalExtension\Manager\DrupalMailManager`           |
+| `Drupal\DrupalMailManagerInterface`       | `Drupal\DrupalExtension\Manager\DrupalMailManagerInterface`  |
+
+The `Drupal\DrupalExtension\Manager\DrupalUserManager`,
+`DrupalUserManagerInterface`, `DrupalAuthenticationManager`,
+`DrupalAuthenticationManagerInterface` and `FastLogoutInterface` classes
+are unchanged.
+
+Update any subclass, custom context, or test double that imports the moved
+classes by their old fully-qualified name. If you implement
+`DrupalMailManagerInterface` directly, also see
+[Service interface changes](#service-interface-changes) for unrelated
+method-signature breaks on that interface.
+
+### Service container parameters
+
+If you override the driver manager service class in your own Behat config,
+the container parameter value changes accordingly:
+
+| 5.x parameter value                               | 6.0 parameter value                                                 |
+|---------------------------------------------------|---------------------------------------------------------------------|
+| `drupal.drupal.class: Drupal\DrupalDriverManager` | `drupal.drupal.class: Drupal\DrupalExtension\Manager\DriverManager` |
+
+The service ids (`drupal.drupal`, `drupal.authentication_manager`,
+`drupal.user_manager`) are unchanged.
+
 ## Service interface changes
 
 `DrupalMailManagerInterface::getMail()` and `::clearMail()` no longer accept

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal;
+namespace Drupal\DrupalExtension\Manager;
 
 use Drupal\Driver\Capability\MailCapabilityInterface;
 

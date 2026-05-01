@@ -90,7 +90,6 @@
     "prefer-stable": true,
     "autoload": {
         "psr-0": {
-            "Drupal\\Drupal": "src/",
             "Drupal\\DrupalExtension": "src/",
             "Drupal\\Exception": "src/",
             "Drupal\\MinkExtension": "src/"

@@ -1,34 +1,15 @@
 parameters:
-  # Drupal driver manager.
-  drupal.drupal.class: Drupal\DrupalDriverManager
+  drupal.drupal.class: Drupal\DrupalExtension\Manager\DriverManager
   drupal.drupal.default_session: blackbox
   drupal.drupal.api_driver: drush
-
-  # Drupal authentication manager.
   drupal.authentication_manager.class: Drupal\DrupalExtension\Manager\DrupalAuthenticationManager
-
-  # Drupal user manager.
   drupal.user_manager.class: Drupal\DrupalExtension\Manager\DrupalUserManager
-
-  # Random generator.
   drupal.random.class: Drupal\Component\Utility\Random
-
-  # Context initializer.
   drupal.context.initializer.class: Drupal\DrupalExtension\Context\Initializer\DrupalAwareInitializer
-
-  # Environment reader.
   drupal.context.environment.reader.class: Drupal\DrupalExtension\Context\Environment\Reader\Reader
-
-  # Event listeners.
   drupal.listener.drivers.class: Drupal\DrupalExtension\Listener\DriverListener
-
-  # Hook loaders.
   drupal.context.attribute.reader.class: Drupal\DrupalExtension\Context\Attribute\HookAttributeReader
-
-  # Region selector class.
   drupal.context.region_selector.class: Drupal\DrupalExtension\Selector\RegionSelector
-
-  # Parameters.
   drupal.parameters: {}
   drupal.regions: {}
 
@@ -37,7 +18,6 @@ services:
     class: "%drupal.drupal.class%"
     arguments:
       - {}
-      - "@drupal.random"
   drupal.authentication_manager:
     class: "%drupal.authentication_manager.class%"
     arguments:
@@ -78,7 +58,6 @@ services:
   drupal.region_selector:
     class: "%drupal.context.region_selector.class%"
     arguments:
-      # inject the CSSSelector
       - "@mink.selector.css"
       - "%drupal.regions%"
     tags:

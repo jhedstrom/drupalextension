@@ -10,7 +10,7 @@ use Behat\Behat\EventDispatcher\Event\ScenarioTested;
 
 use Behat\Gherkin\Node\TaggedNodeInterface;
 use Behat\Testwork\EventDispatcher\Event\LifecycleEvent;
-use Drupal\DrupalDriverManager;
+use Drupal\DrupalExtension\Manager\DriverManager;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -24,13 +24,13 @@ class DriverListener implements EventSubscriberInterface {
   /**
    * Constructs a DriverListener.
    *
-   * @param \Drupal\DrupalDriverManager $drupalDriverManager
+   * @param \Drupal\DrupalExtension\Manager\DriverManager $drupalDriverManager
    *   Drupal driver manager.
    * @param array<string, mixed> $parameters
    *   Test parameters.
    */
   public function __construct(
-    private readonly DrupalDriverManager $drupalDriverManager,
+    private readonly DriverManager $drupalDriverManager,
     private array $parameters,
   ) {
   }

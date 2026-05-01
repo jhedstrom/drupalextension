@@ -20,11 +20,11 @@ use Behat\MinkExtension\Context\RawMinkContext;
 use Behat\Testwork\Hook\HookDispatcher;
 use Behat\Behat\Context\Environment\InitializedContextEnvironment;
 
-use Drupal\DrupalDriverManagerInterface;
 use Drupal\DrupalExtension\DeprecationInterface;
 use Drupal\DrupalExtension\DeprecationTrait;
 use Drupal\DrupalExtension\ParametersTrait;
 use Drupal\DrupalExtension\Manager\DrupalAuthenticationManagerInterface;
+use Drupal\DrupalExtension\Manager\DriverManagerInterface;
 use Drupal\DrupalExtension\Manager\DrupalUserManagerInterface;
 use Drupal\DrupalExtension\Parser\EntityFieldParser;
 use Drupal\DrupalExtension\Parser\EntityFieldParserInterface;
@@ -51,7 +51,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface, D
   /**
    * Drupal driver manager.
    */
-  private ?DrupalDriverManagerInterface $drupalDriverManager = NULL;
+  private ?DriverManagerInterface $drupalDriverManager = NULL;
 
   /**
    * Event dispatcher object.
@@ -97,14 +97,14 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface, D
   /**
    * {@inheritdoc}
    */
-  public function setDrupal(DrupalDriverManagerInterface $drupal): void {
+  public function setDrupal(DriverManagerInterface $drupal): void {
     $this->drupalDriverManager = $drupal;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getDrupal(): ?DrupalDriverManagerInterface {
+  public function getDrupal(): ?DriverManagerInterface {
     return $this->drupalDriverManager;
   }
 

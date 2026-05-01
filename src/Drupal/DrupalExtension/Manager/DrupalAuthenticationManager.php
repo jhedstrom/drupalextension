@@ -12,7 +12,6 @@ use Behat\Mink\Exception\ExpectationException;
 use Behat\Mink\Mink;
 use Drupal\Driver\Capability\AuthenticationCapabilityInterface;
 use Drupal\Driver\Entity\EntityStubInterface;
-use Drupal\DrupalDriverManagerInterface;
 use Drupal\DrupalExtension\MinkAwareTrait;
 use Drupal\DrupalExtension\ParametersTrait;
 
@@ -31,7 +30,7 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
    *   The Mink instance.
    * @param \Drupal\DrupalExtension\Manager\DrupalUserManagerInterface $userManager
    *   The Drupal user manager.
-   * @param \Drupal\DrupalDriverManagerInterface $driverManager
+   * @param \Drupal\DrupalExtension\Manager\DriverManagerInterface $driverManager
    *   The Drupal driver manager.
    * @param array<string, mixed> $minkParameters
    *   Mink configuration parameters.
@@ -41,7 +40,7 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
   public function __construct(
     Mink $mink,
     protected DrupalUserManagerInterface $userManager,
-    protected DrupalDriverManagerInterface $driverManager,
+    protected DriverManagerInterface $driverManager,
     array $minkParameters,
     array $parameters,
   ) {
