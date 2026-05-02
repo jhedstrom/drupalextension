@@ -740,6 +740,22 @@ class FeatureContext extends RawDrupalContext {
   }
 
   /**
+   * Resets the SlowLoginSubscriber state keys after slow-login scenarios.
+   *
+   * Scenarios tagged '@slow_login_state' set 'behat_test.slow_login' and/or
+   * 'behat_test.slow_logout_link' to non-zero values to simulate delayed
+   * post-login DOM signals. Clear them on the way out so other features
+   * are not affected, even if the scenario fails before its cleanup step
+   * would run.
+   */
+  #[AfterScenario('@slow_login_state')]
+  public function testResetSlowLoginStateAfterScenario(): void {
+    $state = \Drupal::state();
+    $state->set('behat_test.slow_login', 0);
+    $state->set('behat_test.slow_logout_link', 0);
+  }
+
+  /**
    * Uninstalls 'big_pipe' after every '@bigpipe' scenario.
    *
    * Subprocess scenarios install 'big_pipe' against the shared Drupal

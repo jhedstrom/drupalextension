@@ -32,13 +32,13 @@ Feature: Login wait
       The value -1 is too small for path
       """
 
-  @test-drupal @api @javascript
+  @test-drupal @api @javascript @slow_login_state
   Scenario: Assert login succeeds with "login_wait" when logged-in class is delayed by JS
     Given I run drush "state:set behat_test.slow_login 1500"
     And I am logged in as a user with the "authenticated user" role
     Then I should see the link "My account"
 
-  @test-drupal @api @javascript
+  @test-drupal @api @javascript @slow_login_state
   Scenario: Assert "login_wait" extends to the last-resort logout link lookup
     # Body class is stripped on every response and never re-added during the
     # test, forcing 'loggedIn()' to fall through to the third-resort logout
@@ -50,8 +50,3 @@ Feature: Login wait
     And I run drush "state:set behat_test.slow_logout_link 800"
     When I am logged in as a user with the "authenticated user" role
     Then I should see the link "My account"
-
-  @test-drupal @api
-  Scenario: Assert slow login state is cleaned up
-    Given I run drush "state:set behat_test.slow_login 0"
-    And I run drush "state:set behat_test.slow_logout_link 0"
