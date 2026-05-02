@@ -192,8 +192,19 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
 
     // As a last resort, if a logout link is found, we are logged in.
     // While not perfect, this is how Drupal SimpleTests currently work as
-    // well.
+    // well. On themes that defer header navigation (e.g. via Critical CSS
+    // or a late JS render), the logout link may not be present in the DOM
+    // at the moment of this lookup. Poll for it within the same window
+    // configured by 'login_wait' so this last-resort check tolerates the
+    // same delays as the post-submit waits in 'logIn()'.
     $session->visit($this->locatePath('/'));
+    $login_wait = (int) $this->getParameter('login_wait');
+    if ($login_wait > 0) {
+      $timeout = microtime(TRUE) + $login_wait;
+      while (microtime(TRUE) < $timeout && !$this->getLogoutElement() instanceof NodeElement) {
+        usleep(100000);
+      }
+    }
     if ($this->getLogoutElement() instanceof NodeElement) {
       return TRUE;
     }

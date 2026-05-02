@@ -71,7 +71,8 @@ default:
         Footer: '#footer'
         Left sidebar: '#sidebar-first'
         Right sidebar: '#sidebar-second'
-      # Seconds to wait for the browser to load after login. 0 to disable.
+      # Maximum seconds to wait for post-login DOM signals (URL change, body
+      # render, logged-in selector, logout link). 0 to disable.
       login_wait: 0
       # Maximum time (in seconds) to wait for AJAX calls to complete.
       ajax_timeout: 5

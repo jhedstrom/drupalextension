@@ -335,6 +335,90 @@ class DrupalAuthenticationManagerTest extends TestCase {
   }
 
   /**
+   * Tests that loggedIn() polls for the logout link when login_wait > 0.
+   *
+   * Simulates the Critical CSS / late JS race: the logged-in selector
+   * never appears, the login form is absent (we are logged in), and the
+   * logout link is initially missing but materialises a few polls later.
+   * With login_wait > 0, the third-resort check must keep polling.
+   */
+  public function testLoggedInPollsForLogoutLinkWhenLoginWaitSet(): void {
+    $link = $this->createMock(NodeElement::class);
+
+    $call_count = 0;
+    $page = $this->createMock(DocumentElement::class);
+    $page->method('has')->willReturn(FALSE);
+    $page->method('findLink')->willReturnCallback(function () use (&$call_count, $link): ?NodeElement {
+      $call_count++;
+      return $call_count >= 3 ? $link : NULL;
+    });
+
+    $session = $this->createSessionMock($page);
+    // @phpstan-ignore method.notFound
+    $session->method('isStarted')->willReturn(TRUE);
+
+    $params = self::DRUPAL_PARAMS;
+    $params['login_wait'] = 2;
+
+    $manager = $this->createManager($session, NULL, NULL, $params);
+    $this->assertTrue($manager->loggedIn());
+    $this->assertGreaterThanOrEqual(3, $call_count);
+  }
+
+  /**
+   * Tests that loggedIn() does not poll when login_wait is 0.
+   *
+   * Confirms the wait loop is skipped entirely when waiting is disabled,
+   * preserving the historical single-lookup behaviour for the third-
+   * resort check.
+   */
+  public function testLoggedInDoesNotPollWhenLoginWaitIsZero(): void {
+    $call_count = 0;
+    $page = $this->createMock(DocumentElement::class);
+    $page->method('has')->willReturn(FALSE);
+    $page->method('findLink')->willReturnCallback(function () use (&$call_count): ?NodeElement {
+      $call_count++;
+      return NULL;
+    });
+
+    $session = $this->createSessionMock($page);
+    // @phpstan-ignore method.notFound
+    $session->method('isStarted')->willReturn(TRUE);
+
+    $params = self::DRUPAL_PARAMS;
+    $params['login_wait'] = 0;
+
+    $manager = $this->createManager($session, NULL, NULL, $params);
+    $this->assertFalse($manager->loggedIn());
+    $this->assertSame(1, $call_count);
+  }
+
+  /**
+   * Tests that loggedIn() returns FALSE when the wait elapses.
+   *
+   * The logout link never appears, so the wait expires after login_wait
+   * seconds and the method falls through to the anonymous-state cleanup.
+   */
+  public function testLoggedInReturnsFalseWhenLogoutLinkWaitTimesOut(): void {
+    $page = $this->createMock(DocumentElement::class);
+    $page->method('has')->willReturn(FALSE);
+    $page->method('findLink')->willReturn(NULL);
+
+    $session = $this->createSessionMock($page);
+    // @phpstan-ignore method.notFound
+    $session->method('isStarted')->willReturn(TRUE);
+
+    $params = self::DRUPAL_PARAMS;
+    $params['login_wait'] = 1;
+
+    $manager = $this->createManager($session, NULL, NULL, $params);
+    $start = microtime(TRUE);
+    $this->assertFalse($manager->loggedIn());
+    $elapsed = microtime(TRUE) - $start;
+    $this->assertGreaterThanOrEqual(1.0, $elapsed);
+  }
+
+  /**
    * Tests that loggedIn() handles a DriverException gracefully.
    */
   public function testLoggedInHandlesDriverException(): void {

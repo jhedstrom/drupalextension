@@ -10,14 +10,17 @@ use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
- * Simulates a slow post-login page by delaying the logged-in body class.
+ * Simulates slow post-login DOM signals.
  *
- * When 'behat_test.slow_login' state is set to a positive integer (ms),
- * strips the 'logged-in' class from the body tag and injects JavaScript
- * that re-adds it after the configured delay. This reproduces the race
- * condition where JS or async processing delays the logged-in indicator.
+ * Two independent state keys control which signal is delayed:
  *
- * Requires a JS-capable driver (Selenium) to observe the effect.
+ * - 'behat_test.slow_login' (ms): strips the 'logged-in' class from the
+ *   body tag and re-adds it via JS after the configured delay.
+ * - 'behat_test.slow_logout_link' (ms): strips logout links from the
+ *   response and re-injects one via JS after the configured delay.
+ *
+ * Both manipulations rely on a JS-capable driver (Selenium) to observe the
+ * delayed re-addition.
  */
 class SlowLoginSubscriber implements EventSubscriberInterface {
 
@@ -33,11 +36,13 @@ class SlowLoginSubscriber implements EventSubscriberInterface {
   }
 
   /**
-   * Removes the logged-in class and re-adds it after a delay.
+   * Strips logged-in indicators and schedules their delayed re-addition.
    */
   public function onResponse(ResponseEvent $event): void {
-    $delay = (int) $this->state->get('behat_test.slow_login', 0);
-    if ($delay <= 0) {
+    $login_delay = (int) $this->state->get('behat_test.slow_login', 0);
+    $logout_link_delay = (int) $this->state->get('behat_test.slow_logout_link', 0);
+
+    if ($login_delay <= 0 && $logout_link_delay <= 0) {
       return;
     }
 
@@ -47,22 +52,32 @@ class SlowLoginSubscriber implements EventSubscriberInterface {
       return;
     }
 
-    // Only act on pages where the logged-in class is present.
-    if (!str_contains($content, 'logged-in')) {
-      return;
+    $scripts = '';
+
+    if ($login_delay > 0 && str_contains($content, 'logged-in')) {
+      $content = preg_replace('/(<body[^>]*class="[^"]*)\blogged-in\b/', '$1', $content);
+      $scripts .= sprintf(
+        '<script>setTimeout(function(){document.body.classList.add("logged-in");}, %d);</script>',
+        $login_delay
+      );
     }
 
-    // Remove the logged-in class from the body tag.
-    $content = preg_replace('/(<body[^>]*class="[^"]*)\blogged-in\b/', '$1', $content);
+    if ($logout_link_delay > 0) {
+      $count = 0;
+      $stripped = preg_replace('/<a\b[^>]*href="[^"]*\/user\/logout[^"]*"[^>]*>.*?<\/a>/is', '', $content, -1, $count);
+      if ($count > 0) {
+        $content = $stripped;
+        $scripts .= sprintf(
+          '<script>setTimeout(function(){var a=document.createElement("a");a.href="/user/logout";a.textContent="Log out";document.body.appendChild(a);}, %d);</script>',
+          $logout_link_delay
+        );
+      }
+    }
 
-    // Inject JS to re-add it after the configured delay.
-    $js = sprintf(
-      '<script>setTimeout(function(){document.body.classList.add("logged-in");}, %d);</script>',
-      $delay
-    );
-    $content = str_replace('</body>', $js . '</body>', $content);
-
-    $response->setContent($content);
+    if ($scripts !== '') {
+      $content = str_replace('</body>', $scripts . '</body>', $content);
+      $response->setContent($content);
+    }
   }
 
 }

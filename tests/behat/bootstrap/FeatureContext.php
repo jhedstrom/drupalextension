@@ -148,6 +148,28 @@ class FeatureContext extends RawDrupalContext {
   }
 
   /**
+   * Override the active 'login_wait' parameter on the authentication manager.
+   *
+   * 'login_wait' is normally read once from behat.yml at boot. This step
+   * uses reflection to mutate the live manager so a single scenario can
+   * exercise the wait branches without spawning a subprocess to rewrite
+   * the config file.
+   *
+   * @code
+   * Given the post-login wait is set to 3 seconds
+   * @endcode
+   */
+  #[Given('the post-login wait is set to :seconds second(s)')]
+  public function testSetPostLoginWait(int|string $seconds): void {
+    $manager = $this->getAuthenticationManager();
+    $reflection = new \ReflectionObject($manager);
+    $property = $reflection->getProperty('parameters');
+    $params = $property->getValue($manager);
+    $params['login_wait'] = (int) $seconds;
+    $property->setValue($manager, $params);
+  }
+
+  /**
    * Registers fixture-only field handlers with the active driver's core.
    *
    * The fixture module 'behat_test' ships an 'address_field' type with four
@@ -715,6 +737,22 @@ class FeatureContext extends RawDrupalContext {
     /** @var \Drupal\Core\Extension\ModuleInstallerInterface $installer */
     $installer = \Drupal::service('module_installer');
     $installer->install([$module]);
+  }
+
+  /**
+   * Resets the SlowLoginSubscriber state keys after slow-login scenarios.
+   *
+   * Scenarios tagged '@slow_login_state' set 'behat_test.slow_login' and/or
+   * 'behat_test.slow_logout_link' to non-zero values to simulate delayed
+   * post-login DOM signals. Clear them on the way out so other features
+   * are not affected, even if the scenario fails before its cleanup step
+   * would run.
+   */
+  #[AfterScenario('@slow_login_state')]
+  public function testResetSlowLoginStateAfterScenario(): void {
+    $state = \Drupal::state();
+    $state->set('behat_test.slow_login', 0);
+    $state->set('behat_test.slow_logout_link', 0);
   }
 
   /**
