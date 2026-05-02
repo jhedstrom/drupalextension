@@ -166,7 +166,7 @@ class DrupalExtension implements ExtensionInterface {
         ->integerNode('login_wait')
           ->min(0)
           ->defaultValue(0)
-          ->info('Seconds to wait for the browser to load after login. Set to 0 to disable waiting.')
+          ->info('Maximum seconds to wait for post-login DOM signals (URL change, body render, logged-in selector, logout link). Set to 0 to disable waiting.')
         ->end()
         ->integerNode('ajax_timeout')
           ->min(0)

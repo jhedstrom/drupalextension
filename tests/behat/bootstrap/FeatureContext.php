@@ -148,6 +148,28 @@ class FeatureContext extends RawDrupalContext {
   }
 
   /**
+   * Override the active 'login_wait' parameter on the authentication manager.
+   *
+   * 'login_wait' is normally read once from behat.yml at boot. This step
+   * uses reflection to mutate the live manager so a single scenario can
+   * exercise the wait branches without spawning a subprocess to rewrite
+   * the config file.
+   *
+   * @code
+   * Given the post-login wait is set to 3 seconds
+   * @endcode
+   */
+  #[Given('the post-login wait is set to :seconds second(s)')]
+  public function testSetPostLoginWait(int|string $seconds): void {
+    $manager = $this->getAuthenticationManager();
+    $reflection = new \ReflectionObject($manager);
+    $property = $reflection->getProperty('parameters');
+    $params = $property->getValue($manager);
+    $params['login_wait'] = (int) $seconds;
+    $property->setValue($manager, $params);
+  }
+
+  /**
    * Registers fixture-only field handlers with the active driver's core.
    *
    * The fixture module 'behat_test' ships an 'address_field' type with four
