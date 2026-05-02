@@ -288,15 +288,12 @@ Feature: DrupalContext coverage gaps
 
   @test-drupal @api
   Scenario: Assert "Given the following :type content:" passes for author property
-    Given some behat configuration
-    And scenario steps tagged with "@test-drupal @api":
-      """
-      Given the following users:
-        | name     | mail            | status |
-        | Joe User | joe@example.com | 1      |
-      And the following "article" content:
-        | title          | author   | status |
-        | Article by Joe | Joe User | 1      |
-      """
-    When I run behat with drupal profile
-    Then it should pass
+    Given I am logged in as a user with the "administrator" role
+    And the following users:
+      | name     | mail            | status |
+      | Joe User | joe@example.com | 1      |
+    And the following "article" content:
+      | title          | author   | status |
+      | Article by Joe | Joe User | 1      |
+    When I go to "admin/content"
+    Then I should see the text "Joe User" in the "Article by Joe" row
