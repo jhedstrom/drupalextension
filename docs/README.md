@@ -27,7 +27,7 @@ testing Drupal sites with Behavior-Driven Development.
 
 - [Step definitions](../STEPS.md) - Generated reference for every step
   shipped with the extension.
-- [Migration guide](../MIGRATION.md) - Breaking changes and upgrade
+- [Upgrading guide](../UPGRADING.md) - Breaking changes and upgrade
   instructions for `5.x` to `6.x`.
 - [Contributing](../CONTRIBUTING.md) - Development setup and
   contribution guidelines.

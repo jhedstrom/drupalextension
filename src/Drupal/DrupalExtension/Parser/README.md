@@ -82,6 +82,6 @@ Parse errors thrown by the modern parser carry:
 
 `getMessage()` returns a multi-line string with the cell, a caret line at the offset, and the description, suitable for surfacing directly in a Behat run. `MultipleParseException` collects multiple per-cell errors so authors can fix them all in one edit.
 
-## Migration
+## Upgrading
 
-See [`MIGRATION.md`](../../../../../MIGRATION.md) for the side-by-side syntax mapping, positional-to-named conversion table, escape sequences, and parse-error format.
+See [`UPGRADING.md`](../../../../../UPGRADING.md) for the side-by-side syntax mapping, positional-to-named conversion table, escape sequences, and parse-error format.

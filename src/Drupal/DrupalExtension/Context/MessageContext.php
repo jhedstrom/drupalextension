@@ -411,7 +411,7 @@ class MessageContext extends RawMinkContext implements TranslatableContext, Para
     $legacy_key = $legacy_key_map[$name];
 
     if (is_array($selectors) && isset($selectors[$legacy_key])) {
-      $this->triggerDeprecation('Configuring message selectors as flat keys under "Drupal\\DrupalExtension.selectors:" is deprecated in drupal-extension:6.0.0 and is removed from drupal-extension:6.1.0. Move them under "Drupal\\DrupalExtension.selectors.messages:" with keys "default", "error", "success", "warning". See https://github.com/jhedstrom/drupalextension/blob/main/MIGRATION.md');
+      $this->triggerDeprecation('Configuring message selectors as flat keys under "Drupal\\DrupalExtension.selectors:" is deprecated in drupal-extension:6.0.0 and is removed from drupal-extension:6.1.0. Move them under "Drupal\\DrupalExtension.selectors.messages:" with keys "default", "error", "success", "warning". See https://github.com/jhedstrom/drupalextension/blob/main/UPGRADING.md');
     }
 
     return $this->getDrupalSelector($legacy_key);

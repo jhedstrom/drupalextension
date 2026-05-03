@@ -31,7 +31,7 @@ sites.
 > [6.x epic](https://github.com/jhedstrom/drupalextension/issues/782)
 > for details and progress.
 >
-> Upgrading from `5.x`? See [`MIGRATION.md`](MIGRATION.md) for the full list
+> Upgrading from `5.x`? See [`UPGRADING.md`](UPGRADING.md) for the full list
 > of breaking changes and the step-text migration table.
 
 ## Use it for testing your Drupal site.
