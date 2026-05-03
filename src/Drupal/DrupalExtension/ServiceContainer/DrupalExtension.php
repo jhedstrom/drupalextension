@@ -239,7 +239,7 @@ class DrupalExtension implements ExtensionInterface {
     $legacy = $config['region_map'] ?? [];
 
     if ($legacy !== []) {
-      $this->triggerDeprecation('The "region_map" configuration key under "Drupal\\DrupalExtension" is deprecated in drupal-extension:6.0.0 and removed from drupal-extension:6.1.0. Rename it to "regions". See https://github.com/jhedstrom/drupalextension/blob/main/MIGRATION.md');
+      $this->triggerDeprecation('The "region_map" configuration key under "Drupal\\DrupalExtension" is deprecated in drupal-extension:6.0.0 and removed from drupal-extension:6.1.0. Rename it to "regions". See https://github.com/jhedstrom/drupalextension/blob/main/UPGRADING.md');
       // 'regions' wins on key collisions; '+' keeps the left-hand keys.
       $regions += $legacy;
     }

@@ -444,7 +444,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface, D
     $mode = $this->getParameter('field_parser') ?? 'default';
 
     if ($mode === 'legacy') {
-      $this->triggerDeprecation('The legacy field parser is deprecated in drupal-extension:6.0.0 and is removed from drupal-extension:6.1.0. Remove "field_parser: legacy" from your behat.yml to migrate. See https://github.com/jhedstrom/drupalextension/blob/main/MIGRATION.md');
+      $this->triggerDeprecation('The legacy field parser is deprecated in drupal-extension:6.0.0 and is removed from drupal-extension:6.1.0. Remove "field_parser: legacy" from your behat.yml to migrate. See https://github.com/jhedstrom/drupalextension/blob/main/UPGRADING.md');
 
       return new LegacyEntityFieldParser($entity_type, $classifier);
     }

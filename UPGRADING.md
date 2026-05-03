@@ -1,4 +1,4 @@
-# Migration guide: 5.x → 6.0
+# Upgrading from 5.x to 6.0
 
 Version 6.0 enforces a consistent set of step-definition conventions across
 all bundled contexts. The conventions are documented in

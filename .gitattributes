@@ -1,10 +1,12 @@
 # Ignore files for distribution archives.
 /.ahoy.yml           export-ignore
+/.docker             export-ignore
 /.editorconfig       export-ignore
 /.gitattributes      export-ignore
 /.github             export-ignore
 /.gitignore          export-ignore
 /CONTRIBUTING.md     export-ignore
+/behat.dist.yml      export-ignore
 /behat.yml           export-ignore
 /build               export-ignore
 /composer.lock       export-ignore
