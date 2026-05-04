@@ -23,9 +23,8 @@ The Drupal Extension is an integration layer between [Behat](http://behat.org),
 provides step definitions for common testing scenarios specific to Drupal
 sites.
 
-> **Note:** This `main` branch is under heavy development for
-> version `6.x`, which will use DrupalDriver `3.x`. For the
-> `5.x` maintenance line, use the
+> **Note:** Version `6.0.0-alpha1` has been released and runs on
+> DrupalDriver `3.x`. For the `5.x` maintenance line, use the
 > [`5.x` branch](https://github.com/jhedstrom/drupalextension/tree/5.x).
 > See the
 > [6.x epic](https://github.com/jhedstrom/drupalextension/issues/782)
