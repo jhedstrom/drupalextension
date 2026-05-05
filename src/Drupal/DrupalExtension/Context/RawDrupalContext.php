@@ -424,7 +424,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface, D
       throw new \RuntimeException(sprintf('The active Drupal driver "%s" does not support field inspection.', $driver::class));
     }
 
-    $parser = $this->getFieldParser($stub->getEntityType(), $driver->getCore()->getFieldClassifier());
+    $parser = $this->getFieldParser($stub->getEntityType(), $driver->getCore()->getFieldClassifier(), $stub->getBundle());
     $parser->ignoring($ignored_properties);
 
     $parsed = $parser->parse($stub->getValues());
@@ -440,16 +440,16 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface, D
    * that will be removed in 6.1). Override in a subclass to swap in a
    * custom implementation.
    */
-  protected function getFieldParser(string $entity_type, FieldClassifierInterface $classifier): EntityFieldParserInterface {
+  protected function getFieldParser(string $entity_type, FieldClassifierInterface $classifier, ?string $bundle = null): EntityFieldParserInterface {
     $mode = $this->getParameter('field_parser') ?? 'default';
 
     if ($mode === 'legacy') {
       $this->triggerDeprecation('The legacy field parser is deprecated in drupal-extension:6.0.0 and is removed from drupal-extension:6.1.0. Remove "field_parser: legacy" from your behat.yml to migrate. See https://github.com/jhedstrom/drupalextension/blob/main/UPGRADING.md');
 
-      return new LegacyEntityFieldParser($entity_type, $classifier);
+      return new LegacyEntityFieldParser($entity_type, $classifier, $bundle);
     }
 
-    return new EntityFieldParser($entity_type, $classifier);
+    return new EntityFieldParser($entity_type, $classifier, $bundle);
   }
 
   /**
