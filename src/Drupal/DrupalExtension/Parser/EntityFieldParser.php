@@ -44,11 +44,23 @@ final class EntityFieldParser implements EntityFieldParserInterface {
   protected array $ignoredProperties = [];
 
   /**
-   * Constructs the parser for one entity-type / classifier pairing.
+   * Constructs the parser for one entity-type / bundle / classifier pairing.
+   *
+   * @param string $entityType
+   *   The entity type ID.
+   * @param \Drupal\Driver\Core\Field\FieldClassifierInterface $fieldClassifier
+   *   The field classifier.
+   * @param string|null $bundle
+   *   The bundle for the stub being parsed, or NULL for entity types
+   *   without bundles. When provided, bundle-scoped fields (F6-F9) are
+   *   accepted as known fields rather than triggering the unknown-field
+   *   guard - their values flow to the entity unchanged so the bundle's
+   *   field item-list class can take over at save.
    */
   public function __construct(
     protected readonly string $entityType,
     protected readonly FieldClassifierInterface $fieldClassifier,
+    protected readonly ?string $bundle = null,
   ) {
   }
 
@@ -113,12 +125,21 @@ final class EntityFieldParser implements EntityFieldParserInterface {
         }
       }
       else {
-        $is_base_field = $this->fieldClassifier->fieldIsBaseStandard($this->entityType, $field_name)
+        $is_known = $this->fieldClassifier->fieldIsBaseStandard($this->entityType, $field_name)
           || $this->fieldClassifier->fieldIsBaseComputedReadOnly($this->entityType, $field_name)
           || $this->fieldClassifier->fieldIsBaseComputedWritable($this->entityType, $field_name)
-          || $this->fieldClassifier->fieldIsBaseCustomStorage($this->entityType, $field_name);
+          || $this->fieldClassifier->fieldIsBaseCustomStorage($this->entityType, $field_name)
+          || (
+            $this->bundle !== null
+            && (
+              $this->fieldClassifier->fieldIsBundleComputedReadOnly($this->entityType, $field_name, $this->bundle)
+              || $this->fieldClassifier->fieldIsBundleComputedWritable($this->entityType, $field_name, $this->bundle)
+              || $this->fieldClassifier->fieldIsBundleCustomStorage($this->entityType, $field_name, $this->bundle)
+              || $this->fieldClassifier->fieldIsBundleStorageBacked($this->entityType, $field_name, $this->bundle)
+            )
+          );
 
-        if (!$is_base_field && !in_array($field_name, $this->ignoredProperties, TRUE)) {
+        if (!$is_known && !in_array($field_name, $this->ignoredProperties, TRUE)) {
           throw new \RuntimeException(sprintf('Field "%s" does not exist on entity type "%s".', $field_name, $this->entityType));
         }
 
