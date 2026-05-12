@@ -200,8 +200,8 @@ final class LegacyEntityFieldParser implements EntityFieldParserInterface {
         // must be checked so computed and custom-storage base fields like
         // 'moderation_state' do not trip the unknown-field guard. When the
         // bundle is known, also accept F6-F9 (bundle-scoped fields) so that
-        // fields contributed via 'hook_entity_bundle_field_info()' such as
-        // rdf_sync's 'uri' are recognised.
+        // fields contributed via 'hook_entity_bundle_field_info()' are
+        // recognised.
         $is_known = $this->fieldClassifier->fieldIsBaseStandard($this->entityType, $field_name)
           || $this->fieldClassifier->fieldIsBaseComputedReadOnly($this->entityType, $field_name)
           || $this->fieldClassifier->fieldIsBaseComputedWritable($this->entityType, $field_name)

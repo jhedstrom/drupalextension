@@ -125,6 +125,13 @@ final class EntityFieldParser implements EntityFieldParserInterface {
         }
       }
       else {
+        // The classifier splits base fields across F1-F4 (standard, computed
+        // read-only, computed writable, custom storage). All four predicates
+        // must be checked so computed and custom-storage base fields like
+        // 'moderation_state' do not trip the unknown-field guard. When the
+        // bundle is known, also accept F6-F9 (bundle-scoped fields) so that
+        // fields contributed via 'hook_entity_bundle_field_info()' are
+        // recognised.
         $is_known = $this->fieldClassifier->fieldIsBaseStandard($this->entityType, $field_name)
           || $this->fieldClassifier->fieldIsBaseComputedReadOnly($this->entityType, $field_name)
           || $this->fieldClassifier->fieldIsBaseComputedWritable($this->entityType, $field_name)
