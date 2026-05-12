@@ -492,3 +492,38 @@ store name.
 5. If you subclass any bundled context, rename overridden `@Then` methods to
    the `<concern>Assert<action>` form.
 6. Re-run your Behat suite.
+
+# Upgrading from 6.0 to 6.1
+
+## `Before/AfterEntityCreate` hooks fan out to every entity create path
+
+In 6.0 the `Before/AfterEntityCreateScope` hooks (registered via the
+`#[BeforeEntityCreate]` / `#[AfterEntityCreate]` attributes) only fired
+for the generic `Given the following :type entities:` step that
+`entityCreate()` backs.
+
+In 6.1 these scopes also fire as siblings of the per-type scopes inside
+`nodeCreate()`, `userCreate()`, and `termCreate()`. A single
+`#[BeforeEntityCreate]` / `#[AfterEntityCreate]` handler now observes
+every entity create within a scenario - node, term, user, and generic -
+making it the right tool for cross-cutting concerns like audit logging,
+tagging, or scenario-wide telemetry.
+
+The per-type scopes (`BeforeNodeCreateScope`, `BeforeTermCreateScope`,
+`BeforeUserCreateScope` and their `After*` counterparts) are unchanged
+and remain the correct choice for type-targeted handlers.
+
+Dispatch order within each create path is per-type first, then entity:
+
+```
+nodeCreate()    → BeforeNodeCreateScope    → BeforeEntityCreateScope    → save → AfterNodeCreateScope    → AfterEntityCreateScope
+userCreate()    → BeforeUserCreateScope    → BeforeEntityCreateScope    → save → AfterUserCreateScope    → AfterEntityCreateScope
+termCreate()    → BeforeTermCreateScope    → BeforeEntityCreateScope    → save → AfterTermCreateScope    → AfterEntityCreateScope
+entityCreate()  →                             BeforeEntityCreateScope    → save →                            AfterEntityCreateScope
+```
+
+This is purely additive - no deprecations and no API breaks. If you
+already registered an `#[BeforeEntityCreate]` or `#[AfterEntityCreate]`
+handler against 6.0 expecting it to fire only for the generic step,
+audit the handler before upgrading: it will now fire for every entity
+create in the scenario.
