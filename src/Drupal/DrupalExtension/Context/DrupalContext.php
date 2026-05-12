@@ -631,6 +631,28 @@ class DrupalContext extends RawDrupalContext implements TranslatableContext {
   }
 
   /**
+   * Creates entities of a given type provided in a table.
+   *
+   * Useful for entity types that do not have a dedicated step (e.g.
+   * 'commerce_product', 'group', 'paragraph'). Entities are tracked and
+   * removed after the scenario by 'cleanEntities()'.
+   *
+   * @code
+   *   Given the following "commerce_product" entities:
+   *     | title | type    | status |
+   *     | TNT   | product | 1      |
+   *     | Anvil | product | 1      |
+   * @endcode
+   */
+  #[Given('the following :type entities:')]
+  public function createEntities(string $type, TableNode $entitiesTable): void {
+    foreach ($entitiesTable->getHash() as $entity_hash) {
+      $stub = new EntityStub($type, NULL, $entity_hash);
+      $this->entityCreate($stub);
+    }
+  }
+
+  /**
    * Pauses the scenario until the user presses a key.
    *
    * Useful when debugging a scenario.

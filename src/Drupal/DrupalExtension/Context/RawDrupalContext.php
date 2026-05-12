@@ -30,10 +30,12 @@ use Drupal\DrupalExtension\Parser\EntityFieldParser;
 use Drupal\DrupalExtension\Parser\EntityFieldParserInterface;
 use Drupal\DrupalExtension\Parser\LegacyEntityFieldParser;
 
+use Drupal\DrupalExtension\Hook\Scope\AfterEntityCreateScope;
 use Drupal\DrupalExtension\Hook\Scope\AfterLanguageCreateScope;
 use Drupal\DrupalExtension\Hook\Scope\AfterNodeCreateScope;
 use Drupal\DrupalExtension\Hook\Scope\AfterTermCreateScope;
 use Drupal\DrupalExtension\Hook\Scope\AfterUserCreateScope;
+use Drupal\DrupalExtension\Hook\Scope\BeforeEntityCreateScope;
 use Drupal\DrupalExtension\Hook\Scope\BeforeLanguageCreateScope;
 use Drupal\DrupalExtension\Hook\Scope\BeforeNodeCreateScope;
 use Drupal\DrupalExtension\Hook\Scope\BeforeTermCreateScope;
@@ -522,6 +524,36 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface, D
     $this->restoreScalarBaseFields($stub, $scalars);
 
     $this->dispatchHooks(AfterTermCreateScope::class, $stub);
+    $this->createdStubs[] = $stub;
+
+    return $stub;
+  }
+
+  /**
+   * Create a generic entity.
+   *
+   * Mirrors 'nodeCreate()/userCreate()/termCreate()' for entity types that
+   * do not have a dedicated method. The stub is added to 'createdStubs' so
+   * the existing 'cleanEntities()' machinery removes it after the scenario
+   * via the driver's 'entityDelete()' fallback.
+   *
+   * @param \Drupal\Driver\Entity\EntityStubInterface $stub
+   *   The entity stub.
+   *
+   * @return \Drupal\Driver\Entity\EntityStubInterface
+   *   The same stub, now flagged as saved.
+   */
+  public function entityCreate(EntityStubInterface $stub): EntityStubInterface {
+    $this->dispatchHooks(BeforeEntityCreateScope::class, $stub);
+    $this->parseEntityFields($stub);
+
+    $driver = $this->getContentDriver();
+
+    $scalars = $this->captureScalarBaseFields($stub);
+    $driver->entityCreate($stub);
+    $this->restoreScalarBaseFields($stub, $scalars);
+
+    $this->dispatchHooks(AfterEntityCreateScope::class, $stub);
     $this->createdStubs[] = $stub;
 
     return $stub;

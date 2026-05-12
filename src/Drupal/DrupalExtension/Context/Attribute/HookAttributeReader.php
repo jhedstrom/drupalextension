@@ -5,16 +5,20 @@ declare(strict_types=1);
 namespace Drupal\DrupalExtension\Context\Attribute;
 
 use Behat\Behat\Context\Attribute\AttributeReader;
+use Drupal\DrupalExtension\Hook\Attribute\AfterEntityCreate as AfterEntityCreateAttribute;
 use Drupal\DrupalExtension\Hook\Attribute\AfterNodeCreate as AfterNodeCreateAttribute;
 use Drupal\DrupalExtension\Hook\Attribute\AfterTermCreate as AfterTermCreateAttribute;
 use Drupal\DrupalExtension\Hook\Attribute\AfterUserCreate as AfterUserCreateAttribute;
+use Drupal\DrupalExtension\Hook\Attribute\BeforeEntityCreate as BeforeEntityCreateAttribute;
 use Drupal\DrupalExtension\Hook\Attribute\BeforeNodeCreate as BeforeNodeCreateAttribute;
 use Drupal\DrupalExtension\Hook\Attribute\BeforeTermCreate as BeforeTermCreateAttribute;
 use Drupal\DrupalExtension\Hook\Attribute\BeforeUserCreate as BeforeUserCreateAttribute;
 use Drupal\DrupalExtension\Hook\Attribute\DrupalHook;
+use Drupal\DrupalExtension\Hook\Call\AfterEntityCreate;
 use Drupal\DrupalExtension\Hook\Call\AfterNodeCreate;
 use Drupal\DrupalExtension\Hook\Call\AfterTermCreate;
 use Drupal\DrupalExtension\Hook\Call\AfterUserCreate;
+use Drupal\DrupalExtension\Hook\Call\BeforeEntityCreate;
 use Drupal\DrupalExtension\Hook\Call\BeforeNodeCreate;
 use Drupal\DrupalExtension\Hook\Call\BeforeTermCreate;
 use Drupal\DrupalExtension\Hook\Call\BeforeUserCreate;
@@ -30,9 +34,11 @@ class HookAttributeReader implements AttributeReader {
    * @var array<class-string, class-string>
    */
   private const ATTRIBUTE_MAP = [
+    AfterEntityCreateAttribute::class => AfterEntityCreate::class,
     AfterNodeCreateAttribute::class => AfterNodeCreate::class,
     AfterTermCreateAttribute::class => AfterTermCreate::class,
     AfterUserCreateAttribute::class => AfterUserCreate::class,
+    BeforeEntityCreateAttribute::class => BeforeEntityCreate::class,
     BeforeNodeCreateAttribute::class => BeforeNodeCreate::class,
     BeforeTermCreateAttribute::class => BeforeTermCreate::class,
     BeforeUserCreateAttribute::class => BeforeUserCreate::class,
