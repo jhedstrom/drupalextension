@@ -435,6 +435,23 @@ Creates one or more languages.
 </details>
 
 <details>
+  <summary><code>@Given the following :type entities:</code></summary>
+
+<br/>
+Creates entities of a given type provided in a table. 
+<br/><br/>
+
+```gherkin
+  Given the following "commerce_product" entities:
+    | title | type    | status |
+    | TNT   | product | 1      |
+    | Anvil | product | 1      |
+
+```
+
+</details>
+
+<details>
   <summary><code>@Given I wait for the batch job to finish</code></summary>
 
 <br/>
