@@ -280,4 +280,78 @@ class LegacyEntityFieldParserTest extends TestCase {
     yield 'F4 base custom storage' => ['fieldIsBaseCustomStorage'];
   }
 
+  /**
+   * Tests that bundle-scoped fields pass through when the bundle is known.
+   *
+   * Regression guard: each bundle predicate F6-F9 must be checked so a
+   * field contributed via 'hook_entity_bundle_field_info()' does not
+   * trigger the unknown-field error.
+   *
+   * @param string $true_predicate
+   *   The classifier predicate that returns TRUE for this scenario.
+   */
+  #[DataProvider('dataProviderParseAcceptsBundleFields')]
+  public function testParseAcceptsBundleFields(string $true_predicate): void {
+    $bundle_predicates = [
+      'fieldIsBundleComputedReadOnly',
+      'fieldIsBundleComputedWritable',
+      'fieldIsBundleCustomStorage',
+      'fieldIsBundleStorageBacked',
+    ];
+
+    $classifier = $this->createMock(FieldClassifierInterface::class);
+    $classifier->method('fieldIsConfigurable')->willReturn(FALSE);
+    $classifier->method('fieldIsBaseStandard')->willReturn(FALSE);
+    $classifier->method('fieldIsBaseComputedReadOnly')->willReturn(FALSE);
+    $classifier->method('fieldIsBaseComputedWritable')->willReturn(FALSE);
+    $classifier->method('fieldIsBaseCustomStorage')->willReturn(FALSE);
+
+    foreach ($bundle_predicates as $predicate) {
+      $classifier->method($predicate)->willReturn($predicate === $true_predicate);
+    }
+
+    $parser = new LegacyEntityFieldParser('node', $classifier, 'article');
+
+    $this->assertSame(
+      ['uri' => 'http://example.com/node/1'],
+      $parser->parse(['uri' => 'http://example.com/node/1']),
+    );
+  }
+
+  /**
+   * Tests that bundle predicates are not consulted when no bundle is given.
+   *
+   * When the parser is constructed without a bundle, a field that only
+   * matches a bundle predicate must still trip the unknown-field guard.
+   */
+  public function testParseWithoutBundleRejectsBundleField(): void {
+    $classifier = $this->createMock(FieldClassifierInterface::class);
+    $classifier->method('fieldIsConfigurable')->willReturn(FALSE);
+    $classifier->method('fieldIsBaseStandard')->willReturn(FALSE);
+    $classifier->method('fieldIsBaseComputedReadOnly')->willReturn(FALSE);
+    $classifier->method('fieldIsBaseComputedWritable')->willReturn(FALSE);
+    $classifier->method('fieldIsBaseCustomStorage')->willReturn(FALSE);
+    $classifier->expects($this->never())->method('fieldIsBundleComputedReadOnly');
+    $classifier->expects($this->never())->method('fieldIsBundleComputedWritable');
+    $classifier->expects($this->never())->method('fieldIsBundleCustomStorage');
+    $classifier->expects($this->never())->method('fieldIsBundleStorageBacked');
+
+    $parser = new LegacyEntityFieldParser('node', $classifier);
+
+    $this->expectException(\RuntimeException::class);
+    $this->expectExceptionMessage('Field "uri" does not exist on entity type "node".');
+
+    $parser->parse(['uri' => 'http://example.com/node/1']);
+  }
+
+  /**
+   * Provides data for testParseAcceptsBundleFields().
+   */
+  public static function dataProviderParseAcceptsBundleFields(): \Iterator {
+    yield 'F6 bundle computed read-only' => ['fieldIsBundleComputedReadOnly'];
+    yield 'F7 bundle computed writable' => ['fieldIsBundleComputedWritable'];
+    yield 'F8 bundle custom storage' => ['fieldIsBundleCustomStorage'];
+    yield 'F9 bundle storage backed' => ['fieldIsBundleStorageBacked'];
+  }
+
 }
