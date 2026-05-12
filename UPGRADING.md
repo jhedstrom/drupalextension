@@ -515,7 +515,7 @@ and remain the correct choice for type-targeted handlers.
 
 Dispatch order within each create path is per-type first, then entity:
 
-```
+```text
 nodeCreate()    → BeforeNodeCreateScope    → BeforeEntityCreateScope    → save → AfterNodeCreateScope    → AfterEntityCreateScope
 userCreate()    → BeforeUserCreateScope    → BeforeEntityCreateScope    → save → AfterUserCreateScope    → AfterEntityCreateScope
 termCreate()    → BeforeTermCreateScope    → BeforeEntityCreateScope    → save → AfterTermCreateScope    → AfterEntityCreateScope
