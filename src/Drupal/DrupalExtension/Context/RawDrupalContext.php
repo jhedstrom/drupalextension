@@ -381,6 +381,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface, D
    */
   public function nodeCreate(EntityStubInterface $stub): EntityStubInterface {
     $this->dispatchHooks(BeforeNodeCreateScope::class, $stub);
+    $this->dispatchHooks(BeforeEntityCreateScope::class, $stub);
     $this->parseEntityFields($stub, ['author']);
 
     $driver = $this->getContentDriver();
@@ -390,6 +391,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface, D
     $this->restoreScalarBaseFields($stub, $scalars);
 
     $this->dispatchHooks(AfterNodeCreateScope::class, $stub);
+    $this->dispatchHooks(AfterEntityCreateScope::class, $stub);
     $this->createdStubs[] = $stub;
 
     return $stub;
@@ -465,6 +467,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface, D
    */
   public function userCreate(EntityStubInterface $stub): EntityStubInterface {
     $this->dispatchHooks(BeforeUserCreateScope::class, $stub);
+    $this->dispatchHooks(BeforeEntityCreateScope::class, $stub);
     $this->parseEntityFields($stub, ['role']);
 
     $driver = $this->getDriver();
@@ -478,6 +481,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface, D
     $this->restoreScalarBaseFields($stub, $scalars);
 
     $this->dispatchHooks(AfterUserCreateScope::class, $stub);
+    $this->dispatchHooks(AfterEntityCreateScope::class, $stub);
     $this->userManager->addUser($stub);
 
     return $stub;
@@ -515,6 +519,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface, D
     }
 
     $this->dispatchHooks(BeforeTermCreateScope::class, $stub);
+    $this->dispatchHooks(BeforeEntityCreateScope::class, $stub);
     $this->parseEntityFields($stub, ['vocabulary_machine_name']);
 
     $driver = $this->getContentDriver();
@@ -524,6 +529,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface, D
     $this->restoreScalarBaseFields($stub, $scalars);
 
     $this->dispatchHooks(AfterTermCreateScope::class, $stub);
+    $this->dispatchHooks(AfterEntityCreateScope::class, $stub);
     $this->createdStubs[] = $stub;
 
     return $stub;

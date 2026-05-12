@@ -47,3 +47,27 @@ Feature: Generic entity creation
       """
       The "no_such_entity" entity type does not exist.
       """
+
+  @test-drupal @api
+  Scenario: Assert "Before/AfterEntityCreate" hooks fire for every entity create path
+    # A single Before/AfterEntityCreate handler registered in FeatureContext
+    # must observe all four create paths - user, term, node, and the generic
+    # entityCreate() path - within one scenario.
+    Given the following users:
+      | name        |
+      | Hook probe  |
+    And the following "tags" terms:
+      | name      |
+      | Hook tag  |
+    And the following "article" content:
+      | title         |
+      | Hook article  |
+    And the following "behat_test_thing" entities:
+      | title      |
+      | Hook thing |
+    Then the generic entity create hook should have fired for:
+      | entity_type      |
+      | user             |
+      | taxonomy_term    |
+      | node             |
+      | behat_test_thing |

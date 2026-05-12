@@ -27,9 +27,11 @@ use Drupal\Driver\DrupalDriver;
 use Drupal\Driver\Entity\EntityStub;
 use Drupal\Driver\Entity\EntityStubInterface;
 use Drupal\DrupalExtension\Context\MinkContext;
+use Drupal\DrupalExtension\Hook\Attribute\AfterEntityCreate;
 use Drupal\DrupalExtension\Hook\Attribute\AfterNodeCreate;
 use Drupal\DrupalExtension\Hook\Attribute\AfterTermCreate;
 use Drupal\DrupalExtension\Hook\Attribute\AfterUserCreate;
+use Drupal\DrupalExtension\Hook\Attribute\BeforeEntityCreate;
 use Drupal\DrupalExtension\Hook\Attribute\BeforeNodeCreate;
 use Drupal\DrupalExtension\Hook\Attribute\BeforeTermCreate;
 use Drupal\DrupalExtension\Hook\Attribute\BeforeUserCreate;
@@ -51,6 +53,18 @@ class FeatureContext extends RawDrupalContext {
    * The previously remembered user name.
    */
   protected string $previousUserName = '';
+
+  /**
+   * Entity types observed by the generic 'Before/AfterEntityCreate' hooks.
+   *
+   * Populated by 'testRecordBeforeEntityCreate()' /
+   * 'testRecordAfterEntityCreate()' and asserted by
+   * 'testAssertGenericEntityHookFiredFor()'. Reset implicitly by Behat
+   * re-instantiating 'FeatureContext' per scenario.
+   *
+   * @var array<int, string>
+   */
+  protected array $observedEntityCreates = [];
 
   /**
    * Captured MinkContext used by 'testAjaxWaitTimesOutVerbose()'.
@@ -290,6 +304,50 @@ class FeatureContext extends RawDrupalContext {
   public static function testAfterUserCreate(EntityScope $scope): void {
     if ($scope->getStub()->getValues() === []) {
       throw new \Exception('Failed to find a user in @afterUserCreate hook.');
+    }
+  }
+
+  /**
+   * Records every entity type that fires the generic Before hook.
+   */
+  #[BeforeEntityCreate]
+  public function testRecordBeforeEntityCreate(EntityScope $scope): void {
+    $this->observedEntityCreates[] = 'before:' . $scope->getStub()->getEntityType();
+  }
+
+  /**
+   * Records every entity type that fires the generic After hook.
+   */
+  #[AfterEntityCreate]
+  public function testRecordAfterEntityCreate(EntityScope $scope): void {
+    $this->observedEntityCreates[] = 'after:' . $scope->getStub()->getEntityType();
+  }
+
+  /**
+   * Asserts every expected entity type appeared in both Before and After hooks.
+   *
+   * Compares 'observedEntityCreates' against a Gherkin table of expected
+   * entity types. Each expected type must appear as both 'before:<type>' and
+   * 'after:<type>' at least once.
+   */
+  #[Then('the generic entity create hook should have fired for:')]
+  public function testAssertGenericEntityHookFiredFor(TableNode $table): void {
+    $expected = array_column($table->getHash(), 'entity_type');
+    $missing = [];
+
+    foreach ($expected as $type) {
+      foreach (['before', 'after'] as $phase) {
+        if (!in_array($phase . ':' . $type, $this->observedEntityCreates, TRUE)) {
+          $missing[] = $phase . ':' . $type;
+        }
+      }
+    }
+
+    if ($missing !== []) {
+      throw new ExpectationException(
+        sprintf("Generic entity create hook did not fire for: %s.\nObserved: %s.", implode(', ', $missing), implode(', ', $this->observedEntityCreates)),
+        $this->getSession()->getDriver()
+      );
     }
   }
 
