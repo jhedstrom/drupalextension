@@ -86,11 +86,21 @@ final class LegacyEntityFieldParser implements EntityFieldParserInterface {
   protected array $ignoredProperties = [];
 
   /**
-   * Constructs the parser for one entity-type / classifier pairing.
+   * Constructs the parser for one entity-type / bundle / classifier pairing.
+   *
+   * @param string $entityType
+   *   The entity type ID.
+   * @param \Drupal\Driver\Core\Field\FieldClassifierInterface $fieldClassifier
+   *   The field classifier.
+   * @param string|null $bundle
+   *   The bundle for the stub being parsed, or NULL when the entity type
+   *   has no bundles. When provided, bundle-scoped fields (F6-F9) are
+   *   accepted as known fields.
    */
   public function __construct(
     protected readonly string $entityType,
     protected readonly FieldClassifierInterface $fieldClassifier,
+    protected readonly ?string $bundle = null,
   ) {
   }
 
@@ -188,13 +198,25 @@ final class LegacyEntityFieldParser implements EntityFieldParserInterface {
         // The classifier splits base fields across F1-F4 (standard, computed
         // read-only, computed writable, custom storage). All four predicates
         // must be checked so computed and custom-storage base fields like
-        // 'moderation_state' do not trip the unknown-field guard.
-        $is_base_field = $this->fieldClassifier->fieldIsBaseStandard($this->entityType, $field_name)
+        // 'moderation_state' do not trip the unknown-field guard. When the
+        // bundle is known, also accept F6-F9 (bundle-scoped fields) so that
+        // fields contributed via 'hook_entity_bundle_field_info()' such as
+        // rdf_sync's 'uri' are recognised.
+        $is_known = $this->fieldClassifier->fieldIsBaseStandard($this->entityType, $field_name)
           || $this->fieldClassifier->fieldIsBaseComputedReadOnly($this->entityType, $field_name)
           || $this->fieldClassifier->fieldIsBaseComputedWritable($this->entityType, $field_name)
-          || $this->fieldClassifier->fieldIsBaseCustomStorage($this->entityType, $field_name);
+          || $this->fieldClassifier->fieldIsBaseCustomStorage($this->entityType, $field_name)
+          || (
+            $this->bundle !== null
+            && (
+              $this->fieldClassifier->fieldIsBundleComputedReadOnly($this->entityType, $field_name, $this->bundle)
+              || $this->fieldClassifier->fieldIsBundleComputedWritable($this->entityType, $field_name, $this->bundle)
+              || $this->fieldClassifier->fieldIsBundleCustomStorage($this->entityType, $field_name, $this->bundle)
+              || $this->fieldClassifier->fieldIsBundleStorageBacked($this->entityType, $field_name, $this->bundle)
+            )
+          );
 
-        if (!$is_base_field && !in_array($field_name, $this->ignoredProperties, TRUE)) {
+        if (!$is_known && !in_array($field_name, $this->ignoredProperties, TRUE)) {
           throw new \RuntimeException(sprintf('Field "%s" does not exist on entity type "%s".', $field_name, $this->entityType));
         }
 
