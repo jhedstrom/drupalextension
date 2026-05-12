@@ -100,7 +100,7 @@ final class LegacyEntityFieldParser implements EntityFieldParserInterface {
   public function __construct(
     protected readonly string $entityType,
     protected readonly FieldClassifierInterface $fieldClassifier,
-    protected readonly ?string $bundle = null,
+    protected readonly ?string $bundle = NULL,
   ) {
   }
 
@@ -207,7 +207,7 @@ final class LegacyEntityFieldParser implements EntityFieldParserInterface {
           || $this->fieldClassifier->fieldIsBaseComputedWritable($this->entityType, $field_name)
           || $this->fieldClassifier->fieldIsBaseCustomStorage($this->entityType, $field_name)
           || (
-            $this->bundle !== null
+            $this->bundle !== NULL
             && (
               $this->fieldClassifier->fieldIsBundleComputedReadOnly($this->entityType, $field_name, $this->bundle)
               || $this->fieldClassifier->fieldIsBundleComputedWritable($this->entityType, $field_name, $this->bundle)

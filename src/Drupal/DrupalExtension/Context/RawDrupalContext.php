@@ -440,7 +440,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface, D
    * that will be removed in 6.1). Override in a subclass to swap in a
    * custom implementation.
    */
-  protected function getFieldParser(string $entity_type, FieldClassifierInterface $classifier, ?string $bundle = null): EntityFieldParserInterface {
+  protected function getFieldParser(string $entity_type, FieldClassifierInterface $classifier, ?string $bundle = NULL): EntityFieldParserInterface {
     $mode = $this->getParameter('field_parser') ?? 'default';
 
     if ($mode === 'legacy') {
