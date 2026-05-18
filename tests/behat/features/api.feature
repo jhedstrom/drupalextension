@@ -128,7 +128,7 @@ Feature: DrupalContext general testing
         | Orphan | NonExistentParent99 |
       """
     When I run behat with drupal profile
-    Then it should fail with a "InvalidArgumentException" exception:
+    Then it should fail with a "Drupal\Driver\Exception\CreationAliasResolutionException" exception:
       """
       Cannot create term because parent term 'NonExistentParent99' does not exist in vocabulary 'tags'.
       """
