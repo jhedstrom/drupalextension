@@ -116,7 +116,7 @@ a hard configuration error.
 | Scalar containing `,`             | `"Tag, one"`                                                        | `"Tag, one"` (unchanged)                                                                 |
 | Scalar containing ` - `           | `"Alpha - Bravo"` (workaround required)                             | `Alpha - Bravo` (no escape needed)                                                       |
 | Scalar containing `;`             | `Hello; world`                                                      | `"Hello; world"` (new escape required)                                                   |
-| Scalar containing literal `"`     | not expressible                                                     | `note:"He said \"hi\""`                                                                  |
+| Scalar containing literal `"`     | `Hello <a href="x">y</a>` (works incidentally)                      | `Hello <a href="x">y</a>` (allowed; `"` is only structural at item start)                |
 | Scalar that looks like `key:value`| `port:8080` (silent compound risk if value present)                 | `port:8080` (unambiguous scalar)                                                         |
 
 ### Positional compound columns are no longer supported

@@ -17,7 +17,9 @@ use Drupal\DrupalExtension\Parser\Exception\ParseException;
  *
  *   Scalar mode (no top-level 'key:"...' or 'key:[...]' pattern):
  *     - Plain text or comma-separated list of items.
- *     - Items containing ',' or ';' or '"' must be wrapped in '"..."'.
+ *     - Items containing ',' or ';' must be wrapped in '"..."'.
+ *     - A literal '"' inside an item is allowed; '"' is only structural
+ *       at the start of an item, where it begins a quoted string.
  *
  *   Compound mode (top-level 'key:"...' or 'key:[...]' pattern present):
  *     - One or more 'key: value' columns separated by ','.
@@ -296,7 +298,12 @@ final class EntityFieldParser implements EntityFieldParserInterface {
       else {
         $start = $i;
 
-        while ($i < $length && $cell[$i] !== ',' && $cell[$i] !== ';' && $cell[$i] !== '"') {
+        // '"' is only structural at the start of an item (handled in the
+        // branch above). Once we are inside an unquoted item it can be
+        // any literal character (e.g. an HTML attribute value), so the
+        // stop set is the list separator ',' and the compound-record
+        // separator ';' only.
+        while ($i < $length && $cell[$i] !== ',' && $cell[$i] !== ';') {
           $i++;
         }
 
@@ -310,18 +317,6 @@ final class EntityFieldParser implements EntityFieldParserInterface {
             $cell,
             'Semicolons are not allowed in unquoted scalar values.',
             sprintf('Wrap the value in double quotes: "%s".', $raw),
-          );
-          $i = $length;
-          break;
-        }
-
-        if ($i < $length && $cell[$i] === '"') {
-          $errors[] = new ParseException(
-            'unexpected_quote',
-            $i,
-            $cell,
-            'Unexpected double quote inside an unquoted scalar value.',
-            'Wrap the entire item in double quotes if it contains a literal quote, then escape inner quotes as \\".',
           );
           $i = $length;
           break;

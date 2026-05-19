@@ -147,6 +147,22 @@ class EntityFieldParserTest extends TestCase {
       ['field_test' => 'port:8080'],
       ['field_test' => ['port:8080']],
     ];
+    // Row 6a: scalar, single, contains literal '"' mid-text. The unquoted
+    // item is read as-is; '"' is only structural at the start of an item.
+    yield '6a. scalar, single, contains literal \'"\'' => [
+      ['field_test' => 'Hello <a href="https://example.com">link</a>'],
+      ['field_test' => ['Hello <a href="https://example.com">link</a>']],
+    ];
+    // Row 6b: scalar, multi-value, each item contains literal '"'.
+    yield '6b. scalar, multi-value, items contain literal \'"\'' => [
+      ['field_test' => '<a href="https://a.test">A</a>, <a href="https://b.test">B</a>'],
+      ['field_test' => ['<a href="https://a.test">A</a>', '<a href="https://b.test">B</a>']],
+    ];
+    // Row 6c: scalar, single, '"' adjacent to the trailing list separator.
+    yield '6c. scalar, multi-value, literal \'"\' right before \',\'' => [
+      ['field_test' => 'abc"def, ghi'],
+      ['field_test' => ['abc"def', 'ghi']],
+    ];
     // Row 7: scalar, multi-value.
     yield '7. scalar, multi-value' => [
       ['field_test' => 'Tag one, Tag two'],
@@ -478,14 +494,6 @@ class EntityFieldParserTest extends TestCase {
       NULL,
       ParseException::class,
       'unexpected_character',
-    ];
-    yield 'error: scalar with unexpected quote inside unquoted item' => [
-      ['field_test' => 'abc"def'],
-      [],
-      NULL,
-      NULL,
-      ParseException::class,
-      'unexpected_quote',
     ];
     yield 'error: compound trailing characters after closing quote' => [
       ['field_test' => 'name:"Alice"junk'],
