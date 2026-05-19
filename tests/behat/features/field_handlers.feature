@@ -47,6 +47,62 @@ Feature: FieldHandlers
       | field_post_reference | Alpha - Bravo |
     Then I should see "Alpha - Bravo"
 
+  # A scalar cell can carry literal '"' as content. The parser treats '"' as
+  # structural only at the start of an item (where it begins a quoted
+  # string), so HTML attribute values like 'href="..."' pass through.
+  # @see https://github.com/jhedstrom/drupalextension/issues/857
+  @test-drupal @api
+  Scenario: Test multicolumn scalar cell accepts literal '"' in HTML attributes
+    When I am viewing a "post" content with the following fields:
+      | title      | Post with HTML body via multicolumn header                                                                                                                            |
+      | body:value | <p>Visit <a class="internal" href="https://example.com/internal">our internal page</a> or our <a class="external" href="https://example.org/external">partner</a>.</p> |
+      | :format    | basic_html                                                                                                                                                            |
+    Then I should see the link "our internal page"
+    And I should see the link "partner"
+
+  @test-drupal @api
+  Scenario: Test single-cell scalar accepts literal '"' in HTML attributes
+    When I am viewing a "post" content with the following fields:
+      | title | Post with HTML body inline                                                |
+      | body  | Read <a href="https://example.com" data-track="cta">the announcement</a>. |
+    Then I should see "the announcement"
+
+  # Relaxing mid-item '"' must not drop the structural meaning of '"' at the
+  # start of an item: a quoted item with no closing '"' is still a parse
+  # error. Guards against over-relaxation of the scalar grammar.
+  # @see https://github.com/jhedstrom/drupalextension/issues/857
+  @test-drupal @api
+  Scenario: Assert scalar item starting with '"' but never closed is still rejected
+    Given some behat configuration
+    And scenario steps tagged with "@test-drupal @api":
+      """
+      Given the following "post" content:
+        | title         | body                 |
+        | Bad scenario  | "unclosed quote body |
+      """
+    When I run behat with drupal profile
+    Then it should fail with a "Drupal\DrupalExtension\Parser\Exception\ParseException" exception:
+      """
+      unclosed_quote
+      """
+
+  # Same guard, complementary case: a closed quoted item followed by extra
+  # unquoted content is still a parse error.
+  @test-drupal @api
+  Scenario: Assert scalar item with trailing junk after closing '"' is still rejected
+    Given some behat configuration
+    And scenario steps tagged with "@test-drupal @api":
+      """
+      Given the following "post" content:
+        | title          | body         |
+        | Trailing junk  | "valid"junk  |
+      """
+    When I run behat with drupal profile
+    Then it should fail with a "Drupal\DrupalExtension\Parser\Exception\ParseException" exception:
+      """
+      unexpected_character
+      """
+
   # URI-only link values (no title) are supported via scalar mode: the bare
   # URI is treated as the 'uri' column and the title is left empty, so
   # Drupal renders the URI itself as the visible link text.

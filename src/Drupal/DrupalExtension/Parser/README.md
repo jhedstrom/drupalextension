@@ -15,7 +15,8 @@ A single uniform escape mechanism (double quotes) for compound values. Cells fal
 
 - **Scalar mode** (no top-level `key:"...` or `key:[...]` pattern):
   - Plain text or comma-separated list of items.
-  - Items containing `,` or `;` or `"` must be wrapped in `"..."`.
+  - Items containing `,` or `;` must be wrapped in `"..."`.
+  - A literal `"` inside an item is allowed; `"` is only structural at the start of an item, where it begins a quoted string.
 - **Compound mode** (top-level `key:"...` or `key:[...]` pattern present):
   - One or more `key: value` columns separated by `,`.
   - Multi-value compound: records separated by `;`.
@@ -36,6 +37,8 @@ Errors detected while parsing a single cell are collected and thrown together vi
 | 4  | scalar, single, contains ` - `           | entity_reference title   | `Alpha - Bravo`                                                        |
 | 5  | scalar, single, contains `;`             | text_long                | `"Hello; world"`                                                       |
 | 6  | scalar, looks like `key:value`           | string                   | `port:8080`                                                            |
+| 6a | scalar, single, contains literal `"`     | text_long                | `Hello <a href="https://example.com">link</a>`                         |
+| 6b | scalar, multi-value, items contain `"`   | text_long                | `<a href="https://a.test">A</a>, <a href="https://b.test">B</a>`       |
 | 7  | scalar, multi-value                      | string / list            | `Tag one, Tag two`                                                     |
 | 8  | scalar, multi-value, item contains `,`   | string                   | `Tag one, "Tag, two"`                                                  |
 | 9  | token, single                            | datetime relative        | `[relative:-1 week]`                                                   |
@@ -75,7 +78,7 @@ default:
 
 Parse errors thrown by the modern parser carry:
 
-- `errorCode` - machine-readable identifier (`unclosed_quote`, `unknown_escape`, `unquoted_compound_value`, `empty_record`, `empty_column`, `unclosed_token`, `unquoted_semicolon`, `unexpected_quote`, `unexpected_character`, `expected_quoted_string`, `expected_token`, `trailing_characters`, `invalid_column`).
+- `errorCode` - machine-readable identifier (`unclosed_quote`, `unknown_escape`, `unquoted_compound_value`, `empty_record`, `empty_column`, `unclosed_token`, `unquoted_semicolon`, `unexpected_character`, `expected_quoted_string`, `expected_token`, `trailing_characters`, `invalid_column`).
 - `offset` - zero-based character offset within the cell.
 - `cell` - the cell text being parsed.
 - `description` and optional `hint` - human-readable explanation.

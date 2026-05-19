@@ -22,7 +22,7 @@ use Behat\Hook\AfterScenario;
 use Behat\Hook\BeforeScenario;
 use Behat\Mink\Exception\ExpectationException;
 use Drupal\Core\Database\Database;
-use Drupal\Driver\Core\Field\AbstractHandler;
+use Drupal\Driver\Core\Field\AddressHandler;
 use Drupal\Driver\DrupalDriver;
 use Drupal\Driver\Entity\EntityStub;
 use Drupal\Driver\Entity\EntityStubInterface;
@@ -845,63 +845,21 @@ class FeatureContext extends RawDrupalContext {
  * Handler for the 'behat_test_address_field' fixture field type.
  *
  * The fixture's 'AddressFieldItem' has four columns - country, locality,
- * thoroughfare, postal_code - so the driver's 'DefaultHandler' (single
- * 'value' column only) cannot marshal it. This handler accepts the inline
- * 'key: value' shape produced by 'parseEntityFields()' and returns Drupal
- * storage format directly.
+ * thoroughfare, postal_code - and no single main property. Reuses the
+ * driver's 'AddressHandler' (which already folds multi-column input
+ * shapes into records) by replacing only the visible-fields list.
  *
  * Defined alongside 'FeatureContext' so subprocess Behat runs (which copy
  * only 'FeatureContext.php' to their working dir) pick it up without any
  * extra autoload wiring.
  */
-class BehatTestAddressFieldHandler extends AbstractHandler {
+class BehatTestAddressFieldHandler extends AddressHandler {
 
   /**
    * {@inheritdoc}
    */
-  public function expand($values): array {
-    $columns = ['country', 'locality', 'thoroughfare', 'postal_code'];
-    $expanded = [];
-
-    foreach ($values as $value) {
-      $expanded[] = is_array($value) ? $this->normaliseRow($value, $columns) : [$columns[0] => (string) $value];
-    }
-
-    return $expanded;
-  }
-
-  /**
-   * Normalises a row of key/value or positional values into a column map.
-   *
-   * @param array<int|string, mixed> $value
-   *   Row produced by 'parseEntityFields()'. Keys are either column names
-   *   (when the inline 'key: value' shape was used) or 0-indexed integers
-   *   (when the values were supplied positionally).
-   * @param array<int, string> $columns
-   *   Ordered column names for positional values.
-   *
-   * @return array<string, mixed>
-   *   A row keyed by column name.
-   */
-  protected function normaliseRow(array $value, array $columns): array {
-    $row = [];
-    $position = 0;
-
-    foreach ($value as $key => $field_value) {
-      if (is_string($key)) {
-        $row[$key] = $field_value;
-        continue;
-      }
-
-      if (!isset($columns[$position])) {
-        throw new \RuntimeException(sprintf('Too many positional values supplied for "behat_test_address_field"; only %d columns available.', count($columns)));
-      }
-
-      $row[$columns[$position]] = $field_value;
-      $position++;
-    }
-
-    return $row;
+  protected function getVisibleAddressFields(): array {
+    return ['country', 'locality', 'thoroughfare', 'postal_code'];
   }
 
 }
