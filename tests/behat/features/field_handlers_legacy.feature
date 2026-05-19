@@ -96,7 +96,7 @@ Feature: FieldHandlersLegacyParser
       Then I should see "Alpha - Bravo"
       """
     When I run behat with drupal profile
-    Then it should fail with a "Drupal\Core\Database\InvalidQueryException" exception:
+    Then it should fail with a "InvalidArgumentException" exception:
       """
-      must have an array compatible operator
+      Field record must include the main property "target_id"
       """
