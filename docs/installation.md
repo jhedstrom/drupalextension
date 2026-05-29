@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- PHP 8.1 or higher with the `curl`, `mbstring`, and `dom` extensions.
+- PHP 8.2 or higher with the `curl`, `mbstring`, and `dom` extensions.
 - [Composer](https://getcomposer.org/).
 - Drupal 10 or 11.
 - A web server reachable from the machine running Behat (for tests that
