@@ -23,15 +23,10 @@ The Drupal Extension is an integration layer between [Behat](http://behat.org),
 provides step definitions for common testing scenarios specific to Drupal
 sites.
 
-> **Note:** Version `6.0.0-alpha1` has been released and runs on
-> DrupalDriver `3.x`. For the `5.x` maintenance line, use the
-> [`5.x` branch](https://github.com/jhedstrom/drupalextension/tree/5.x).
-> See the
-> [6.x epic](https://github.com/jhedstrom/drupalextension/issues/782)
-> for details and progress.
->
-> Upgrading from `5.x`? See [`UPGRADING.md`](UPGRADING.md) for the full list
-> of breaking changes and the step-text migration table.
+> **Note:** v6 supports Drupal 10 and 11 on PHP 8.2+ and runs on
+> DrupalDriver `3.x`. Sites that need Drupal 7 or PHP 8.1 should pin
+> to the [`5.x` branch](https://github.com/jhedstrom/drupalextension/tree/5.x).
+> See [`UPGRADING.md`](UPGRADING.md) for the v5 to v6 migration guide.
 
 ## Use it for testing your Drupal site.
 
@@ -144,7 +139,7 @@ For detailed step documentation, see: vendor/drupal/drupal-extension/STEPS.md
 
 ## Release notes
 
-See [CHANGELOG](CHANGELOG.md).
+See [GitHub Releases](https://github.com/jhedstrom/drupalextension/releases).
 
 ## Contributing
 
