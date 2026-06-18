@@ -310,7 +310,9 @@ final class EntityFieldParser implements EntityFieldParserInterface {
         $raw = substr($cell, $start, $i - $start);
         $value = rtrim($raw, " \t");
 
-        if ($i < $length && $cell[$i] === ';') {
+        // Reading via substr() (not $cell[$i]) yields '' past the end and
+        // avoids a static-analysis false positive on this comparison.
+        if (substr($cell, $i, 1) === ';') {
           $errors[] = new ParseException(
             'unquoted_semicolon',
             $i,
