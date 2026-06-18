@@ -112,8 +112,10 @@ function main(array $options = []): void {
     exit(0);
   }
 
+  // Up-to-date documentation already exited above, so reaching this point
+  // means at least one file changed.
   $fail_on_change = isset($options['fail-on-change']);
-  if ($fail_on_change && ($steps_replaced !== $steps_contents || $readme_replaced !== $readme_contents)) {
+  if ($fail_on_change) {
     echo PHP_EOL . "\033[31mDocumentation is outdated. Please regenerate documentation.\033[0m" . PHP_EOL;
     exit(1);
   }
