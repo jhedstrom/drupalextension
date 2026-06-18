@@ -113,11 +113,39 @@ a hard configuration error.
 | Compound positional single (link) | `Link 1 - http://example.com`                                       | `title:"Link 1", uri:"http://example.com"` (positional gone, use named keys)             |
 | Compound positional multi (link)  | `L1 - http://a, L2 - http://b`                                      | `title:"L1", uri:"http://a"; title:"L2", uri:"http://b"`                                 |
 | Token at compound value position  | not expressible                                                     | `value:[relative:-1 week], end_value:[relative:+1 week]`                                 |
+| Compound value with leading `[`   | `value: [TEST] Body` (bracket literal)                             | `value:"[TEST] Body"` (quote the bracket)                                                |
 | Scalar containing `,`             | `"Tag, one"`                                                        | `"Tag, one"` (unchanged)                                                                 |
 | Scalar containing ` - `           | `"Alpha - Bravo"` (workaround required)                             | `Alpha - Bravo` (no escape needed)                                                       |
 | Scalar containing `;`             | `Hello; world`                                                      | `"Hello; world"` (new escape required)                                                   |
 | Scalar containing literal `"`     | `Hello <a href="x">y</a>` (works incidentally)                      | `Hello <a href="x">y</a>` (allowed; `"` is only structural at item start)                |
 | Scalar that looks like `key:value`| `port:8080` (silent compound risk if value present)                 | `port:8080` (unambiguous scalar)                                                         |
+
+### Bracketed values (test-data markers)
+
+A compound column value that begins with `[` is parsed as the start of a
+`[name:value]` token. That is what makes `value:[relative:-1 week]` work,
+but it also means a literal marker such as `[TEST]`, `[DEV]` or `[QA]` at
+the start of a value is read as a token, not as text. A marker followed by
+prose (`[TEST] Some body text.`) is a token plus trailing characters, which
+is a parse error.
+
+The colon-then-bracket is also what tips the cell into compound mode:
+writing `value: [TEST] ...` makes the parser treat the whole cell as
+compound, so every column then has to be a quoted string or a token.
+
+Wrap the value in double quotes so the bracket is treated literally:
+
+```text
+value: [TEST] Some body text.     # error: '[TEST]' parsed as a token
+value:"[TEST] Some body text."    # ok: bracket is literal inside quotes
+```
+
+Bracketed test-data markers (`[TEST]`, `[DEV]`, `[QA]`) are a common Behat
+convention, so this is a frequent upgrade snag. A value that is genuinely a
+token (`[relative:-1 week]`) needs no quoting; a marker that is just text
+does. In scalar (single-value) cells - without `key:` columns - a leading
+marker is read as text and needs no quoting; the rule applies only to
+compound columns.
 
 ### Positional compound columns are no longer supported
 
@@ -171,6 +199,14 @@ Hint: Wrap the value in double quotes or use a [token:value] form.
 
 All errors detected in a single cell are reported together, so authors
 fix every problem in one edit instead of one error per run.
+
+A common, non-obvious cause of `unquoted_compound_value` is a *different*
+column whose value begins with `[`. That leading bracket can tip the whole
+cell into compound mode, after which a sibling value that was valid as
+scalar text now needs quoting - so the caret can point at a column that
+looks fine. If that happens, check whether another value starts with a
+`[marker]` and quote it (see
+[Bracketed values](#bracketed-values-test-data-markers)).
 
 ## Behaviour changes
 
