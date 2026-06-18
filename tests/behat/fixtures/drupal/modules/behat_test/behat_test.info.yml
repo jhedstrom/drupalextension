@@ -4,5 +4,6 @@ description: 'Test feature exposing basic configuration for Behat Drupal extensi
 package: Test
 core_version_requirement: ^9 || ^10 || ^11
 dependencies:
+  - color_field:color_field
   - drupal:content_moderation
   - drupal:language
