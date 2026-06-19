@@ -100,3 +100,27 @@ Feature: FieldHandlersLegacyParser
       """
       Field record must include the main property "target_id"
       """
+
+  # The color field handler resolves the same under either parser: the bare
+  # hex maps to the main 'color' property and the ' - '-separated form carries
+  # the opacity. The text formatter lowercases the hex and appends opacity.
+  @test-drupal @api
+  Scenario: Assert color field handler passes under field_parser:legacy
+    Given some behat configuration
+    And the behat configuration uses the legacy field parser
+    And scenario steps tagged with "@test-drupal @api":
+      """
+      When I am viewing a "post" content with the following fields:
+        | title            | Bare color post |
+        | field_post_color | #3C5A99         |
+      Then I should see "#3c5a99"
+      When I am viewing a "post" content with the following fields:
+        | title            | Color and opacity post        |
+        | field_post_color | color: #3C5A99 - opacity: 0.5 |
+      Then I should see "#3c5a99 0.5"
+      """
+    When I run behat with drupal profile
+    Then it should pass with:
+      """
+      1 scenario (1 passed)
+      """

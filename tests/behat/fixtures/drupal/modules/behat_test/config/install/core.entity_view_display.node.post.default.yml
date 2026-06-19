@@ -4,12 +4,14 @@ dependencies:
   config:
     - field.field.node.post.body
     - field.field.node.post.field_post_address
+    - field.field.node.post.field_post_color
     - field.field.node.post.field_post_date
     - field.field.node.post.field_post_links
     - field.field.node.post.field_post_reference
     - field.field.node.post.field_post_select
     - node.type.post
   module:
+    - color_field
     - datetime
     - link
     - options
@@ -43,6 +45,14 @@ content:
     settings: {  }
     third_party_settings: {  }
     type: behat_test_address_field
+  field_post_color:
+    weight: 108
+    label: above
+    settings:
+      format: hex
+      opacity: true
+    third_party_settings: {  }
+    type: color_field_formatter_text
   field_post_date:
     weight: 103
     label: above

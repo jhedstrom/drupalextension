@@ -39,7 +39,7 @@
         "behat/gherkin": "^4.13",
         "behat/mink": "^1.12",
         "behat/mink-browserkit-driver": "^2.1.0",
-        "drupal/drupal-driver": "^3.0",
+        "drupal/drupal-driver": "^3.1",
         "friends-of-behat/mink-extension": "^2.7.1",
         "lullabot/mink-selenium2-driver": "^1.7.4",
         "symfony/css-selector": "^6.4.3 || ^7",
@@ -55,6 +55,7 @@
         "drevops/behat-screenshot": "^2.2",
         "drevops/phpcs-standard": "^0.7.0",
         "drupal/coder": "^8.3.27",
+        "drupal/color_field": "^3.0",
         "drupal/core": "^11",
         "drupal/core-composer-scaffold": "^11",
         "drush/drush": "^12.5.2 || ^13.7",
@@ -90,6 +91,12 @@
     },
     "conflict": {
         "drupal/drupal-driver": "<3"
+    },
+    "repositories": {
+        "drupal": {
+            "type": "composer",
+            "url": "https://packages.drupal.org/8"
+        }
     },
     "minimum-stability": "stable",
     "prefer-stable": true,

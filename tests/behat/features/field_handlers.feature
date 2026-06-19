@@ -35,6 +35,24 @@ Feature: FieldHandlers
     And I should see "1000"
     And I should see "Louisalaan 1"
 
+  # The color_field contrib module's 'color_field_type' stores a hex color
+  # plus an optional opacity across two columns. Its text formatter lowercases
+  # the hex and appends the opacity, so the stored '#3C5A99' renders as
+  # '#3c5a99' (bare) or '#3c5a99 0.5' (with opacity).
+  @test-drupal @api
+  Scenario: Test color field handler with the bare hex shorthand
+    When I am viewing a "post" content with the following fields:
+      | title            | Post with a bare color |
+      | field_post_color | #3C5A99                |
+    Then I should see "#3c5a99"
+
+  @test-drupal @api
+  Scenario: Test color field handler with an explicit color and opacity
+    When I am viewing a "post" content with the following fields:
+      | title            | Post with color and opacity    |
+      | field_post_color | color:"#3C5A99", opacity:"0.5" |
+    Then I should see "#3c5a99 0.5"
+
   # Entity reference titles containing ' - ' no longer need any escape under
   # the modern parser - dashes are just literal characters in scalar mode.
   @test-drupal @api
