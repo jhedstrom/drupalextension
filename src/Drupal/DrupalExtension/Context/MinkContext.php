@@ -30,6 +30,13 @@ class MinkContext extends MinkExtension implements TranslatableContext, Paramete
   use TagTrait;
 
   /**
+   * Basenames of files attached during the scenario, in attach order.
+   *
+   * @var array<int, string>
+   */
+  protected array $attachedFiles = [];
+
+  /**
    * Returns list of definition translation resources paths.
    *
    * @return array<int, string>
@@ -134,6 +141,35 @@ class MinkContext extends MinkExtension implements TranslatableContext, Paramete
 
     // Use the Mink Extension step definition.
     parent::pressButton($button);
+  }
+
+  /**
+   * Attaches a file to a field and records it for after-scenario cleanup.
+   *
+   * Overrides the Mink Extension step to track the upload; the step pattern
+   * is inherited from the parent definition.
+   *
+   * @code
+   * When I attach the file "image.png" to "files[field_image_0]"
+   * @endcode
+   */
+  public function attachFileToField(mixed $field, mixed $path): void {
+    parent::attachFileToField($field, $path);
+
+    // Record the basename only: Drupal stores the managed file under the
+    // uploaded file's basename, which is the key the after-scenario cleanup
+    // resolves the file entity against.
+    $this->attachedFiles[] = basename((string) $path);
+  }
+
+  /**
+   * Returns the basenames of files attached during the scenario.
+   *
+   * @return array<int, string>
+   *   Attached file basenames, in attach order.
+   */
+  public function getAttachedFiles(): array {
+    return $this->attachedFiles;
   }
 
   /**

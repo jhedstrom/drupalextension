@@ -13,12 +13,14 @@ use Drupal\Driver\Capability\RoleCapabilityInterface;
 use Drupal\Driver\Capability\UserCapabilityInterface;
 use Drupal\Driver\Core\Field\FieldClassifierInterface;
 use Drupal\Driver\DrupalDriver;
+use Drupal\Driver\Entity\EntityStub;
 use Drupal\Driver\Entity\EntityStubInterface;
 use Drupal\DrupalExtension\Hook\Attribute\BeforeNodeCreate;
 use Drupal\taxonomy\Entity\Vocabulary;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Behat\Testwork\Hook\HookDispatcher;
 use Behat\Behat\Context\Environment\InitializedContextEnvironment;
+use Behat\Behat\Hook\Scope\AfterScenarioScope;
 
 use Drupal\DrupalExtension\DeprecationInterface;
 use Drupal\DrupalExtension\DeprecationTrait;
@@ -317,6 +319,72 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface, D
     }
 
     $this->roles = [];
+  }
+
+  /**
+   * Remove managed files attached through the UI during the scenario.
+   *
+   * Files uploaded via the Mink 'attach the file' step leave no entity
+   * reference the test can clean up directly. A leftover file forces Drupal
+   * to rename the next scenario's upload of the same filename (e.g.
+   * 'image.png' becomes 'image_0.png'), breaking any assertion that depends
+   * on a deterministic path. Opt out per scenario or feature with the
+   * '@no-file-cleanup' tag.
+   */
+  #[AfterScenario]
+  public function cleanAttachedFiles(AfterScenarioScope $scope): void {
+    if (!$this->shouldCleanup()) {
+      return;
+    }
+
+    if ($this->fileCleanupDisabled($scope)) {
+      return;
+    }
+
+    $mink = $this->getContext(MinkContext::class);
+
+    if (!$mink instanceof MinkContext) {
+      return;
+    }
+
+    $files = $mink->getAttachedFiles();
+
+    if ($files === []) {
+      return;
+    }
+
+    $driver = $this->getDriver();
+
+    if (!$driver instanceof ContentCapabilityInterface) {
+      return;
+    }
+
+    foreach (array_unique($files) as $filename) {
+      $this->deleteAttachedFile($filename, $driver);
+    }
+  }
+
+  /**
+   * Deletes every managed file whose filename matches the uploaded basename.
+   *
+   * Deleting the file entity also unlinks the physical file, freeing the
+   * original path so the next upload of the same filename is not renamed.
+   */
+  protected function deleteAttachedFile(string $filename, ContentCapabilityInterface $driver): void {
+    $storage = \Drupal::entityTypeManager()->getStorage('file');
+
+    foreach ($storage->loadByProperties(['filename' => $filename]) as $file) {
+      $driver->entityDelete((new EntityStub('file'))->markSaved($file));
+    }
+  }
+
+  /**
+   * Whether file cleanup is opted out for the current scenario or feature.
+   */
+  protected function fileCleanupDisabled(AfterScenarioScope $scope): bool {
+    $tags = array_merge($scope->getFeature()->getTags(), $scope->getScenario()->getTags());
+
+    return in_array('no-file-cleanup', $tags, TRUE);
   }
 
   /**
