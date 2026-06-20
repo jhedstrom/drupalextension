@@ -29,6 +29,11 @@ class RawMailContextTest extends TestCase {
   protected \ReflectionMethod $matchMessage;
 
   /**
+   * Reflection method for messageHasAttachments().
+   */
+  protected \ReflectionMethod $messageHasAttachments;
+
+  /**
    * Reflection method for sortMessages().
    */
   protected \ReflectionMethod $sortMessages;
@@ -56,6 +61,7 @@ class RawMailContextTest extends TestCase {
     $this->context->setMink($mink);
 
     $this->matchMessage = new \ReflectionMethod(RawMailContext::class, 'matchMessage');
+    $this->messageHasAttachments = new \ReflectionMethod(RawMailContext::class, 'messageHasAttachments');
     $this->sortMessages = new \ReflectionMethod(RawMailContext::class, 'sortMessages');
     $this->compareMessages = new \ReflectionMethod(RawMailContext::class, 'compareMessages');
     $this->assertMessageCount = new \ReflectionMethod(RawMailContext::class, 'assertMessageCount');
@@ -108,6 +114,56 @@ class RawMailContextTest extends TestCase {
       FALSE,
       ['to' => 'alice@example.com', 'subject' => 'hello'],
       ['to' => 'alice@example.com', 'subject' => 'goodbye'],
+    ];
+  }
+
+  /**
+   * Tests that messageHasAttachments() detects required attachments.
+   *
+   * @param bool $expected
+   *   The expected result.
+   * @param array<string, mixed> $message
+   *   The mail message data.
+   * @param array<int, string> $filenames
+   *   The attachment filenames that must all be present.
+   */
+  #[DataProvider('dataProviderMessageHasAttachments')]
+  public function testMessageHasAttachments(bool $expected, array $message, array $filenames): void {
+    $result = $this->messageHasAttachments->invoke($this->context, $message, $filenames);
+    $this->assertSame($expected, $result);
+  }
+
+  /**
+   * Data provider for testMessageHasAttachments().
+   */
+  public static function dataProviderMessageHasAttachments(): \Iterator {
+    yield 'empty request matches anything' => [TRUE, ['params' => ['attachments' => []]], []];
+    yield 'no params key' => [FALSE, ['to' => 'alice@example.com'], ['invoice.pdf']];
+    yield 'no attachments key' => [FALSE, ['params' => []], ['invoice.pdf']];
+    yield 'single attachment present' => [
+      TRUE, ['params' => ['attachments' => [['filename' => 'invoice.pdf']]]], ['invoice.pdf'],
+    ];
+    yield 'single attachment missing' => [
+      FALSE, ['params' => ['attachments' => [['filename' => 'invoice.pdf']]]], ['terms.pdf'],
+    ];
+    yield 'multiple attachments all present' => [
+      TRUE,
+      ['params' => ['attachments' => [['filename' => 'invoice.pdf'], ['filename' => 'terms.pdf']]]],
+      ['invoice.pdf', 'terms.pdf'],
+    ];
+    yield 'multiple attachments one missing' => [
+      FALSE,
+      ['params' => ['attachments' => [['filename' => 'invoice.pdf']]]],
+      ['invoice.pdf', 'terms.pdf'],
+    ];
+    yield 'attachment match is case sensitive' => [
+      FALSE, ['params' => ['attachments' => [['filename' => 'Invoice.pdf']]]], ['invoice.pdf'],
+    ];
+    yield 'non-array attachments treated as none' => [
+      FALSE, ['params' => ['attachments' => 'invoice.pdf']], ['invoice.pdf'],
+    ];
+    yield 'attachment entry without filename ignored' => [
+      FALSE, ['params' => ['attachments' => [['filemime' => 'text/plain']]]], ['invoice.pdf'],
     ];
   }
 

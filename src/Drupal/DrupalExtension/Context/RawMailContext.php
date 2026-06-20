@@ -55,13 +55,15 @@ class RawMailContext extends RawDrupalContext {
    *   Whether to ignore previously seen mail.
    * @param null|int $index
    *   A particular mail to return, e.g. 0 for first or -1 for last.
+   * @param array<int, string> $attachments
+   *   Filenames that each returned mail must include as attachments.
    *
    * @return array<int, array<string, mixed>>|array<string, mixed>
    *   An array of mail messages keyed by index, or a single mail message
    *   array when '$index' is specified. Each item follows Drupal's
    *   'MailInterface::mail()' shape ('to', 'subject', 'body', etc.).
    */
-  protected function getMail(array $criteria = [], bool $new = FALSE, ?int $index = NULL) {
+  protected function getMail(array $criteria = [], bool $new = FALSE, ?int $index = NULL, array $attachments = []) {
     $messages = $this->getMailManager()->getMail();
     $previous_count = $this->mailMessageCount;
     $this->mailMessageCount = count($messages);
@@ -74,6 +76,11 @@ class RawMailContext extends RawDrupalContext {
     // Filter messages based on $matches; keep only mail where each field
     // mentioned in $filters contains the value specified for that field.
     $messages = array_values(array_filter($messages, fn(array $message): bool => $this->matchMessage($message, $criteria)));
+
+    // Further filter by required attachments, when specified.
+    if ($attachments !== []) {
+      $messages = array_values(array_filter($messages, fn(array $message): bool => $this->messageHasAttachments($message, $attachments)));
+    }
 
     // Return an individual mail if specified by an index.
     if (is_null($index) || count($messages) === 0) {
@@ -102,6 +109,31 @@ class RawMailContext extends RawDrupalContext {
     foreach ($criteria as $field => $value) {
       // Case insensitive.
       if (stripos((string) $message[$field], (string) $value) === FALSE) {
+        return FALSE;
+      }
+    }
+
+    return TRUE;
+  }
+
+  /**
+   * Determine if a mail carries all the given attachments.
+   *
+   * @param array<string, mixed> $message
+   *   The mail message as an associative array of mail fields.
+   * @param array<int, string> $filenames
+   *   Attachment filenames that must all be present on the message.
+   *
+   * @return bool
+   *   Whether the mail message includes every requested attachment.
+   */
+  protected function messageHasAttachments(array $message, array $filenames): bool {
+    $params = $message['params'] ?? [];
+    $attachments = is_array($params) ? ($params['attachments'] ?? []) : [];
+    $attached = is_array($attachments) ? array_column($attachments, 'filename') : [];
+
+    foreach ($filenames as $filename) {
+      if (!in_array($filename, $attached, TRUE)) {
         return FALSE;
       }
     }
