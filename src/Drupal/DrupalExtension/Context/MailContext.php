@@ -160,6 +160,55 @@ class MailContext extends RawMailContext {
   }
 
   /**
+   * Assert mail with an attachment has been sent during the scenario.
+   *
+   * @code
+   *   Then an email should have been sent with the attachment "invoice.pdf"
+   *   Then an email should have been sent with the attachments "invoice.pdf,terms.pdf"
+   * @endcode
+   */
+  #[Then('(a )(an )(e)mail(s) should have been sent with the attachment(s) :attachments')]
+  public function mailAssertHasBeenSentWithAttachments(string $attachments): void {
+    $this->assertMailWithAttachments('', '', $attachments);
+  }
+
+  /**
+   * Assert mail to a recipient with an attachment has been sent.
+   *
+   * @code
+   *   Then an email should have been sent to "user@example.com" with the attachment "invoice.pdf"
+   * @endcode
+   */
+  #[Then('(a )(an )(e)mail(s) should have been sent to :to with the attachment(s) :attachments')]
+  public function mailAssertHasBeenSentToWithAttachments(string $to, string $attachments): void {
+    $this->assertMailWithAttachments($to, '', $attachments);
+  }
+
+  /**
+   * Assert mail with a subject and an attachment has been sent.
+   *
+   * @code
+   *   Then an email should have been sent with the subject "Invoice" and the attachment "invoice.pdf"
+   * @endcode
+   */
+  #[Then('(a )(an )(e)mail(s) should have been sent with the subject :subject and the attachment(s) :attachments')]
+  public function mailAssertHasBeenSentWithSubjectAndAttachments(string $subject, string $attachments): void {
+    $this->assertMailWithAttachments('', $subject, $attachments);
+  }
+
+  /**
+   * Assert mail to a recipient with a subject and an attachment has been sent.
+   *
+   * @code
+   *   Then an email should have been sent to "user@example.com" with the subject "Invoice" and the attachments "invoice.pdf,terms.pdf"
+   * @endcode
+   */
+  #[Then('(a )(an )(e)mail(s) should have been sent to :to with the subject :subject and the attachment(s) :attachments')]
+  public function mailAssertHasBeenSentToWithSubjectAndAttachments(string $to, string $subject, string $attachments): void {
+    $this->assertMailWithAttachments($to, $subject, $attachments);
+  }
+
+  /**
    * Assert new mail has been sent since the last mail check.
    *
    * @code
@@ -424,6 +473,7 @@ class MailContext extends RawMailContext {
       'subject' => $this->getRandom()->name(20),
       'to' => $this->getRandom()->name(10) . '@anonexample.com',
       'langcode' => '',
+      'attachments' => '',
     ];
 
     foreach ($fields->getRowsHash() as $field => $value) {
@@ -436,7 +486,43 @@ class MailContext extends RawMailContext {
       throw new \RuntimeException(sprintf('The active Drupal driver "%s" does not support sending mail.', $driver::class));
     }
 
-    $driver->mailSend($mail['body'], $mail['subject'], $mail['to'], $mail['langcode']);
+    $driver->mailSend($mail['body'], $mail['subject'], $mail['to'], $mail['langcode'], $this->buildAttachments($mail['attachments']));
+  }
+
+  /**
+   * Parse a comma-separated list of attachment filenames.
+   *
+   * @param string $attachments
+   *   A comma-separated list of attachment filenames.
+   *
+   * @return array<int, string>
+   *   The individual filenames, trimmed and with empty entries removed.
+   */
+  protected function parseAttachmentNames(string $attachments): array {
+    return array_values(array_filter(array_map('trim', explode(',', $attachments)), static fn(string $filename): bool => $filename !== ''));
+  }
+
+  /**
+   * Build mail attachment definitions from a list of filenames.
+   *
+   * @param string $attachments
+   *   A comma-separated list of attachment filenames.
+   *
+   * @return array<int, array<string, string>>
+   *   Attachment definitions following Drupal's mail attachment shape.
+   */
+  protected function buildAttachments(string $attachments): array {
+    $definitions = [];
+
+    foreach ($this->parseAttachmentNames($attachments) as $filename) {
+      $definitions[] = [
+        'filecontent' => $filename,
+        'filename' => $filename,
+        'filemime' => 'text/plain',
+      ];
+    }
+
+    return $definitions;
   }
 
   /**
@@ -455,6 +541,25 @@ class MailContext extends RawMailContext {
     $expected = $expectedMailTable->getHash();
     $actual = array_values($this->getMail(['to' => $to, 'subject' => $subject], TRUE));
     $this->compareMessages($actual, $expected);
+  }
+
+  /**
+   * Assert at least one sent mail matches the filters and carries attachments.
+   *
+   * @param string $to
+   *   Recipient filter, or an empty string to match any recipient.
+   * @param string $subject
+   *   Subject filter, or an empty string to match any subject.
+   * @param string $attachments
+   *   A comma-separated list of attachment filenames that must all be present.
+   */
+  protected function assertMailWithAttachments(string $to, string $subject, string $attachments): void {
+    $filenames = $this->parseAttachmentNames($attachments);
+    $matching = $this->getMail(['to' => $to, 'subject' => $subject], FALSE, NULL, $filenames);
+
+    if (count($matching) === 0) {
+      throw new ExpectationException(sprintf('No mail matching the given criteria was sent with the attachment(s): "%s".', implode('", "', $filenames)), $this->getSession()->getDriver());
+    }
   }
 
   /**

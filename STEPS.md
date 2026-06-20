@@ -933,6 +933,63 @@ Assert mail to a recipient with a subject has been sent.
 </details>
 
 <details>
+  <summary><code>@Then (a )(an )(e)mail(s) should have been sent with the attachment(s) :attachments</code></summary>
+
+<br/>
+Assert mail with an attachment has been sent during the scenario. 
+<br/><br/>
+
+```gherkin
+  Then an email should have been sent with the attachment "invoice.pdf"
+  Then an email should have been sent with the attachments "invoice.pdf,terms.pdf"
+
+```
+
+</details>
+
+<details>
+  <summary><code>@Then (a )(an )(e)mail(s) should have been sent to :to with the attachment(s) :attachments</code></summary>
+
+<br/>
+Assert mail to a recipient with an attachment has been sent. 
+<br/><br/>
+
+```gherkin
+  Then an email should have been sent to "user@example.com" with the attachment "invoice.pdf"
+
+```
+
+</details>
+
+<details>
+  <summary><code>@Then (a )(an )(e)mail(s) should have been sent with the subject :subject and the attachment(s) :attachments</code></summary>
+
+<br/>
+Assert mail with a subject and an attachment has been sent. 
+<br/><br/>
+
+```gherkin
+  Then an email should have been sent with the subject "Invoice" and the attachment "invoice.pdf"
+
+```
+
+</details>
+
+<details>
+  <summary><code>@Then (a )(an )(e)mail(s) should have been sent to :to with the subject :subject and the attachment(s) :attachments</code></summary>
+
+<br/>
+Assert mail to a recipient with a subject and an attachment has been sent. 
+<br/><br/>
+
+```gherkin
+  Then an email should have been sent to "user@example.com" with the subject "Invoice" and the attachments "invoice.pdf,terms.pdf"
+
+```
+
+</details>
+
+<details>
   <summary><code>@Then the following new (e)mail(s) should have been sent:</code></summary>
 
 <br/>

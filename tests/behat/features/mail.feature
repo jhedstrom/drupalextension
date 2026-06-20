@@ -279,3 +279,58 @@ Feature: MailContext
     Then the following new email should have been sent:
       | body        |
       | second body |
+
+  @test-drupal @api
+  Scenario: Assert "Then an email should have been sent with the attachment :attachments" passes
+    When I send the following email:
+      | to          | fred@example.com |
+      | subject     | Invoice          |
+      | body        | See attached     |
+      | attachments | invoice.pdf      |
+    Then an email should have been sent with the attachment "invoice.pdf"
+    And an email should have been sent to "fred@example.com" with the attachment "invoice.pdf"
+    And an email should have been sent with the subject "Invoice" and the attachment "invoice.pdf"
+    And an email should have been sent to "fred@example.com" with the subject "Invoice" and the attachment "invoice.pdf"
+
+  @test-drupal @api
+  Scenario: Assert "Then an email should have been sent with the attachments :attachments" passes for multiple attachments
+    When I send the following email:
+      | to          | jane@example.com      |
+      | subject     | Documents             |
+      | attachments | invoice.pdf,terms.pdf |
+    Then an email should have been sent with the attachments "invoice.pdf,terms.pdf"
+    And an email should have been sent to "jane@example.com" with the subject "Documents" and the attachments "terms.pdf,invoice.pdf"
+
+  @test-drupal @api
+  Scenario: Assert "Then an email should have been sent with the attachment :attachments" fails when the attachment is missing
+    Given some behat configuration
+    And scenario steps tagged with "@test-drupal @api":
+      """
+      When I send the following mail:
+        | to          | fred@example.com |
+        | subject     | Invoice          |
+        | attachments | invoice.pdf      |
+      Then an email should have been sent with the attachment "missing.pdf"
+      """
+    When I run behat with drupal profile
+    Then it should fail with an error:
+      """
+      No mail matching the given criteria was sent with the attachment(s): "missing.pdf".
+      """
+
+  @test-drupal @api
+  Scenario: Assert "Then an email should have been sent to :to with the attachment :attachments" fails when the recipient does not match
+    Given some behat configuration
+    And scenario steps tagged with "@test-drupal @api":
+      """
+      When I send the following mail:
+        | to          | fred@example.com |
+        | subject     | Invoice          |
+        | attachments | invoice.pdf      |
+      Then an email should have been sent to "nobody@example.com" with the attachment "invoice.pdf"
+      """
+    When I run behat with drupal profile
+    Then it should fail with an error:
+      """
+      No mail matching the given criteria was sent with the attachment(s): "invoice.pdf".
+      """
