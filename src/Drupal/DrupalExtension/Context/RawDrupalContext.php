@@ -355,7 +355,11 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface, D
 
     $driver = $this->getDriver();
 
-    if (!$driver instanceof ContentCapabilityInterface) {
+    // Resolving the managed file reads the entity storage through '\Drupal::',
+    // which only exists when Drupal is bootstrapped in-process. Require the
+    // 'DrupalDriver' rather than the broader 'ContentCapabilityInterface' so a
+    // remote, content-capable driver does not reach the direct API calls below.
+    if (!$driver instanceof DrupalDriver) {
       return;
     }
 
@@ -370,7 +374,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface, D
    * Deleting the file entity also unlinks the physical file, freeing the
    * original path so the next upload of the same filename is not renamed.
    */
-  protected function deleteAttachedFile(string $filename, ContentCapabilityInterface $driver): void {
+  protected function deleteAttachedFile(string $filename, DrupalDriver $driver): void {
     $storage = \Drupal::entityTypeManager()->getStorage('file');
 
     foreach ($storage->loadByProperties(['filename' => $filename]) as $file) {

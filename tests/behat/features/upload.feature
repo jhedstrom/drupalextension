@@ -41,7 +41,9 @@ Feature: Upload test
     And I fill in "field_image[0][alt]" with "Second"
     And I press "Save"
     Then I should see the heading "Second cleanup upload"
-    And the response should not contain "cleanup_check_0.png"
+    # Reject any rename suffix ("_0", "_1", ...), not just "_0", so a failed
+    # cleanup cannot slip through on a higher-numbered variant.
+    And the response should not contain "cleanup_check_"
 
   # The @no-file-cleanup tag opts a scenario out, leaving its uploaded file in
   # place so the next upload of the same filename is renamed by Drupal - its
