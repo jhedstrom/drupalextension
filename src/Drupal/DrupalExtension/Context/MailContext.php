@@ -499,7 +499,7 @@ class MailContext extends RawMailContext {
    *   The individual filenames, trimmed and with empty entries removed.
    */
   protected function parseAttachmentNames(string $attachments): array {
-    return array_values(array_filter(array_map('trim', explode(',', $attachments)), static fn(string $filename): bool => $filename !== ''));
+    return array_values(array_filter(array_map(trim(...), explode(',', $attachments)), static fn(string $filename): bool => $filename !== ''));
   }
 
   /**
