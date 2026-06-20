@@ -9,6 +9,7 @@ use Behat\Step\Given;
 use Behat\Step\Then;
 use Behat\Step\When;
 use Behat\Behat\Context\TranslatableContext;
+use Drupal\Driver\DrushDriver;
 
 /**
  * Provides step definitions for interacting directly with Drush commands.
@@ -75,6 +76,37 @@ class DrushContext extends RawDrupalContext implements TranslatableContext {
   }
 
   /**
+   * Run a Drush command that is expected to fail.
+   *
+   * The command runs without aborting the step on a non-zero exit, capturing
+   * its error output so it can be asserted with the "the drush output should"
+   * steps. The step fails if the command instead succeeds.
+   *
+   * @code
+   * Given I run the failing drush command "pm:uninstall no_such_module"
+   * @endcode
+   */
+  #[Given('I run the failing drush command :command')]
+  public function iRunFailingDrush(string $command): void {
+    $this->runFailingDrush($command);
+  }
+
+  /**
+   * Run a Drush command with arguments that is expected to fail.
+   *
+   * The arguments string is appended to the command verbatim, so it may
+   * contain Drush options (flags) as well as positional arguments.
+   *
+   * @code
+   * Given I run the failing drush command "pm:uninstall" "no_such_module"
+   * @endcode
+   */
+  #[Given('I run the failing drush command :command :arguments')]
+  public function iRunFailingDrushWithArguments(string $command, string $arguments): void {
+    $this->runFailingDrush($command, $arguments);
+  }
+
+  /**
    * Assert the Drush output contains a string.
    *
    * @code
@@ -126,6 +158,36 @@ class DrushContext extends RawDrupalContext implements TranslatableContext {
   #[When('I print the last drush output')]
   public function iPrintLastDrushOutput(): void {
     echo $this->readDrushOutput();
+  }
+
+  /**
+   * Run a Drush command expecting it to fail, capturing its output.
+   *
+   * @param string $command
+   *   The Drush command to run.
+   * @param string|null $arguments
+   *   Optional arguments string appended to the command verbatim.
+   *
+   * @throws \Behat\Mink\Exception\ExpectationException
+   *   When the command exits with a zero (success) status.
+   */
+  protected function runFailingDrush(string $command, ?string $arguments = NULL): void {
+    $driver = $this->getDriver('drush');
+
+    if (!$driver instanceof DrushDriver) {
+      throw new \RuntimeException(sprintf('The active Drupal driver "%s" does not support capturing drush command results.', $driver::class));
+    }
+
+    $args = $arguments === NULL ? [] : [$this->fixStepArgument($arguments)];
+    $result = $driver->drushResult($command, $args);
+
+    // Prefer stdout, falling back to stderr, to match the success-path output.
+    $output = ($result->output === '' || $result->output === '0') ? $result->errorOutput : $result->output;
+    $this->drushOutput = $output;
+
+    if ($result->exitCode === 0) {
+      throw new ExpectationException(sprintf("Expected the drush command '%s' to fail, but it exited 0.\nOutput:\n\n%s", $command, $output), $this->getSession()->getDriver());
+    }
   }
 
   /**
