@@ -20,6 +20,29 @@ Feature: DrushContext
     And the drush output should not contain "system.site"
 
   @test-drupal @api
+  Scenario: Assert "Given I run the failing drush command :command" passes
+    Given I run the failing drush command "pm:uninstall no_such_module"
+    Then the drush output should contain "no_such_module"
+
+  @test-drupal @api
+  Scenario: Assert "Given I run the failing drush command :command :arguments" passes
+    Given I run the failing drush command "pm:uninstall" "no_such_module"
+    Then the drush output should contain "no_such_module"
+
+  @test-drupal @api
+  Scenario: Assert "Given I run the failing drush command :command" fails when the command succeeds
+    Given some behat configuration
+    And scenario steps tagged with "@test-drupal @api":
+      """
+      Given I run the failing drush command "status"
+      """
+    When I run behat with drupal profile
+    Then it should fail with an error:
+      """
+      Expected the drush command 'status' to fail, but it exited 0.
+      """
+
+  @test-drupal @api
   Scenario: Assert "Then the drush output should contain :output" passes
     Given I run drush "status"
     Then the drush output should contain "Drupal version"

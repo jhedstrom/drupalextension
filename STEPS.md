@@ -632,6 +632,34 @@ Given I run drush "config:get" "system.site uuid --format=string"
 </details>
 
 <details>
+  <summary><code>@Given I run the failing drush command :command</code></summary>
+
+<br/>
+Run a Drush command that is expected to fail. 
+<br/><br/>
+
+```gherkin
+Given I run the failing drush command "pm:uninstall no_such_module"
+
+```
+
+</details>
+
+<details>
+  <summary><code>@Given I run the failing drush command :command :arguments</code></summary>
+
+<br/>
+Run a Drush command with arguments that is expected to fail. 
+<br/><br/>
+
+```gherkin
+Given I run the failing drush command "pm:uninstall" "no_such_module"
+
+```
+
+</details>
+
+<details>
   <summary><code>@When I print the last drush output</code></summary>
 
 <br/>
