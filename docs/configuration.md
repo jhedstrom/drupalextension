@@ -75,6 +75,7 @@ Drupal\DrupalExtension:
 | `drush` | Configuration for the [Drush driver](drivers/drush.md). |
 | `drupal` | Configuration for the [Drupal API driver](drivers/drupal-api.md). |
 | `regions` | Maps human-readable region names to CSS selectors. |
+| `mappings` | Named value groups; `{{ Key }}` tokens in steps resolve to the mapped value. See [Mappings](#mappings). |
 | `selectors` | CSS selectors for Drupal status, error, and success messages. |
 | `suppress_deprecations` | Silences `[Deprecation]` notices. See [Suppressing deprecation notices](#suppressing-deprecation-notices). |
 | `text` | Localised or themed strings used by the built-in steps. |
@@ -198,6 +199,40 @@ for the full pattern.
 > map. It still works in 6.0 but emits a deprecation notice and is
 > removed in 6.1. Rename it to `regions`. If both keys are present, an
 > entry under `regions` overrides the same key under `region_map`.
+
+## Mappings
+
+Name values once and reference them with `{{ Key }}` tokens in any step.
+The token is replaced before the step runs, so it works in paths, field
+values, button labels, assertion text - anywhere a step takes a string -
+and in table cells:
+
+```yaml
+Drupal\DrupalExtension:
+  mappings:
+    paths:
+      User Registration: '/user/register'
+      User Login: '/user/login'
+    text:
+      Welcome: 'Welcome back'
+```
+
+```gherkin
+Scenario: Visit a named page
+  Given I am at "{{ User Registration }}"
+  Then I should see the heading "Create new account"
+```
+
+Groups (`paths`, `text` above) exist only to organise the file; a token
+resolves by its bare key, so a key must be unique across every group - a
+duplicate is rejected when Behat loads. Whitespace inside the braces is
+ignored, so `{{ User Login }}` and `{{User Login}}` are equivalent. An
+unknown key fails the step rather than passing the token through, so a
+typo surfaces immediately.
+
+Resolution is provided by `MappingContext`, which must be listed under
+the suite's `contexts`. It is a pure Behat context with no Drupal driver
+dependency - see [Contexts](contexts.md).
 
 ## Suppressing deprecation notices
 

@@ -18,6 +18,7 @@ declared explicitly.
 | `Drupal\DrupalExtension\Context\DrushContext` | Steps that invoke arbitrary Drush commands. |
 | `Drupal\DrupalExtension\Context\MailContext` | Steps that assert against the Drupal mail collector. |
 | `Drupal\DrupalExtension\Context\RandomContext` | Transforms typed placeholders such as `[?title]` or `[?id:int,1,99]` into random values. Pure Behat context - no Drupal driver, no Mink session. |
+| `Drupal\DrupalExtension\Context\MappingContext` | Replaces `{{ Key }}` tokens with values configured under the `mappings` key. Pure Behat context - no Drupal driver, no Mink session. |
 
 For a complete reference of every step each context exposes, see
 [`STEPS.md`](../STEPS.md).
@@ -135,9 +136,10 @@ browser can extend `RawMinkContext` (or `MinkContext`) and pull in two
 lightweight traits:
 
 - `Drupal\DrupalExtension\ParametersTrait` exposes `getParameter()`,
-  `getDrupalText()`, and `getDrupalSelector()`. It is the consumption
-  point for parameter, text, and selector access from any context,
-  regardless of whether it inherits from `RawDrupalContext`. The
+  `getDrupalText()`, `getDrupalSelector()`, and `getMapping()`. It is the
+  consumption point for parameter, text, selector, and mapping access
+  from any context, regardless of whether it inherits from
+  `RawDrupalContext`. The
   context must also implement
   `Drupal\DrupalExtension\ParametersAwareInterface` so the
   initializer knows to inject the parameter array.
@@ -177,7 +179,7 @@ class CustomMinkContext extends RawMinkContext implements ParametersAwareInterfa
 The bundled `MinkContext`, `MarkupContext`, and `MessageContext`
 follow this pattern - none of them inherit from `RawDrupalContext`.
 
-`RandomContext` goes one step further: it implements
-`Behat\Behat\Context\Context` directly and uses no Mink session at all.
-A consumer can register it in any Behat suite, even one that does not
+`RandomContext` and `MappingContext` go one step further: they implement
+`Behat\Behat\Context\Context` directly and use no Mink session at all.
+A consumer can register them in any Behat suite, even one that does not
 load `Drupal\MinkExtension`.

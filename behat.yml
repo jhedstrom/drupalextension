@@ -47,6 +47,7 @@ default:
         - Drupal\DrupalExtension\Context\MessageContext
         - Drupal\DrupalExtension\Context\MarkupContext
         - Drupal\DrupalExtension\Context\RandomContext
+        - Drupal\DrupalExtension\Context\MappingContext
         # Helper contexts for test execution and reporting.
         - FeatureContext
         - BehatCliContext
@@ -98,6 +99,11 @@ default:
           error: '.static-messages.static-error'
           success: '.static-messages.static-status'
           warning: '.static-messages.static-warning'
+      mappings:
+        paths:
+          Form Page: "form_controls.html"
+        text:
+          Submit Button: "Submit"
 
     DrevOps\BehatScreenshotExtension:
         dir: '%paths.base%/.logs/screenshots'
@@ -140,6 +146,7 @@ drupal:
         - Drupal\DrupalExtension\Context\MessageContext
         - Drupal\DrupalExtension\Context\MailContext
         - Drupal\DrupalExtension\Context\RandomContext
+        - Drupal\DrupalExtension\Context\MappingContext
         # Helper contexts for test execution and reporting.
         - FeatureContext
         - BehatCliContext
@@ -167,3 +174,8 @@ drupal:
           error: '.messages--error'
           success: '.messages--status'
           warning: '.messages--warning'
+      mappings:
+        paths:
+          User Login: "/user/login"
+        text:
+          Mapped Title: "Welcome Home"

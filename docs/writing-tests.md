@@ -179,6 +179,46 @@ behaviour. They will be removed together once the legacy form is
 dropped, leaving only the modern `transformVariables()` /
 `transformTable()` pair.
 
+## Mappings
+
+`MappingContext` replaces `{{ Key }}` tokens in step text and table
+cells with values configured under the `mappings` key in `behat.yml`.
+Use it to name a path, label, or string once and reuse it across
+scenarios.
+
+Add `Drupal\DrupalExtension\Context\MappingContext` to the suite's
+`contexts` list. Like `RandomContext`, it has no Drupal driver
+dependency, so it works in both Drupal API suites and pure blackbox
+suites.
+
+```yaml
+Drupal\DrupalExtension:
+  mappings:
+    paths:
+      User Registration: '/user/register'
+    text:
+      Welcome: 'Welcome back'
+```
+
+```gherkin
+Scenario: Register through the named page
+  Given I am at "{{ User Registration }}"
+  Then I should see the heading "Create new account"
+  And I should see the text "{{ Welcome }}"
+```
+
+A token resolves by its bare key, so the group it lives in (`paths`,
+`text`) is purely organisational - keys must be unique across all
+groups. Whitespace inside the braces is ignored (`{{ Welcome }}` equals
+`{{Welcome}}`), and an unknown key fails the step instead of passing the
+token through unresolved.
+
+Because resolution happens in a step-argument transform, the token works
+anywhere a step accepts a string - paths, field values, button labels,
+assertion text - not just in dedicated steps. See
+[Configuration - Mappings](configuration.md#mappings) for the config
+reference.
+
 ## Custom step definitions
 
 When the prebuilt steps do not cover a behaviour, write your own. Add

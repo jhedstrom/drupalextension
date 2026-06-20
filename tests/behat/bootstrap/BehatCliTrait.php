@@ -108,7 +108,10 @@ Feature: Stub feature';
 EOL;
 
     $content = strtr($content, $tokens);
-    $content = preg_replace('/\{\{[^\}]+\}\}/', '', $content);
+    // Strip only the harness's own UPPER_SNAKE placeholders if any remain.
+    // A broader '{{...}}' match would also eat MappingContext tokens like
+    // '{{ Some Key }}' that a subprocess scenario legitimately uses.
+    $content = preg_replace('/\{\{[A-Z_]+\}\}/', '', $content);
 
     $filename = 'features/stub.feature';
     $this->createFileInWorkingDir($filename, $content);
