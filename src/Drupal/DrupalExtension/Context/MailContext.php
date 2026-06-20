@@ -555,6 +555,11 @@ class MailContext extends RawMailContext {
    */
   protected function assertMailWithAttachments(string $to, string $subject, string $attachments): void {
     $filenames = $this->parseAttachmentNames($attachments);
+
+    if ($filenames === []) {
+      throw new ExpectationException('At least one attachment name must be provided.', $this->getSession()->getDriver());
+    }
+
     $matching = $this->getMail(['to' => $to, 'subject' => $subject], FALSE, NULL, $filenames);
 
     if (count($matching) === 0) {

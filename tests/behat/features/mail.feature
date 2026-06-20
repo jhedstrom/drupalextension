@@ -334,3 +334,19 @@ Feature: MailContext
       """
       No mail matching the given criteria was sent with the attachment(s): "invoice.pdf".
       """
+
+  @test-drupal @api
+  Scenario: Assert "Then an email should have been sent with the attachment :attachments" fails when no attachment name is given
+    Given some behat configuration
+    And scenario steps tagged with "@test-drupal @api":
+      """
+      When I send the following mail:
+        | to      | fred@example.com |
+        | subject | Invoice          |
+      Then an email should have been sent with the attachment ""
+      """
+    When I run behat with drupal profile
+    Then it should fail with an error:
+      """
+      At least one attachment name must be provided.
+      """
