@@ -63,7 +63,7 @@ class MappingContextTest extends TestCase {
    * @param string $expected
    *   The argument after every token has been resolved.
    */
-  #[DataProvider('dataProviderTransformMappings')]
+  #[DataProvider('dataProviderTransformMappingsSubstitutesTokens')]
   public function testTransformMappingsSubstitutesTokens(string $argument, string $expected): void {
     $this->assertSame($expected, $this->context->transformMappings($argument));
   }
@@ -71,11 +71,14 @@ class MappingContextTest extends TestCase {
   /**
    * Provides cases for testTransformMappingsSubstitutesTokens().
    */
-  public static function dataProviderTransformMappings(): \Iterator {
+  public static function dataProviderTransformMappingsSubstitutesTokens(): \Iterator {
     yield 'bare token resolves' => ['{{User Registration}}', '/user/register'];
     yield 'token with inner whitespace resolves the same' => ['{{ User Registration }}', '/user/register'];
     yield 'token embedded in surrounding text' => ['go to {{ User Registration }} now', 'go to /user/register now'];
-    yield 'two distinct tokens both resolve' => ['{{User Login}} then {{User Registration}}', '/user/login then /user/register'];
+    yield 'two distinct tokens both resolve' => [
+      '{{User Login}} then {{User Registration}}',
+      '/user/login then /user/register',
+    ];
     yield 'a repeated token resolves every occurrence' => ['{{Greeting}}, {{Greeting}}!', 'Hello World, Hello World!'];
     yield 'a string without tokens is returned unchanged' => ['plain value', 'plain value'];
   }
