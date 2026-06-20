@@ -14,6 +14,7 @@ use Drupal\DrupalExtension\Generator\ClassGenerator;
 use Behat\Mink\Element\DocumentElement as MinkDocumentElement;
 use Drupal\DrupalExtension\Element\DocumentElement;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -198,6 +199,17 @@ class DrupalExtension implements ExtensionInterface {
             ->end()
           ->end()
         ->end()
+        ->arrayNode('mappings')
+          ->info('Named value mappings grouped for organisation. A "{{ Key }}" token in any step argument or table cell is replaced with the mapped value before the step runs; whitespace inside the braces is ignored, so "{{ Key }}" and "{{Key}}" are equivalent. Group names are organisational only - a key must be unique across all groups.' . PHP_EOL
+            . '  paths:' . PHP_EOL
+            . '    User Registration: "/user/register"' . PHP_EOL
+            . '    User Login: "/user/login"' . PHP_EOL)
+          ->useAttributeAsKey('group')
+          ->prototype('array')
+            ->useAttributeAsKey('key')
+            ->prototype('scalar')->end()
+          ->end()
+        ->end()
         // Drupal drivers.
         ->arrayNode('blackbox')->end()
         ->arrayNode('drupal')
@@ -250,8 +262,44 @@ class DrupalExtension implements ExtensionInterface {
     $config['regions'] = $regions;
     unset($config['region_map']);
 
+    // Flatten the grouped mappings to a single key => value map that
+    // contexts resolve '{{ Key }}' tokens against. Groups are only a way
+    // to organise the configuration, so a key must be unique across them.
+    $config['mappings'] = $this->flattenMappings($config['mappings'] ?? []);
+
     $container->setParameter('drupal.parameters', $config);
     $container->setParameter('drupal.regions', $regions);
+  }
+
+  /**
+   * Flattens grouped mappings into a single key => value map.
+   *
+   * @param array<string, array<string, string>> $grouped
+   *   Mappings as configured: group name => (key => value).
+   *
+   * @return array<string, string>
+   *   The flattened key => value map.
+   *
+   * @throws \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
+   *   When the same key appears in more than one group, which would make the
+   *   bare-key '{{ Key }}' token ambiguous.
+   */
+  protected function flattenMappings(array $grouped): array {
+    $flat = [];
+    $groups = [];
+
+    foreach ($grouped as $group => $entries) {
+      foreach ($entries as $key => $value) {
+        if (isset($groups[$key])) {
+          throw new InvalidConfigurationException(sprintf('Duplicate mapping key "%s" found in groups "%s" and "%s" under "Drupal\DrupalExtension: mappings:". Mapping keys must be unique across all groups.', $key, $groups[$key], $group));
+        }
+
+        $groups[$key] = $group;
+        $flat[$key] = (string) $value;
+      }
+    }
+
+    return $flat;
   }
 
   /**

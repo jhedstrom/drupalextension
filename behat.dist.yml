@@ -96,6 +96,16 @@ default:
           warning: '.messages--warning'
         login_form_selector: 'form#user-login,form#user-login-form'
         logged_in_selector: 'body.logged-in,body.user-logged-in'
+      # Named value mappings grouped for organisation. A "{{ Key }}" token in
+      # any step argument or table cell is replaced with the mapped value
+      # before the step runs (whitespace inside the braces is ignored). Group
+      # names are organisational only - a key must be unique across all groups.
+      mappings:
+        paths:
+          User Registration: /user/register
+          User Login: /user/login
+        text:
+          Welcome: Welcome back
 
 # Drupal API profile: tests that bootstrap Drupal.
 drupal:
