@@ -107,6 +107,11 @@
             "Drupal\\MinkExtension": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Drupal\\Tests\\behat_test\\": "tests/behat/fixtures/drupal/modules/behat_test/tests/src/"
+        }
+    },
     "config": {
         "allow-plugins": {
             "composer/installers": true,

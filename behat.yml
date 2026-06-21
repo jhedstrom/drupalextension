@@ -147,6 +147,9 @@ drupal:
         - Drupal\DrupalExtension\Context\MailContext
         - Drupal\DrupalExtension\Context\RandomContext
         - Drupal\DrupalExtension\Context\MappingContext
+        # Example of a context shipped by a module — see "Shipping contexts in
+        # a module" in docs/contexts.md.
+        - Drupal\Tests\behat_test\Behat\Context\ExampleContext
         # Helper contexts for test execution and reporting.
         - FeatureContext
         - BehatCliContext

@@ -183,3 +183,106 @@ follow this pattern - none of them inherit from `RawDrupalContext`.
 `Behat\Behat\Context\Context` directly and use no Mink session at all.
 A consumer can register them in any Behat suite, even one that does not
 load `Drupal\MinkExtension`.
+
+## Shipping contexts in a module
+
+A module can ship its own contexts so a project that enables the module
+can reuse its step definitions. The module ships plain context classes;
+the consuming project registers them in `behat.yml` explicitly, exactly
+like any other context.
+
+### Where to put them
+
+Place the classes under the module's `tests/src/` directory - the PSR-4
+root Drupal maps to the `Drupal\Tests\{module}\` namespace:
+
+```text
+mymodule/
+├── mymodule.info.yml
+├── src/
+└── tests/
+    └── src/
+        └── Behat/
+            ├── Context/
+            │   └── ExampleContext.php
+            ├── ExampleContextTrait.php
+            └── features/
+                └── example.feature
+```
+
+Context classes go in `tests/src/Behat/Context/`, reusable helper traits
+in `tests/src/Behat/`, and example scenarios in `tests/src/Behat/features/`.
+
+### How to namespace them
+
+Follow Drupal's test namespace convention - a class at
+`tests/src/Behat/Context/ExampleContext.php` is
+`Drupal\Tests\{module}\Behat\Context\ExampleContext`:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\Tests\mymodule\Behat\Context;
+
+use Behat\Step\When;
+use Drupal\DrupalExtension\Context\RawDrupalContext;
+
+class ExampleContext extends RawDrupalContext {
+
+  #[When('I visit the module custom login page')]
+  public function visitModuleCustomLoginPage(): void {
+    $this->visitPath('/custom-login');
+  }
+
+}
+```
+
+### How to autoload them
+
+Drupal's PHPUnit bootstrap registers the whole `Drupal\Tests\{module}\`
+namespace against the module's `tests/src/` directory, so the class above
+resolves automatically under PHPUnit (Drupal 10.3 and later). A standalone
+`behat` run does not load that bootstrap - it uses Composer's autoloader,
+and Behat's own `autoload` key supports PSR-0 only. Register the namespace
+once in the **project** `composer.json` so Behat can find it:
+
+```json
+"autoload-dev": {
+    "psr-4": {
+        "Drupal\\Tests\\mymodule\\": "web/modules/contrib/mymodule/tests/src/"
+    }
+}
+```
+
+Run `composer dump-autoload` afterwards, then register the context in the
+suite like any other:
+
+```yaml
+default:
+  suites:
+    default:
+      contexts:
+        - Drupal\Tests\mymodule\Behat\Context\ExampleContext
+```
+
+A module that wants to be usable with no project-side wiring can instead
+declare the same `psr-4` mapping in its **own** `composer.json` `autoload`
+block, at the cost of carrying a test namespace in its runtime autoloader.
+
+### What to ship
+
+A module rarely knows the business language of the project that installs
+it, so contexts that activate automatically tend not to fit. Ship building
+blocks the project can opt into instead:
+
+- A **trait** of helper methods, so projects can write their own steps on
+  top of yours.
+- An **example context** the project can register as-is, extend, or copy.
+- **Example scenarios** that prove the integration works.
+
+This extension's own test suite ships a working example: see the
+`behat_test` fixture module's `tests/src/Behat/` directory, autoloaded
+through `composer.json` and registered in the `drupal` profile of
+`behat.yml`.
