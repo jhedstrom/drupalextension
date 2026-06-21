@@ -560,6 +560,11 @@ class DrupalAuthenticationManagerTest extends TestCase {
       'http://bob%40corp:p%40ss@localhost',
       ['bob@corp', 'p@ss'],
     ];
+    yield 'literal plus in userinfo is preserved' => [
+      [],
+      'http://bob+corp:p+ss@localhost',
+      ['bob+corp', 'p+ss'],
+    ];
     yield 'empty config username falls through to no basic auth' => [
       ['username' => '', 'password' => 'x'],
       'http://localhost',

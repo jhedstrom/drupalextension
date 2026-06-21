@@ -279,8 +279,11 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
     if (is_string($user) && $user !== '') {
       $pass = parse_url($base_url, PHP_URL_PASS);
       return [
-        'username' => urldecode($user),
-        'password' => is_string($pass) ? urldecode($pass) : '',
+        // Userinfo is RFC 3986 encoded, where '+' is a literal plus and
+        // spaces are '%20', so decode with rawurldecode() rather than
+        // urldecode() (which would turn a literal '+' into a space).
+        'username' => rawurldecode($user),
+        'password' => is_string($pass) ? rawurldecode($pass) : '',
       ];
     }
 
