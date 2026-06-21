@@ -195,9 +195,9 @@ without re-application the credentials would be dropped and the next
 request would get a `401`. Re-applying keeps the whole login flow
 authenticated.
 
-Credentials can also come from the `base_url` userinfo. This is the only
-option for JavaScript drivers, since Selenium/WebDriver cannot set basic
-auth headers:
+Credentials can also come from the `base_url` userinfo. For JavaScript
+drivers this is the most practical option, since Selenium/WebDriver
+cannot set basic auth headers directly:
 
 ```yaml
 Drupal\MinkExtension:
