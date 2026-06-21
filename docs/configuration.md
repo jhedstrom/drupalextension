@@ -72,6 +72,7 @@ Drupal\DrupalExtension:
 | --- | --- |
 | `blackbox` | Enables the Blackbox driver. |
 | `api_driver` | `'blackbox'`, `'drush'`, or `'drupal'`. Used by `@api` scenarios. |
+| `basic_auth` | HTTP Basic auth credentials, re-applied after session resets. See [Basic authentication](#basic-authentication). |
 | `drush` | Configuration for the [Drush driver](drivers/drush.md). |
 | `drupal` | Configuration for the [Drupal API driver](drivers/drupal-api.md). |
 | `regions` | Maps human-readable region names to CSS selectors. |
@@ -173,6 +174,41 @@ Drupal\DrupalExtension:
     log_in: 'Sign in'
     password_field: 'Enter your password'
     username_field: 'Nickname'
+```
+
+## Basic authentication
+
+For sites behind webserver-level HTTP Basic auth (enforced by Apache or
+Nginx, not Drupal), set the credentials under `basic_auth`:
+
+```yaml
+Drupal\DrupalExtension:
+  basic_auth:
+    username: 'user'
+    password: 'pass'
+```
+
+The extension applies these credentials to every request and re-applies
+them after each session reset. Logging a user in first resets the Mink
+session to a clean anonymous state, which clears request headers - so
+without re-application the credentials would be dropped and the next
+request would get a `401`. Re-applying keeps the whole login flow
+authenticated.
+
+Credentials can also come from the `base_url` userinfo. This is the only
+option for JavaScript drivers, since Selenium/WebDriver cannot set basic
+auth headers:
+
+```yaml
+Drupal\MinkExtension:
+  base_url: 'http://user:pass@example.org'
+```
+
+When both are present, `basic_auth` wins. Keep credentials out of
+`behat.yml` by injecting them through `BEHAT_PARAMS`:
+
+```shell
+export BEHAT_PARAMS='{"extensions":{"Drupal\\DrupalExtension":{"basic_auth":{"username":"user","password":"pass"}}}}'
 ```
 
 ## Regions

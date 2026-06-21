@@ -219,6 +219,23 @@ EOL;
   }
 
   /**
+   * Sets 'basic_auth' on the default profile in the subprocess config.
+   *
+   * Use after 'Given some behat configuration' to exercise HTTP Basic
+   * authentication handling inside a Behat subprocess invocation.
+   */
+  #[Given('the behat configuration uses basic auth with username :username and password :password')]
+  public function behatCliUseBasicAuth(string $username, string $password): void {
+    $config_file = $this->workingDir . DIRECTORY_SEPARATOR . 'behat.yml';
+    $yaml = Yaml::parse((string) file_get_contents($config_file));
+    $yaml['default']['extensions']['Drupal\DrupalExtension']['basic_auth'] = [
+      'username' => $username,
+      'password' => $password,
+    ];
+    file_put_contents($config_file, Yaml::dump($yaml, 4, 2));
+  }
+
+  /**
    * Sets 'field_parser: legacy' on the drupal profile in the subprocess config.
    *
    * Use after 'Given some behat configuration' to exercise the legacy
