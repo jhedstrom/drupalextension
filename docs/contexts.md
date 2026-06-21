@@ -196,7 +196,7 @@ like any other context.
 Place the classes under the module's `tests/src/` directory - the PSR-4
 root Drupal maps to the `Drupal\Tests\{module}\` namespace:
 
-```
+```text
 mymodule/
 ├── mymodule.info.yml
 ├── src/
