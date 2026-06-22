@@ -175,6 +175,35 @@ Drupal\DrupalExtension:
     username_field: 'Nickname'
 ```
 
+## Basic authentication
+
+For sites behind webserver-level HTTP Basic auth (enforced by Apache or
+Nginx, not Drupal), embed the credentials in the `base_url` userinfo:
+
+```yaml
+Drupal\MinkExtension:
+  base_url: 'http://user:pass@example.org'
+```
+
+The extension extracts those credentials and applies them to every
+request, re-applying them after each session reset. Logging a user in
+first resets the Mink session to a clean anonymous state, which clears
+request headers - so without re-application the credentials would be
+dropped and the next request would get a `401`. Re-applying keeps the
+whole login flow authenticated.
+
+Percent-encode any reserved characters in the username or password - for
+example a literal `@` becomes `%40`. JavaScript drivers (Selenium /
+WebDriver) cannot set basic auth headers directly, so the `base_url`
+userinfo is the only supported option for them too.
+
+Keep credentials out of `behat.yml` by injecting `base_url` through
+`BEHAT_PARAMS`:
+
+```shell
+export BEHAT_PARAMS='{"extensions":{"Drupal\\MinkExtension":{"base_url":"http://user:pass@example.org"}}}'
+```
+
 ## Regions
 
 Define page regions so steps such as `I press "Search" in the "header"

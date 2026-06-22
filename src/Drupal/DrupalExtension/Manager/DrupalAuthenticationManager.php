@@ -9,6 +9,7 @@ use Behat\Mink\Element\DocumentElement;
 use Behat\Mink\Exception\DriverException;
 use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\Mink\Exception\ExpectationException;
+use Behat\Mink\Exception\UnsupportedDriverActionException;
 use Behat\Mink\Mink;
 use Drupal\Driver\Capability\AuthenticationCapabilityInterface;
 use Drupal\Driver\Entity\EntityStubInterface;
@@ -18,7 +19,7 @@ use Drupal\DrupalExtension\ParametersTrait;
 /**
  * Default implementation of the Drupal authentication manager service.
  */
-class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterface, FastLogoutInterface {
+class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterface, FastLogoutInterface, BasicAuthInterface {
 
   use MinkAwareTrait;
   use ParametersTrait;
@@ -224,6 +225,9 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
     $session = $this->getSession();
     if ($session->isStarted()) {
       $session->reset();
+      // Resetting clears request headers, including basic auth, so requests
+      // after the reset would 401 on sites behind webserver-level basic auth.
+      $this->applyBasicAuth();
     }
 
     // Reset the currently tracked user.
@@ -231,6 +235,51 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
 
     // Log out on the backend.
     $this->backendLogout();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function applyBasicAuth(): void {
+    $credentials = $this->resolveBasicAuth();
+    if ($credentials === NULL) {
+      return;
+    }
+
+    try {
+      $this->getSession()->setBasicAuth($credentials['username'], $credentials['password']);
+    }
+    catch (UnsupportedDriverActionException) {
+      // The active driver cannot set basic auth headers (e.g. a JavaScript
+      // driver); those receive credentials via the 'base_url' userinfo.
+    }
+  }
+
+  /**
+   * Resolves the HTTP Basic authentication credentials to apply.
+   *
+   * Credentials are derived from the 'base_url' userinfo
+   * ('http://user:pass@host'). Returns NULL when the 'base_url' carries no
+   * username.
+   *
+   * @return array{username: string, password: string}|null
+   *   The resolved credentials, or NULL when none are configured.
+   */
+  protected function resolveBasicAuth(): ?array {
+    $base_url = (string) $this->getMinkParameter('base_url');
+    $user = parse_url($base_url, PHP_URL_USER);
+    if (is_string($user) && $user !== '') {
+      $pass = parse_url($base_url, PHP_URL_PASS);
+      return [
+        // Userinfo is RFC 3986 encoded, where '+' is a literal plus and
+        // spaces are '%20', so decode with rawurldecode() rather than
+        // urldecode() (which would turn a literal '+' into a space).
+        'username' => rawurldecode($user),
+        'password' => is_string($pass) ? rawurldecode($pass) : '',
+      ];
+    }
+
+    return NULL;
   }
 
   /**

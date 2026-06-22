@@ -19,6 +19,7 @@ use Drupal\Driver\Capability\RoleCapabilityInterface;
 use Drupal\Driver\Capability\UserCapabilityInterface;
 use Drupal\Driver\Entity\EntityStub;
 use Drupal\Driver\Entity\EntityStubInterface;
+use Drupal\DrupalExtension\Context\Traits\BasicAuthTrait;
 use Drupal\DrupalExtension\Context\Traits\BatchTrait;
 use Drupal\DrupalExtension\Context\Traits\BigPipeTrait;
 
@@ -27,6 +28,7 @@ use Drupal\DrupalExtension\Context\Traits\BigPipeTrait;
  */
 class DrupalContext extends RawDrupalContext implements TranslatableContext {
 
+  use BasicAuthTrait;
   use BatchTrait;
   use BigPipeTrait;
 

@@ -12,6 +12,7 @@ use Behat\Mink\Driver\DriverInterface as MinkDriverInterface;
 use Behat\Mink\Element\DocumentElement;
 use Behat\Mink\Element\NodeElement;
 use Behat\Mink\Exception\DriverException;
+use Behat\Mink\Exception\UnsupportedDriverActionException;
 use Behat\Mink\Mink;
 use Behat\Mink\Session;
 use Drupal\Driver\Capability\AuthenticationCapabilityInterface;
@@ -494,6 +495,109 @@ class DrupalAuthenticationManagerTest extends TestCase {
 
     $manager = new DrupalAuthenticationManager($mink, new DrupalUserManager(), $driver_manager, self::MINK_PARAMS, self::DRUPAL_PARAMS);
     $manager->fastLogout();
+  }
+
+  /**
+   * Tests that applyBasicAuth() applies credentials parsed from base_url.
+   *
+   * @param string $base_url
+   *   The configured Mink 'base_url'.
+   * @param array{0: string, 1: string}|null $expected
+   *   The [username, password] expected to be applied, or NULL when basic
+   *   auth should not be applied at all.
+   */
+  #[DataProvider('dataProviderApplyBasicAuth')]
+  public function testApplyBasicAuth(string $base_url, ?array $expected): void {
+    $session = $this->createMock(Session::class);
+
+    if ($expected === NULL) {
+      $session->expects($this->never())->method('setBasicAuth');
+    }
+    else {
+      $session->expects($this->once())->method('setBasicAuth')->with($expected[0], $expected[1]);
+    }
+
+    $mink = new Mink(['default' => $session]);
+    $mink->setDefaultSessionName('default');
+
+    $manager = new DrupalAuthenticationManager($mink, new DrupalUserManager(), $this->createDriverManagerMock(), ['base_url' => $base_url], self::DRUPAL_PARAMS);
+    $manager->applyBasicAuth();
+  }
+
+  /**
+   * Data provider for testApplyBasicAuth().
+   */
+  public static function dataProviderApplyBasicAuth(): \Iterator {
+    yield 'base_url userinfo is used' => [
+      'http://bob:s3cret@localhost',
+      ['bob', 's3cret'],
+    ];
+    yield 'base_url user without password uses empty password' => [
+      'http://bob@localhost',
+      ['bob', ''],
+    ];
+    yield 'url-encoded userinfo is decoded' => [
+      'http://bob%40corp:p%40ss@localhost',
+      ['bob@corp', 'p@ss'],
+    ];
+    yield 'literal plus in userinfo is preserved' => [
+      'http://bob+corp:p+ss@localhost',
+      ['bob+corp', 'p+ss'],
+    ];
+    yield 'no credentials is a no-op' => [
+      'http://localhost',
+      NULL,
+    ];
+  }
+
+  /**
+   * Tests that fastLogout() re-applies basic auth after resetting the session.
+   */
+  public function testFastLogoutReappliesBasicAuth(): void {
+    $session = $this->createMock(Session::class);
+    $session->method('isStarted')->willReturn(TRUE);
+    $session->expects($this->once())->method('reset');
+    $session->expects($this->once())->method('setBasicAuth')->with('alice', 'secret');
+
+    $mink = new Mink(['default' => $session]);
+    $mink->setDefaultSessionName('default');
+
+    $manager = new DrupalAuthenticationManager($mink, new DrupalUserManager(), $this->createDriverManagerMock(), ['base_url' => 'http://alice:secret@localhost'], self::DRUPAL_PARAMS);
+    $manager->fastLogout();
+  }
+
+  /**
+   * Tests that fastLogout() skips basic auth when the session is not started.
+   *
+   * Nothing was reset, so there are no cleared headers to restore.
+   */
+  public function testFastLogoutSkipsBasicAuthWhenSessionNotStarted(): void {
+    $session = $this->createMock(Session::class);
+    $session->method('isStarted')->willReturn(FALSE);
+    $session->expects($this->never())->method('setBasicAuth');
+
+    $mink = new Mink(['default' => $session]);
+    $mink->setDefaultSessionName('default');
+
+    $manager = new DrupalAuthenticationManager($mink, new DrupalUserManager(), $this->createDriverManagerMock(), ['base_url' => 'http://alice:secret@localhost'], self::DRUPAL_PARAMS);
+    $manager->fastLogout();
+  }
+
+  /**
+   * Tests that applyBasicAuth() swallows an unsupported-driver exception.
+   *
+   * JavaScript drivers cannot set basic auth headers and throw; the call must
+   * be a no-op for them rather than aborting the scenario.
+   */
+  public function testApplyBasicAuthIgnoresUnsupportedDriver(): void {
+    $session = $this->createMock(Session::class);
+    $session->expects($this->once())->method('setBasicAuth')->willThrowException(new UnsupportedDriverActionException('Basic auth setup is not supported by %s', $this->createMock(MinkDriverInterface::class)));
+
+    $mink = new Mink(['default' => $session]);
+    $mink->setDefaultSessionName('default');
+
+    $manager = new DrupalAuthenticationManager($mink, new DrupalUserManager(), $this->createDriverManagerMock(), ['base_url' => 'http://alice:secret@localhost'], self::DRUPAL_PARAMS);
+    $manager->applyBasicAuth();
   }
 
   /**

@@ -97,6 +97,29 @@ class FeatureContext extends RawDrupalContext {
   }
 
   /**
+   * Visit a path with credentials embedded in the 'base_url' userinfo.
+   *
+   * Mirrors how a JavaScript driver reaches a basic-auth-protected site: it
+   * cannot set basic auth headers, so the credentials must travel in the
+   * navigated URL. Builds the URL from the configured 'base_url' so the step
+   * is not tied to a specific host.
+   */
+  #[When('I visit :path with basic auth username :username and password :password')]
+  public function testVisitWithBasicAuth(string $path, string $username, string $password): void {
+    $base_url = (string) $this->getMinkParameter('base_url');
+    $parts = parse_url($base_url);
+    if ($parts === FALSE || !isset($parts['scheme'], $parts['host'])) {
+      throw new \RuntimeException(sprintf('Invalid base_url for basic auth injection: "%s"', $base_url));
+    }
+    $authority = rawurlencode($username) . ':' . rawurlencode($password) . '@' . $parts['host'];
+    if (isset($parts['port'])) {
+      $authority .= ':' . $parts['port'];
+    }
+    $url = $parts['scheme'] . '://' . $authority . '/' . ltrim($path, '/');
+    $this->getSession()->visit($url);
+  }
+
+  /**
    * Captures the MinkContext from the suite environment per scenario.
    */
   #[BeforeScenario]
