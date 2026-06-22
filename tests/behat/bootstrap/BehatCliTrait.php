@@ -230,12 +230,21 @@ EOL;
     $yaml = Yaml::parse((string) file_get_contents($config_file));
     $base_url = (string) ($yaml['default']['extensions']['Drupal\MinkExtension']['base_url'] ?? '');
     $parts = parse_url($base_url);
+    if ($parts === FALSE || !isset($parts['scheme'], $parts['host'])) {
+      throw new \RuntimeException(sprintf('Invalid base_url for basic auth injection: "%s"', $base_url));
+    }
     $rebuilt = $parts['scheme'] . '://' . rawurlencode($username) . ':' . rawurlencode($password) . '@' . $parts['host'];
     if (isset($parts['port'])) {
       $rebuilt .= ':' . $parts['port'];
     }
     if (isset($parts['path'])) {
       $rebuilt .= $parts['path'];
+    }
+    if (isset($parts['query'])) {
+      $rebuilt .= '?' . $parts['query'];
+    }
+    if (isset($parts['fragment'])) {
+      $rebuilt .= '#' . $parts['fragment'];
     }
     $yaml['default']['extensions']['Drupal\MinkExtension']['base_url'] = $rebuilt;
     file_put_contents($config_file, Yaml::dump($yaml, 4, 2));
