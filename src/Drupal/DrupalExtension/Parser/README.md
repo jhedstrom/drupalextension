@@ -1,15 +1,10 @@
-# Entity-field parsers
+# Entity-field parser
 
-This namespace contains the parsers used by `RawDrupalContext::parseEntityFields()` to convert raw stub field values into Drupal-ready structured arrays.
+This namespace contains the parser used by `RawDrupalContext::parseEntityFields()` to convert raw stub field values into Drupal-ready structured arrays.
 
-Two implementations live here:
+`EntityFieldParser` implements `EntityFieldParserInterface` and owns everything between the raw stub map and the final stub map: textual parsing, `field:column` / `:column` multicolumn-header merging, configurable / base / ignored field validation, and the unknown-field guard. The context layer delegates to it.
 
-- `EntityFieldParser` - the current parser. Default at runtime.
-- `LegacyEntityFieldParser` - the previous parser, kept available behind the `field_parser: legacy` extension parameter for migration. Frozen and scheduled for removal in 6.1.
-
-Both implement `EntityFieldParserInterface` and own everything between the raw stub map and the final stub map: textual parsing, `field:column` / `:column` multicolumn-header merging, configurable / base / ignored field validation, and the unknown-field guard. The context layer just chooses an instance and delegates.
-
-## Modern syntax
+## Syntax
 
 A single uniform escape mechanism (double quotes) for compound values. Cells fall into two modes detected by the value form, not by the spacing of separators:
 
@@ -29,7 +24,7 @@ Errors detected while parsing a single cell are collected and thrown together vi
 
 ## Validity table
 
-| #  | Value type                               | Field type example       | Modern syntax                                                          |
+| #  | Value type                               | Field type example       | Syntax                                                                 |
 |----|------------------------------------------|--------------------------|------------------------------------------------------------------------|
 | 1  | scalar, single                           | string / integer / email | `Hello`                                                                |
 | 2  | scalar, single, contains `:`             | text_long                | `Note: this is important`                                              |
@@ -63,20 +58,11 @@ Errors detected while parsing a single cell are collected and thrown together vi
 
 ## Configuration
 
-Selected via the `field_parser` extension parameter in `behat.yml`:
-
-```yaml
-default:
-  extensions:
-    Drupal\DrupalExtension:
-      field_parser: default   # one of: default | legacy
-```
-
-`legacy` is opt-in and emits a deprecation notice once per process. It is removed in 6.1.
+The parser is always active and needs no configuration.
 
 ## Errors
 
-Parse errors thrown by the modern parser carry:
+Parse errors thrown by the parser carry:
 
 - `errorCode` - machine-readable identifier (`unclosed_quote`, `unknown_escape`, `unquoted_compound_value`, `empty_record`, `empty_column`, `unclosed_token`, `unquoted_semicolon`, `unexpected_character`, `expected_quoted_string`, `expected_token`, `trailing_characters`, `invalid_column`).
 - `offset` - zero-based character offset within the cell.

@@ -18,11 +18,9 @@ use PHPUnit\Framework\TestCase;
 /**
  * Integration tests for RawDrupalContext.
  *
- * The full parsing matrices for each implementation live in their own
- * tests ('LegacyEntityFieldParserTest' and 'EntityFieldParserTest'). This
- * class tests only the context-level concerns: the driver precondition,
- * the field_parser flag, and that parseEntityFields() delegates to the
- * selected parser.
+ * The full parsing matrix lives in its own test ('EntityFieldParserTest').
+ * This class tests only the context-level concerns: the driver precondition
+ * and that parseEntityFields() delegates to the parser.
  */
 #[CoversClass(RawDrupalContext::class)]
 class RawDrupalContextTest extends TestCase {
@@ -74,9 +72,9 @@ class RawDrupalContextTest extends TestCase {
   }
 
   /**
-   * Tests that parseEntityFields uses the modern parser by default.
+   * Tests that parseEntityFields delegates to the entity-field parser.
    */
-  public function testParseEntityFieldsUsesModernParserByDefault(): void {
+  public function testParseEntityFieldsDelegatesToParser(): void {
     $context = $this->buildContext();
 
     $stub = new EntityStub('node', NULL, ['field_test' => 'name:"Alice", age:"42"']);
@@ -84,22 +82,6 @@ class RawDrupalContextTest extends TestCase {
 
     $this->assertSame(
       ['field_test' => [['name' => 'Alice', 'age' => '42']]],
-      $stub->getValues(),
-    );
-  }
-
-  /**
-   * Tests that parseEntityFields uses the legacy parser when configured.
-   */
-  public function testParseEntityFieldsUsesLegacyParserWhenConfigured(): void {
-    $context = $this->buildContext();
-    $context->setParameters(['field_parser' => 'legacy']);
-
-    $stub = new EntityStub('node', NULL, ['field_test' => 'A - B']);
-    $context->parseEntityFields($stub);
-
-    $this->assertSame(
-      ['field_test' => [['A', 'B']]],
       $stub->getValues(),
     );
   }

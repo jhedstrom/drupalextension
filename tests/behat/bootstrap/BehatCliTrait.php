@@ -251,16 +251,20 @@ EOL;
   }
 
   /**
-   * Sets 'field_parser: legacy' on the drupal profile in the subprocess config.
+   * Sets 'suppress_deprecations: true' on both profiles in the subprocess.
    *
-   * Use after 'Given some behat configuration' to exercise the legacy
-   * field-value parser inside a Behat subprocess invocation.
+   * Use after 'Given some behat configuration' to exercise the suppression
+   * path on 'DrupalExtension::loadParameters()' and 'DeprecationTrait'.
    */
-  #[Given('the behat configuration uses the legacy field parser')]
-  public function behatCliUseLegacyFieldParser(): void {
+  #[Given('the behat configuration suppresses deprecations')]
+  public function behatCliSuppressDeprecations(): void {
     $config_file = $this->workingDir . DIRECTORY_SEPARATOR . 'behat.yml';
     $yaml = Yaml::parse((string) file_get_contents($config_file));
-    $yaml['drupal']['extensions']['Drupal\DrupalExtension']['field_parser'] = 'legacy';
+
+    foreach (['default', 'drupal'] as $profile) {
+      $yaml[$profile]['extensions']['Drupal\DrupalExtension']['suppress_deprecations'] = TRUE;
+    }
+
     file_put_contents($config_file, Yaml::dump($yaml, 4, 2));
   }
 

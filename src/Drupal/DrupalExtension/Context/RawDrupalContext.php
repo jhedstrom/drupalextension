@@ -30,7 +30,6 @@ use Drupal\DrupalExtension\Manager\DriverManagerInterface;
 use Drupal\DrupalExtension\Manager\DrupalUserManagerInterface;
 use Drupal\DrupalExtension\Parser\EntityFieldParser;
 use Drupal\DrupalExtension\Parser\EntityFieldParserInterface;
-use Drupal\DrupalExtension\Parser\LegacyEntityFieldParser;
 
 use Drupal\DrupalExtension\Hook\Scope\AfterEntityCreateScope;
 use Drupal\DrupalExtension\Hook\Scope\AfterLanguageCreateScope;
@@ -472,11 +471,11 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface, D
   /**
    * Parses field values from Behat table cells into Drupal's field format.
    *
-   * Delegates everything to the active entity-field parser: textual
-   * parsing, multicolumn-header merging, field-type classification, and
-   * the unknown-field guard. For the syntax accepted by the legacy
-   * parser (multi-value, compound columns, inline named columns,
-   * multicolumn headers) see the parser class itself.
+   * Delegates everything to the entity-field parser: textual parsing,
+   * multicolumn-header merging, field-type classification, and the
+   * unknown-field guard. For the accepted syntax (multi-value, compound
+   * columns, inline named columns, multicolumn headers) see the parser
+   * class itself.
    *
    * @param \Drupal\Driver\Entity\EntityStubInterface $stub
    *   The entity stub. Recognised field values are replaced in-place with
@@ -491,7 +490,7 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface, D
    *   preceding 'field:column' header, or when a property is neither a
    *   configurable field, a base field, nor in the ignored list.
    *
-   * @see \Drupal\DrupalExtension\Parser\LegacyEntityFieldParser
+   * @see \Drupal\DrupalExtension\Parser\EntityFieldParser
    */
   public function parseEntityFields(EntityStubInterface $stub, array $ignored_properties = []): void {
     $driver = $this->getDriver();
@@ -509,22 +508,11 @@ class RawDrupalContext extends RawMinkContext implements DrupalAwareInterface, D
   }
 
   /**
-   * Builds the active entity-field parser for one parsing call.
+   * Builds the entity-field parser for one parsing call.
    *
-   * The 'field_parser' extension parameter controls which implementation is
-   * used: 'default' (the current parser) or 'legacy' (the deprecated parser
-   * that will be removed in 6.1). Override in a subclass to swap in a
-   * custom implementation.
+   * Override in a subclass to swap in a custom implementation.
    */
   protected function getFieldParser(string $entity_type, FieldClassifierInterface $classifier, ?string $bundle = NULL): EntityFieldParserInterface {
-    $mode = $this->getParameter('field_parser') ?? 'default';
-
-    if ($mode === 'legacy') {
-      $this->triggerDeprecation('The legacy field parser is deprecated in drupal-extension:6.0.0 and is removed from drupal-extension:6.1.0. Remove "field_parser: legacy" from your behat.yml to migrate. See https://github.com/jhedstrom/drupalextension/blob/main/UPGRADING.md');
-
-      return new LegacyEntityFieldParser($entity_type, $classifier, $bundle);
-    }
-
     return new EntityFieldParser($entity_type, $classifier, $bundle);
   }
 
