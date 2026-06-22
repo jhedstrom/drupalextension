@@ -9,8 +9,6 @@ use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Exception\ExpectationException;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Behat\Step\Then;
-use Drupal\DrupalExtension\DeprecationInterface;
-use Drupal\DrupalExtension\DeprecationTrait;
 use Drupal\DrupalExtension\ParametersAwareInterface;
 use Drupal\DrupalExtension\ParametersTrait;
 
@@ -18,16 +16,12 @@ use Drupal\DrupalExtension\ParametersTrait;
  * Provides step-definitions for interacting with Drupal messages.
  *
  * Operates against the rendered page via Mink. CSS selectors are read from
- * the nested 'selectors.messages:' map under 'Drupal\DrupalExtension'.
- * The legacy flat 'message_selector' / 'error_message_selector' /
- * 'success_message_selector' / 'warning_message_selector' keys under the
- * same map remain supported with a deprecation notice and are removed
- * in 6.1.
+ * the nested 'selectors.messages:' map under 'Drupal\DrupalExtension', keyed
+ * by 'default', 'error', 'success' and 'warning'.
  */
-class MessageContext extends RawMinkContext implements TranslatableContext, ParametersAwareInterface, DeprecationInterface {
+class MessageContext extends RawMinkContext implements TranslatableContext, ParametersAwareInterface {
 
   use ParametersTrait;
-  use DeprecationTrait;
 
   /**
    * {@inheritdoc}
@@ -370,12 +364,6 @@ class MessageContext extends RawMinkContext implements TranslatableContext, Para
   /**
    * Resolves a message selector by short name.
    *
-   * Reads from 'Drupal\DrupalExtension.selectors.messages.<name>' first.
-   * When not configured there, falls back to the legacy flat key on the
-   * same map ('message_selector' / 'error_message_selector' /
-   * 'success_message_selector' / 'warning_message_selector'), emitting a
-   * one-shot deprecation notice for the legacy form.
-   *
    * @param string $name
    *   One of 'default', 'error', 'success', 'warning'.
    *
@@ -383,38 +371,17 @@ class MessageContext extends RawMinkContext implements TranslatableContext, Para
    *   The resolved CSS selector.
    *
    * @throws \RuntimeException
-   *   When the selector is not configured under either form, or when
-   *   $name is not a recognised message-selector key.
+   *   When no selector is configured for the message type under
+   *   'Drupal\DrupalExtension.selectors.messages'.
    */
   protected function getSelector(string $name): string {
-    // @deprecated in 6.0 — remove the local '$legacy_key_map', the
-    // legacy-form lookup and the deprecation call in 6.1. The new nested
-    // '$selectors['messages'][$name]' lookup becomes the single source
-    // of truth at that point.
-    $legacy_key_map = [
-      'default' => 'message_selector',
-      'error' => 'error_message_selector',
-      'success' => 'success_message_selector',
-      'warning' => 'warning_message_selector',
-    ];
-
-    if (!isset($legacy_key_map[$name])) {
-      throw new \RuntimeException(sprintf('Unknown message selector "%s". Expected one of: default, error, success, warning.', $name));
-    }
-
     $selectors = $this->getParameter('selectors');
 
     if (is_array($selectors) && isset($selectors['messages'][$name])) {
       return $selectors['messages'][$name];
     }
 
-    $legacy_key = $legacy_key_map[$name];
-
-    if (is_array($selectors) && isset($selectors[$legacy_key])) {
-      $this->triggerDeprecation('Configuring message selectors as flat keys under "Drupal\\DrupalExtension.selectors:" is deprecated in drupal-extension:6.0.0 and is removed from drupal-extension:6.1.0. Move them under "Drupal\\DrupalExtension.selectors.messages:" with keys "default", "error", "success", "warning". See https://github.com/jhedstrom/drupalextension/blob/main/UPGRADING.md');
-    }
-
-    return $this->getDrupalSelector($legacy_key);
+    throw new \RuntimeException(sprintf('No CSS selector configured for the "%s" message type. Define it under "Drupal\\DrupalExtension.selectors.messages.%s".', $name, $name));
   }
 
   /**

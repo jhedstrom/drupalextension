@@ -87,9 +87,10 @@ markup. If your theme renders messages differently, override them:
 ```yaml
 Drupal\DrupalExtension:
   selectors:
-    message_selector: '.messages'
-    error_message_selector: '.messages.messages-error'
-    success_message_selector: '.messages.messages-status'
+    messages:
+      default: '.messages'
+      error: '.messages.messages-error'
+      success: '.messages.messages-status'
 ```
 
 Message-related steps available with the Blackbox driver:

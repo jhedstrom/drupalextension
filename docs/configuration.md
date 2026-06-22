@@ -58,9 +58,10 @@ Drupal\DrupalExtension:
     content: '#main'
     footer: '#footer'
   selectors:
-    message_selector: '.messages'
-    error_message_selector: '.messages.messages-error'
-    success_message_selector: '.messages.messages-status'
+    messages:
+      default: '.messages'
+      error: '.messages.messages-error'
+      success: '.messages.messages-status'
   text:
     log_in: 'Log in'
     log_out: 'Log out'

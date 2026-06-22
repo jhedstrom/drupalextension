@@ -296,18 +296,6 @@ default:
         logged_in_selector: 'body.logged-in,body.user-logged-in'
 ```
 
-### Deprecation: legacy flat keys
-
-Defining `message_selector`, `error_message_selector`,
-`success_message_selector` and `warning_message_selector` as flat keys
-under `Drupal\DrupalExtension.selectors:` is deprecated and will be
-removed in 6.1. The flat form still works in 6.0 and emits a one-shot
-deprecation notice on first use. Migrate by moving the four keys under
-`Drupal\DrupalExtension.selectors.messages:` and renaming them as shown
-in the table above. Other entries under
-`Drupal\DrupalExtension.selectors:` (`login_form_selector`,
-`logged_in_selector`) are unaffected.
-
 ## BatchContext removed
 
 `Drupal\DrupalExtension\Context\BatchContext` no longer exists. Its two
@@ -563,3 +551,26 @@ already registered an `#[BeforeEntityCreate]` or `#[AfterEntityCreate]`
 handler against 6.0 expecting it to fire only for the generic step,
 audit the handler before upgrading: it will now fire for every entity
 create in the scenario.
+
+## Message selector flat keys removed
+
+The flat `message_selector`, `error_message_selector`,
+`success_message_selector` and `warning_message_selector` keys under
+`Drupal\DrupalExtension.selectors:` are removed. Configure the four
+message selectors under the nested `selectors.messages:` map instead,
+keyed by `default`, `error`, `success` and `warning`:
+
+```yaml
+Drupal\DrupalExtension:
+  selectors:
+    messages:
+      default: '.messages'
+      error: '.messages--error'
+      success: '.messages--status'
+      warning: '.messages--warning'
+```
+
+If a message selector is configured only under a removed flat key,
+`MessageContext` throws a `RuntimeException` that names the nested key
+to define. Other entries under `Drupal\DrupalExtension.selectors:`
+(`login_form_selector`, `logged_in_selector`) are unaffected.
