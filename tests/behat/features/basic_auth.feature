@@ -31,3 +31,8 @@ Feature: Basic authentication
       """
       was not found anywhere in the text of the current page
       """
+
+  @test-blackbox @javascript
+  Scenario: Assert a JavaScript-driven browser authenticates from base_url userinfo
+    When I visit "/basic-auth.php" with basic auth username "behatuser" and password "behatpass"
+    Then I should see "Authenticated as behatuser"
