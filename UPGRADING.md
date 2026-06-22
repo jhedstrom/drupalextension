@@ -82,28 +82,6 @@ mechanism (double quotes) and detects compound mode by value form rather
 than by the spacing of separators, removing the silent failures that
 plagued the legacy syntax.
 
-### Configuration
-
-A new `field_parser` extension parameter selects the active parser:
-
-```yaml
-default:
-  extensions:
-    Drupal\DrupalExtension:
-      field_parser: default   # one of: default | legacy
-```
-
-`default` is the default and uses the new parser. To opt back into the
-legacy parser during migration:
-
-```yaml
-field_parser: legacy
-```
-
-Setting `legacy` emits a deprecation notice once per process. The legacy
-parser is removed in 6.1; setting `field_parser: legacy` then will produce
-a hard configuration error.
-
 ### Side-by-side syntax
 
 | Pattern                           | Legacy syntax                                                       | Modern syntax                                                                            |
@@ -611,3 +589,25 @@ Drupal\DrupalExtension:
 
 A leftover `region_map` key is no longer recognised and raises an
 "Unrecognized option" configuration error on load.
+
+## Field parser: `legacy` parser removed
+
+The `field_parser` extension parameter is removed, along with the
+`LegacyEntityFieldParser` it selected. The default parser is now the only
+parser and needs no configuration. Remove the `field_parser` key from
+`Drupal\DrupalExtension` entirely - it is no longer a recognised option, so
+any value (including `default`) is rejected when configuration is loaded:
+
+```yaml
+# 6.0 (deprecated)
+Drupal\DrupalExtension:
+  field_parser: legacy
+
+# 6.1 (remove the key entirely)
+Drupal\DrupalExtension:
+```
+
+Feature tables written for the legacy field syntax must be converted to the
+current syntax before upgrading. See [Field syntax](#field-syntax) for the
+side-by-side mapping, the positional-to-named conversion table, and the escape
+sequences.

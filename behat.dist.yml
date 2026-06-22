@@ -57,8 +57,6 @@ default:
       # "BEHAT_DRUPALEXTENSION_SUPPRESS_DEPRECATIONS" environment variable
       # overrides this setting in either direction.
       suppress_deprecations: false
-      # Field-value parser used by parseEntityFields(): "default" or "legacy".
-      field_parser: default
       # User entity property submitted as the login value (e.g. "name", "mail").
       login_field: name
       # Enable the blackbox driver.
