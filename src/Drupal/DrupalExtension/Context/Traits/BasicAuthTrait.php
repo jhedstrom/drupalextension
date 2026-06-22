@@ -13,10 +13,10 @@ use Drupal\DrupalExtension\Manager\BasicAuthInterface;
  *
  * Mink resets the session before every scenario and on every fast logout,
  * which clears request headers and drops basic auth credentials. Re-applying
- * the configured credentials on each scenario and step keeps requests to
- * sites behind webserver-level basic auth authenticated.
+ * the credentials on each scenario and step keeps requests to sites behind
+ * webserver-level basic auth authenticated.
  *
- * A no-op when no credentials are configured, so projects that do not use
+ * A no-op when no credentials are present, so projects that do not use
  * basic auth pay no cost. Used in the standard 'DrupalContext'. The host
  * class is expected to extend 'RawDrupalContext' so
  * '$this->getAuthenticationManager()' is available.
@@ -40,7 +40,7 @@ trait BasicAuthTrait {
   }
 
   /**
-   * Applies the configured basic auth credentials to the session.
+   * Applies the resolved basic auth credentials to the session.
    */
   protected function basicAuthApply(): void {
     $manager = $this->getAuthenticationManager();

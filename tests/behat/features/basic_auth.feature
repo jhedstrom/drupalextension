@@ -4,9 +4,9 @@ Feature: Basic authentication
   So that I can test sites that sit behind webserver-level basic auth
 
   @test-blackbox
-  Scenario: Assert configured basic auth authenticates and persists across a session reset
+  Scenario: Assert base_url basic auth authenticates and persists across a session reset
     Given some behat configuration
-    And the behat configuration uses basic auth with username "behatuser" and password "behatpass"
+    And the behat configuration uses base url basic auth with username "behatuser" and password "behatpass"
     And scenario steps tagged with "@test-blackbox":
       """
       Given I am on "/basic-auth.php"
@@ -19,7 +19,7 @@ Feature: Basic authentication
     Then it should pass
 
   @test-blackbox
-  Scenario: Assert basic-auth-protected pages are rejected without configured credentials
+  Scenario: Assert basic-auth-protected pages are rejected without credentials
     Given some behat configuration
     And scenario steps tagged with "@test-blackbox":
       """

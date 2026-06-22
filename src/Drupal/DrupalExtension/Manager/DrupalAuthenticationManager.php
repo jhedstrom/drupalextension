@@ -258,22 +258,14 @@ class DrupalAuthenticationManager implements DrupalAuthenticationManagerInterfac
   /**
    * Resolves the HTTP Basic authentication credentials to apply.
    *
-   * Explicit 'basic_auth' configuration takes precedence; otherwise the
-   * credentials are derived from the 'base_url' userinfo. Returns NULL when
-   * neither source provides a username.
+   * Credentials are derived from the 'base_url' userinfo
+   * ('http://user:pass@host'). Returns NULL when the 'base_url' carries no
+   * username.
    *
    * @return array{username: string, password: string}|null
    *   The resolved credentials, or NULL when none are configured.
    */
   protected function resolveBasicAuth(): ?array {
-    $config = $this->getParameter('basic_auth');
-    if (is_array($config) && ($config['username'] ?? '') !== '') {
-      return [
-        'username' => (string) $config['username'],
-        'password' => (string) ($config['password'] ?? ''),
-      ];
-    }
-
     $base_url = (string) $this->getMinkParameter('base_url');
     $user = parse_url($base_url, PHP_URL_USER);
     if (is_string($user) && $user !== '') {

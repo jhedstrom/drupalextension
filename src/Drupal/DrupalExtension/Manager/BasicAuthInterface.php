@@ -16,9 +16,8 @@ interface BasicAuthInterface {
    * auth credentials. Calling this restores them so requests to sites behind
    * webserver-level basic auth stay authenticated after a reset.
    *
-   * Credentials come from the 'basic_auth' configuration, falling back to the
-   * 'base_url' userinfo. Drivers that cannot set basic auth (such as
-   * JavaScript drivers) are a no-op.
+   * Credentials come from the 'base_url' userinfo. Drivers that cannot set
+   * basic auth (such as JavaScript drivers) are a no-op.
    */
   public function applyBasicAuth(): void;
 

@@ -498,10 +498,8 @@ class DrupalAuthenticationManagerTest extends TestCase {
   }
 
   /**
-   * Tests that applyBasicAuth() applies credentials by source precedence.
+   * Tests that applyBasicAuth() applies credentials parsed from base_url.
    *
-   * @param array<string, mixed> $basic_auth
-   *   The 'basic_auth' configuration, or an empty array for none.
    * @param string $base_url
    *   The configured Mink 'base_url'.
    * @param array{0: string, 1: string}|null $expected
@@ -509,7 +507,7 @@ class DrupalAuthenticationManagerTest extends TestCase {
    *   auth should not be applied at all.
    */
   #[DataProvider('dataProviderApplyBasicAuth')]
-  public function testApplyBasicAuth(array $basic_auth, string $base_url, ?array $expected): void {
+  public function testApplyBasicAuth(string $base_url, ?array $expected): void {
     $session = $this->createMock(Session::class);
 
     if ($expected === NULL) {
@@ -522,12 +520,7 @@ class DrupalAuthenticationManagerTest extends TestCase {
     $mink = new Mink(['default' => $session]);
     $mink->setDefaultSessionName('default');
 
-    $params = self::DRUPAL_PARAMS;
-    if ($basic_auth !== []) {
-      $params['basic_auth'] = $basic_auth;
-    }
-
-    $manager = new DrupalAuthenticationManager($mink, new DrupalUserManager(), $this->createDriverManagerMock(), ['base_url' => $base_url], $params);
+    $manager = new DrupalAuthenticationManager($mink, new DrupalUserManager(), $this->createDriverManagerMock(), ['base_url' => $base_url], self::DRUPAL_PARAMS);
     $manager->applyBasicAuth();
   }
 
@@ -535,43 +528,23 @@ class DrupalAuthenticationManagerTest extends TestCase {
    * Data provider for testApplyBasicAuth().
    */
   public static function dataProviderApplyBasicAuth(): \Iterator {
-    yield 'config credentials win over base_url userinfo' => [
-      ['username' => 'alice', 'password' => 'secret'],
-      'http://bob:other@localhost',
-      ['alice', 'secret'],
-    ];
-    yield 'config username only uses empty password' => [
-      ['username' => 'alice'],
-      'http://localhost',
-      ['alice', ''],
-    ];
-    yield 'base_url userinfo used when no config' => [
-      [],
+    yield 'base_url userinfo is used' => [
       'http://bob:s3cret@localhost',
       ['bob', 's3cret'],
     ];
     yield 'base_url user without password uses empty password' => [
-      [],
       'http://bob@localhost',
       ['bob', ''],
     ];
     yield 'url-encoded userinfo is decoded' => [
-      [],
       'http://bob%40corp:p%40ss@localhost',
       ['bob@corp', 'p@ss'],
     ];
     yield 'literal plus in userinfo is preserved' => [
-      [],
       'http://bob+corp:p+ss@localhost',
       ['bob+corp', 'p+ss'],
     ];
-    yield 'empty config username falls through to no basic auth' => [
-      ['username' => '', 'password' => 'x'],
-      'http://localhost',
-      NULL,
-    ];
-    yield 'no credentials anywhere is a no-op' => [
-      [],
+    yield 'no credentials is a no-op' => [
       'http://localhost',
       NULL,
     ];
@@ -589,10 +562,7 @@ class DrupalAuthenticationManagerTest extends TestCase {
     $mink = new Mink(['default' => $session]);
     $mink->setDefaultSessionName('default');
 
-    $params = self::DRUPAL_PARAMS;
-    $params['basic_auth'] = ['username' => 'alice', 'password' => 'secret'];
-
-    $manager = new DrupalAuthenticationManager($mink, new DrupalUserManager(), $this->createDriverManagerMock(), self::MINK_PARAMS, $params);
+    $manager = new DrupalAuthenticationManager($mink, new DrupalUserManager(), $this->createDriverManagerMock(), ['base_url' => 'http://alice:secret@localhost'], self::DRUPAL_PARAMS);
     $manager->fastLogout();
   }
 
@@ -609,10 +579,7 @@ class DrupalAuthenticationManagerTest extends TestCase {
     $mink = new Mink(['default' => $session]);
     $mink->setDefaultSessionName('default');
 
-    $params = self::DRUPAL_PARAMS;
-    $params['basic_auth'] = ['username' => 'alice', 'password' => 'secret'];
-
-    $manager = new DrupalAuthenticationManager($mink, new DrupalUserManager(), $this->createDriverManagerMock(), self::MINK_PARAMS, $params);
+    $manager = new DrupalAuthenticationManager($mink, new DrupalUserManager(), $this->createDriverManagerMock(), ['base_url' => 'http://alice:secret@localhost'], self::DRUPAL_PARAMS);
     $manager->fastLogout();
   }
 
@@ -629,10 +596,7 @@ class DrupalAuthenticationManagerTest extends TestCase {
     $mink = new Mink(['default' => $session]);
     $mink->setDefaultSessionName('default');
 
-    $params = self::DRUPAL_PARAMS;
-    $params['basic_auth'] = ['username' => 'alice', 'password' => 'secret'];
-
-    $manager = new DrupalAuthenticationManager($mink, new DrupalUserManager(), $this->createDriverManagerMock(), self::MINK_PARAMS, $params);
+    $manager = new DrupalAuthenticationManager($mink, new DrupalUserManager(), $this->createDriverManagerMock(), ['base_url' => 'http://alice:secret@localhost'], self::DRUPAL_PARAMS);
     $manager->applyBasicAuth();
   }
 

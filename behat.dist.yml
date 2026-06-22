@@ -61,13 +61,6 @@ default:
       field_parser: default
       # User entity property submitted as the login value (e.g. "name", "mail").
       login_field: name
-      # HTTP Basic auth credentials for sites behind webserver-level basic auth.
-      # Re-applied after every session reset so the login flow stays authenticated.
-      # Omit this section when no basic auth is needed, or supply credentials via
-      # the base_url userinfo: "http://user:pass@mysite.local".
-      basic_auth:
-        username: ~
-        password: ~
       # Enable the blackbox driver.
       blackbox: ~
       # Map of named regions to CSS selectors. Region steps such as

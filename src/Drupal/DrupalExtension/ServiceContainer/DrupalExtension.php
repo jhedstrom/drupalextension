@@ -114,15 +114,6 @@ class DrupalExtension implements ExtensionInterface {
           ->defaultValue('name')
           ->info('User entity property submitted as the login value. Defaults to "name". Set to "mail" for sites that authenticate by email, or any other user property.')
         ->end()
-        ->arrayNode('basic_auth')
-          ->info('HTTP Basic authentication credentials, re-applied after every session reset (each scenario and each login/logout) so requests to webserver-protected sites stay authenticated. Leave unset to derive credentials from the "base_url" userinfo instead. Not supported by JavaScript drivers - supply credentials via "base_url: http://user:pass@host" for those.' . PHP_EOL
-            . '  username: "user"' . PHP_EOL
-            . '  password: "pass"')
-          ->children()
-            ->scalarNode('username')->end()
-            ->scalarNode('password')->defaultValue('')->end()
-          ->end()
-        ->end()
         ->arrayNode('regions')
           ->info("Map of named regions to CSS selectors. Region steps such as 'I press :button in the :region region' resolve against this map." . PHP_EOL
             . '  My region: "#css-selector"' . PHP_EOL
