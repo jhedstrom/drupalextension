@@ -80,16 +80,18 @@ Scenario: Find an element with an attribute in a region
 
 ## Message selectors
 
-The Drupal Extension recognises three message types - generic,
-error, and success. The default selectors target Drupal's standard
+The Drupal Extension recognises four message types - generic, error,
+success, and warning. The default selectors target Drupal's standard
 markup. If your theme renders messages differently, override them:
 
 ```yaml
 Drupal\DrupalExtension:
   selectors:
-    message_selector: '.messages'
-    error_message_selector: '.messages.messages-error'
-    success_message_selector: '.messages.messages-status'
+    messages:
+      default: '.messages'
+      error: '.messages.messages-error'
+      success: '.messages.messages-status'
+      warning: '.messages.messages-warning'
 ```
 
 Message-related steps available with the Blackbox driver:

@@ -22,6 +22,11 @@ class MessageContextTest extends TestCase {
   protected \ReflectionMethod $assertValidMessageTable;
 
   /**
+   * Reflection method for getSelector.
+   */
+  protected \ReflectionMethod $getSelector;
+
+  /**
    * The context under test.
    */
   protected MessageContext $context;
@@ -32,6 +37,7 @@ class MessageContextTest extends TestCase {
   protected function setUp(): void {
     $this->context = new MessageContext();
     $this->assertValidMessageTable = new \ReflectionMethod(MessageContext::class, 'assertValidMessageTable');
+    $this->getSelector = new \ReflectionMethod(MessageContext::class, 'getSelector');
   }
 
   /**
@@ -104,6 +110,57 @@ class MessageContextTest extends TestCase {
     yield 'error messages' => ['Error messages', 'error messages'];
     yield 'success messages' => ['Success messages', 'success messages'];
     yield 'warning messages' => ['Warning messages', 'warning messages'];
+  }
+
+  /**
+   * Tests that getSelector() resolves from the nested messages map.
+   */
+  #[DataProvider('dataProviderGetSelectorResolvesNestedSelector')]
+  public function testGetSelectorResolvesNestedSelector(string $name, string $expected): void {
+    $this->context->setParameters([
+      'selectors' => [
+        'messages' => [
+          'default' => '.messages',
+          'error' => '.messages--error',
+          'success' => '.messages--status',
+          'warning' => '.messages--warning',
+        ],
+      ],
+    ]);
+    $this->assertSame($expected, $this->getSelector->invoke($this->context, $name));
+  }
+
+  /**
+   * Provides data for testGetSelectorResolvesNestedSelector().
+   */
+  public static function dataProviderGetSelectorResolvesNestedSelector(): \Iterator {
+    yield 'default' => ['default', '.messages'];
+    yield 'error' => ['error', '.messages--error'];
+    yield 'success' => ['success', '.messages--status'];
+    yield 'warning' => ['warning', '.messages--warning'];
+  }
+
+  /**
+   * Tests that getSelector() throws when the message type is not configured.
+   *
+   * @param array<string, mixed> $parameters
+   *   The Drupal extension parameters to set on the context.
+   */
+  #[DataProvider('dataProviderGetSelectorThrowsWhenNotConfigured')]
+  public function testGetSelectorThrowsWhenNotConfigured(array $parameters): void {
+    $this->context->setParameters($parameters);
+    $this->expectException(\RuntimeException::class);
+    $this->expectExceptionMessage('No CSS selector configured for the "error" message type. Define it under "Drupal\DrupalExtension.selectors.messages.error".');
+    $this->getSelector->invoke($this->context, 'error');
+  }
+
+  /**
+   * Provides data for testGetSelectorThrowsWhenNotConfigured().
+   */
+  public static function dataProviderGetSelectorThrowsWhenNotConfigured(): \Iterator {
+    yield 'no selectors parameter' => [[]];
+    yield 'selectors without a messages map' => [['selectors' => ['login_form_selector' => 'form#user-login']]];
+    yield 'messages map missing the requested type' => [['selectors' => ['messages' => ['default' => '.messages']]]];
   }
 
 }
