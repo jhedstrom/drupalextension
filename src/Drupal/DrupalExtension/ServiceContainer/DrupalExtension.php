@@ -9,7 +9,6 @@ use Behat\Testwork\ServiceContainer\Extension as ExtensionInterface;
 use Behat\Testwork\ServiceContainer\ExtensionManager;
 use Drupal\DrupalExtension\Compiler\DriverPass;
 use Drupal\DrupalExtension\Compiler\EventSubscriberPass;
-use Drupal\DrupalExtension\DeprecationTrait;
 use Drupal\DrupalExtension\Generator\ClassGenerator;
 use Behat\Mink\Element\DocumentElement as MinkDocumentElement;
 use Drupal\DrupalExtension\Element\DocumentElement;
@@ -25,8 +24,6 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
  * Drupal extension for Behat providing step definitions and driver management.
  */
 class DrupalExtension implements ExtensionInterface {
-
-  use DeprecationTrait;
 
   /**
    * Extension configuration ID.
@@ -119,11 +116,6 @@ class DrupalExtension implements ExtensionInterface {
             . '  My region: "#css-selector"' . PHP_EOL
             . '  Content: "#main .region-content"' . PHP_EOL
             . '  Right sidebar: "#sidebar-second"' . PHP_EOL)
-          ->useAttributeAsKey('key')
-          ->prototype('variable')->end()
-        ->end()
-        ->arrayNode('region_map')
-          ->info('Deprecated since drupal-extension:6.0.0 and removed from drupal-extension:6.1.0. Use "regions" instead.')
           ->useAttributeAsKey('key')
           ->prototype('variable')->end()
         ->end()
@@ -230,10 +222,8 @@ class DrupalExtension implements ExtensionInterface {
   /**
    * Load test parameters.
    *
-   * Resolves the region map from 'regions' (current) and 'region_map'
-   * (deprecated). Entries in 'regions' take precedence when a key appears
-   * in both. The merged result is exposed under the 'drupal.regions'
-   * container parameter and surfaced through the 'region' Mink selector.
+   * Exposes the configured region map under the 'drupal.regions' container
+   * parameter and surfaces it through the 'region' Mink selector.
    *
    * @param \Symfony\Component\DependencyInjection\ContainerBuilder $container
    *   The container builder.
@@ -241,22 +231,12 @@ class DrupalExtension implements ExtensionInterface {
    *   The extension configuration.
    */
   protected function loadParameters(ContainerBuilder $container, array $config): void {
-    $this->setParameters($config);
-
     $regions = $config['regions'] ?? [];
-    $legacy = $config['region_map'] ?? [];
 
-    if ($legacy !== []) {
-      $this->triggerDeprecation('The "region_map" configuration key under "Drupal\\DrupalExtension" is deprecated in drupal-extension:6.0.0 and removed from drupal-extension:6.1.0. Rename it to "regions". See https://github.com/jhedstrom/drupalextension/blob/main/UPGRADING.md');
-      // 'regions' wins on key collisions; '+' keeps the left-hand keys.
-      $regions += $legacy;
-    }
-
-    // Surface the merged map back into the parameters array so contexts
-    // reading it through 'getParameter("regions")' see the same value
-    // the 'region' Mink selector resolves against.
+    // Mirror the map into the config so the 'drupal.parameters' and
+    // 'drupal.regions' container parameters always expose the same value,
+    // even when the optional 'regions' key was omitted from behat.yml.
     $config['regions'] = $regions;
-    unset($config['region_map']);
 
     // Flatten the grouped mappings to a single key => value map that
     // contexts resolve '{{ Key }}' tokens against. Groups are only a way

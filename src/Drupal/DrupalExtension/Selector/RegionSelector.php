@@ -19,9 +19,9 @@ use Behat\Mink\Selector\CssSelector;
  * Once registered, any context with a Mink session can call
  * '$page->find("region", "Header")' and Mink dispatches to
  * 'translateToXPath()' here. The class looks the name up in the user's
- * configured map (the 'regions' / legacy 'region_map' key under
- * 'Drupal\DrupalExtension' in 'behat.yml') and delegates the
- * CSS-to-XPath translation to the wrapped 'CssSelector'.
+ * configured map (the 'regions' key under 'Drupal\DrupalExtension' in
+ * 'behat.yml') and delegates the CSS-to-XPath translation to the wrapped
+ * 'CssSelector'.
  *
  * Regions are a generic page concept - this selector has no Drupal API
  * dependency and works against any HTML page.
@@ -35,7 +35,7 @@ class RegionSelector implements SelectorInterface {
    *   The CSS selector that performs the actual CSS-to-XPath translation.
    * @param array<string, string> $regions
    *   Map of region names to CSS selectors, sourced from the 'regions' key
-   *   (or the deprecated 'region_map') under 'Drupal\DrupalExtension'.
+   *   under 'Drupal\DrupalExtension'.
    */
   public function __construct(private readonly CssSelector $cssSelector, private array $regions) {
   }
