@@ -142,6 +142,9 @@ class MessageContextTest extends TestCase {
 
   /**
    * Tests that getSelector() throws when the message type is not configured.
+   *
+   * @param array<string, mixed> $parameters
+   *   The Drupal extension parameters to set on the context.
    */
   #[DataProvider('dataProviderGetSelectorThrowsWhenNotConfigured')]
   public function testGetSelectorThrowsWhenNotConfigured(array $parameters): void {
