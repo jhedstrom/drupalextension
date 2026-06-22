@@ -62,6 +62,7 @@ Drupal\DrupalExtension:
       default: '.messages'
       error: '.messages.messages-error'
       success: '.messages.messages-status'
+      warning: '.messages.messages-warning'
   text:
     log_in: 'Log in'
     log_out: 'Log out'
