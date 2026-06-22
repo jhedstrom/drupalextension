@@ -151,7 +151,7 @@ class RandomContext implements Context {
   protected function substituteTable(TableNode $table): TableNode {
     $rows = [];
     foreach ($table->getRows() as $row) {
-      $rows[] = array_map(fn (string $v): string => $this->substitute($v), $row);
+      $rows[] = array_map($this->substitute(...), $row);
     }
 
     return new TableNode($rows);
