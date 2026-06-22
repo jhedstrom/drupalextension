@@ -531,6 +531,34 @@ store name.
 
 # Upgrading from 6.0 to 6.1
 
+## Random token: legacy `<?name>` syntax removed
+
+The `<?name>` random-token syntax, deprecated in 6.0, has been removed.
+Use the typed `[?name:type,args]` form instead. A bare `[?name]` is
+equivalent to the old `<?name>` - a `string` of length 10 - so the common
+case is a one-character-per-token change.
+
+| 6.0 (removed)    | 6.1              |
+| ---------------- | ---------------- |
+| `<?title>`       | `[?title]`       |
+| `<?user>`        | `[?user]`        |
+| `<?random_page>` | `[?random_page]` |
+
+Update every `<?name>` token in your `.feature` files to `[?name]`. The
+typed form also supports explicit generator types and arguments, such as
+`[?slug:machine_name,8]` or `[?age:int,18,65]`; see
+[Writing tests](docs/writing-tests.md#random-data) for the full list of
+built-in types.
+
+If you subclass `RandomContext`, note that its interface surface shrank: it
+no longer implements `ParametersAwareInterface` or `DeprecationInterface`
+and is now a bare `Behat\Behat\Context\Context`. The
+`transformVariablesLegacy()` and `transformTableLegacy()` methods are gone;
+`transformVariables()` / `transformTable()` handle the `[?...]` form. If
+your subclass relied on the inherited `getParameter()` accessor, add
+`use ParametersTrait;` together with `implements ParametersAwareInterface`
+to restore it.
+
 ## `Before/AfterEntityCreate` hooks fan out to every entity create path
 
 In 6.0 the `Before/AfterEntityCreateScope` hooks (registered via the

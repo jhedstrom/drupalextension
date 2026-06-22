@@ -132,12 +132,12 @@ cached value within a scenario:
 | `[?title]`               | `title:string:10`   |
 | `[?title:string]`        | `title:string:10`   |
 | `[?title:string,10]`     | `title:string:10`   |
-| `<?title>` (legacy)      | `title:string:10`   |
 | `[?title:string,8]`      | `title:string:8`    |
 | `[?title:int]`           | `title:int:0,...`   |
 
-So a feature mid-migration from `<?title>` to `[?title]` resolves both
-literals to the same string, letting you swap one usage at a time.
+This lets you reference one generated value from several steps:
+`[?title]`, `[?title:string]`, and `[?title:string,10]` all resolve to
+the same string throughout a scenario.
 
 ### Custom types
 
@@ -162,22 +162,6 @@ class CustomRandomContext extends RandomContext {
 
 Register `CustomRandomContext` in `behat.yml` instead of `RandomContext`,
 then use `[?primary:phone]` in scenarios.
-
-### Legacy `<?token>` syntax
-
-The original `<?token>` form is still accepted but deprecated. Each
-unique legacy literal triggers a one-time `[Deprecation]` notice on
-`STDERR` pointing at the equivalent `[?token]` replacement. Suppress
-notices with the `suppress_deprecations` configuration key or the
-`BEHAT_DRUPALEXTENSION_SUPPRESS_DEPRECATIONS` environment variable -
-see [Configuration](configuration.md).
-
-The legacy form is processed by separate `Transform` methods on
-`RandomContext` (`transformVariablesLegacy()` /
-`transformTableLegacy()`) which exist purely to host the deprecated
-behaviour. They will be removed together once the legacy form is
-dropped, leaving only the modern `transformVariables()` /
-`transformTable()` pair.
 
 ## Mappings
 
