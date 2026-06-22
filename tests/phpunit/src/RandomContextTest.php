@@ -12,8 +12,6 @@ use Behat\Gherkin\Node\ScenarioNode;
 use Behat\Gherkin\Node\StepNode;
 use Behat\Gherkin\Node\TableNode;
 use Drupal\DrupalExtension\Context\RandomContext;
-use Drupal\DrupalExtension\DeprecationInterface;
-use Drupal\DrupalExtension\ParametersAwareInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -29,9 +27,9 @@ use PHPUnit\Framework\TestCase;
 class RandomContextTest extends TestCase {
 
   /**
-   * The context under test - a subclass that captures deprecations.
+   * The context under test.
    */
-  protected RecordingRandomContext $context;
+  protected RandomContext $context;
 
   /**
    * Reflection of the protected $values property (canonical key -> value).
@@ -47,13 +45,13 @@ class RandomContextTest extends TestCase {
    * {@inheritdoc}
    */
   protected function setUp(): void {
-    $this->context = new RecordingRandomContext();
+    $this->context = new RandomContext();
     $this->valuesProperty = new \ReflectionProperty(RandomContext::class, 'values');
     $this->literalsProperty = new \ReflectionProperty(RandomContext::class, 'literals');
   }
 
   /**
-   * Tests the bare-Behat structural promise of the rebase.
+   * Tests the bare-Behat structural promise of the class.
    *
    * 'RandomContext' must implement 'Behat\Behat\Context\Context' directly
    * with no parent class, so it can be loaded in suites that do not
@@ -62,16 +60,14 @@ class RandomContextTest extends TestCase {
   public function testImplementsBareBehatContextWithoutAncestors(): void {
     $context = new RandomContext();
     $this->assertInstanceOf(Context::class, $context);
-    $this->assertInstanceOf(ParametersAwareInterface::class, $context);
-    $this->assertInstanceOf(DeprecationInterface::class, $context);
     $this->assertSame([], class_parents($context));
   }
 
   /**
-   * Tests modern '[?...]' substitution via 'transformVariables()'.
+   * Tests '[?...]' substitution via 'transformVariables()'.
    *
    * @param string $message
-   *   The input message containing one or more modern tokens.
+   *   The input message containing one or more tokens.
    * @param string $pattern
    *   Regex the substituted output must match end-to-end.
    * @param int $expected_substitutions
@@ -88,9 +84,7 @@ class RandomContextTest extends TestCase {
   /**
    * Provides cases for testTransformVariablesSubstitutesTokens().
    *
-   * Modern-form inputs only - legacy '<?...>' is covered separately by
-   * 'testTransformVariablesLegacySubstitutesTokens()'. Pattern is anchored
-   * end-to-end so a wrongly-substituted output fails.
+   * Pattern is anchored end-to-end so a wrongly-substituted output fails.
    */
   public static function dataProviderTransformVariablesSubstitutesTokens(): \Iterator {
     yield 'bare token resolves to lowercase 10-char string' => [
@@ -131,59 +125,19 @@ class RandomContextTest extends TestCase {
   }
 
   /**
-   * Tests legacy '<?...>' substitution via 'transformVariablesLegacy()'.
-   *
-   * Asserts both that the substitution works and that exactly one
-   * deprecation message is captured per unique legacy literal.
-   *
-   * @param string $message
-   *   The input message containing legacy tokens.
-   * @param string $pattern
-   *   Regex the substituted output must match end-to-end.
-   * @param int $expected_deprecations
-   *   How many '[Deprecation]' notices should be captured.
-   */
-  #[DataProvider('dataProviderTransformVariablesLegacySubstitutesTokens')]
-  public function testTransformVariablesLegacySubstitutesTokens(string $message, string $pattern, int $expected_deprecations): void {
-    $output = $this->context->transformVariablesLegacy($message);
-    $this->assertIsString($output);
-    $this->assertMatchesRegularExpression($pattern, $output);
-    $this->assertCount($expected_deprecations, $this->context->capturedDeprecations);
-  }
-
-  /**
-   * Provides cases for testTransformVariablesLegacySubstitutesTokens().
-   */
-  public static function dataProviderTransformVariablesLegacySubstitutesTokens(): \Iterator {
-    yield 'single legacy token resolves and emits one deprecation' => [
-      'value: <?token>',
-      '/^value: [a-z0-9]{10}$/',
-      1,
-    ];
-    yield 'two distinct legacy tokens emit two deprecations' => [
-      '<?one> and <?two>',
-      '/^[a-z0-9]{10} and [a-z0-9]{10}$/',
-      2,
-    ];
-  }
-
-  /**
    * Tests that equivalent token forms collapse to the same canonical value.
    *
-   * Default 'string' / length '10' means '[?title]', '[?title:string]',
-   * '[?title:string,10]', and the legacy '<?title>' must all resolve to
-   * the same string within one scenario - this is the back-compat lever
-   * that lets users migrate one literal at a time.
+   * Default 'string' / length '10' means '[?title]', '[?title:string]'
+   * and '[?title:string,10]' all resolve to the same string within one
+   * scenario.
    */
   public function testEquivalentFormsShareTheSameValue(): void {
-    $message = '<?title> [?title] [?title:string] [?title:string,10]';
-    $modern = $this->context->transformVariables($message);
-    $this->assertIsString($modern);
-    $output = $this->context->transformVariablesLegacy($modern);
+    $message = '[?title] [?title:string] [?title:string,10]';
+    $output = $this->context->transformVariables($message);
     $this->assertIsString($output);
 
     $parts = explode(' ', $output);
-    $this->assertCount(4, $parts);
+    $this->assertCount(3, $parts);
     $this->assertSame([$parts[0]], array_unique($parts));
   }
 
@@ -264,9 +218,9 @@ class RandomContextTest extends TestCase {
   }
 
   /**
-   * Tests that 'transformTable()' substitutes modern tokens in cells.
+   * Tests that 'transformTable()' substitutes tokens in cells.
    */
-  public function testTransformTableSubstitutesModernTokensInCells(): void {
+  public function testTransformTableSubstitutesTokensInCells(): void {
     $table = new TableNode([
       ['title', 'value'],
       ['[?one]', '[?two]'],
@@ -279,25 +233,6 @@ class RandomContextTest extends TestCase {
     $this->assertMatchesRegularExpression('/^[a-z0-9]{10}$/', $rows[1][0]);
     $this->assertMatchesRegularExpression('/^[a-z0-9]{10}$/', $rows[1][1]);
     $this->assertNotSame($rows[1][0], $rows[1][1]);
-    $this->assertSame([], $this->context->capturedDeprecations);
-  }
-
-  /**
-   * Tests that 'transformTableLegacy()' substitutes and emits deprecations.
-   */
-  public function testTransformTableLegacySubstitutesAndDeprecates(): void {
-    $table = new TableNode([
-      ['title', 'value'],
-      ['<?one>', '<?two>'],
-    ]);
-
-    $transformed = $this->context->transformTableLegacy($table);
-    $rows = $transformed->getRows();
-
-    $this->assertSame(['title', 'value'], $rows[0]);
-    $this->assertMatchesRegularExpression('/^[a-z0-9]{10}$/', $rows[1][0]);
-    $this->assertMatchesRegularExpression('/^[a-z0-9]{10}$/', $rows[1][1]);
-    $this->assertCount(2, $this->context->capturedDeprecations);
   }
 
   /**
@@ -328,19 +263,15 @@ class RandomContextTest extends TestCase {
    * Provides cases for testBeforeScenarioCollectsTokens().
    */
   public static function dataProviderBeforeScenarioCollectsTokens(): \Iterator {
-    yield 'legacy token in step text' => [
-      ['token:string:10'],
-      [new StepNode('Given', 'a string <?token>', [], 1)],
-    ];
-    yield 'new bare token in step text' => [
+    yield 'bare token in step text' => [
       ['token:string:10'],
       [new StepNode('Given', 'a string [?token]', [], 1)],
     ];
-    yield 'mixed legacy and new with same name share one key' => [
+    yield 'bare and typed same name share one key' => [
       ['token:string:10'],
       [
-        new StepNode('Given', 'first <?token>', [], 1),
-        new StepNode('Then', 'second [?token]', [], 2),
+        new StepNode('Given', 'first [?token]', [], 1),
+        new StepNode('Then', 'second [?token:string,10]', [], 2),
       ],
     ];
     yield 'distinct names produce distinct keys' => [
@@ -354,55 +285,8 @@ class RandomContextTest extends TestCase {
     yield 'tokens in background and scenario are merged' => [
       ['from_background:string:10', 'from_scenario:string:10'],
       [new StepNode('Then', '[?from_scenario]', [], 2)],
-      [new StepNode('Given', '<?from_background>', [], 1)],
+      [new StepNode('Given', '[?from_background]', [], 1)],
     ];
-  }
-
-  /**
-   * Tests that legacy literals trigger one deprecation each.
-   *
-   * The trait's process-wide dedup means each unique message fires only
-   * once, so two uses of '<?token>' produce one notice but '<?one>' plus
-   * '<?two>' produce two. Deprecation is the legacy Transform method's
-   * responsibility - 'resolveLiteral()' must not fire on its own.
-   */
-  public function testLegacyTransformTriggersDeprecation(): void {
-    $this->context->transformVariablesLegacy('<?one> <?two> <?one>');
-    $messages = $this->context->capturedDeprecations;
-
-    $this->assertCount(2, $messages);
-    $this->assertStringContainsString('"<?one>" token syntax is deprecated', $messages[0]);
-    $this->assertStringContainsString('Use "[?one]" instead', $messages[0]);
-    $this->assertStringContainsString('"<?two>" token syntax is deprecated', $messages[1]);
-    $this->assertStringContainsString('Use "[?two]" instead', $messages[1]);
-  }
-
-  /**
-   * Tests that the modern Transform method never emits a deprecation.
-   */
-  public function testModernTransformDoesNotTriggerDeprecation(): void {
-    $this->context->transformVariables('[?one] [?two:int,1,9]');
-
-    $this->assertSame([], $this->context->capturedDeprecations);
-  }
-
-  /**
-   * Tests that scenario pre-resolution does not emit deprecations.
-   *
-   * The 'BeforeScenario' hook warms the cache via 'resolveLiteral()'; if
-   * deprecation lived there, every legacy literal in a feature would fire
-   * a notice before any step ran. The legacy Transform methods are the
-   * single source of deprecation emission.
-   */
-  public function testBeforeScenarioDoesNotTriggerDeprecation(): void {
-    $scope = $this->createScenarioScope([
-      new StepNode('Given', 'a string <?legacy>', [], 1),
-      new StepNode('Then', '[?modern]', [], 2),
-    ]);
-
-    $this->context->beforeScenarioSetVariables($scope);
-
-    $this->assertSame([], $this->context->capturedDeprecations);
   }
 
   /**
@@ -446,32 +330,6 @@ class RandomContextTest extends TestCase {
     $scope->method('getScenario')->willReturn($scenario);
 
     return $scope;
-  }
-
-}
-
-/**
- * Subclass that records deprecations instead of writing to 'STDERR'.
- *
- * 'DeprecationTrait::triggerDeprecation()' writes through 'fwrite(STDERR,
- * ...)' which sidesteps PHP output buffering, so capturing it from a
- * unit test is awkward. Overriding the method is the simplest hook.
- */
-// phpcs:ignore Drupal.Classes.ClassFileName.NoMatch
-class RecordingRandomContext extends RandomContext {
-
-  /**
-   * Deprecation messages captured during the test.
-   *
-   * @var list<string>
-   */
-  public array $capturedDeprecations = [];
-
-  /**
-   * {@inheritdoc}
-   */
-  public function triggerDeprecation(string $message): void {
-    $this->capturedDeprecations[] = $message;
   }
 
 }
