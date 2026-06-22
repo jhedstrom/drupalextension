@@ -226,11 +226,6 @@ custom `region` selector and has no dependency on the Drupal driver.
 See [Blackbox driver - Region steps](drivers/blackbox.md#region-steps)
 for the full pattern.
 
-> **Deprecated:** the `region_map` key is the legacy name for the same
-> map. It still works in 6.0 but emits a deprecation notice and is
-> removed in 6.1. Rename it to `regions`. If both keys are present, an
-> entry under `regions` overrides the same key under `region_map`.
-
 ## Mappings
 
 Name values once and reference them with `{{ Key }}` tokens in any step.

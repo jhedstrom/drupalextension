@@ -386,13 +386,6 @@ default:
         Content: '#main'
 ```
 
-`region_map` still works during the 6.0 cycle - it emits a one-shot
-deprecation notice on extension load and is removed in 6.1. If both
-keys are present, an entry under `regions` overrides the same key
-under `region_map`. The merged map is exposed to contexts as
-`getParameter('regions')` and to Mink's `region` selector as the
-`drupal.regions` container parameter.
-
 ## Configuration: `ajax_timeout`
 
 `ajax_timeout` has moved from `Drupal\MinkExtension` to `Drupal\DrupalExtension`.
@@ -602,3 +595,19 @@ If a message selector is configured only under a removed flat key,
 `MessageContext` throws a `RuntimeException` that names the nested key
 to define. Other entries under `Drupal\DrupalExtension.selectors:`
 (`login_form_selector`, `logged_in_selector`) are unaffected.
+
+## Configuration: `region_map` removed
+
+The `region_map` configuration key under `Drupal\DrupalExtension`,
+deprecated in 6.0, is removed. Rename it to `regions`; the structure is
+identical:
+
+```yaml
+Drupal\DrupalExtension:
+  regions:
+    Header: '#header'
+    Content: '#main'
+```
+
+A leftover `region_map` key is no longer recognised and raises an
+"Unrecognized option" configuration error on load.
