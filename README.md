@@ -118,23 +118,15 @@ For detailed step documentation, see: vendor/drupal/drupal-extension/STEPS.md
 * Originally developed by [Jonathan Hedstrom](https://github.com/jhedstrom) with great help from [eliza411](https://github.com/eliza411)
 * Maintainers
   * [Alex Skrypnyk](https://github.com/AlexSkrypnyk)
-  * [Pieter Frenssen](https://github.com/pfrenssen)
-  * [Ricardo Sanz](https://github.com/rsanzante)
-  * [All these great contributors](https://github.com/jhedstrom/drupalextension/graphs/contributors)
+* [All these great contributors](https://github.com/jhedstrom/drupalextension/graphs/contributors)
 
 ## Additional resources
 
 * [Behat Drupal Extension documentation](docs/README.md)
+* [Behat Steps - A collection of Behat steps](https://github.com/drevops/behat-steps)
 * [Behat documentation](http://docs.behat.org)
 * [Mink documentation](http://mink.behat.org)
 * [Drupal Behat group](http://groups.drupal.org/behat)
-
-## Examples and code snippets
-
-* [Complex node creation, with field collections and entity references](https://gist.github.com/jhedstrom/5708233)
-* [Achievements module support](https://gist.github.com/jhedstrom/9633067)
-* [Drupal form element visibility](https://gist.github.com/pbuyle/7698675)
-* [Track down PHP notices](https://www.godel.com.au/blog/use-behat-track-down-php-notices-they-take-over-your-drupal-site-forever)
 
 ## Release notes
 
