@@ -15,6 +15,7 @@
 [![ci](https://github.com/jhedstrom/drupalextension/actions/workflows/ci.yml/badge.svg)](https://github.com/jhedstrom/drupalextension/actions/workflows/ci.yml)
 [![GitHub Issues](https://img.shields.io/github/issues/jhedstrom/drupalextension.svg)](https://github.com/jhedstrom/drupalextension/issues)
 [![GitHub Pull Requests](https://img.shields.io/github/issues-pr/jhedstrom/drupalextension.svg)](https://github.com/jhedstrom/drupalextension/pulls)
+
 [![Join our community](https://img.shields.io/badge/Join%20our%20community-Slack-4A154B?style=for-the-badge&logo=slack&logoColor=white)](https://drupal.slack.com/archives/C4T2JHG9K)
 </div>
 
