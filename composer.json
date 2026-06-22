@@ -11,24 +11,17 @@
     "authors": [
         {
             "name": "Jonathan Hedstrom",
-            "email": "jhedstrom@gmail.com"
+            "email": "jhedstrom@gmail.com",
+            "role": "author"
         },
         {
             "name": "Melissa Anderson",
-            "homepage": "https://github.com/eliza411"
-        },
-        {
-            "name": "Pieter Frenssen",
-            "homepage": "https://github.com/pfrenssen"
+            "homepage": "https://github.com/eliza411",
+            "role": "author"
         },
         {
             "name": "Alex Skrypnyk",
             "email": "alex@drevops.com",
-            "role": "maintainer"
-        },
-        {
-            "name": "Ricardo Sanz",
-            "homepage": "https://github.com/rsanzante",
             "role": "maintainer"
         }
     ],
